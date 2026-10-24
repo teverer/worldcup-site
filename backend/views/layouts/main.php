@@ -1,4 +1,11 @@
 <?php
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by Codex (AI assistance), 20261021
+ * 模块:球队与球员 —— 在后台布局中添加资料管理导航。
+ * @var yii\web\View $this
+ * @var string $content
+ */
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -38,6 +45,10 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role >= common\models\User::ROLE_ADMIN) {
+        $menuItems[] = ['label' => '球队管理', 'url' => ['/team/index']];
+        $menuItems[] = ['label' => '球员管理', 'url' => ['/player/index']];
+    }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
