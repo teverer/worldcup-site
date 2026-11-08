@@ -10,6 +10,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
+use common\components\CommentTarget;
+use frontend\widgets\CommentSection;
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => '资讯', 'url' => ['index']];
@@ -45,3 +47,8 @@ $date = $model->publish_time ?: $model->create_time;
         <?= Html::a('← 返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
     </footer>
 </article>
+
+<?= CommentSection::widget([
+    'targetType' => CommentTarget::NEWS,
+    'targetId' => $model->id,
+]) ?>
