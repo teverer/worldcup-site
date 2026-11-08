@@ -2,7 +2,8 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by Codex (AI assistance), 20261021
- * 模块:球队与球员 —— 球队详情和跨届球员名单。
+ * Coding by 石子川 2411966, 20261108
+ * 模块:球队与球员、留言与资讯 —— 球队详情、跨届球员名单和留言区。
  * @var yii\web\View $this
  * @var common\models\Team $model
  * @var array $tournaments
@@ -12,6 +13,8 @@
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use common\components\CommentTarget;
+use frontend\widgets\CommentSection;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => '球队目录', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -44,3 +47,8 @@ $this->registerCssFile('@web/css/catalog.css');
         ], 'tableOptions' => ['class' => 'table table-hover catalog-table']]) ?>
     </div>
 </article>
+
+<?= CommentSection::widget([
+    'targetType' => CommentTarget::TEAM,
+    'targetId' => $model->id,
+]) ?>

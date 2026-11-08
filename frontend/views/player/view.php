@@ -2,13 +2,16 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by Codex (AI assistance), 20261021
- * 模块:球队与球员 —— 球员资料、参赛经历及分届统计。
+ * Coding by 石子川 2411966, 20261108
+ * 模块:球队与球员、留言与资讯 —— 球员资料、参赛经历、统计和留言区。
  * @var yii\web\View $this
  * @var common\models\Player $model
  * @var array $participations
  * @var array $statistics
  */
 use yii\helpers\Html;
+use common\components\CommentTarget;
+use frontend\widgets\CommentSection;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => '球员目录', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -50,3 +53,8 @@ $this->registerCssFile('@web/css/catalog.css');
         </tr><?php endforeach ?></tbody>
     </table></div><?php endif ?>
 </article>
+
+<?= CommentSection::widget([
+    'targetType' => CommentTarget::PLAYER,
+    'targetId' => $model->id,
+]) ?>
