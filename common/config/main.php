@@ -6,6 +6,13 @@ return [
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
+        'db' => [
+            'class' => 'yii\db\Connection',
+            // MySQL 8 的 information_schema 查询返回大写列名，与 Yii 2.0.32 期望的小写列名不符，
+            // 导致 mysql\Schema::findConstraints() 报 Undefined array key "constraint_name"。
+            // 统一将 PDO 结果列名转为小写以兼容。
+            'attributes' => [PDO::ATTR_CASE => PDO::CASE_LOWER],
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
