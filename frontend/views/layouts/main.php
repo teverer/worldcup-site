@@ -3,7 +3,8 @@
  * Team: 国足世界杯夺冠队
  * Coding by Codex (AI assistance), 20261021
  * Coding by 石子川 2411966, 20261108
- * 模块:球队与球员、留言与资讯 —— 在公共布局中添加球队、球员和资讯导航。
+ * Coding by 李行阳 2411353, 20261115
+ * 模块:球队与球员、留言与资讯、届次与比赛 —— 在公共布局中添加球队、球员、届次、比赛和资讯导航。
  * @var yii\web\View $this
  * @var string $content
  */
@@ -47,6 +48,8 @@ AppAsset::register($this);
         ['label' => 'Home', 'url' => ['/site/index']],
         ['label' => '球队', 'url' => ['/team/index']],
         ['label' => '球员', 'url' => ['/player/index']],
+        ['label' => '届次', 'url' => ['/tournament/index']],
+        ['label' => '比赛', 'url' => ['/game/index']],
         ['label' => '资讯', 'url' => ['/news/index']],
         ['label' => 'About', 'url' => ['/site/about']],
         ['label' => 'Contact', 'url' => ['/site/contact']],
