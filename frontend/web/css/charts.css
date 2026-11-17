@@ -65,6 +65,71 @@
     line-height: 1.6;
 }
 
+.chart-card-head--standings {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px 18px;
+}
+
+.chart-card-head-text {
+    min-width: 0;
+    flex: 1 1 320px;
+}
+
+.chart-group-switch-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0 10px;
+}
+
+.chart-group-switch-label {
+    color: #446653;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.chart-group-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chart-group-switch-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 4px 10px;
+    border: 1px solid #cfe0d5;
+    border-radius: 999px;
+    background: #fff;
+    color: #355747;
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.chart-group-switch-btn:hover {
+    border-color: #26734d;
+    color: #1e5a3d;
+}
+
+.chart-group-switch-btn:focus-visible {
+    outline: 2px solid #26734d;
+    outline-offset: 2px;
+}
+
+.chart-group-switch-btn[aria-pressed="true"] {
+    border-color: #26734d;
+    background: #26734d;
+    color: #fff;
+    font-weight: 600;
+}
+
 .chart-canvas {
     width: 100%;
     height: 380px;

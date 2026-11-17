@@ -1,5 +1,6 @@
 <?php
 return [
+    'name' => '世界杯数据门户',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -15,6 +16,11 @@ return [
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
+        ],
+        // 统一空值展示:避免表格里出现红色的英文“(not set)”。
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'nullDisplay' => '<span class="text-muted">—</span>',
         ],
         'user' => [
             'class' => 'yii\web\User',
