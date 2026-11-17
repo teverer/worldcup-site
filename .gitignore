@@ -45,3 +45,7 @@ phpunit.phar
 .vscode/
 Thumbs.db
 *.zip
+
+# Python test caches
+__pycache__/
+*.py[cod]
