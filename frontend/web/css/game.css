@@ -1,0 +1,234 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261115
+   模块:届次与比赛 —— 届次卡片、比赛列表、比分板与进球时间线样式。 */
+.tournament-page,
+.game-page,
+.game-detail {
+    color: #182d27;
+    padding-bottom: 36px;
+}
+
+.tournament-heading {
+    border-left: 5px solid #26734d;
+    background: #f2f7f3;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+}
+
+.tournament-kicker {
+    color: #446653;
+    letter-spacing: .1em;
+}
+
+.tournament-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.tournament-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #d9e5dd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 22px 24px;
+}
+
+.tournament-card h2 {
+    margin: 6px 0 16px;
+    font-size: 20px;
+}
+
+.tournament-card h2 a {
+    color: #245b40;
+}
+
+.tournament-year {
+    margin: 0;
+    color: #26734d;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.tournament-meta {
+    margin: 0 0 16px;
+}
+
+.tournament-meta dt {
+    float: left;
+    clear: left;
+    width: 64px;
+    color: #667c71;
+    font-weight: 400;
+}
+
+.tournament-meta dd {
+    margin-left: 72px;
+    margin-bottom: 8px;
+}
+
+.tournament-card-link {
+    margin: auto 0 0;
+}
+
+.tournament-detail-list {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px 18px;
+    max-width: 720px;
+    margin: 18px 0 28px;
+}
+
+.tournament-detail-list dt {
+    color: #526b5f;
+    font-weight: 400;
+}
+
+.tournament-detail-list dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.tournament-group {
+    margin-bottom: 28px;
+}
+
+.tournament-group h3 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: #245b40;
+}
+
+.game-summary {
+    margin: 0 0 10px;
+    color: #526b5f;
+}
+
+.game-score {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.game-scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 28px;
+    border: 1px solid #d9e5dd;
+    border-radius: 8px;
+    background: #f2f7f3;
+    padding: 26px 20px;
+    margin: 8px 0 30px;
+}
+
+.game-scoreboard .game-team {
+    min-width: 140px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.game-score-main {
+    text-align: center;
+}
+
+.game-score-value {
+    display: block;
+    color: #245b40;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.game-penalty {
+    display: block;
+    margin-top: 6px;
+    color: #526b5f;
+}
+
+.goal-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 8px;
+    border-left: 3px solid #cfe0d5;
+}
+
+.goal-item {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 0 12px 18px;
+    border-bottom: 1px solid #eef3ef;
+}
+
+.goal-item:last-child {
+    border-bottom: 0;
+}
+
+.goal-item::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 19px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #26734d;
+}
+
+.goal-minute {
+    min-width: 64px;
+    color: #26734d;
+    font-weight: 700;
+}
+
+.goal-player {
+    font-weight: 700;
+}
+
+.goal-team {
+    color: #526b5f;
+}
+
+.goal-assist {
+    color: #667c71;
+}
+
+.game-pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .tournament-heading {
+        padding: 18px;
+    }
+
+    .tournament-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tournament-detail-list {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .tournament-detail-list dd {
+        margin-bottom: 10px;
+    }
+
+    .game-scoreboard {
+        gap: 14px;
+        padding: 20px 14px;
+    }
+
+    .game-score-value {
+        font-size: 34px;
+    }
+}
