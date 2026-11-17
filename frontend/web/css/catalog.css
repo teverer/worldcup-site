@@ -1,0 +1,25 @@
+/* Team: 国足世界杯夺冠队
+   Coding by Codex (AI assistance), 20261021
+   模块:球队与球员 —— 与现有 Bootstrap 兼容的资料目录样式。 */
+.catalog-page { color: #182d27; padding-bottom: 36px; }
+.catalog-heading { border-left: 5px solid #26734d; background: #f2f7f3; padding: 24px 28px; margin-bottom: 28px; }
+.catalog-heading h1 { margin-top: 4px; font-weight: 700; }
+.catalog-kicker { color: #446653; letter-spacing: .1em; }
+.catalog-filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin: 20px 0; }
+.catalog-filters .form-group { min-width: 160px; margin-bottom: 0; }
+.catalog-filter-actions { display: flex; gap: 8px; }
+.catalog-table th { background: #f2f7f3; }
+.catalog-table td { vertical-align: middle !important; }
+.catalog-page h2 { font-size: 23px; margin: 32px 0 18px; }
+.catalog-intro { line-height: 1.9; overflow-wrap: anywhere; }
+.catalog-portrait { float: right; max-width: 110px; max-height: 100px; object-fit: contain; margin-left: 20px; }
+.catalog-statistics { display: flex; flex-wrap: wrap; gap: 44px; margin-top: 24px; }
+.catalog-statistics dt { color: #526b5f; font-weight: 400; }
+.catalog-statistics dd { font-size: 36px; font-weight: 700; color: #245b40; }
+@media (max-width: 600px) {
+    .catalog-heading { padding: 18px; }
+    .catalog-heading h1 { font-size: 28px; }
+    .catalog-filters .form-group { width: 100%; }
+    .catalog-portrait { max-width: 70px; max-height: 70px; }
+    .catalog-statistics { gap: 24px; }
+}

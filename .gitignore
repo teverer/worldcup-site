@@ -45,3 +45,6 @@ phpunit.phar
 .vscode/
 Thumbs.db
 *.zip
+
+# 本地备份与截图
+/runtime/
