@@ -310,10 +310,10 @@ INSERT INTO `team_info` (`name`, `logo`, `slogan`, `intro`) VALUES
 -- 占位数据:等队友信息齐了直接改这几行,或让模块①的人在后台上传维护
 -- 队长自己那一条记得把 role 改成「组长」
 INSERT INTO `member` (`name`, `student_id`, `role`, `duty`, `avatar`, `intro`) VALUES
-('成员一', NULL, '组员', '待认领', NULL, NULL),
-('成员二', NULL, '组员', '待认领', NULL, NULL),
-('成员三', NULL, '组员', '待认领', NULL, NULL),
-('成员四', NULL, '组员', '待认领', NULL, NULL);
+('李行阳', '2411353', '组长', '模块③ 届次与比赛', NULL, NULL),
+('石子川', '2411966', '组员', '待确认', NULL, NULL),
+('高家铭', '2412267', '组员', '待确认', NULL, NULL),
+('李佳婕', '2413745', '组员', '待确认', NULL, NULL);
 
 -- 2.4 届次(1986~2026 共 11 届) ---------------------------------------------------
 -- win_points:1986/1990 两届胜一场 2 分,1994 年起改为 3 分
