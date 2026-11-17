@@ -57,9 +57,16 @@ $this->registerJsFile('@web/js/charts.js', [
 
     <div class="chart-grid">
         <article class="chart-card chart-card--wide">
-            <div class="chart-card-head">
-                <h3>小组积分榜</h3>
-                <p class="chart-caption">柱高为积分，按小组分组排序；悬停可查看胜 / 平 / 负与进失球。</p>
+            <div class="chart-card-head chart-card-head--standings">
+                <div class="chart-card-head-text">
+                    <h3>小组积分榜</h3>
+                    <p class="chart-caption">默认显示 A 组，可切换小组查看该组球队的积分；柱顶为积分，悬停可查看胜 / 平 / 负与进失球。</p>
+                </div>
+                <div class="chart-group-switch-wrap">
+                    <span class="chart-group-switch-label" id="standings-group-label">小组</span>
+                    <div id="standings-group-switch" class="chart-group-switch"
+                         role="group" aria-labelledby="standings-group-label"></div>
+                </div>
             </div>
             <div id="chart-standings" class="chart-canvas chart-canvas--standings"
                  data-chart="standings" role="img" aria-label="小组积分榜柱状图">

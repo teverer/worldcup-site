@@ -5,22 +5,24 @@
     'use strict';
 
     var INK = {
-        primary: '#182d27',
-        secondary: '#52514e',
-        muted: '#898781',
-        grid: '#e1e0d9',
-        axis: '#c3c2b7',
-        surface: '#ffffff'
+        primary: '#0B1F3A',
+        secondary: '#4B5563',
+        muted: '#6B7280',
+        grid: '#E5E7EB',
+        axis: '#9CA3AF',
+        surface: '#FFFFFF'
     };
 
-    // 分类色顺序经 dataviz validate_palette.js 在白色背景下校验通过。
+    // 分类色取自主题设计令牌(绿 / 金 / 深蓝 / 灰),白底上保持足够区分度;
+    // 避免使用纯蓝紫,与门户整体绿色主视觉保持一致。
     var CATEGORICAL = [
-        '#2a78d6', '#eb6834', '#1baf7a', '#eda100',
-        '#e87ba4', '#008300', '#6250d6', '#e34948'
+        '#0E7C4A', '#16A34A', '#F2B705', '#0B1F3A',
+        '#6B7280', '#2F855A', '#B7791F', '#9CA3AF'
     ];
-    var PRIMARY_SERIES = '#2a78d6';
-    var HOVER_SERIES = '#256abf';
-    var OTHER_COLOR = '#898781';
+    var PRIMARY_SERIES = '#0E7C4A';
+    var HOVER_SERIES = '#16A34A';
+    var ACCENT_SERIES = '#F2B705';
+    var OTHER_COLOR = '#9CA3AF';
 
     var chartInstances = {};
     var resizeTimer = null;
@@ -46,6 +48,40 @@
     function formatSigned(value) {
         var number = Number(value) || 0;
         return (number > 0 ? '+' : '') + number;
+    }
+
+    // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
+    // 同时处理空格、连字符与撇号后的首字母，兼容 Heung-min、O'Neill 等写法。
+    function formatPlayerName(value) {
+        var name = String(value === null || value === undefined ? '' : value)
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase();
+        if (!name) {
+            return '';
+        }
+        return name.replace(/(^|[\s\-'’])([a-zà-ÿ])/g, function (match, separator, letter) {
+            return separator + letter.toUpperCase();
+        });
+    }
+
+    // 粗略估算轴标签像素宽度：中日韩字符按全角计，其余按半角计。
+    function estimateTextWidth(text) {
+        var width = 0;
+        var value = String(text === null || text === undefined ? '' : text);
+        for (var i = 0; i < value.length; i += 1) {
+            width += value.charCodeAt(i) > 0x2e7f ? 11 : 6.2;
+        }
+        return width;
+    }
+
+    function findGroup(groups, name) {
+        for (var i = 0; i < groups.length; i += 1) {
+            if (groups[i].group === name) {
+                return groups[i];
+            }
+        }
+        return null;
     }
 
     function disposeChart(container) {
@@ -167,6 +203,7 @@
             });
         });
 
+        // 数据表保留全部小组的完整明细。
         renderTable(byId('table-standings'), [
             { label: '小组', value: function (row) { return row.group; } },
             { label: '排名', value: function (row) { return row.rank; }, numeric: true },
@@ -185,84 +222,149 @@
             return;
         }
 
-        var categories = [];
-        var values = [];
-        var tooltipRows = [];
-        groups.forEach(function (group) {
-            var groupLabel = group.group === '未分组' ? group.group : group.group + '组';
-            (group.rows || []).forEach(function (row) {
-                categories.push((group.group ? groupLabel : '') + '\n' + row.teamName);
-                values.push(Number(row.points) || 0);
-                tooltipRows.push(Object.assign({ group: group.group }, row));
-            });
+        // 只展示有数据的小组,默认 A 组;URL 带 group 参数时优先沿用。
+        var availableGroups = groups.filter(function (group) {
+            return group.rows && group.rows.length;
         });
+        if (!availableGroups.length) {
+            showEmpty(byId('chart-standings'), '暂无数据');
+            return;
+        }
+
+        var root = byId('charts-panel');
+        var requestedGroup = root ? root.getAttribute('data-group') : '';
+        var activeGroup = findGroup(availableGroups, requestedGroup) ? requestedGroup : null;
+        if (!activeGroup) {
+            activeGroup = findGroup(availableGroups, 'A') ? 'A' : availableGroups[0].group;
+        }
 
         var chart = initChart(byId('chart-standings'));
         if (!chart) {
             return;
         }
 
-        chart.setOption({
-            animationDuration: 500,
-            grid: { left: 16, right: 20, top: 36, bottom: 18, containLabel: true },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                backgroundColor: INK.surface,
-                borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 12 },
-                formatter: function (params) {
-                    var row = tooltipRows[params[0].dataIndex];
-                    if (!row) {
-                        return '';
+        var chartRows = [];
+        var switchContainer = byId('standings-group-switch');
+
+        function groupLabel(name) {
+            return name === '未分组' ? name : name + ' 组';
+        }
+
+        function drawGroup(groupData) {
+            chartRows = groupData.rows || [];
+            var categories = [];
+            var values = [];
+            var groupLeaders = [];
+            chartRows.forEach(function (row) {
+                categories.push(row.teamName);
+                values.push(Number(row.points) || 0);
+                // 小组头名使用金色强调,其余球队使用主题绿色。
+                groupLeaders.push(Number(row.rank) === 1);
+            });
+
+            chart.setOption({
+                animationDuration: 500,
+                grid: { left: 16, right: 20, top: 36, bottom: 18, containLabel: true },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    backgroundColor: INK.surface,
+                    borderColor: INK.grid,
+                    textStyle: { color: INK.primary, fontSize: 12 },
+                    formatter: function (params) {
+                        var row = chartRows[params[0].dataIndex];
+                        if (!row) {
+                            return '';
+                        }
+                        return '<strong>' + escapeHtml(row.teamName) + '</strong>'
+                            + '<br>小组：' + escapeHtml(groupData.group)
+                            + '<br>排名：第 ' + row.rank + ' 名'
+                            + '<br>积分：' + row.points
+                            + '<br>胜 / 平 / 负：' + row.won + ' / ' + row.drawn + ' / ' + row.lost
+                            + '<br>进球 / 失球：' + row.goalsFor + ' / ' + row.goalsAgainst
+                            + '<br>净胜球：' + formatSigned(row.goalDifference);
                     }
-                    return '<strong>' + escapeHtml(row.teamName) + '</strong>'
-                        + '<br>小组：' + escapeHtml(row.group)
-                        + '<br>积分：' + row.points
-                        + '<br>胜 / 平 / 负：' + row.won + ' / ' + row.drawn + ' / ' + row.lost
-                        + '<br>进球 / 失球：' + row.goalsFor + ' / ' + row.goalsAgainst
-                        + '<br>净胜球：' + formatSigned(row.goalDifference);
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: categories,
-                axisTick: { show: false },
-                axisLine: { lineStyle: { color: INK.axis } },
-                axisLabel: {
-                    interval: 0,
-                    color: INK.secondary,
-                    fontSize: 11,
-                    lineHeight: 15,
-                    rotate: categories.length > 10 ? 30 : 0
-                }
-            },
-            yAxis: {
-                type: 'value',
-                name: '积分',
-                nameTextStyle: { color: INK.muted, fontSize: 11, padding: [0, 0, 4, 0] },
-                minInterval: 1,
-                axisLabel: { color: INK.secondary, fontSize: 11 },
-                axisLine: { show: false },
-                axisTick: { show: false },
-                splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
-            },
-            series: [{
-                name: '积分',
-                type: 'bar',
-                data: values,
-                barMaxWidth: 24,
-                itemStyle: { color: PRIMARY_SERIES, borderRadius: [4, 4, 0, 0] },
-                label: {
-                    show: true,
-                    position: 'top',
-                    color: INK.primary,
-                    fontSize: 11,
-                    fontWeight: 'bold'
                 },
-                emphasis: { itemStyle: { color: HOVER_SERIES } }
-            }]
-        });
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisTick: { show: false },
+                    axisLine: { lineStyle: { color: INK.axis } },
+                    axisLabel: {
+                        interval: 0,
+                        color: INK.secondary,
+                        fontSize: 12,
+                        margin: 10,
+                        // 单组最多 4 支球队,横轴标签不旋转即可完整显示。
+                        rotate: categories.length > 6 ? 30 : 0
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '积分',
+                    nameTextStyle: { color: INK.muted, fontSize: 11, padding: [0, 0, 4, 0] },
+                    minInterval: 1,
+                    axisLabel: { color: INK.secondary, fontSize: 11 },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
+                },
+                series: [{
+                    name: '积分',
+                    type: 'bar',
+                    data: values,
+                    barMaxWidth: 48,
+                    itemStyle: {
+                        color: function (params) {
+                            return groupLeaders[params.dataIndex] ? ACCENT_SERIES : PRIMARY_SERIES;
+                        },
+                        borderRadius: [4, 4, 0, 0]
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        color: INK.primary,
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                    },
+                    emphasis: { itemStyle: { color: HOVER_SERIES } }
+                }]
+            }, true);
+        }
+
+        function selectGroup(name) {
+            var groupData = findGroup(availableGroups, name);
+            if (!groupData) {
+                return;
+            }
+            activeGroup = name;
+            if (switchContainer) {
+                var buttons = switchContainer.querySelectorAll('button[data-group]');
+                Array.prototype.forEach.call(buttons, function (button) {
+                    button.setAttribute('aria-pressed',
+                        button.getAttribute('data-group') === name ? 'true' : 'false');
+                });
+            }
+            drawGroup(groupData);
+        }
+
+        if (switchContainer) {
+            switchContainer.innerHTML = '';
+            availableGroups.forEach(function (groupData) {
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'chart-group-switch-btn';
+                button.setAttribute('data-group', groupData.group);
+                button.setAttribute('aria-pressed', groupData.group === activeGroup ? 'true' : 'false');
+                button.textContent = groupLabel(groupData.group);
+                button.addEventListener('click', function () {
+                    selectGroup(groupData.group);
+                });
+                switchContainer.appendChild(button);
+            });
+        }
+
+        drawGroup(findGroup(availableGroups, activeGroup));
     }
 
     function renderScorers(data) {
@@ -271,7 +373,7 @@
 
         renderTable(byId('table-scorers'), [
             { label: '排名', value: function (row) { return row.rank; }, numeric: true },
-            { label: '球员', value: function (row) { return row.playerName; } },
+            { label: '球员', value: function (row) { return formatPlayerName(row.playerName); } },
             { label: '球队', value: function (row) { return row.teamName; } },
             { label: '进球', value: function (row) { return row.goals; }, numeric: true }
         ], scorers);
@@ -282,11 +384,18 @@
         }
 
         var names = chartRows.map(function (row) {
-            return row.playerName + ' · ' + row.teamName;
+            return formatPlayerName(row.playerName) + ' · ' + row.teamName;
         });
+        // y 轴保留完整「姓名 · 球队」,按最长标签动态留宽,避免截断。
+        var maxNameWidth = names.reduce(function (maxWidth, name) {
+            return Math.max(maxWidth, estimateTextWidth(name));
+        }, 0);
+        var yLabelWidth = Math.min(220, Math.max(132, Math.ceil(maxNameWidth) + 10));
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
         });
+        // 射手榜前三名使用金色强调,其余使用主题绿色。
+        var topThreeFrom = Math.max(0, chartRows.length - 3);
 
         var chart = initChart(byId('chart-scorers'));
         if (!chart) {
@@ -307,7 +416,7 @@
                     if (!row) {
                         return '';
                     }
-                    return '<strong>' + escapeHtml(row.playerName) + '</strong>'
+                    return '<strong>' + escapeHtml(formatPlayerName(row.playerName)) + '</strong>'
                         + '<br>球队：' + escapeHtml(row.teamName)
                         + '<br>进球：' + row.goals;
                 }
@@ -330,8 +439,8 @@
                 axisLabel: {
                     color: INK.secondary,
                     fontSize: 11,
-                    width: 108,
-                    overflow: 'truncate'
+                    width: yLabelWidth,
+                    overflow: 'none'
                 }
             },
             series: [{
@@ -339,7 +448,12 @@
                 type: 'bar',
                 data: goals,
                 barMaxWidth: 18,
-                itemStyle: { color: PRIMARY_SERIES, borderRadius: [0, 4, 4, 0] },
+                itemStyle: {
+                    color: function (params) {
+                        return params.dataIndex >= topThreeFrom ? ACCENT_SERIES : PRIMARY_SERIES;
+                    },
+                    borderRadius: [0, 4, 4, 0]
+                },
                 label: {
                     show: true,
                     position: 'right',
