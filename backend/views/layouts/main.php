@@ -2,9 +2,9 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by Codex (AI assistance), 20261021
- * Coding by 石子川 2411966, 20261112
+ * Coding by 石子川 2411966, 20261117
  * Coding by 李行阳 2411353, 20261115
- * 模块:球队与球员、留言与资讯 —— 在后台布局中添加资料和资讯管理导航。
+ * 模块:球队与球员、留言与资讯 —— 在后台布局中添加资料、资讯和留言管理导航。
  * 模块:届次与比赛 —— 在后台布局中增加届次、参赛队、名单、比赛、进球导航。
  * @var yii\web\View $this
  * @var string $content
@@ -57,6 +57,7 @@ AppAsset::register($this);
         $menuItems[] = ['label' => '比赛', 'url' => ['/game/index']];
         $menuItems[] = ['label' => '进球', 'url' => ['/goal/index']];
         $menuItems[] = ['label' => '资讯管理', 'url' => ['/news/index']];
+        $menuItems[] = ['label' => '留言管理', 'url' => ['/comment/index']];
     }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/site/login']];

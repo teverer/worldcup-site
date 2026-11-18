@@ -22,13 +22,16 @@
 
 ## 文档索引
 
-模块②“球队与球员”已在本次本地交付中实现：前台导航中的“球队”“球员”可浏览目录与详情，管理员登录后台后可维护资料。演示数据、配置和验收步骤见[模块②设计与使用说明](docs/模块2_球队与球员设计与使用.md)。
+模块②“球队与球员”和模块④“留言与资讯”已实现：前台可浏览球队、球员和资讯，登录用户可以在实体详情页留言、回复和点赞；管理员可以维护资讯和留言。详细入口和测试步骤见对应模块文档。
 
 - [功能清单与数据库表设计](docs/功能清单与数据库表设计.md)
 - [数据库表详细设计](docs/数据库表详细设计.md)
 - [团队分工方案](docs/团队分工方案.md)
 - [编码规范与注释头模板](docs/编码规范与注释头模板.md)
 - [Git 使用说明](docs/Git使用说明.md)
+- [模块④：留言与资讯设计与使用](docs/模块4_留言与资讯设计与使用.md)
+- [用户手册](docs/用户手册.md)
+- [实现文档初稿](docs/实现文档.md)
 - [完整文档目录(含阅读顺序)](docs/README.md)
 
 ## 本地运行
@@ -82,6 +85,31 @@ mysql -u root -p < data/check.sql
 ```
 
 数据库连接配置位于 `common/config/main-local.php`。
+
+### 模块④演示数据
+
+先导入球队与球员演示数据，再导入留言和资讯数据：
+
+```bash
+mysql -u root -p worldcup < data/demo_teams_players.sql
+mysql -u root -p worldcup < data/demo_news_comments.sql
+```
+
+`demo_news_comments.sql` 可重复执行。
+
+### 模块④测试
+
+模型回归必须使用独立测试库：
+
+```powershell
+$env:WC_TEST_DSN = 'mysql:host=127.0.0.1;dbname=worldcup_module4_test'
+$env:WC_TEST_USER = 'root'
+$env:WC_TEST_PASSWORD = '自己的测试库密码'
+php tests/module4/run.php
+```
+
+HTTP 冒烟测试的详细环境变量和启动条件见
+[模块④设计与使用说明](docs/模块4_留言与资讯设计与使用.md)。
 
 ## 队内约定
 

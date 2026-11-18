@@ -48,3 +48,7 @@ Thumbs.db
 
 # 本地备份与截图
 /runtime/
+
+# Python test caches
+__pycache__/
+*.py[cod]
