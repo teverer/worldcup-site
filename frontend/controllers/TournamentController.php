@@ -2,14 +2,14 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 李行阳 2411353, 20261118
- * 模块:届次与比赛 —— 届次列表页
+ * 模块:届次与比赛 —— 届次列表与详情页
  */
 
 namespace frontend\controllers;
 
 use common\models\Game;
-use common\models\Team;
 use common\models\Tournament;
+use frontend\models\TournamentDetail;
 use yii\db\Expression;
 use yii\db\Query;
 use yii\web\Controller;
@@ -252,7 +252,10 @@ class TournamentController extends Controller
     }
 
     /**
-     * 单届详情：基本信息、分组参赛队、分阶段赛程与动态图表。
+     * 单届详情：一次性准备冠军、决赛、淘汰赛对阵、小组积分、统计与冠军路径。
+     *
+     * 所有业务计算集中在 TournamentDetail,视图只按固定结构渲染。
+     * 固定 4 条批量查询 + 1 条 findOne,不产生 N+1。
      *
      * @param mixed $id
      * @return string
@@ -269,58 +272,6 @@ class TournamentController extends Controller
             throw new NotFoundHttpException('届次不存在。');
         }
 
-        $participants = $model->getTournamentTeams()
-            ->orderBy(['group_name' => SORT_ASC, 'fifa_rank' => SORT_ASC, 'id' => SORT_ASC])
-            ->all();
-
-        $teamIds = array_values(array_unique(array_map(static function ($participant) {
-            return (int) $participant->team_id;
-        }, $participants)));
-        $teams = $teamIds
-            ? Team::find()->where(['id' => $teamIds])->indexBy('id')->all()
-            : [];
-
-        $groups = [];
-        foreach ($participants as $participant) {
-            $groupName = $participant->group_name !== null && $participant->group_name !== ''
-                ? (string) $participant->group_name
-                : '未分组';
-            $groups[$groupName][] = $participant;
-        }
-        $groupNames = array_keys($groups);
-        sort($groupNames, SORT_NATURAL | SORT_FLAG_CASE);
-        $orderedGroups = [];
-        foreach ($groupNames as $groupName) {
-            $orderedGroups[$groupName] = $groups[$groupName];
-        }
-
-        $games = $model->getGames()
-            ->with(['homeTeam', 'awayTeam'])
-            ->orderBy(['match_time' => SORT_ASC, 'id' => SORT_ASC])
-            ->all();
-
-        $gamesByStage = [];
-        foreach ($games as $game) {
-            $stage = $game->stage !== null && $game->stage !== '' ? (string) $game->stage : '其他';
-            $gamesByStage[$stage][] = $game;
-        }
-        $orderedGames = [];
-        foreach (self::STAGES as $stage) {
-            if (isset($gamesByStage[$stage])) {
-                $orderedGames[$stage] = $gamesByStage[$stage];
-                unset($gamesByStage[$stage]);
-            }
-        }
-        foreach ($gamesByStage as $stage => $stageGames) {
-            $orderedGames[$stage] = $stageGames;
-        }
-
-        return $this->render('view', [
-            'model' => $model,
-            'groups' => $orderedGroups,
-            'teams' => $teams,
-            'gamesByStage' => $orderedGames,
-            'statusLabels' => GameController::STATUSES,
-        ]);
+        return $this->render('view', TournamentDetail::build($model));
     }
 }

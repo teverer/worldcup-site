@@ -1,0 +1,694 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261118
+   模块:届次与比赛 —— 届次详情页
+   仅使用 theme.css 的设计令牌;晋级图样式由 bracket.css 独立维护。 */
+
+html {
+    scroll-behavior: smooth;
+}
+
+.tournament-detail {
+    padding-bottom: var(--space-4);
+}
+
+#overview {
+    scroll-margin-top: 5.5rem;
+}
+
+/* ==========================================================================
+   1. 紧凑标题栏(90–120px)
+   ========================================================================== */
+.td-header {
+    padding: 10px var(--space-3);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    background-image: linear-gradient(135deg, var(--color-surface) 0%, var(--color-accent-soft) 100%);
+    box-shadow: var(--shadow-sm);
+}
+
+.td-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.td-header-title {
+    min-width: 0;
+}
+
+.td-header-name {
+    margin: 0;
+    font-size: var(--fs-2xl);
+    letter-spacing: -.02em;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.td-header-sub {
+    margin: 2px 0 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    letter-spacing: .02em;
+}
+
+.td-header-sub span {
+    padding: 0 4px;
+    color: var(--color-muted);
+}
+
+.td-header-honor {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+.td-champion-tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 14px;
+    border: 1px solid var(--color-accent-dark);
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.td-champion-tag strong {
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.td-champion-tag.is-pending {
+    border-color: var(--color-border);
+    background-color: var(--color-surface-alt);
+    color: var(--color-muted-strong);
+}
+
+.td-champion-label {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: .08em;
+    opacity: .78;
+}
+
+.td-final-line {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.td-final-line:hover,
+.td-final-line:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-soft);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.td-final-line.is-pending {
+    color: var(--color-muted-strong);
+}
+
+.td-final-label {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.td-final-score {
+    color: var(--color-primary);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.td-final-opponent {
+    font-weight: 600;
+}
+
+.td-final-badge {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.td-final-arrow {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* 第二行:四个关键数字,细线分隔,不做大方块 */
+.td-header-facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 8px 0 0;
+    padding-top: 6px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+}
+
+.td-fact strong {
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.td-fact-sep {
+    color: #B8C0CC;
+}
+
+.td-fact-note {
+    margin-left: 2px;
+    color: var(--color-muted);
+}
+
+/* ==========================================================================
+   2. 冠军之路(晋级图上方一行小字)
+   ========================================================================== */
+.td-champion-path {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin: 8px 0;
+    padding: 5px 12px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+}
+
+.td-champion-path-label {
+    flex: 0 0 auto;
+    color: var(--color-accent-ink);
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+.td-champion-path-track {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+}
+
+.td-champion-path-track a {
+    color: var(--color-text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.td-champion-path-track a:hover,
+.td-champion-path-track a:focus {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.td-champion-path-arrow {
+    color: #B8C0CC;
+}
+
+/* ==========================================================================
+   3. 淘汰赛容器与粘性页内导航
+   ========================================================================== */
+.td-knockout {
+    min-width: 0;
+    margin-top: var(--space-1);
+    scroll-margin-top: 5.5rem;
+}
+
+.td-knockout > :last-child {
+    margin-bottom: 0;
+}
+
+.td-bracket-placeholder {
+    min-height: 220px;
+}
+
+.td-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    gap: 2px;
+    scroll-target-group: auto;
+    margin: var(--space-3) 0;
+    padding: 4px;
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, .94);
+    box-shadow: var(--shadow-sm);
+    scrollbar-width: none;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.td-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.td-nav a {
+    flex: 0 0 auto;
+    padding: 7px 18px;
+    border-radius: 999px;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.td-nav a:hover,
+.td-nav a:focus {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-dark);
+    text-decoration: none;
+}
+
+/* 原生 scroll-target-group 可用时由浏览器高亮;其余浏览器由视图脚本切换 .is-active */
+.td-nav a:is(:target-current, .is-active) {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   4. 区块骨架
+   ========================================================================== */
+.td-section {
+    margin-top: var(--space-6);
+    scroll-margin-top: 5.5rem;
+}
+
+.td-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.td-section-head .section-title {
+    margin-bottom: 0;
+}
+
+.td-section-note {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    text-wrap: pretty;
+}
+
+.td-section-head .section-title,
+.td-group-head h3,
+.td-data-fact dd,
+.td-history-name {
+    text-wrap: balance;
+}
+
+.td-section-head + .td-section-note {
+    margin-top: calc(var(--space-1) * -1);
+    margin-bottom: var(--space-3);
+}
+
+/* ==========================================================================
+   5. 小组赛
+   ========================================================================== */
+.td-groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+    gap: var(--space-2);
+}
+
+.td-group-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.td-group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-surface-alt);
+}
+
+.td-group-head h3 {
+    margin: 0;
+    font-size: var(--fs-sm);
+    letter-spacing: .02em;
+}
+
+.td-group-count {
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.td-group-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+body .td-groups-grid .td-group-table {
+    margin-bottom: 0;
+    font-size: var(--fs-xs);
+}
+
+body .td-groups-grid .td-group-table > thead > tr > th {
+    padding: 7px 10px;
+    font-size: 11px;
+    letter-spacing: .02em;
+}
+
+body .td-groups-grid .td-group-table > tbody > tr > td,
+body .td-groups-grid .td-group-table > tbody > tr > th {
+    padding: 7px 10px;
+    border-top: 1px solid var(--color-border);
+}
+
+body .td-groups-grid .td-group-table > tbody > tr > th.td-team {
+    font-weight: 600;
+    text-align: left;
+}
+
+body .td-groups-grid .td-group-table > tbody > tr.is-qualified {
+    background-color: rgba(14, 124, 74, .055);
+}
+
+body .td-groups-grid .td-group-table > tbody > tr.is-qualified:hover {
+    background-color: rgba(14, 124, 74, .10);
+}
+
+body .td-groups-grid .td-group-table > thead > tr > th:first-child,
+body .td-groups-grid .td-group-table > tbody > tr > td.td-rank-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.td-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    color: var(--color-muted-strong);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.is-qualified .td-rank {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+.td-out-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 4px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    vertical-align: middle;
+}
+
+.td-team {
+    min-width: 92px;
+}
+
+.td-team-name {
+    color: var(--color-text);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.td-team-code {
+    margin-left: 5px;
+    color: var(--color-muted);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .04em;
+}
+
+.td-points {
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
+.td-groups-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: var(--space-2) 0 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    text-wrap: pretty;
+}
+
+/* ==========================================================================
+   6. 数据区
+   ========================================================================== */
+.td-data-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+    margin: 0 0 var(--space-3);
+    padding: 10px var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.td-data-fact {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+}
+
+.td-data-fact dt {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    font-weight: 400;
+}
+
+.td-data-fact dd {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.td-data-fact-note {
+    margin-left: 4px;
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
+    font-weight: 400;
+}
+
+/* ==========================================================================
+   7. 讨论区与上一届 / 下一届
+   ========================================================================== */
+.td-comments .comment-section {
+    margin-top: 0;
+}
+
+.td-history {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+}
+
+.td-history-link {
+    display: flex;
+    flex: 1 1 0;
+    max-width: calc(50% - var(--space-1));
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.td-history-link:hover,
+.td-history-link:focus {
+    border-color: #CFE0D5;
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.td-history-link--next {
+    margin-left: auto;
+    text-align: right;
+}
+
+.td-history-dir {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.td-history-year {
+    color: var(--color-primary);
+    font-size: var(--fs-xl);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.td-history-name {
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+}
+
+/* ==========================================================================
+   8. 响应式:桌面 1440 / 平板 768 / 手机 390
+   ========================================================================== */
+@media (max-width: 991px) {
+    .td-header-name {
+        font-size: var(--fs-xl);
+    }
+
+    .td-header-honor {
+        gap: var(--space-1);
+    }
+}
+
+@media (max-width: 767px) {
+    .td-header {
+        padding: 10px var(--space-2);
+    }
+
+    .td-header-top {
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
+    }
+
+    .td-header-title {
+        flex: 1 1 100%;
+    }
+
+    .td-header-honor {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+    }
+
+    .td-nav {
+        margin: var(--space-2) 0;
+        border-radius: 12px;
+    }
+
+    .td-nav a {
+        padding: 6px 14px;
+        font-size: 13px;
+    }
+
+    body .td-groups-grid .td-group-table-wrap > .td-group-table {
+        min-width: 300px;
+    }
+
+    .td-section {
+        margin-top: var(--space-4);
+    }
+
+    .td-section-head {
+        display: block;
+    }
+
+    .td-section-note {
+        margin-top: 4px;
+    }
+
+    .td-data-facts {
+        gap: 6px var(--space-3);
+        padding: 8px var(--space-2);
+    }
+
+    .td-history {
+        flex-direction: column;
+    }
+
+    .td-history-link {
+        max-width: none;
+    }
+
+    .td-history-link--next {
+        margin-left: 0;
+        text-align: left;
+    }
+}
+
+@media (max-width: 575px) {
+    .td-header-facts {
+        gap: 2px 8px;
+    }
+
+    .td-champion-tag strong {
+        font-size: var(--fs-base);
+    }
+
+    .td-final-line {
+        padding: 3px 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
