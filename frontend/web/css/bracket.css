@@ -1,0 +1,828 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261118
+   模块:届次与比赛 —— 淘汰赛晋级图
+   颜色、间距、字号与圆角全部复用 theme.css 的设计令牌。 */
+
+/* ==========================================================================
+   1. 组件外框与头部
+   ========================================================================== */
+.bracket {
+    --bracket-col: 190px;
+    --bracket-col-max: 260px;
+    --bracket-gap: var(--space-4);
+    --bracket-row: 34px;
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    background-image: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-text);
+}
+
+.bracket__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 0 0 var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.bracket__heading {
+    min-width: 0;
+}
+
+.bracket__eyebrow {
+    margin: 0 0 2px;
+    color: var(--color-primary);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: .16em;
+}
+
+.bracket__title {
+    margin: 0;
+    font-size: var(--fs-xl);
+    line-height: 1.25;
+    letter-spacing: -.01em;
+}
+
+.bracket__note {
+    margin: 4px 0 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.bracket__hint {
+    display: none;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    margin: 0;
+    border: 1px dashed var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface-alt);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.bracket__hint-icon {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.bracket.is-scrollable .bracket__hint {
+    display: inline-flex;
+}
+
+/* ==========================================================================
+   2. 横向滚动区与轮次列
+   ========================================================================== */
+.bracket__viewport {
+    margin-top: var(--space-3);
+    padding: 2px 2px var(--space-2);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: var(--color-border) transparent;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+.bracket__viewport::-webkit-scrollbar {
+    height: 8px;
+}
+
+.bracket__viewport::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.bracket__viewport::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: var(--color-border);
+}
+
+.bracket__viewport:focus-visible {
+    border-radius: var(--radius-sm);
+    outline: 3px solid rgba(22, 163, 74, .45);
+    outline-offset: 2px;
+}
+
+.bracket__track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--bracket-gap);
+    min-height: 240px;
+}
+
+.bracket-round {
+    position: relative;
+    display: flex;
+    flex: 1 1 var(--bracket-col);
+    flex-direction: column;
+    min-width: var(--bracket-col);
+    max-width: var(--bracket-col-max);
+    scroll-snap-align: start;
+}
+
+.bracket-round__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1);
+    padding: 0 2px var(--space-1);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.bracket-round--final .bracket-round__head {
+    border-bottom-color: rgba(242, 183, 5, .55);
+}
+
+.bracket-round__title {
+    margin: 0;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: .02em;
+}
+
+.bracket-round__count {
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.bracket-round__body {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: var(--space-1);
+    padding: var(--space-2) 0;
+}
+
+.bracket-round--final .bracket-round__body {
+    justify-content: center;
+}
+
+.bracket-round__body--third {
+    justify-content: flex-start;
+    padding-top: var(--space-2);
+}
+
+/* ==========================================================================
+   3. 比赛节点
+   ========================================================================== */
+.bracket-match {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    box-shadow: 0 1px 2px rgba(11, 31, 58, .04);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+@media (hover: hover) {
+    .bracket-match:hover {
+        border-color: #CFE0D5;
+        box-shadow: var(--shadow-md);
+    }
+}
+
+.bracket-match:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
+}
+
+.bracket-match.is-open {
+    border-color: rgba(14, 124, 74, .50);
+    box-shadow: var(--shadow-md);
+}
+
+.bracket-match--path {
+    box-shadow: inset 3px 0 0 rgba(14, 124, 74, .35);
+}
+
+.bracket-match--champion {
+    border-color: rgba(242, 183, 5, .65);
+    box-shadow: 0 0 0 1px rgba(242, 183, 5, .28), var(--shadow-sm);
+}
+
+.bracket-match__link {
+    display: block;
+    border-radius: calc(var(--radius-sm) - 1px);
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 单目的地卡片:比分板之外的空白区域也可点击进入比赛详情 */
+.bracket-match__link::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    content: "";
+}
+
+.bracket-match__link:hover,
+.bracket-match__link:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
+.bracket-team {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--bracket-row);
+    padding: 4px 10px;
+}
+
+.bracket-team + .bracket-team {
+    border-top: 1px dashed var(--color-border);
+}
+
+.bracket-team__code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 38px;
+    padding: 1px 3px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-surface-alt);
+    color: var(--color-muted-strong);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: .02em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.bracket-team__name {
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--fs-sm);
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bracket-team__score {
+    min-width: 20px;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 胜者:加粗 + 绿色左标 + 绿色代码徽章 */
+.bracket-team--winner {
+    background-image: linear-gradient(90deg, var(--color-primary-soft), transparent 72%);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.bracket-team--winner .bracket-team__name {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.bracket-team--winner .bracket-team__score {
+    color: var(--color-primary);
+}
+
+.bracket-team--winner .bracket-team__code {
+    border-color: rgba(14, 124, 74, .28);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+}
+
+/* 决赛胜者:金色描边与金星 */
+.bracket-match--champion .bracket-team--champion {
+    background-image: linear-gradient(90deg, var(--color-accent-soft), transparent 72%);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.bracket-match--champion .bracket-team--champion .bracket-team__code {
+    border-color: var(--color-accent-dark);
+    background-color: var(--color-accent);
+    color: var(--color-text);
+}
+
+.bracket-match--champion .bracket-team--champion .bracket-team__score {
+    color: var(--color-accent-ink);
+}
+
+.bracket-team--champion .bracket-team__name::after {
+    margin-left: 4px;
+    color: var(--color-accent-ink);
+    font-size: 11px;
+    /* 金星是装饰,冠军身份已由 aria-label 与金色描边表达 */
+    content: "★";
+    content: "★" / "";
+}
+
+/* 节点底部:加时 / 点球标记与详情入口 */
+.bracket-match__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-height: 24px;
+    padding: 2px 6px 2px 10px;
+    border-top: 1px solid var(--color-border);
+    border-radius: 0 0 calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px);
+    background-color: var(--color-surface-alt);
+}
+
+.bracket-match__tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.bracket-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 5px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.bracket-tag--time {
+    border-color: rgba(14, 124, 74, .20);
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-dark);
+}
+
+.bracket-tag--pen {
+    border-color: rgba(242, 183, 5, .35);
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.bracket-tag--path {
+    border-color: rgba(14, 124, 74, .28);
+    background-color: var(--color-surface);
+    color: var(--color-primary-dark);
+}
+
+.bracket-tag--shootout {
+    border-color: rgba(11, 31, 58, .14);
+    background-color: rgba(11, 31, 58, .08);
+    color: var(--color-text);
+}
+
+.bracket-tag--own {
+    border-color: rgba(220, 38, 38, .24);
+    background-color: rgba(220, 38, 38, .10);
+    color: #991B1B;
+}
+
+.bracket-match__more {
+    position: relative;
+    z-index: 1;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    min-height: 20px;
+    margin-left: auto;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: transparent;
+    color: var(--color-muted-strong);
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--transition-base), background-color var(--transition-base),
+        border-color var(--transition-base);
+}
+
+/* 仅在脚本接管后显示,避免无 JS 时出现无效按钮 */
+.bracket.is-enhanced .bracket-match__more {
+    display: inline-flex;
+}
+
+.bracket-match__more:hover {
+    border-color: var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-primary-dark);
+}
+
+.bracket-match__more:focus-visible {
+    outline: 3px solid rgba(22, 163, 74, .45);
+    outline-offset: 1px;
+}
+
+.bracket-match__more-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* 晋级别汇流线:第 2n-1、2n 场从右缘出线,在列间中线汇合后指向下一轮第 n 场。
+   位置由 --pair / --matches 用百分比计算,随列高与响应式布局自动伸缩。 */
+.bracket-links {
+    position: absolute;
+    top: var(--space-2);
+    right: 0;
+    bottom: var(--space-2);
+    left: 0;
+    pointer-events: none;
+}
+
+.bracket-link {
+    --y1: calc(100% * (var(--pair) * 2 + 0.5) / var(--matches));
+    --y2: calc(100% * (var(--pair) * 2 + 1.5) / var(--matches));
+    --ymid: calc(100% * (var(--pair) * 2 + 1) / var(--matches));
+    --half: calc(50% / var(--matches));
+    position: absolute;
+    top: var(--y1);
+    left: 100%;
+    width: calc(var(--bracket-gap) / 2);
+    height: calc(var(--y2) - var(--y1));
+    border-top: 2px solid var(--color-border);
+    border-right: 2px solid var(--color-border);
+    border-bottom: 2px solid var(--color-border);
+}
+
+/* 冠军晋级路径:只保留冠军所在半区的上/下半段汇流线,并用深金强调 */
+.bracket-link--path {
+    border-color: var(--color-accent-dark);
+}
+
+.bracket-link--path-top {
+    height: var(--half);
+    border-bottom-width: 0;
+}
+
+.bracket-link--path-bottom {
+    top: var(--ymid);
+    height: var(--half);
+    border-top-width: 0;
+}
+
+.bracket-link__arrow {
+    position: absolute;
+    top: calc(50% - 1px);
+    left: 100%;
+    width: calc(var(--bracket-gap) / 2);
+    border-top: 2px solid var(--color-border);
+}
+
+.bracket-link__arrow::after {
+    position: absolute;
+    top: 50%;
+    right: -2px;
+    width: 6px;
+    height: 6px;
+    border-top: 2px solid var(--color-border);
+    border-right: 2px solid var(--color-border);
+    content: "";
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.bracket-link--path .bracket-link__arrow {
+    border-top-color: var(--color-accent-dark);
+}
+
+.bracket-link--path .bracket-link__arrow::after {
+    border-color: var(--color-accent-dark);
+}
+
+.bracket-link--path-top .bracket-link__arrow {
+    top: calc(100% - 1px);
+}
+
+.bracket-link--path-bottom .bracket-link__arrow {
+    top: -1px;
+}
+
+/* 三四名决赛:决赛列下方独立分区 */
+.bracket-third {
+    margin-top: var(--space-3);
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--color-border);
+}
+
+.bracket-third__title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 var(--space-1);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.bracket-third__title::before {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-accent);
+    content: "";
+    transform: rotate(45deg);
+}
+
+/* ==========================================================================
+   4. 悬停 / 聚焦详情浮层
+   ========================================================================== */
+.bracket-tip[hidden] {
+    display: none !important;
+}
+
+.bracket-tooltip {
+    position: fixed;
+    z-index: 1080;
+    box-sizing: border-box;
+    width: min(340px, calc(100vw - 24px));
+    width: min(340px, calc(100dvw - 24px));
+    max-height: min(70vh, 420px);
+    padding: var(--space-2);
+    overflow: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    line-height: var(--line-height-base);
+    pointer-events: none;
+    overscroll-behavior: contain;
+}
+
+.bracket-tooltip[hidden] {
+    display: none;
+}
+
+.bracket-tooltip.is-pinned {
+    pointer-events: auto;
+}
+
+.bracket-tip__score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+    margin: 0 0 6px;
+}
+
+.bracket-tip__team {
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bracket-tip__score strong {
+    flex: 0 0 auto;
+    color: var(--color-primary);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.bracket-tip__sep {
+    color: var(--color-muted);
+    font-weight: 400;
+}
+
+.bracket-tip__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 var(--space-1);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.bracket-tip__stage {
+    margin-right: 2px;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.bracket-tip__goals {
+    padding: var(--space-1) 0 0;
+    margin: 0;
+    border-top: 1px solid var(--color-border);
+    list-style: none;
+}
+
+.bracket-goal {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 6px;
+    padding: 3px 0;
+}
+
+.bracket-goal + .bracket-goal {
+    border-top: 1px dashed rgba(229, 231, 235, .85);
+}
+
+.bracket-goal__caption {
+    padding: 6px 0 2px;
+    border-top: 1px dashed var(--color-border);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.bracket-goal__minute {
+    color: var(--color-primary);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.bracket-goal--shootout .bracket-goal__minute {
+    color: var(--color-muted);
+}
+
+.bracket-goal__player {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bracket-goal__name {
+    font-weight: 500;
+}
+
+.bracket-goal__team {
+    margin-left: 4px;
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
+}
+
+.bracket-goal__tags {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.bracket-tip__stats {
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-1);
+    margin: var(--space-1) 0 0;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.bracket-tip__stats strong {
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.bracket-tip__empty {
+    padding-top: var(--space-1);
+    margin: var(--space-1) 0 0;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
+}
+
+/* ==========================================================================
+   5. 响应式
+   ========================================================================== */
+@media (max-width: 1199px) {
+    .bracket {
+        --bracket-col: 210px;
+        --bracket-gap: var(--space-3);
+    }
+
+    /* 提示是否显示由脚本按实际溢出判断;无脚本时仅在手机端常显 */
+}
+
+/* 宽屏下所有轮次无需横向滚动,取消滚动容器以便轮次标题相对页面粘性定位。
+   窄屏仍保留横向滚动容器,避免粘性标题与横向滚动互相干扰。 */
+@media (min-width: 1200px) {
+    .bracket__viewport {
+        overflow: visible;
+    }
+
+    .bracket-round__head {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background-color: var(--color-surface);
+    }
+}
+
+@media (max-width: 767px) {
+    .bracket {
+        --bracket-col: 236px;
+        --bracket-gap: var(--space-3);
+        /* 手机端整页宽横向滑动;优先用动态视口单位,避免经典滚动条造成横向溢出 */
+        width: 100vw;
+        width: 100dvw;
+        max-width: 100vw;
+        max-width: 100dvw;
+        margin-right: calc(50% - 50vw);
+        margin-right: calc(50% - 50dvw);
+        margin-left: calc(50% - 50vw);
+        margin-left: calc(50% - 50dvw);
+        padding: var(--space-2) 0;
+        border-right: 0;
+        border-left: 0;
+        border-radius: 0;
+    }
+
+    .bracket__head {
+        padding-right: var(--space-2);
+        padding-left: var(--space-2);
+    }
+
+    .bracket__note {
+        display: none;
+    }
+
+    /* 无脚本时也给出手势提示;有脚本时由 .is-scrollable 精确控制 */
+    .bracket__hint {
+        display: inline-flex;
+    }
+
+    .bracket__viewport {
+        padding-right: var(--space-2);
+        padding-left: var(--space-2);
+        scroll-padding-left: var(--space-2);
+        scroll-snap-type: x mandatory;
+    }
+
+    .bracket__track {
+        min-height: 0;
+    }
+
+    .bracket-round {
+        flex: 0 0 var(--bracket-col);
+        min-width: var(--bracket-col);
+        max-width: var(--bracket-col);
+    }
+
+    .bracket-team {
+        min-height: 40px;
+        padding: 5px 10px;
+    }
+
+    .bracket-team__score {
+        font-size: var(--fs-xl);
+    }
+
+    .bracket-match__foot {
+        min-height: 30px;
+        padding-right: 8px;
+    }
+
+    .bracket-match__more {
+        min-height: 28px;
+        padding: 0 8px;
+        font-size: var(--fs-xs);
+    }
+
+    .bracket-tooltip {
+        max-height: min(60vh, 360px);
+        font-size: var(--fs-sm);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bracket-match,
+    .bracket-match__more {
+        transition: none;
+    }
+}
