@@ -174,11 +174,6 @@
     justify-content: center;
 }
 
-.bracket-round__body--third {
-    justify-content: flex-start;
-    padding-top: var(--space-2);
-}
-
 /* ==========================================================================
    3. 比赛节点
    ========================================================================== */
@@ -448,8 +443,10 @@
     font-style: normal;
 }
 
-/* 晋级别汇流线:第 2n-1、2n 场从右缘出线,在列间中线汇合后指向下一轮第 n 场。
-   位置由 --pair / --matches 用百分比计算,随列高与响应式布局自动伸缩。 */
+/* 晋级汇流线:第 2n-1、2n 场从右缘出线,在列间汇合后指向下一轮第 n 场。
+   竖直汇流线覆盖两场比赛中心与箭头目标之间的完整高度,保证箭头不脱节。
+   位置由 --pair / --matches 百分比计算;JS 可用时用实测的
+   --y1 / --y2 / --target 精修(含下一轮卡片真实垂直中心)。 */
 .bracket-links {
     position: absolute;
     top: var(--space-2);
@@ -459,6 +456,7 @@
     pointer-events: none;
 }
 
+/* 无 JS 回退:对称的百分比汇流线,与旧实现一致 */
 .bracket-link {
     --y1: calc(100% * (var(--pair) * 2 + 0.5) / var(--matches));
     --y2: calc(100% * (var(--pair) * 2 + 1.5) / var(--matches));
@@ -526,30 +524,110 @@
     top: -1px;
 }
 
-/* 三四名决赛:决赛列下方独立分区 */
-.bracket-third {
+/* JS 实测后:箭头对准下一轮卡片中心,竖直汇流线自动延伸到 --target 高度 */
+.bracket-link.is-measured {
+    --target: var(--ymid);
+    --vtop: min(var(--y1), var(--target));
+    --vbottom: max(var(--y2), var(--target));
+    top: var(--vtop);
+    height: calc(var(--vbottom) - var(--vtop));
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+.bracket-link.is-measured.bracket-link--path-top {
+    --vtop: min(var(--y1), var(--target));
+    --vbottom: max(var(--y1), var(--target));
+}
+
+.bracket-link.is-measured.bracket-link--path-bottom {
+    --vtop: min(var(--y2), var(--target));
+    --vbottom: max(var(--y2), var(--target));
+}
+
+/* 实测版用伪元素画两条水平短线,使竖线可以独立延长到目标高度 */
+.bracket-link.is-measured::before,
+.bracket-link.is-measured::after {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid var(--color-border);
+    content: "";
+}
+
+.bracket-link.is-measured::before {
+    top: calc(var(--y1) - var(--vtop));
+}
+
+.bracket-link.is-measured::after {
+    top: calc(var(--y2) - var(--vtop));
+}
+
+.bracket-link.is-measured.bracket-link--path::before,
+.bracket-link.is-measured.bracket-link--path::after {
+    border-top-color: var(--color-accent-dark);
+}
+
+.bracket-link.is-measured.bracket-link--path-top::after {
+    display: none;
+}
+
+.bracket-link.is-measured.bracket-link--path-bottom::before {
+    display: none;
+}
+
+.bracket-link.is-measured .bracket-link__arrow {
+    top: calc(var(--target) - var(--vtop) - 1px);
+}
+
+/* 三四名决赛:移出决赛列,横向滚动区之后的独立区块,不参与列布局 */
+.bracket-consolation {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-1);
     margin-top: var(--space-3);
     padding-top: var(--space-2);
     border-top: 1px dashed var(--color-border);
 }
 
-.bracket-third__title {
+.bracket-consolation__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1);
+    width: min(100%, var(--bracket-col-max));
+    padding: 0 2px;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+}
+
+.bracket-consolation__title {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin: 0 0 var(--space-1);
-    color: var(--color-muted-strong);
-    font-size: var(--fs-xs);
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
     font-weight: 600;
-    letter-spacing: .04em;
+    letter-spacing: .02em;
 }
 
-.bracket-third__title::before {
+.bracket-consolation__title::before {
     width: 6px;
     height: 6px;
     background-color: var(--color-accent);
     content: "";
     transform: rotate(45deg);
+}
+
+.bracket-consolation__count {
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.bracket-consolation > .bracket-match {
+    width: min(100%, var(--bracket-col-max));
 }
 
 /* ==========================================================================
@@ -817,6 +895,19 @@
     .bracket-tooltip {
         max-height: min(60vh, 360px);
         font-size: var(--fs-sm);
+    }
+
+    /* 三四名决赛在手机上顺排到横向滚动区之后,与组件左右内边距对齐 */
+    .bracket-consolation {
+        align-items: stretch;
+        padding-right: var(--space-2);
+        padding-left: var(--space-2);
+    }
+
+    .bracket-consolation__head,
+    .bracket-consolation > .bracket-match {
+        width: 100%;
+        max-width: none;
     }
 }
 
