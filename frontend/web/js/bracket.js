@@ -199,13 +199,36 @@
                 var baseTop = overlay.getBoundingClientRect().top;
                 var topRect = topMatch.getBoundingClientRect();
                 var bottomRect = bottomMatch.getBoundingClientRect();
+                if (!topRect.width || !topRect.height || !bottomRect.width || !bottomRect.height) {
+                    return;
+                }
                 var y1 = topRect.top + topRect.height / 2 - baseTop;
                 var y2 = bottomRect.top + bottomRect.height / 2 - baseTop;
+                var target = (y1 + y2) / 2;
+
+                // 箭头对准下一轮真实比赛卡片的垂直中心;卡片不可测量时回退两场中点。
+                var nextRound = round.nextElementSibling;
+                while (nextRound && !nextRound.classList.contains('bracket-round')) {
+                    nextRound = nextRound.nextElementSibling;
+                }
+                if (nextRound) {
+                    var nextMatches = nextRound.querySelectorAll(
+                        '.bracket-round__body > .bracket-match'
+                    );
+                    var nextMatch = nextMatches[pairIndex];
+                    if (nextMatch) {
+                        var nextRect = nextMatch.getBoundingClientRect();
+                        if (nextRect.width > 0 && nextRect.height > 0) {
+                            target = nextRect.top + nextRect.height / 2 - baseTop;
+                        }
+                    }
+                }
 
                 link.style.setProperty('--y1', y1 + 'px');
                 link.style.setProperty('--y2', y2 + 'px');
                 link.style.setProperty('--ymid', (y1 + y2) / 2 + 'px');
-                link.style.setProperty('--half', Math.abs(y2 - y1) / 2 + 'px');
+                link.style.setProperty('--target', target + 'px');
+                link.classList.add('is-measured');
             });
         }
 

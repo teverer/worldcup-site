@@ -135,7 +135,14 @@ $renderMatch = function (array $match, $roundLabel, $isFinal) use ($renderTeam, 
         $ariaLabel .= '，经过加时';
     }
     if ($winnerName !== '') {
-        $ariaLabel .= '，' . $winnerName . ($isFinal ? ' 夺得冠军' : ' 晋级');
+        if ($isFinal) {
+            $resultText = ' 夺得冠军';
+        } elseif ($roundLabel === '三四名决赛') {
+            $resultText = ' 获胜';
+        } else {
+            $resultText = ' 晋级';
+        }
+        $ariaLabel .= '，' . $winnerName . $resultText;
     }
     if ($isPath) {
         $ariaLabel .= '，属于冠军晋级之路';
@@ -371,7 +378,6 @@ for ($roundCursor = $roundCount - 2; $roundCursor >= 0; $roundCursor--) {
              role="region"
              aria-label="淘汰赛晋级图,可左右滚动查看各轮次">
             <div class="bracket__track">
-                <?php $thirdRendered = false; ?>
                 <?php foreach ($rounds as $roundIndex => $round): ?>
                     <?php
                     $roundKey = isset($round['key']) ? (string) $round['key'] : 'round-' . $roundIndex;
@@ -441,29 +447,19 @@ for ($roundCursor = $roundCount - 2; $roundCursor >= 0; $roundCursor--) {
                                 <?= $renderMatch($match, $roundLabel, $isFinalRound) ?>
                             <?php endforeach ?>
                         </div>
-                        <?php if ($isFinalRound && $thirdPlaceMatch !== null): ?>
-                            <?php $thirdRendered = true; ?>
-                            <div class="bracket-third">
-                                <p class="bracket-third__title">三四名决赛</p>
-                                <?= $renderMatch($thirdPlaceMatch, '三四名决赛', false) ?>
-                            </div>
-                        <?php endif ?>
                     </section>
                 <?php endforeach ?>
-
-                <?php if ($thirdPlaceMatch !== null && !$thirdRendered): ?>
-                    <section class="bracket-round bracket-round--third"
-                             aria-labelledby="bracket-round-third">
-                        <header class="bracket-round__head">
-                            <h3 class="bracket-round__title" id="bracket-round-third">三四名决赛</h3>
-                            <span class="bracket-round__count">1 场</span>
-                        </header>
-                        <div class="bracket-round__body bracket-round__body--third">
-                            <?= $renderMatch($thirdPlaceMatch, '三四名决赛', false) ?>
-                        </div>
-                    </section>
-                <?php endif ?>
             </div>
         </div>
+
+        <?php if ($thirdPlaceMatch !== null): ?>
+            <section class="bracket-consolation" aria-labelledby="bracket-consolation-title">
+                <header class="bracket-consolation__head">
+                    <h3 class="bracket-consolation__title" id="bracket-consolation-title">三四名决赛</h3>
+                    <span class="bracket-consolation__count">1 场</span>
+                </header>
+                <?= $renderMatch($thirdPlaceMatch, '三四名决赛', false) ?>
+            </section>
+        <?php endif ?>
     </section>
 <?php endif ?>
