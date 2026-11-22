@@ -19,7 +19,7 @@ if ($previous === null && $next === null) {
     <?php if ($previous !== null): ?>
         <a class="td-history-link td-history-link--prev"
            href="<?= Html::encode(Url::to(['view', 'id' => (int) $previous['id']])) ?>">
-            <span class="td-history-dir">← 上一届</span>
+            <span class="td-history-dir">上一届</span>
             <span class="td-history-year"><?= Html::encode((string) $previous['year']) ?></span>
             <span class="td-history-name"><?= Html::encode((string) $previous['name']) ?></span>
         </a>
@@ -28,7 +28,7 @@ if ($previous === null && $next === null) {
     <?php if ($next !== null): ?>
         <a class="td-history-link td-history-link--next"
            href="<?= Html::encode(Url::to(['view', 'id' => (int) $next['id']])) ?>">
-            <span class="td-history-dir">下一届 →</span>
+            <span class="td-history-dir">下一届</span>
             <span class="td-history-year"><?= Html::encode((string) $next['year']) ?></span>
             <span class="td-history-name"><?= Html::encode((string) $next['name']) ?></span>
         </a>
