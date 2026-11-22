@@ -1,0 +1,398 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261122
+   模块:界面设计 —— 根页记分牌墙 */
+
+/* 根页整体:夜场底色,页头 / 页脚一起沉入夜色 */
+body.site-site-index {
+    background-color: var(--night);
+    color: var(--flood);
+}
+
+.site-site-index .site-main {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.site-site-index .breadcrumb {
+    display: none;
+}
+
+.site-site-index .site-header .navbar {
+    border-bottom: 1px solid var(--line-dark);
+    background-color: var(--night);
+    background-image: none;
+    box-shadow: none;
+}
+
+.site-site-index .navbar-inverse .navbar-brand {
+    color: var(--flood);
+}
+
+.site-site-index .navbar-inverse .navbar-brand:hover,
+.site-site-index .navbar-inverse .navbar-brand:focus {
+    color: var(--gold-light);
+}
+
+.site-site-index .navbar-inverse .navbar-nav > li > a {
+    color: rgba(243, 246, 242, .72);
+}
+
+.site-site-index .navbar-inverse .navbar-nav > li > a:hover,
+.site-site-index .navbar-inverse .navbar-nav > li > a:focus {
+    background-color: rgba(243, 246, 242, .08);
+    color: var(--flood);
+}
+
+.site-site-index .navbar-inverse .navbar-nav > .active > a,
+.site-site-index .navbar-inverse .navbar-nav > .active > a:hover,
+.site-site-index .navbar-inverse .navbar-nav > .active > a:focus {
+    background-color: rgba(127, 200, 169, .14);
+    box-shadow: inset 0 -3px 0 var(--green-light);
+    color: var(--flood);
+}
+
+.site-site-index .site-footer {
+    border-top-color: var(--line-dark);
+    background-color: var(--night);
+    color: var(--steel);
+}
+
+.site-site-index .site-footer-name,
+.site-site-index .site-footer-title {
+    color: var(--flood);
+}
+
+.site-site-index .site-footer-intro {
+    color: var(--steel);
+}
+
+.site-site-index .site-footer a {
+    color: var(--steel);
+}
+
+.site-site-index .site-footer a:hover,
+.site-site-index .site-footer a:focus {
+    color: var(--gold-light);
+}
+
+.site-site-index .site-footer-bottom {
+    border-top-color: var(--line-dark);
+    color: var(--steel);
+}
+
+/* 记分牌墙 */
+.root-wall {
+    padding: clamp(40px, 6vw, 88px) 0 clamp(48px, 7vw, 96px);
+}
+
+.wall-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
+    align-items: end;
+    gap: clamp(32px, 6vw, 80px);
+    padding-bottom: clamp(32px, 5vw, 64px);
+    border-bottom: 1px solid var(--line-dark);
+}
+
+.wall-title {
+    margin: 0;
+}
+
+.wall-range {
+    display: block;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: clamp(64px, 9.5vw, 132px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+    line-height: .82;
+}
+
+.wall-subtitle {
+    display: block;
+    margin-top: clamp(12px, 2vw, 20px);
+    color: var(--steel);
+    font-size: clamp(18px, 2vw, 26px);
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.wall-lead {
+    max-width: 46ch;
+    margin: clamp(20px, 3vw, 28px) 0 0;
+    color: var(--steel);
+    font-size: var(--fs-lg);
+    line-height: 1.6;
+}
+
+.wall-scope {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 28px;
+    margin: 0;
+    padding: 0;
+}
+
+.wall-scope-item {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-dark);
+}
+
+.wall-scope-value {
+    display: block;
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.wall-scope-label {
+    display: block;
+    margin-top: 6px;
+    color: var(--steel);
+    font-size: var(--fs-xs);
+    letter-spacing: .06em;
+}
+
+.wall {
+    margin-top: clamp(32px, 5vw, 56px);
+    border-top: 1px solid var(--line-dark);
+}
+
+.wall-board {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(120px, 190px) minmax(0, 1fr) auto 72px;
+    align-items: center;
+    gap: clamp(16px, 3vw, 32px);
+    padding: clamp(20px, 2.6vw, 28px) 20px;
+    border-bottom: 1px solid var(--line-dark);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.wall-board:hover,
+.wall-board:focus {
+    background-color: rgba(243, 246, 242, .045);
+    color: inherit;
+    text-decoration: none;
+}
+
+.wall-board:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 4px;
+}
+
+.wall-board.is-lit {
+    background:
+        radial-gradient(120% 180% at 0% 0%, rgba(243, 246, 242, .09), transparent 58%),
+        var(--night-2);
+    box-shadow: inset 3px 0 0 var(--green-light);
+}
+
+.board-year {
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: clamp(40px, 4.6vw, 64px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+    line-height: .9;
+}
+
+.wall-board.is-lit .board-year {
+    color: var(--flood);
+    font-size: clamp(56px, 6.4vw, 92px);
+}
+
+.board-main {
+    min-width: 0;
+}
+
+.board-name {
+    display: block;
+    color: var(--flood);
+    font-size: clamp(17px, 1.5vw, 20px);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.board-host {
+    display: block;
+    margin-top: 4px;
+    color: var(--steel);
+    font-size: var(--fs-sm);
+}
+
+.board-final {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 12px;
+    margin-top: 8px;
+    color: var(--steel);
+    font-size: var(--fs-sm);
+}
+
+.board-champion {
+    color: var(--gold-light);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+}
+
+.board-score {
+    color: var(--flood);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.board-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border: 1px solid var(--red);
+    border-radius: 2px;
+    color: var(--red-bright);
+    font-size: 11px;
+    letter-spacing: .04em;
+    line-height: 1.5;
+}
+
+.board-volume {
+    color: var(--steel);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.board-enter {
+    color: var(--green-light);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.wall-board:hover .board-enter,
+.wall-board:focus .board-enter {
+    color: var(--flood);
+}
+
+.wall-empty {
+    padding: clamp(40px, 6vw, 72px) 0;
+    border-bottom: 1px solid var(--line-dark);
+    color: var(--steel);
+    text-align: center;
+}
+
+.wall-empty strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--flood);
+    font-size: var(--fs-xl);
+}
+
+.wall-ways {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px 28px;
+    margin-top: clamp(28px, 4vw, 44px);
+    padding-top: 20px;
+    border-top: 1px solid var(--line-dark);
+    color: var(--steel);
+    font-size: var(--fs-sm);
+}
+
+.wall-ways a {
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(243, 246, 242, .25);
+    color: var(--flood);
+    text-decoration: none;
+    transition: color 160ms ease, border-color 160ms ease;
+}
+
+.wall-ways a:hover,
+.wall-ways a:focus {
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+@media (max-width: 991px) {
+    .wall-head {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+    }
+
+    .wall-scope {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .wall-board {
+        grid-template-columns: 120px minmax(0, 1fr) 64px;
+    }
+
+    .board-volume {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .root-wall {
+        padding: 32px 0 40px;
+    }
+
+    .wall-range {
+        font-size: clamp(52px, 14vw, 76px);
+    }
+
+    .wall-scope {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 20px;
+    }
+
+    .wall-board {
+        grid-template-areas:
+            "year enter"
+            "main main";
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px 16px;
+        padding: 18px 0;
+    }
+
+    .board-year {
+        grid-area: year;
+        font-size: 48px;
+    }
+
+    .wall-board.is-lit .board-year {
+        font-size: 56px;
+    }
+
+    .board-main {
+        grid-area: main;
+    }
+
+    .board-enter {
+        grid-area: enter;
+    }
+
+    .wall-ways {
+        gap: 10px 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wall-board,
+    .wall-ways a {
+        transition: none;
+    }
+}

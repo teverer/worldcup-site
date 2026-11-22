@@ -28,7 +28,6 @@ $thirdPlaceMatch = $third_place_match;
 $championPath = $champion_path;
 
 $this->title = (string) $model->name;
-$this->params['breadcrumbs'][] = ['label' => '世界杯届次', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/tournament-detail.css');
 

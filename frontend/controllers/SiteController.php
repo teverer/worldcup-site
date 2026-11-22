@@ -1,6 +1,13 @@
 <?php
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261122
+ * 模块:界面设计 —— 前台站点入口与根页
+ */
 namespace frontend\controllers;
 
+use frontend\models\EditionWall;
+use frontend\models\HomeStats;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -68,13 +75,20 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * 根页:夜场记分牌墙。
      *
-     * @return mixed
+     * 一次取回全部届次与全站概览,视图只按固定结构渲染。
+     *
+     * @return string
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $wall = EditionWall::all();
+
+        return $this->render('index', [
+            'editions' => $wall['editions'],
+            'overview' => HomeStats::overview(),
+        ]);
     }
 
     /**
