@@ -33,9 +33,10 @@ if ($tournamentId < 1) {
 }
 
 $this->registerCssFile('@web/css/charts.css');
-$this->registerJsFile('https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js', [
+// 本地引入 ECharts(Apache-2.0),避免部署环境无外网或 CDN 不可用时图表空白。
+$this->registerJsFile('@web/js/vendor/echarts.min.js', [
     'position' => View::POS_END,
-    'id' => 'echarts-cdn',
+    'id' => 'echarts-local',
     'onerror' => 'window.__echartsLoadFailed = true;',
 ]);
 $this->registerJsFile('@web/js/charts.js', [
