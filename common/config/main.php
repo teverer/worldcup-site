@@ -1,6 +1,8 @@
 <?php
 return [
     'name' => '世界杯数据门户',
+    // 全站内容为中文,显式声明语言,避免 <html lang="en-US"> 与读屏/搜索引擎不一致。
+    'language' => 'zh-CN',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',

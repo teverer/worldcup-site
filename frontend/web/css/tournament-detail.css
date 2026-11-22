@@ -182,7 +182,7 @@ html {
 }
 
 .td-fact-sep {
-    color: #B8C0CC;
+    color: var(--color-muted);
 }
 
 .td-fact-note {
@@ -239,7 +239,7 @@ html {
 }
 
 .td-champion-path-arrow {
-    color: #B8C0CC;
+    color: var(--color-muted);
 }
 
 /* ==========================================================================
@@ -567,7 +567,7 @@ body .td-groups-grid .td-group-table > tbody > tr > td.td-rank-cell {
 
 .td-history-link:hover,
 .td-history-link:focus {
-    border-color: #CFE0D5;
+    border-color: var(--color-border);
     box-shadow: var(--shadow-md);
     color: var(--color-text);
     text-decoration: none;

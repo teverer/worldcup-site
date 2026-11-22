@@ -15,6 +15,8 @@
     --color-surface: #FFFFFF;
     --color-surface-alt: #F0F3F7;
     --color-text: #0B1F3A;
+    /* 深色渐变中间调,仅用于 Hero/页头的背景层,不用于文字 */
+    --color-text-soft: #102C50;
     --color-muted: #6B7280;
     --color-primary: #0E7C4A;
     --color-primary-dark: #0A5C37;
@@ -1619,8 +1621,9 @@ body.site-body {
     margin-top: auto;
 }
 
-/* 登录页:默认模板没有卡片容器,这里补齐与其他页面一致的面板样式 */
-.site-login {
+/* 表单页(登录/注册/找回密码/联系):统一为与全站一致的面板 */
+.site-login,
+.form-page {
     max-width: 460px;
     margin: var(--space-4) auto var(--space-2);
     padding: var(--space-5);
@@ -1630,48 +1633,60 @@ body.site-body {
     box-shadow: var(--shadow-sm);
 }
 
-.site-login > h1 {
+.form-page--wide {
+    max-width: 640px;
+}
+
+.site-login > h1,
+.form-page > h1 {
     margin-bottom: var(--space-1);
     font-size: var(--fs-2xl);
 }
 
-.site-login > p {
+.site-login > p,
+.form-page > p {
     margin-bottom: var(--space-3);
     color: var(--color-muted);
     font-size: var(--fs-sm);
 }
 
-.site-login .row {
+.site-login .row,
+.form-page .row {
     margin-right: 0;
     margin-left: 0;
 }
 
-.site-login .col-lg-5 {
+.site-login .col-lg-5,
+.form-page .col-lg-5 {
     float: none;
     width: 100%;
     padding-right: 0;
     padding-left: 0;
 }
 
-.site-login .btn-primary {
+.site-login .btn-primary,
+.form-page .btn-primary {
     width: 100%;
     margin-top: var(--space-1);
 }
 
 /* 登录页底部的注册引导 */
-.site-login .login-signup {
+.site-login .login-signup,
+.form-page .form-page-footer {
     margin: var(--space-3) 0 0;
     color: var(--color-muted-strong);
     font-size: var(--fs-sm);
     text-align: center;
 }
 
-.site-login .login-signup a {
+.site-login .login-signup a,
+.form-page .form-page-footer a {
     font-weight: var(--font-weight-semibold);
 }
 
 @media (max-width: 767px) {
-    .site-login {
+    .site-login,
+    .form-page {
         margin-top: var(--space-2);
         padding: var(--space-3);
         border-radius: var(--radius-md);

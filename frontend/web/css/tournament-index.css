@@ -26,7 +26,7 @@
             rgba(255, 255, 255, .04) 1px,
             transparent 1px,
             transparent 72px),
-        linear-gradient(135deg, #0B1F3A 0%, #102C50 58%, #0B3B2A 100%);
+        linear-gradient(135deg, var(--color-text) 0%, var(--color-text-soft) 58%, var(--color-primary-dark) 100%);
     box-shadow: var(--shadow-md);
     color: #FFFFFF;
 }
@@ -143,10 +143,10 @@
 .chronicle-stat-value {
     margin: 0;
     color: var(--color-accent);
-    font-size: calc(var(--fs-3xl) * 1.15);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -.02em;
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -.01em;
     font-variant-numeric: tabular-nums;
 }
 
@@ -604,7 +604,7 @@
 /* ==========================================================================
    6. 响应式:平板 / 手机
    ========================================================================== */
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
     .chronicle-hero {
         padding: var(--space-6) var(--space-5);
     }
