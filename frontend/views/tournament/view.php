@@ -28,7 +28,6 @@ $thirdPlaceMatch = $third_place_match;
 $championPath = $champion_path;
 
 $this->title = (string) $model->name;
-$this->params['breadcrumbs'][] = ['label' => '世界杯届次', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/tournament-detail.css');
 
@@ -168,6 +167,14 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
         </nav>
     <?php endif ?>
 
+    <nav class="td-nav" aria-label="页内导航">
+        <a href="#overview" class="is-active">概览</a>
+        <a href="#knockout">淘汰赛</a>
+        <a href="#groups">小组赛</a>
+        <a href="#charts">数据</a>
+        <a href="#comments">讨论</a>
+    </nav>
+
     <section class="td-knockout" id="knockout" tabindex="-1" aria-label="淘汰赛对阵">
         <?php if (is_file($bracketView)): ?>
             <?= $this->render('_bracket', [
@@ -182,14 +189,6 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
             </div>
         <?php endif ?>
     </section>
-
-    <nav class="td-nav" aria-label="页内导航">
-        <a href="#overview" class="is-active">概览</a>
-        <a href="#knockout">淘汰赛</a>
-        <a href="#groups">小组赛</a>
-        <a href="#charts">数据</a>
-        <a href="#comments">讨论</a>
-    </nav>
 
     <?= $this->render('_groups', ['groups' => $groups]) ?>
 

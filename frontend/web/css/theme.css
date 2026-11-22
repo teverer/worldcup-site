@@ -7,6 +7,26 @@
    前台 Hero、卡片层级参考 Start Bootstrap 的 BS3 模板,均以本项目变量重写。 */
 
 /* ==========================================================================
+   0. 自托管字体
+   ========================================================================== */
+/* Saira Condensed · OFL 许可 · 拉丁子集,仅用于年份 / 比分 / 数字。 */
+@font-face {
+    font-family: "Saira Condensed";
+    src: url("../fonts/SairaCondensed-600.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Saira Condensed";
+    src: url("../fonts/SairaCondensed-700.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* ==========================================================================
    1. 设计令牌(CSS 变量)
    ========================================================================== */
 :root {
@@ -15,6 +35,8 @@
     --color-surface: #FFFFFF;
     --color-surface-alt: #F0F3F7;
     --color-text: #0B1F3A;
+    /* 深色渐变中间调,仅用于 Hero/页头的背景层,不用于文字 */
+    --color-text-soft: #102C50;
     --color-muted: #6B7280;
     --color-primary: #0E7C4A;
     --color-primary-dark: #0A5C37;
@@ -68,6 +90,31 @@
     --focus-ring: 0 0 0 3px rgba(22, 163, 74, .30);
     --color-primary-soft: rgba(14, 124, 74, .10);
     --color-accent-soft: rgba(242, 183, 5, .16);
+
+    /* 设计改造 2026-11 · 夜场记分牌
+       深色只给入口 / 身份 / 纪录,浅色留给数据与长文。 */
+    --night: #071A26;
+    --night-2: #0C2431;
+    --pitch: #0E3B2E;
+    --pitch-2: #14523E;
+    --paper: #E9EDE9;
+    --paper-2: #F5F7F4;
+    --flood: #F3F6F2;
+    --ink: #0B1A22;
+    --ink-2: #33454C;
+    --muted: #5F6B66;
+    --steel: #8A9AA1;
+    --line: #D3DBD6;
+    --line-dark: rgba(243, 246, 242, .14);
+    --red: #C8102E;
+    --red-bright: #FF5A5F;
+    --gold: #C9A227;
+    --gold-light: #E8C766;
+    --gold-ink: #8A6500;
+    --green-action: #146B45;
+    --green-light: #7FC8A9;
+    --danger: #B3261E;
+    --font-display: "Saira Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
 }
 
 /* ==========================================================================
@@ -154,6 +201,25 @@ summary:focus-visible,
 [tabindex]:focus-visible {
     outline: 3px solid rgba(22, 163, 74, .45);
     outline-offset: 2px;
+}
+
+/* 键盘用户跳过导航直达正文 */
+.skip-link {
+    position: absolute;
+    top: -48px;
+    left: 16px;
+    z-index: 1100;
+    padding: 8px 14px;
+    background-color: var(--gold);
+    color: var(--night);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 8px;
+    color: var(--night);
+    text-decoration: none;
 }
 
 ::selection {
@@ -1619,8 +1685,9 @@ body.site-body {
     margin-top: auto;
 }
 
-/* 登录页:默认模板没有卡片容器,这里补齐与其他页面一致的面板样式 */
-.site-login {
+/* 表单页(登录/注册/找回密码/联系):统一为与全站一致的面板 */
+.site-login,
+.form-page {
     max-width: 460px;
     margin: var(--space-4) auto var(--space-2);
     padding: var(--space-5);
@@ -1630,48 +1697,60 @@ body.site-body {
     box-shadow: var(--shadow-sm);
 }
 
-.site-login > h1 {
+.form-page--wide {
+    max-width: 640px;
+}
+
+.site-login > h1,
+.form-page > h1 {
     margin-bottom: var(--space-1);
     font-size: var(--fs-2xl);
 }
 
-.site-login > p {
+.site-login > p,
+.form-page > p {
     margin-bottom: var(--space-3);
     color: var(--color-muted);
     font-size: var(--fs-sm);
 }
 
-.site-login .row {
+.site-login .row,
+.form-page .row {
     margin-right: 0;
     margin-left: 0;
 }
 
-.site-login .col-lg-5 {
+.site-login .col-lg-5,
+.form-page .col-lg-5 {
     float: none;
     width: 100%;
     padding-right: 0;
     padding-left: 0;
 }
 
-.site-login .btn-primary {
+.site-login .btn-primary,
+.form-page .btn-primary {
     width: 100%;
     margin-top: var(--space-1);
 }
 
 /* 登录页底部的注册引导 */
-.site-login .login-signup {
+.site-login .login-signup,
+.form-page .form-page-footer {
     margin: var(--space-3) 0 0;
     color: var(--color-muted-strong);
     font-size: var(--fs-sm);
     text-align: center;
 }
 
-.site-login .login-signup a {
+.site-login .login-signup a,
+.form-page .form-page-footer a {
     font-weight: var(--font-weight-semibold);
 }
 
 @media (max-width: 767px) {
-    .site-login {
+    .site-login,
+    .form-page {
         margin-top: var(--space-2);
         padding: var(--space-3);
         border-radius: var(--radius-md);

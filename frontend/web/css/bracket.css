@@ -188,7 +188,7 @@
 
 @media (hover: hover) {
     .bracket-match:hover {
-        border-color: #CFE0D5;
+        border-color: var(--color-border);
         box-shadow: var(--shadow-md);
     }
 }
@@ -390,7 +390,7 @@
 .bracket-tag--own {
     border-color: rgba(220, 38, 38, .24);
     background-color: rgba(220, 38, 38, .10);
-    color: #991B1B;
+    color: var(--color-danger);
 }
 
 .bracket-match__more {

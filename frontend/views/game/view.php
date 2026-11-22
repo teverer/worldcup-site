@@ -36,7 +36,10 @@ $this->registerCssFile('@web/css/game.css');
 ?>
 <article class="catalog-page game-detail">
     <header class="catalog-heading">
-        <p class="catalog-kicker"><?= Html::encode($tournamentName) ?> · <?= Html::encode($model->stage) ?></p>
+        <p class="catalog-kicker">
+            <?= Html::a(Html::encode($tournamentName), ['/tournament/view', 'id' => $model->tournament_id]) ?>
+            · <?= Html::encode($model->stage) ?>
+        </p>
         <h1><?= Html::encode($homeName) ?> <span class="text-muted">vs</span> <?= Html::encode($awayName) ?></h1>
         <p><?= Html::encode($matchTime) ?> · <?= Html::encode($venue) ?> · <?= Html::encode($statusText) ?></p>
     </header>
@@ -56,30 +59,13 @@ $this->registerCssFile('@web/css/game.css');
         </div>
     </section>
 
-    <h2>比赛信息</h2>
-    <dl class="tournament-detail-list">
-        <dt>届次</dt>
-        <dd><?= Html::a(Html::encode($tournamentName), [
-            '/tournament/view',
-            'id' => $model->tournament_id,
-        ]) ?></dd>
-        <dt>阶段</dt>
-        <dd><?= Html::encode($model->stage) ?></dd>
-        <dt>比赛时间</dt>
-        <dd><?= Html::encode($matchTime) ?></dd>
-        <dt>比赛场地</dt>
-        <dd><?= Html::encode($venue) ?></dd>
-        <dt>状态</dt>
-        <dd><?= Html::encode($statusText) ?></dd>
-        <?php if ($penaltyText !== null): ?>
-            <dt>点球大战</dt>
-            <dd><?= Html::encode($penaltyText) ?></dd>
-        <?php endif ?>
-    </dl>
-
-    <h2>进球时间线</h2>
+    <section class="game-section" aria-labelledby="game-goals-title">
+    <h2 class="section-title" id="game-goals-title">进球时间线</h2>
     <?php if (!$goals): ?>
-        <p class="text-muted">暂无进球记录。</p>
+        <div class="empty-state">
+            <h3>暂无进球记录</h3>
+            <p>该场比赛的进球会在数据补齐后显示。</p>
+        </div>
     <?php else: ?>
         <ul class="goal-timeline">
             <?php foreach ($goals as $goal): ?>
@@ -124,6 +110,7 @@ $this->registerCssFile('@web/css/game.css');
             <?php endforeach ?>
         </ul>
     <?php endif ?>
+    </section>
 </article>
 
 <?= CommentSection::widget([

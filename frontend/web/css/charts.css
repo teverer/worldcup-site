@@ -1,51 +1,53 @@
 /* Team: 国足世界杯夺冠队
    Coding by 李行阳 2411353, 20261115
-   模块:届次与比赛 —— 积分榜、射手榜、各队进球分布图表样式。 */
+   模块:届次与比赛 —— 积分榜、射手榜、各队进球分布图表样式。
+   2026-11-22 令牌化:颜色、字号、间距、圆角统一取 theme.css 变量。 */
+
 .charts-panel {
-    margin: 36px 0 48px;
-    color: #182d27;
+    margin: var(--space-3) 0 0;
+    color: var(--color-text);
 }
 
 .charts-heading {
-    border-left: 5px solid #26734d;
-    background: #f2f7f3;
-    padding: 20px 24px;
-    margin-bottom: 20px;
+    border-left: 5px solid var(--color-primary);
+    background-color: var(--color-surface-alt);
+    padding: var(--space-3);
+    margin-bottom: var(--space-2);
 }
 
 .charts-kicker {
-    margin: 0 0 4px;
-    color: #446653;
-    font-size: 12px;
+    margin: 0 0 var(--space-1);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
     letter-spacing: .12em;
 }
 
 .charts-heading h2 {
-    margin: 0 0 6px;
-    font-size: 26px;
-    font-weight: 700;
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-2xl);
+    font-weight: var(--font-weight-semibold);
 }
 
 .charts-heading p {
     margin: 0;
-    color: #526b5f;
+    color: var(--color-muted-strong);
     line-height: 1.7;
 }
 
 .chart-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 20px;
+    gap: var(--space-2);
 }
 
 .chart-card {
     min-width: 0;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid #dce8e0;
-    border-radius: 8px;
-    padding: 18px 20px 12px;
-    box-shadow: 0 2px 10px rgba(38, 115, 77, .06);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3) var(--space-1);
+    box-shadow: var(--shadow-sm);
 }
 
 .chart-card--wide {
@@ -53,15 +55,15 @@
 }
 
 .chart-card-head h3 {
-    margin: 0 0 4px;
-    font-size: 19px;
-    font-weight: 700;
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-lg);
+    font-weight: var(--font-weight-semibold);
 }
 
 .chart-caption {
-    margin: 0 0 10px;
-    color: #6b7f75;
-    font-size: 12px;
+    margin: 0 0 var(--space-1);
+    color: var(--color-muted);
+    font-size: var(--fs-xs);
     line-height: 1.6;
 }
 
@@ -70,7 +72,7 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 6px 18px;
+    gap: 6px var(--space-2);
 }
 
 .chart-card-head-text {
@@ -82,14 +84,14 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin: 2px 0 10px;
+    gap: var(--space-1);
+    margin: 2px 0 var(--space-1);
 }
 
 .chart-group-switch-label {
-    color: #446653;
-    font-size: 12px;
-    font-weight: 600;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    font-weight: var(--font-weight-semibold);
 }
 
 .chart-group-switch {
@@ -102,32 +104,32 @@
     appearance: none;
     -webkit-appearance: none;
     padding: 4px 10px;
-    border: 1px solid #cfe0d5;
+    border: 1px solid var(--color-border);
     border-radius: 999px;
-    background: #fff;
-    color: #355747;
+    background-color: var(--color-surface);
+    color: var(--color-muted-strong);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--fs-xs);
     line-height: 1.4;
     cursor: pointer;
-    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+    transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 
 .chart-group-switch-btn:hover {
-    border-color: #26734d;
-    color: #1e5a3d;
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
 }
 
 .chart-group-switch-btn:focus-visible {
-    outline: 2px solid #26734d;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
 
 .chart-group-switch-btn[aria-pressed="true"] {
-    border-color: #26734d;
-    background: #26734d;
-    color: #fff;
-    font-weight: 600;
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    font-weight: var(--font-weight-semibold);
 }
 
 .chart-canvas {
@@ -151,32 +153,32 @@
     height: 100%;
     min-height: 120px;
     margin: 0;
-    padding: 16px;
-    color: #6b7f75;
-    font-size: 14px;
+    padding: var(--space-2);
+    color: var(--color-muted);
+    font-size: var(--fs-sm);
     text-align: center;
 }
 
 .chart-notice {
-    margin: 24px 0;
+    margin: var(--space-3) 0;
 }
 
 .chart-data {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #edf3ef;
+    margin-top: var(--space-1);
+    padding-top: var(--space-1);
+    border-top: 1px solid var(--color-border);
 }
 
 .chart-data summary {
     cursor: pointer;
-    color: #26734d;
-    font-size: 13px;
-    font-weight: 600;
+    color: var(--color-primary);
+    font-size: var(--fs-sm);
+    font-weight: var(--font-weight-semibold);
     outline-offset: 2px;
 }
 
 .chart-table-wrap {
-    margin-top: 10px;
+    margin-top: var(--space-1);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -184,25 +186,25 @@
 .chart-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: var(--fs-xs);
     white-space: nowrap;
 }
 
 .chart-table th,
 .chart-table td {
-    border-bottom: 1px solid #edf3ef;
+    border-bottom: 1px solid var(--color-border);
     padding: 7px 9px;
     text-align: left;
 }
 
 .chart-table th {
-    background: #f2f7f3;
-    color: #446653;
-    font-weight: 600;
+    background-color: var(--color-surface-alt);
+    color: var(--color-muted-strong);
+    font-weight: var(--font-weight-semibold);
 }
 
 .chart-table td {
-    color: #3d554b;
+    color: var(--color-text);
 }
 
 .chart-table-num {
@@ -211,7 +213,7 @@
 }
 
 .chart-table tbody tr:hover {
-    background: #f8fbf9;
+    background-color: var(--color-surface-alt);
 }
 
 @media (max-width: 860px) {
@@ -235,19 +237,19 @@
 
 @media (max-width: 480px) {
     .charts-panel {
-        margin: 24px 0 32px;
+        margin: var(--space-2) 0;
     }
 
     .charts-heading {
-        padding: 16px 18px;
+        padding: var(--space-2);
     }
 
     .charts-heading h2 {
-        font-size: 22px;
+        font-size: var(--fs-xl);
     }
 
     .chart-card {
-        padding: 14px 12px 10px;
+        padding: var(--space-2) var(--space-2) var(--space-1);
     }
 
     .chart-canvas,

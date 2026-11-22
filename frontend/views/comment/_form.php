@@ -33,6 +33,6 @@ $formId = 'comment-form-' . $targetType . '-' . $targetId . '-' . ($parentId ?: 
     ]) ?>
     <div class="comment-form-footer">
         <span>最多 5000 字</span>
-        <?= Html::submitButton($submitLabel, ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton($submitLabel, ['class' => 'btn btn-primary']) ?>
     </div>
 <?= Html::endForm() ?>

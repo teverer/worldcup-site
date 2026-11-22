@@ -1,35 +1,37 @@
 <?php
-
-/* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \frontend\models\SignupForm */
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261122
+ * 模块:界面设计 —— 注册页
+ *
+ * @var yii\web\View $this
+ * @var yii\bootstrap\ActiveForm $form
+ * @var frontend\models\SignupForm $model
+ */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Signup';
+$this->title = '注册';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-signup">
+<div class="form-page site-signup">
     <h1><?= Html::encode($this->title) ?></h1>
+    <p>创建账号后即可参与讨论。</p>
 
-    <p>Please fill out the following fields to signup:</p>
+    <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+    <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('用户名') ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'nickname')->textInput()->label('昵称') ?>
 
-                <?= $form->field($model, 'nickname') ?>
+    <?= $form->field($model, 'password')->passwordInput()->label('密码') ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
+    <div class="form-group">
+        <?= Html::submitButton('注册', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
+
+    <?php ActiveForm::end(); ?>
+
+    <p class="form-page-footer">已有账号？<?= Html::a('去登录', ['/site/login']) ?></p>
 </div>
