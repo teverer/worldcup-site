@@ -19,6 +19,8 @@
 4. 提交格式:`type(scope): 说明`(如 `feat(game): 比赛列表支持按届次筛选`)
 5. 合入 `dev`,队长定期合 `main`
 6. 多会话并行时,先声明你要改哪些文件,避免两个会话改同一处
+7. 改了 CSS 但页面没变化:删除 `frontend/web/assets/` 下的哈希目录,刷新重新发布
+8. UI 完成定义:`php -l` 通过 + `curl` 200 + 在 390 / 768 / 1440 三档宽度实际查看 + 对照 `docs/界面设计规范.md` 第 1–6 节
 
 ## 本地环境
 
@@ -43,6 +45,10 @@
 - 在视图/控制器里拼接 SQL 字符串;必须用 AR / QueryBuilder 参数绑定
 - **编造比赛数据**;真实数据来源见 `docs/数据来源说明.md`
 - 把未经检查的子代理产出直接提交
+- 运行 `composer install/update/require`(`vendor/` 已提交);需要新库先问队长
+- 引入新的 CDN、npm / Node 构建链或外部字体;前端库一律放 `frontend/web/js/vendor/` 并提交(ECharts 已本地化)
+- 用 `git reset --hard`、`git checkout -- .` 丢弃改动;提交前用 `git status` 核对,按路径 `git add`
+- 手工对演示库执行临时 `UPDATE/INSERT/DELETE` 做数据修正;数据变更写进 `data/*.sql` 并保持幂等(测试可用临时库)
 
 ## 核心约定
 
@@ -61,6 +67,8 @@
    */
   ```
 - 命名与格式见 `docs/编码规范与注释头模板.md`;UTF-8 无 BOM、LF、4 空格、PHP 文件结尾不加 `?>`
+- 图表配色只取 `theme.css` 令牌(绿 `#0E7C4A` / `#16A34A`、金 `#F2B705`、藏青 `#0B1F3A`、灰 `#6B7280` / `#9CA3AF`);不用 ECharts 默认色板,同一指标在不同图表里颜色一致
+- 新页面或改版前先读 `docs/页面设计指南.md`(页面组织),视觉细节看 `docs/界面设计规范.md`
 
 ## 课程硬性要求
 
@@ -119,6 +127,7 @@
 - [`docs/README.md`](docs/README.md) —— 全部文档与推荐阅读顺序
 - [`docs/数据来源说明.md`](docs/数据来源说明.md)
 - [`docs/界面设计规范.md`](docs/界面设计规范.md)
+- [`docs/页面设计指南.md`](docs/页面设计指南.md) —— 页面构成方法与开工模板
 - [`docs/编码规范与注释头模板.md`](docs/编码规范与注释头模板.md)
 - [`docs/Git使用说明.md`](docs/Git使用说明.md)
 - [`docs/数据库表详细设计.md`](docs/数据库表详细设计.md)
