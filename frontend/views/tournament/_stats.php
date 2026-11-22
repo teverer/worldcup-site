@@ -11,7 +11,6 @@
  */
 use yii\helpers\Html;
 
-$topScorer = $stats['top_scorer'];
 $thirdPlaceName = $third_place !== null ? (string) $third_place['name'] : null;
 ?>
 <section class="td-section td-section--data" id="charts" tabindex="-1"
@@ -29,20 +28,6 @@ $thirdPlaceName = $third_place !== null ? (string) $third_place['name'] : null;
         <div class="td-data-fact">
             <dt>季军</dt>
             <dd><?= Html::encode($thirdPlaceName !== null ? $thirdPlaceName : '待定') ?></dd>
-        </div>
-        <div class="td-data-fact td-data-fact--scorer">
-            <dt>最佳射手</dt>
-            <dd>
-                <?php if ($topScorer !== null): ?>
-                    <?= Html::encode((string) $topScorer['name']) ?>
-                    <span class="td-data-fact-note">
-                        <?= Html::encode((string) $topScorer['team']) ?> ·
-                        <?= Html::encode((string) $topScorer['goals']) ?> 球
-                    </span>
-                <?php else: ?>
-                    待定
-                <?php endif ?>
-            </dd>
         </div>
     </dl>
 

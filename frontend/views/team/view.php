@@ -26,9 +26,11 @@ $this->registerCssFile('@web/css/catalog.css');
         <h1><?= Html::encode($model->name) ?></h1>
         <p><?= Html::encode(implode(' · ', array_filter([$model->code, $model->continent]))) ?></p>
     </header>
-    <h2>球队介绍</h2>
-    <p class="catalog-intro"><?= $model->intro ? nl2br(Html::encode($model->intro)) : '暂无球队介绍。' ?></p>
-    <h2>参赛球员</h2>
+    <?php if ($model->intro): ?>
+        <h2 class="section-title">球队介绍</h2>
+        <p class="catalog-intro"><?= nl2br(Html::encode($model->intro)) ?></p>
+    <?php endif ?>
+    <h2 class="section-title">参赛球员</h2>
     <?= Html::beginForm(['view'], 'get', ['class' => 'catalog-filters']) ?>
     <?= Html::hiddenInput('id', $model->id) ?>
     <div class="form-group">
@@ -36,15 +38,29 @@ $this->registerCssFile('@web/css/catalog.css');
         <?= Html::dropDownList('tournamentId', $tournamentId, ArrayHelper::map($tournaments, 'id', 'name'),
             ['id' => 'roster-tournament', 'class' => 'form-control', 'prompt' => '所有届次（球员不重复）']) ?>
     </div>
-    <div class="form-group catalog-filter-actions"><?= Html::submitButton('查看名单', ['class' => 'btn btn-success']) ?></div>
+    <div class="form-group catalog-filter-actions"><?= Html::submitButton('查看名单', ['class' => 'btn btn-primary']) ?></div>
     <?= Html::endForm() ?>
     <div class="table-responsive">
-    <?= GridView::widget(['dataProvider' => $dataProvider, 'emptyText' => '尚未录入参赛名单。',
-        'summary' => '共 {totalCount} 位球员', 'columns' => [
-            ['attribute' => 'name', 'format' => 'raw', 'value' => function ($player) {
-                return Html::a(Html::encode($player->name), ['/player/view', 'id' => $player->id]);
-            }], 'nationality', 'position',
-        ], 'tableOptions' => ['class' => 'table table-hover catalog-table']]) ?>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'caption' => '该队世界杯参赛球员名单',
+        'captionOptions' => ['class' => 'sr-only'],
+        'emptyText' => '<div class="empty-state"><h3>暂无参赛名单</h3><p>该队的世界杯参赛球员尚未录入,稍后再来。</p></div>',
+        'summary' => '共 {totalCount} 位球员',
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'format' => 'raw',
+                'headerOptions' => ['scope' => 'col'],
+                'value' => function ($player) {
+                    return Html::a(Html::encode($player->name), ['/player/view', 'id' => $player->id]);
+                },
+            ],
+            ['attribute' => 'position', 'headerOptions' => ['scope' => 'col']],
+        ],
+        'tableOptions' => ['class' => 'table table-hover catalog-table'],
+        'pager' => ['prevPageLabel' => '上一页', 'nextPageLabel' => '下一页'],
+    ]) ?>
     </div>
 </article>
 

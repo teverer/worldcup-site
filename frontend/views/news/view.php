@@ -40,15 +40,15 @@ $date = $model->publish_time ?: $model->create_time;
     <?php endif ?>
 
     <div class="news-content">
-        <?= $safeContent !== '' ? $safeContent : '<p>暂无正文。</p>' ?>
+        <?= $safeContent !== '' ? $safeContent : '<div class="empty-state"><h3>暂无正文</h3><p>该资讯的正文尚未发布。</p></div>' ?>
     </div>
 
     <footer class="news-detail-footer">
         <?= Html::a('← 返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
     </footer>
-</article>
 
-<?= CommentSection::widget([
-    'targetType' => CommentTarget::NEWS,
-    'targetId' => $model->id,
-]) ?>
+    <?= CommentSection::widget([
+        'targetType' => CommentTarget::NEWS,
+        'targetId' => $model->id,
+    ]) ?>
+</article>

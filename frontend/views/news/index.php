@@ -35,7 +35,7 @@ $this->registerCssFile('@web/css/community.css');
         ]) ?>
     </div>
     <div class="community-search-actions">
-        <?= Html::submitButton('搜索', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
         <?= Html::a('重置', ['/news/index'], ['class' => 'btn btn-default']) ?>
     </div>
     <?= Html::endForm() ?>
