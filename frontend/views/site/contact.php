@@ -1,45 +1,37 @@
 <?php
-
-/* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \frontend\models\ContactForm */
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261122
+ * 模块:界面设计 —— 联系我们
+ *
+ * @var yii\web\View $this
+ * @var yii\bootstrap\ActiveForm $form
+ * @var frontend\models\ContactForm $model
+ */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\captcha\Captcha;
 
-$this->title = 'Contact';
+$this->title = '联系我们';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-contact">
+<div class="form-page form-page--wide site-contact">
     <h1><?= Html::encode($this->title) ?></h1>
+    <p>有问题或建议？填写下面的表单，我们会尽快回复。</p>
 
-    <p>
-        If you have business inquiries or other questions, please fill out the following form to contact us. Thank you.
-    </p>
+    <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
+    <?= $form->field($model, 'name')->textInput(['autofocus' => true])->label('姓名') ?>
 
-                <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'email')->label('邮箱') ?>
 
-                <?= $form->field($model, 'email') ?>
+    <?= $form->field($model, 'subject')->label('主题') ?>
 
-                <?= $form->field($model, 'subject') ?>
+    <?= $form->field($model, 'body')->textarea(['rows' => 6])->label('内容') ?>
 
-                <?= $form->field($model, 'body')->textarea(['rows' => 6]) ?>
-
-                <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
-                    'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>',
-                ]) ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
+    <div class="form-group">
+        <?= Html::submitButton('发送', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
     </div>
 
+    <?php ActiveForm::end(); ?>
 </div>
