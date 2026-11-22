@@ -1,8 +1,9 @@
 <?php
 /**
  * Team: 国足世界杯夺冠队
+ * Coding by 李佳婕 2413745, 20261122
  * Coding by 李行阳 2411353, 20261117
- * 模块:界面设计 —— 前台公共布局(页头、导航、页脚)
+ * 模块:界面设计、框架与团队主页 —— 前台公共布局及团队、下载导航
  *
  * @var yii\web\View $this
  * @var string $content
@@ -51,12 +52,14 @@ $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
 $actionId = Yii::$app->controller !== null && Yii::$app->controller->action !== null
     ? Yii::$app->controller->action->id : '';
 $navItems = [
-    ['label' => '首页', 'url' => ['/site/index'], 'controller' => 'site'],
+    ['label' => '首页', 'url' => ['/site/index'], 'controller' => 'site', 'action' => 'index'],
     ['label' => '届次', 'url' => ['/tournament/index'], 'controller' => 'tournament'],
     ['label' => '比赛', 'url' => ['/game/index'], 'controller' => 'game'],
     ['label' => '球队', 'url' => ['/team/index'], 'controller' => 'team'],
     ['label' => '球员', 'url' => ['/player/index'], 'controller' => 'player'],
     ['label' => '资讯', 'url' => ['/news/index'], 'controller' => 'news'],
+    ['label' => '团队', 'url' => ['/team-info/index'], 'controller' => 'team-info', 'action' => 'index'],
+    ['label' => '下载', 'url' => ['/team-info/downloads'], 'controller' => 'team-info', 'action' => 'downloads'],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -98,9 +101,8 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <ul class="nav navbar-nav navbar-right">
                     <?php foreach ($navItems as $item): ?>
                         <?php
-                        // 首页只在 site/index 高亮,登录/关于等页面不误亮“首页”。
                         $isActive = $controllerId === $item['controller']
-                            && ($item['controller'] !== 'site' || $actionId === 'index');
+                            && (!isset($item['action']) || $actionId === $item['action']);
                         ?>
                         <li<?= $isActive ? ' class="active"' : '' ?>>
                             <?= Html::a(Html::encode($item['label']), $item['url'], $isActive
@@ -149,7 +151,8 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">关于</p>
                     <ul>
-                        <li><?= Html::a('团队展示', Url::to(['/site/about'])) ?></li>
+                        <li><?= Html::a('团队展示', Url::to(['/team-info/index'])) ?></li>
+                        <li><?= Html::a('作业下载', Url::to(['/team-info/downloads'])) ?></li>
                         <li><?= Html::a('最新资讯', ['/news/index']) ?></li>
                     </ul>
                 </div>
