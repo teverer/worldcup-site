@@ -15,11 +15,21 @@ $this->title = $isTeam ? '球队目录' : '球员目录';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/catalog.css');
 $columns = [
-    ['attribute' => 'name', 'format' => 'raw', 'value' => function ($model) {
-        return Html::a(Html::encode($model->name), ['view', 'id' => $model->id]);
-    }],
+    [
+        'attribute' => 'name',
+        'format' => 'raw',
+        'headerOptions' => ['scope' => 'col'],
+        'value' => function ($model) {
+            return Html::a(Html::encode($model->name), ['view', 'id' => $model->id]);
+        },
+    ],
 ];
-$columns = array_merge($columns, $isTeam ? ['code', 'continent'] : ['nationality', 'position', 'birth_date']);
+$secondaryColumns = $isTeam
+    ? ['code', 'continent']
+    : ['nationality', 'position', 'birth_date'];
+foreach ($secondaryColumns as $attribute) {
+    $columns[] = ['attribute' => $attribute, 'headerOptions' => ['scope' => 'col']];
+}
 ?>
 <section class="catalog-page">
     <header class="catalog-heading">
@@ -29,9 +39,15 @@ $columns = array_merge($columns, $isTeam ? ['code', 'continent'] : ['nationality
     </header>
     <?= $this->render('_filters', ['searchModel' => $searchModel, 'teams' => $teams]) ?>
     <div class="table-responsive">
-    <?= GridView::widget(['dataProvider' => $dataProvider, 'columns' => $columns,
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => $columns,
+        'caption' => $this->title,
+        'captionOptions' => ['class' => 'sr-only'],
         'summary' => '共 {totalCount} 条记录，当前显示 {begin}–{end} 条',
-        'emptyText' => '暂无符合条件的数据，请调整筛选或稍后再来。',
-        'tableOptions' => ['class' => 'table table-hover catalog-table']]) ?>
+        'emptyText' => '<div class="empty-state"><h3>暂无符合条件的数据</h3><p>请调整筛选条件或稍后再来。</p></div>',
+        'tableOptions' => ['class' => 'table table-hover catalog-table'],
+        'pager' => ['prevPageLabel' => '上一页', 'nextPageLabel' => '下一页'],
+    ]) ?>
     </div>
 </section>

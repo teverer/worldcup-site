@@ -46,7 +46,6 @@
 - **编造比赛数据**;真实数据来源见 `docs/数据来源说明.md`
 - 把未经检查的子代理产出直接提交
 - 运行 `composer install/update/require`(`vendor/` 已提交);需要新库先问队长
-- 引入新的 CDN、npm / Node 构建链或外部字体;前端库一律放 `frontend/web/js/vendor/` 并提交(ECharts 已本地化)
 - 用 `git reset --hard`、`git checkout -- .` 丢弃改动;提交前用 `git status` 核对,按路径 `git add`
 - 手工对演示库执行临时 `UPDATE/INSERT/DELETE` 做数据修正;数据变更写进 `data/*.sql` 并保持幂等(测试可用临时库)
 
@@ -67,7 +66,7 @@
    */
   ```
 - 命名与格式见 `docs/编码规范与注释头模板.md`;UTF-8 无 BOM、LF、4 空格、PHP 文件结尾不加 `?>`
-- 图表配色只取 `theme.css` 令牌(绿 `#0E7C4A` / `#16A34A`、金 `#F2B705`、藏青 `#0B1F3A`、灰 `#6B7280` / `#9CA3AF`);不用 ECharts 默认色板,同一指标在不同图表里颜色一致
+- 图表配色优先取 `theme.css` 令牌(绿 `#0E7C4A` / `#16A34A`、金 `#F2B705`、藏青 `#0B1F3A`、灰 `#6B7280` / `#9CA3AF`);需要新色时先加到 `theme.css`,不用 ECharts 默认色板
 - 新页面或改版前先读 `docs/页面设计指南.md`(页面组织),视觉细节看 `docs/界面设计规范.md`
 
 ## 课程硬性要求

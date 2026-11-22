@@ -140,10 +140,6 @@ if ($decades) {
                                             <span class="honor-meta-label">亚军</span>
                                             <strong><?= Html::encode($final['runner_up']) ?></strong>
                                         </span>
-                                        <span class="honor-meta-item">
-                                            <span class="honor-meta-label">总进球</span>
-                                            <strong class="honor-meta-goals"><?= Html::encode((string) $edition['goals']) ?></strong>
-                                        </span>
                                     </p>
                                 <?php else: ?>
                                     <p class="honor-title">

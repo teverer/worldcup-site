@@ -1,6 +1,13 @@
 <?php
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261122
+ * 模块:界面设计 —— 前台站点入口与根页
+ */
 namespace frontend\controllers;
 
+use frontend\models\EditionWall;
+use frontend\models\HomeStats;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -68,13 +75,20 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * 根页:夜场记分牌墙。
      *
-     * @return mixed
+     * 一次取回全部届次与全站概览,视图只按固定结构渲染。
+     *
+     * @return string
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $wall = EditionWall::all();
+
+        return $this->render('index', [
+            'editions' => $wall['editions'],
+            'overview' => HomeStats::overview(),
+        ]);
     }
 
     /**
@@ -122,9 +136,9 @@ class SiteController extends Controller
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
-                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+                Yii::$app->session->setFlash('success', '感谢联系,我们会尽快回复。');
             } else {
-                Yii::$app->session->setFlash('error', 'There was an error sending your message.');
+                Yii::$app->session->setFlash('error', '消息发送失败,请稍后再试。');
             }
 
             return $this->refresh();
@@ -173,11 +187,11 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', '请查收邮件并按提示继续。');
 
                 return $this->goHome();
             } else {
-                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+                Yii::$app->session->setFlash('error', '无法为该邮箱重置密码,请确认邮箱是否正确。');
             }
         }
 
@@ -202,7 +216,7 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
+            Yii::$app->session->setFlash('success', '新密码已保存。');
 
             return $this->goHome();
         }
@@ -228,12 +242,12 @@ class SiteController extends Controller
         }
         if ($user = $model->verifyEmail()) {
             if (Yii::$app->user->login($user)) {
-                Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+                Yii::$app->session->setFlash('success', '邮箱验证成功!');
                 return $this->goHome();
             }
         }
 
-        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        Yii::$app->session->setFlash('error', '无法使用该链接验证账号。');
         return $this->goHome();
     }
 
@@ -247,10 +261,10 @@ class SiteController extends Controller
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', '请查收邮件并按提示继续。');
                 return $this->goHome();
             }
-            Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
+            Yii::$app->session->setFlash('error', '无法为该邮箱重发验证邮件。');
         }
 
         return $this->render('resendVerificationEmail', [
