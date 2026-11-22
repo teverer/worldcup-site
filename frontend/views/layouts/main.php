@@ -26,7 +26,7 @@ $this->registerCss(<<<'CSS'
 .site-header .navbar { margin-bottom: 0; }
 .site-header .site-brand { display: flex; align-items: center; gap: 8px; height: auto; padding-top: 10px; padding-bottom: 10px; }
 .site-main { padding-top: var(--space-5); padding-bottom: var(--space-6); }
-.site-brand-logo { flex: 0 0 auto; vertical-align: middle; }
+.site-brand-logo { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background-color: var(--color-primary); color: var(--color-accent); font-size: var(--fs-sm); font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
 .site-brand-text { display: inline-flex; flex-direction: column; vertical-align: middle; line-height: 1.2; }
 .site-brand-name { font-weight: 600; }
 .site-brand-sub { color: rgba(255, 255, 255, .72); font-size: 12px; letter-spacing: .04em; }
@@ -86,8 +86,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand site-brand" href="<?= Html::encode(Yii::$app->homeUrl) ?>">
-                    <span class="site-brand-logo" aria-hidden="true"
-                          style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-primary, #0e7c4a); color: var(--color-accent, #f2b705); font-weight: 700; font-size: 15px; letter-spacing: .5px;">WC</span>
+                    <span class="site-brand-logo" aria-hidden="true">WC</span>
                     <span class="site-brand-text">
                         <span class="site-brand-name">世界杯数据门户</span>
                         <span class="site-brand-sub">1986–2026</span>
@@ -149,7 +148,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">关于</p>
                     <ul>
-                        <li><?= Html::a('团队展示', Url::to(['/site/about'])) ?></li>
+                        <li><?= Html::a('关于本站', Url::to(['/site/about'])) ?></li>
                         <li><?= Html::a('最新资讯', ['/news/index']) ?></li>
                     </ul>
                 </div>
