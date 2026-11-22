@@ -18,7 +18,7 @@ $this->registerCssFile('@web/css/root-wall.css');
 $latestId = $editions !== [] ? (int) $editions[0]['id'] : null;
 $dataUrl = $latestId !== null
     ? Url::to(['/tournament/view', 'id' => $latestId]) . '#charts'
-    : Url::to(['/tournament/index']);
+    : Url::to(['/game/index']);
 ?>
 <div class="root-wall">
     <header class="wall-head">
@@ -77,6 +77,7 @@ $dataUrl = $latestId !== null
                     <span class="board-main">
                         <span class="board-name"><?= Html::encode($edition['name']) ?></span>
                         <span class="board-host">东道主 <?= Html::encode($edition['host']) ?></span>
+                        <span class="board-ordinal">第 <?= Html::encode((string) $edition['ordinal']) ?> 届</span>
                         <span class="board-final">
                             <?php if ($hasChampion): ?>
                                 <span>冠军 <strong class="board-champion"><?= Html::encode($final['champion']) ?></strong></span>

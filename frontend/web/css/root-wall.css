@@ -232,6 +232,14 @@ body.site-site-index {
     font-size: var(--fs-sm);
 }
 
+.board-ordinal {
+    display: block;
+    margin-top: 2px;
+    color: var(--steel);
+    font-size: var(--fs-xs);
+    letter-spacing: .04em;
+}
+
 .board-final {
     display: flex;
     flex-wrap: wrap;
