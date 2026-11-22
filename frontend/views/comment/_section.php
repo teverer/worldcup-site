@@ -32,7 +32,7 @@ $sectionId = 'comments-' . $targetType . '-' . $targetId;
     <?php if (Yii::$app->user->isGuest): ?>
         <div class="comment-login-prompt">
             <span>登录后可以发表留言、回复和点赞。</span>
-            <?= Html::a('前往登录', ['/site/login'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a('前往登录', ['/site/login'], ['class' => 'btn btn-primary']) ?>
         </div>
     <?php else: ?>
         <div class="comment-compose">

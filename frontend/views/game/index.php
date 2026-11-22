@@ -62,30 +62,36 @@ $statusClasses = [
         ]) ?>
     </div>
     <div class="form-group catalog-filter-actions">
-        <?= Html::submitButton('筛选', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
         <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
     </div>
     <?= Html::endForm() ?>
 
     <p class="game-summary">共 <?= (int) $dataProvider->totalCount ?> 场比赛</p>
 
-    <div class="table-responsive">
+    <div class="table-responsive game-table-responsive">
         <table class="table table-hover catalog-table game-table">
+            <caption class="sr-only">按届次、阶段与小组筛选后的世界杯比赛列表</caption>
             <thead>
             <tr>
-                <th>届次</th>
-                <th>阶段</th>
-                <th>对阵</th>
-                <th>比分</th>
-                <th>比赛时间</th>
-                <th>场地</th>
-                <th>状态</th>
+                <th scope="col">届次</th>
+                <th scope="col">阶段</th>
+                <th scope="col">对阵</th>
+                <th scope="col" class="num">比分</th>
+                <th scope="col">比赛时间</th>
+                <th scope="col">场地</th>
+                <th scope="col">状态</th>
             </tr>
             </thead>
             <tbody>
             <?php if (!$games): ?>
                 <tr>
-                    <td colspan="7" class="text-center text-muted">暂无符合条件的比赛，请调整筛选条件。</td>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <h3>暂无符合条件的比赛</h3>
+                            <p>调整筛选条件,或稍后再来。</p>
+                        </div>
+                    </td>
                 </tr>
             <?php endif ?>
             <?php foreach ($games as $game): ?>
@@ -131,7 +137,7 @@ $statusClasses = [
                             'id' => $game->away_team_id,
                         ]) ?>
                     </td>
-                    <td><?= Html::a(Html::encode($scoreText), ['view', 'id' => $game->id],
+                    <td class="num"><?= Html::a(Html::encode($scoreText), ['view', 'id' => $game->id],
                         ['class' => 'game-score']) ?></td>
                     <td><?= Html::encode($matchTime) ?></td>
                     <td><?= $game->venue !== null && $game->venue !== ''
