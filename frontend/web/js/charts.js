@@ -5,24 +5,20 @@
     'use strict';
 
     var INK = {
-        primary: '#0B1F3A',
-        secondary: '#4B5563',
-        muted: '#6B7280',
-        grid: '#E5E7EB',
-        axis: '#9CA3AF',
-        surface: '#FFFFFF'
+        primary: '#0B1A22',
+        secondary: '#33454C',
+        muted: '#5F6B66',
+        grid: '#D3DBD6',
+        axis: '#8A9AA1',
+        surface: '#F5F7F4'
     };
 
-    // 分类色取自主题设计令牌(绿 / 金 / 深蓝 / 灰),白底上保持足够区分度;
-    // 避免使用纯蓝紫,与门户整体绿色主视觉保持一致。
-    var CATEGORICAL = [
-        '#0E7C4A', '#16A34A', '#F2B705', '#0B1F3A',
-        '#6B7280', '#2F855A', '#B7791F', '#9CA3AF'
-    ];
-    var PRIMARY_SERIES = '#0E7C4A';
-    var HOVER_SERIES = '#16A34A';
-    var ACCENT_SERIES = '#F2B705';
-    var OTHER_COLOR = '#9CA3AF';
+    // 冷纸底六色:金只给第一名,其余用深绿到灰的五色;红不进入图表。
+    var TEAM_COLORS = ['#146B45', '#4F8A6B', '#7FC8A9', '#8A9AA1', '#33454C'];
+    var PRIMARY_SERIES = '#146B45';
+    var HOVER_SERIES = '#0E3B2E';
+    var ACCENT_SERIES = '#C9A227';
+    var OTHER_COLOR = '#8A9AA1';
 
     var chartInstances = {};
     var resizeTimer = null;
@@ -330,6 +326,7 @@
                     emphasis: { itemStyle: { color: HOVER_SERIES } }
                 }]
             }, true);
+            chart.resize();
         }
 
         function selectGroup(name) {
@@ -394,8 +391,8 @@
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
         });
-        // 射手榜前三名使用金色强调,其余使用主题绿色。
-        var topThreeFrom = Math.max(0, chartRows.length - 3);
+        // 只有射手榜第一名使用金色,其余使用深绿。
+        var leaderIndex = chartRows.length - 1;
 
         var chart = initChart(byId('chart-scorers'));
         if (!chart) {
@@ -450,9 +447,9 @@
                 barMaxWidth: 18,
                 itemStyle: {
                     color: function (params) {
-                        return params.dataIndex >= topThreeFrom ? ACCENT_SERIES : PRIMARY_SERIES;
+                        return params.dataIndex === leaderIndex ? ACCENT_SERIES : PRIMARY_SERIES;
                     },
-                    borderRadius: [0, 4, 4, 0]
+                    borderRadius: [0, 2, 2, 0]
                 },
                 label: {
                     show: true,
@@ -464,6 +461,7 @@
                 emphasis: { itemStyle: { color: HOVER_SERIES } }
             }]
         });
+        chart.resize();
     }
 
     function renderTeamGoals(data) {
@@ -513,7 +511,12 @@
 
         pieData.forEach(function (item, index) {
             if (!item.itemStyle) {
-                item.itemStyle = { color: CATEGORICAL[index % CATEGORICAL.length] };
+                item.itemStyle = {
+                    // 进球最多的球队用金色,其余按深绿到灰的五色循环。
+                    color: index === 0
+                        ? ACCENT_SERIES
+                        : TEAM_COLORS[(index - 1) % TEAM_COLORS.length]
+                };
             }
         });
 
@@ -589,6 +592,7 @@
                 data: pieData
             }]
         });
+        chart.resize();
     }
 
     function resizeAll() {
@@ -605,11 +609,18 @@
         resizeTimer = window.setTimeout(resizeAll, 150);
     });
 
+    var chartsInitialized = false;
+
+    function isVisible(element) {
+        return !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+    }
+
     function init() {
         var root = byId('charts-panel');
-        if (!root) {
+        if (!root || chartsInitialized || !isVisible(root)) {
             return;
         }
+        chartsInitialized = true;
 
         var containers = root.querySelectorAll('[data-chart]');
         if (!hasEcharts() || window.__echartsLoadFailed) {
@@ -659,6 +670,15 @@
             failChart('chart-team-goals', 'table-team-goals', '各队进球分布加载失败，请稍后重试。');
         });
     }
+
+    // 统计面板默认隐藏;tab 切到 #charts 后由页面脚本派发事件,再懒加载图表。
+    window.addEventListener('worldcup:charts-shown', function () {
+        if (!chartsInitialized) {
+            init();
+        } else {
+            window.setTimeout(resizeAll, 60);
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
