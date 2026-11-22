@@ -24,12 +24,16 @@ $this->registerCssFile('@web/css/theme.css', ['depends' => [\yii\bootstrap\Boots
 // 布局专用的少量排布样式;颜色、间距、圆角全部复用 theme.css 的设计令牌。
 $this->registerCss(<<<'CSS'
 .site-header .navbar { margin-bottom: 0; }
-.site-header .site-brand { display: flex; align-items: center; gap: 8px; height: auto; padding-top: 10px; padding-bottom: 10px; }
+.site-header .site-brand { display: flex; align-items: center; height: auto; padding: 10px 16px 10px 12px; border-left: 2px solid var(--gold); }
+@media (max-width: 767px) {
+    .site-header .navbar > .container { padding-left: var(--space-2); padding-right: var(--space-2); }
+    .site-header .navbar-header { margin-left: 0; margin-right: 0; }
+    .site-header .navbar-toggle { margin-right: 0; }
+}
 .site-main { padding-top: var(--space-5); padding-bottom: var(--space-6); }
-.site-brand-logo { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background-color: var(--color-primary); color: var(--color-accent); font-size: var(--fs-sm); font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
-.site-brand-text { display: inline-flex; flex-direction: column; vertical-align: middle; line-height: 1.2; }
-.site-brand-name { font-weight: 600; }
-.site-brand-sub { color: rgba(255, 255, 255, .72); font-size: 12px; letter-spacing: .04em; }
+.site-brand-text { display: inline-flex; flex-direction: column; line-height: 1.2; }
+.site-brand-name { font-weight: 700; letter-spacing: .02em; }
+.site-brand-sub { color: rgba(243, 246, 242, .55); font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: .12em; }
 .site-footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-5); }
 .site-footer-brand { flex: 0 1 34rem; max-width: 34rem; }
 .site-footer-name { color: var(--color-text); font-size: var(--fs-lg); font-weight: 600; }
@@ -51,12 +55,11 @@ $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
 $actionId = Yii::$app->controller !== null && Yii::$app->controller->action !== null
     ? Yii::$app->controller->action->id : '';
 $navItems = [
-    ['label' => '首页', 'url' => ['/site/index'], 'controller' => 'site'],
-    ['label' => '届次', 'url' => ['/tournament/index'], 'controller' => 'tournament'],
-    ['label' => '比赛', 'url' => ['/game/index'], 'controller' => 'game'],
-    ['label' => '球队', 'url' => ['/team/index'], 'controller' => 'team'],
-    ['label' => '球员', 'url' => ['/player/index'], 'controller' => 'player'],
-    ['label' => '资讯', 'url' => ['/news/index'], 'controller' => 'news'],
+    ['label' => '届次', 'url' => ['/site/index'], 'controllers' => ['site', 'tournament'], 'siteIndexOnly' => true],
+    ['label' => '比赛', 'url' => ['/game/index'], 'controllers' => ['game']],
+    ['label' => '球队', 'url' => ['/team/index'], 'controllers' => ['team']],
+    ['label' => '球员', 'url' => ['/player/index'], 'controllers' => ['player']],
+    ['label' => '资讯', 'url' => ['/news/index'], 'controllers' => ['news']],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -74,6 +77,8 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
 <body class="site-body site-<?= Html::encode($controllerId) ?> site-<?= Html::encode($controllerId) ?>-<?= Html::encode($actionId) ?>">
 <?php $this->beginBody() ?>
 
+<a class="skip-link" href="#main-content">跳到主要内容</a>
+
 <header class="site-header">
     <nav class="navbar navbar-inverse site-nav" aria-label="主导航">
         <div class="container">
@@ -86,10 +91,9 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand site-brand" href="<?= Html::encode(Yii::$app->homeUrl) ?>">
-                    <span class="site-brand-logo" aria-hidden="true">WC</span>
                     <span class="site-brand-text">
                         <span class="site-brand-name">世界杯数据门户</span>
-                        <span class="site-brand-sub">1986–2026</span>
+                        <span class="site-brand-sub">1986—2026</span>
                     </span>
                 </a>
             </div>
@@ -97,9 +101,11 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <ul class="nav navbar-nav navbar-right">
                     <?php foreach ($navItems as $item): ?>
                         <?php
-                        // 首页只在 site/index 高亮,登录/关于等页面不误亮“首页”。
-                        $isActive = $controllerId === $item['controller']
-                            && ($item['controller'] !== 'site' || $actionId === 'index');
+                        // “届次”在根页与届次详情页保持高亮；登录/关于等 site 页面不误亮。
+                        $isActive = in_array($controllerId, $item['controllers'], true);
+                        if ($isActive && !empty($item['siteIndexOnly']) && $controllerId === 'site') {
+                            $isActive = $actionId === 'index';
+                        }
                         ?>
                         <li<?= $isActive ? ' class="active"' : '' ?>>
                             <?= Html::a(Html::encode($item['label']), $item['url'], $isActive
@@ -116,7 +122,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
 <main class="site-main" id="main-content">
     <div class="container">
         <?= Breadcrumbs::widget([
-            'homeLink' => ['label' => '首页', 'url' => Yii::$app->homeUrl],
+            'homeLink' => ['label' => '档案', 'url' => Yii::$app->homeUrl],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
@@ -129,7 +135,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
         <div class="site-footer-inner">
             <div class="site-footer-brand">
                 <p class="site-footer-name">世界杯数据门户</p>
-                <p class="site-footer-intro">收录 1986–2026 年十一届世界杯的届次、球队、球员、比赛与进球数据,用数据回看绿茵经典。</p>
+                <p class="site-footer-intro">收录 1986–2026 年十一届世界杯的届次、球队、球员、比赛与进球数据，用数据回看绿茵经典。</p>
             </div>
             <div class="site-footer-links">
                 <div class="site-footer-col">

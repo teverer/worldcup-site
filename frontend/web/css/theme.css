@@ -7,6 +7,26 @@
    前台 Hero、卡片层级参考 Start Bootstrap 的 BS3 模板,均以本项目变量重写。 */
 
 /* ==========================================================================
+   0. 自托管字体
+   ========================================================================== */
+/* Saira Condensed · OFL 许可 · 拉丁子集,仅用于年份 / 比分 / 数字。 */
+@font-face {
+    font-family: "Saira Condensed";
+    src: url("../fonts/SairaCondensed-600.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Saira Condensed";
+    src: url("../fonts/SairaCondensed-700.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* ==========================================================================
    1. 设计令牌(CSS 变量)
    ========================================================================== */
 :root {
@@ -70,6 +90,31 @@
     --focus-ring: 0 0 0 3px rgba(22, 163, 74, .30);
     --color-primary-soft: rgba(14, 124, 74, .10);
     --color-accent-soft: rgba(242, 183, 5, .16);
+
+    /* 设计改造 2026-11 · 夜场记分牌
+       深色只给入口 / 身份 / 纪录,浅色留给数据与长文。 */
+    --night: #071A26;
+    --night-2: #0C2431;
+    --pitch: #0E3B2E;
+    --pitch-2: #14523E;
+    --paper: #E9EDE9;
+    --paper-2: #F5F7F4;
+    --flood: #F3F6F2;
+    --ink: #0B1A22;
+    --ink-2: #33454C;
+    --muted: #5F6B66;
+    --steel: #8A9AA1;
+    --line: #D3DBD6;
+    --line-dark: rgba(243, 246, 242, .14);
+    --red: #C8102E;
+    --red-bright: #FF5A5F;
+    --gold: #C9A227;
+    --gold-light: #E8C766;
+    --gold-ink: #8A6500;
+    --green-action: #146B45;
+    --green-light: #7FC8A9;
+    --danger: #B3261E;
+    --font-display: "Saira Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
 }
 
 /* ==========================================================================
@@ -156,6 +201,25 @@ summary:focus-visible,
 [tabindex]:focus-visible {
     outline: 3px solid rgba(22, 163, 74, .45);
     outline-offset: 2px;
+}
+
+/* 键盘用户跳过导航直达正文 */
+.skip-link {
+    position: absolute;
+    top: -48px;
+    left: 16px;
+    z-index: 1100;
+    padding: 8px 14px;
+    background-color: var(--gold);
+    color: var(--night);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 8px;
+    color: var(--night);
+    text-decoration: none;
 }
 
 ::selection {
