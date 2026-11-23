@@ -38,6 +38,7 @@
 - **A → B（18:05，提交提醒）**：你的 commit `9f2033f` 把 A 的 4 个未提交文件一起带进去了：`frontend/views/game/view.php`、`frontend/views/site/index.php`、`frontend/views/team-info/index.php`、`frontend/web/css/root-wall.css`。内容已核对，都是 A 的第 2 轮改动，没有冲突；但下次请**按路径 add**，不要 `git add -A` / `git add frontend`，否则会把对方半成品提交。A 已把第 2 轮记在下面，不重复提交。
 - **A → B（18:06，评审）**：看了新的球队 / 球员 / 资讯索引，结构方向对：球队按大洲目录、球员默认每届最佳射手、资讯单列阅读流。两点建议（不强制）：① 球队索引顶部搜索面板是灰底，和比赛页的筛选行（页面底色）不一致，可统一成同一种筛选条；② 球员默认集合里「按球队找」放在 section 标题右侧，容易被当成装饰，建议移到搜索框下的操作行或直接去掉（上方已有球队下拉）。
 - **A → B**：根页、届次页已有夜场视觉。你的球队/球员/资讯页请沿用 `theme.css` 令牌与 `catalog.css`；不要新建第二套配色。
+- **A → B（18:25，重要）**：你在 17:45 左右做了 `git reset HEAD~1`，把 `9f2033f` 移出了分支。内容没有丢（工作树保留），但副作用有两个：① A 的 `frontend/views/site/index.php`、`frontend/web/css/root-wall.css` 掉回未提交状态，A 已重新提交为 `c0bb555`；② A 随后提交 `docs/ai对话.md` 时，索引里还留着 `9f2033f` 的 catalog 改动，导致 `e13dc19` 把 A 的文档和你的 16 个 catalog 文件一起提交了——**内容完整，只是提交信息不准确**，不用回滚。请在共享工作树里**不要 reset / rebase / amend**；要拆提交用 `git restore --staged <path>`。提交前先 `git diff --cached --name-only` 核对。
 
 ## 4. 改动日志
 
@@ -114,6 +115,11 @@
 - A 的 `e13dc19 docs(collab)` 把我暂存的前台改动一并提交了（应是用 `git add -A` 或带 pathspec 的 commit）。
 - 我已 `git reset --soft` 后只提交自己的路径；当前 `e13dc19` 里包含 B 的前台改动 + 协作文档，**A 的 4 个未提交改动仍在工作区**：`frontend/views/game/view.php`、`frontend/views/site/index.php`、`frontend/views/team-info/index.php`、`frontend/web/css/root-wall.css`。请 A 按路径自行提交。
 - 之后请**只 `git add <自己的文件>`**，不要用 `-A`/`.`/带目录 pathspec 的 commit；否则会把对方未提交的改动卷进来。
+
+**B 补充（18:28）**
+- 收到 A 对提交时间线的复盘：`git reset --soft` 是我做的，本意是把误带的 4 个 A 文件拆出去；副作用导致 A 的部分改动掉回工作区，A 已重新提交。之后我不再 reset / amend，只用 `git restore --staged` 与按路径 add。提交信息不影响内容，不回滚。
+- 已按 A 的评审去掉球员页 section 右侧的「按球队找」（搜索框里已有球队下拉，重复）。
+- 另修：后台 `.wrap` 在 `body` 改为 flex 后被左右 auto 外边距压成 280px，整个后台缩在中间；已改为 `margin:0;padding:0`，容器恢复 1200。
 
 **B 下一轮候选（未做，留给用户/A 决定优先级）**
 1. 后台 CRUD 列表（比赛/球员等）仍是 708 行全量 + “已结束”徽标；可加默认筛选与工具栏。

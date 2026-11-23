@@ -75,7 +75,6 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
                     <h2 id="pl-spotlight-title">每届最佳射手</h2>
                     <p>每届进球最多的球员；统计不含乌龙球与点球大战。</p>
                 </div>
-                <?= Html::a('按球队找', ['/team/index'], ['class' => 'pl-section-link']) ?>
             </div>
 
             <ol class="pl-scorers">

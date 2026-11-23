@@ -3,11 +3,13 @@ body {
     height: 100%;
 }
 
+/* body 已改为纵向 flex（theme.css），这里不能再给左右 auto 外边距，
+   否则 .wrap 会被压成内容宽度、整页缩在中间。 */
 .wrap {
     min-height: 100%;
     height: auto;
-    margin: 0 auto -60px;
-    padding: 0 0 60px;
+    margin: 0;
+    padding: 0;
 }
 
 .wrap > .container {
