@@ -386,6 +386,15 @@
     font-size: 14px;
 }
 
+/* 球队目录的大洲跳转:一行锚点,不抢搜索的主操作。 */
+.ti-jump-label {
+    align-self: center;
+    margin-right: 4px;
+    color: var(--color-muted-strong);
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+
 .ti-group {
     margin-top: var(--space-4);
 }
@@ -742,14 +751,49 @@
     }
 }
 
+/* 移动端资料表不再沿用 560px 最小宽:先删列,再让表铺满容器。 */
+@media (max-width: 767px) {
+    /* 提高一级特异性:theme.css 在页面 CSS 之后加载,同权重会盖掉这里的覆盖。 */
+    body .table-responsive > .table.catalog-table,
+    body .table-responsive > .table.td-table,
+    body .table-responsive > .table.pl-table,
+    body .table-responsive > .table.pd-table {
+        min-width: 100%;
+    }
+}
+
 /* 移动端删信息而不是缩小:名单/球员结果只保留阅读所需的列 */
 @media (max-width: 600px) {
+    .pd-section-head {
+        display: block;
+    }
+
+    .pd-section-head > p {
+        margin-top: 4px;
+    }
+
+    .td-records th,
+    .td-records td,
+    .pd-table--history th,
+    .pd-table--history td {
+        padding: 8px 6px;
+        font-size: 13.5px;
+    }
+
+    /* 球队历届战绩:场次对读者价值最低,手机收起 */
+    .td-records th:nth-child(3),
+    .td-records td:nth-child(3) {
+        display: none;
+    }
+
     .td-table th:nth-child(3),
     .td-table td:nth-child(3),
     .pl-table th:nth-child(4),
     .pl-table td:nth-child(4),
     .pd-table--history th:nth-child(3),
-    .pd-table--history td:nth-child(3) {
+    .pd-table--history td:nth-child(3),
+    .pd-table--history th:nth-child(4),
+    .pd-table--history td:nth-child(4) {
         display: none;
     }
 }
