@@ -131,14 +131,16 @@ if ($statusValue === Game::STATUS_PENDING) {
 
     <section class="game-section" aria-labelledby="game-goals-title">
         <div class="game-section-head">
-            <h2 id="game-goals-title">进球时间线</h2>
+            <h2 id="game-goals-title"><?= $regularGoalCount > 0 ? '进球时间线' : ($shootoutGoalCount > 0 ? '点球大战' : '进球时间线') ?></h2>
             <?php if ($regularGoalCount > 0 || $shootoutGoalCount > 0): ?>
                 <p>
                     <?php if ($regularGoalCount > 0): ?>
                         共 <?= $regularGoalCount ?> 个进球，按分钟排列。
-                    <?php endif ?>
-                    <?php if ($shootoutGoalCount > 0): ?>
-                        点球大战另记 <?= $shootoutGoalCount ?> 罚。
+                        <?php if ($shootoutGoalCount > 0): ?>
+                            点球大战另记 <?= $shootoutGoalCount ?> 罚。
+                        <?php endif ?>
+                    <?php elseif ($shootoutGoalCount > 0): ?>
+                        共 <?= $shootoutGoalCount ?> 罚，仅记录命中。
                     <?php endif ?>
                 </p>
             <?php endif ?>
