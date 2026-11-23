@@ -36,6 +36,28 @@
 - 网络:git 代理 `127.0.0.1:7897`;只读应急镜像 `https://ghproxy.net/https://github.com/...`
 - Chrome:`C:\Program Files\Google\Chrome\Application\chrome.exe`(无头截图)
 
+## GitHub 连接与推送
+
+- remote:`origin` → `https://github.com/teverer/worldcup-site.git`
+- 认证:Git Credential Manager(`git config --get credential.helper` 返回 `manager`)。首次可能弹浏览器授权一次,之后由系统凭据管理器保存;**仓库里没有任何 token 或密码**。
+- 代理:git 全局配置 `http.proxy` / `https.proxy` 为 `http://127.0.0.1:7897`(Clash)。推送前确认代理已开启,否则会报 `Failed to connect to 127.0.0.1 port 7897`。
+- 标准推送流程:
+  ```bash
+  git status                 # 先看改了哪些文件
+  git add <文件路径>          # 按路径添加,不用 -A
+  git commit -m "type(scope): 说明"
+  git push origin <当前分支>
+  git status -sb             # 确认与远端同步
+  ```
+- 代理抖动或 TLS 报错时,依次尝试:
+  1. 等几秒重试一次;
+  2. 绕过代理直连:`git -c http.proxy= -c https.proxy= push origin <分支>`;
+  3. 在 Clash 里换节点后再试。
+- 只读应急(代理不可用、只想看远端):
+  `git -c http.proxy= -c https.proxy= ls-remote --heads https://ghproxy.net/https://github.com/teverer/worldcup-site.git`
+  镜像**只用于读**,不要用它 push——凭据会发给第三方。
+- 分支:`feature/xxx`、`fix/xxx`;先合 `dev`,`main` 只由队长合;禁止 `push --force`。
+
 ## 绝对不能做
 
 - 提交 `*-local.php`、`runtime/`、`web/assets/`
