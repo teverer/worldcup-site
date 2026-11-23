@@ -81,7 +81,7 @@ $metaParts = array_filter([$model->nationality, $model->position, $model->birth_
             </div>
         <?php else: ?>
             <div class="table-responsive">
-                <table class="table pd-table">
+                <table class="table pd-table pd-table--history">
                     <caption class="sr-only">球员历届参赛球队、号码和位置</caption>
                     <thead>
                         <tr>
@@ -117,7 +117,7 @@ $metaParts = array_filter([$model->nationality, $model->position, $model->birth_
             </div>
         <?php else: ?>
             <div class="table-responsive">
-                <table class="table pd-table">
+                <table class="table pd-table pd-table--stats">
                     <caption class="sr-only">球员各届进球与助攻统计</caption>
                     <thead>
                         <tr>

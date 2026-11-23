@@ -715,3 +715,15 @@
         font-size: var(--fs-2xl);
     }
 }
+
+/* 移动端删信息而不是缩小:名单/球员结果只保留阅读所需的列 */
+@media (max-width: 600px) {
+    .td-table th:nth-child(3),
+    .td-table td:nth-child(3),
+    .pl-table th:nth-child(4),
+    .pl-table td:nth-child(4),
+    .pd-table--history th:nth-child(3),
+    .pd-table--history td:nth-child(3) {
+        display: none;
+    }
+}
