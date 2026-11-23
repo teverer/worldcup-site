@@ -62,12 +62,24 @@ foreach ($statistics as $row) {
 }
 krsort($career);
 $showingChineseName = $model->hasChineseName() && !Player::prefersOriginalName();
+// 两种显示模式都保留另一种姓名,避免切到原名后认不出中文名。
+$nameContext = null;
+if ($model->hasChineseName()) {
+    $nameContext = $showingChineseName
+        ? '原名 ' . $model->name
+        : '中文名 ' . $model->name_zh;
+}
 $metaParts = array_filter([
-    $showingChineseName ? '原名 ' . $model->name : null,
+    $nameContext,
     $model->nationality,
     $model->position,
     $model->birth_date,
 ]);
+$nameToggleUrl = [
+    '/preference/name-lang',
+    'lang' => $showingChineseName ? 'orig' : 'zh',
+    'return' => Yii::$app->request->url,
+];
 ?>
 <article class="catalog-page player-detail">
     <header class="pd-head">
@@ -78,6 +90,13 @@ $metaParts = array_filter([
             <div>
                 <h1><?= Html::encode($model->displayName()) ?></h1>
                 <p class="pd-meta"><?= Html::encode($metaParts ? implode(' · ', $metaParts) : '资料待补') ?></p>
+                <?php if ($model->hasChineseName()): ?>
+                    <?= Html::a(
+                        $showingChineseName ? '显示原名' : '显示中文名',
+                        $nameToggleUrl,
+                        ['class' => 'pd-name-toggle']
+                    ) ?>
+                <?php endif ?>
             </div>
         </div>
         <div class="pd-actions">

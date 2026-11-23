@@ -650,6 +650,13 @@
     font-size: var(--fs-sm);
 }
 
+.pd-name-toggle {
+    display: inline-block;
+    margin-top: 2px;
+    color: var(--color-primary);
+    font-size: 13px;
+}
+
 .pd-actions {
     flex: 0 0 auto;
 }
