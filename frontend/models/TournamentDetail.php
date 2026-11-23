@@ -7,12 +7,14 @@
  * 一次性准备届次详情页所需的全部数据:冠军/亚军/季军、决赛、淘汰赛对阵图、
  * 小组积分榜、赛事统计与冠军晋级路径。视图只负责渲染,不再做业务计算。
  *
- * 查询策略:参赛队、比赛、进球、留言统计各用一条批量查询(比赛与球队、
- * 进球与球员/球队通过 JOIN 一次取回),本类固定 4 条数据查询,不存在 N+1。
+ * 查询策略:参赛队、比赛、进球、比赛留言统计、本届讨论总数各用一条查询
+ * (比赛与球队、进球与球员/球队通过 JOIN 一次取回),本类固定 5 条数据查询,
+ * 不存在 N+1。
  */
 
 namespace frontend\models;
 
+use common\components\CommentTarget;
 use common\models\Game;
 use common\models\Tournament;
 use yii\db\Expression;
@@ -66,6 +68,8 @@ class TournamentDetail
         $goals = self::loadGoals($tournamentId);
         // 4) 本场留言数批量统计(1 条 GROUP BY 查询)。
         $commentCounts = self::loadCommentCounts(array_column($games, 'id'));
+        // 5) 本届讨论总数,用于舞台 tab 右侧的评论数(1 条 COUNT 查询)。
+        $commentCount = self::loadTournamentCommentCount($tournamentId);
 
         $gameStatusById = [];
         $gamesByStage = [];
@@ -169,6 +173,7 @@ class TournamentDetail
             'third_place_match' => $thirdPlaceMatch,
             'groups' => $groups,
             'stats' => $stats,
+            'comment_count' => $commentCount,
             'champion_path' => self::buildChampionPath($games, $championTeamId),
         ];
     }
@@ -633,6 +638,7 @@ class TournamentDetail
                 'goal_difference' => 0,
                 'points' => 0,
                 'qualified' => false,
+                'qualification' => null,
             ];
             $teamGroup[$teamId] = $groupName;
         }
@@ -684,6 +690,7 @@ class TournamentDetail
             usort($rows, [self::class, 'compareGroupRows']);
             foreach ($rows as $index => $row) {
                 $rows[$index]['qualified'] = $index < 2;
+                $rows[$index]['qualification'] = $index < 2 ? 'top2' : null;
             }
             $groupRows[$groupName] = $rows;
         }
@@ -713,6 +720,7 @@ class TournamentDetail
             for ($i = 0; $i < $take; $i++) {
                 $groupName = $thirdCandidates[$i]['group'];
                 $groupRows[$groupName][2]['qualified'] = true;
+                $groupRows[$groupName][2]['qualification'] = 'best_third';
             }
         }
 
@@ -821,6 +829,24 @@ class TournamentDetail
             'avg_goals' => $matchCount > 0 ? round($goalCount / $matchCount, 2) : 0,
             'top_scorer' => $topScorer,
         ];
+    }
+
+    /**
+     * 统计本届讨论总数,用于舞台 tab 右侧的评论数。
+     *
+     * @param int $tournamentId
+     * @return int
+     */
+    private static function loadTournamentCommentCount($tournamentId)
+    {
+        return (int) (new Query())
+            ->from('{{%comment}}')
+            ->where([
+                'target_type' => CommentTarget::TOURNAMENT,
+                'target_id' => $tournamentId,
+                'status' => 0,
+            ])
+            ->count();
     }
 
     /**

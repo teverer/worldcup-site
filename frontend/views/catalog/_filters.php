@@ -35,7 +35,7 @@ use yii\helpers\Html;
 </div>
 <?php endif ?>
 <div class="form-group catalog-filter-actions">
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-success']) ?>
+    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
     <?= Html::a('重置', ['/' . $this->context->id . '/index'], ['class' => 'btn btn-default']) ?>
 </div>
 <?= Html::endForm() ?>

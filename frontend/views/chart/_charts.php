@@ -50,12 +50,6 @@ $this->registerJsFile('@web/js/charts.js', [
          data-standings-url="<?= Html::encode(Url::to(['/chart/standings'])) ?>"
          data-scorers-url="<?= Html::encode(Url::to(['/chart/scorers'])) ?>"
          data-team-goals-url="<?= Html::encode(Url::to(['/chart/team-goals'])) ?>">
-    <header class="charts-heading">
-        <p class="charts-kicker">模块③ · 届次与比赛</p>
-        <h2>赛事数据可视化</h2>
-        <p>积分榜只统计已结束的小组赛；射手榜排除乌龙球与点球大战进球，各队进球分布按进球归属球队统计。</p>
-    </header>
-
     <div class="chart-grid">
         <article class="chart-card chart-card--wide">
             <div class="chart-card-head chart-card-head--standings">
@@ -99,7 +93,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">按 goal.team_id 统计；乌龙球已计入受益球队，点球大战进球已排除。</p>
+                <p class="chart-caption">按进球归属球队统计；乌龙球已计入受益球队，点球大战进球已排除。</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--pie"
                  data-chart="team-goals" role="img" aria-label="各队进球分布饼图">

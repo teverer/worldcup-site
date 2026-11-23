@@ -29,29 +29,43 @@ $this->registerCssFile('@web/css/catalog.css');
         <div><dt>参赛届数</dt><dd><?= count($participations) ?></dd></div>
     </dl>
     <p class="text-muted">统计以已录入且已结束的比赛为准，不含乌龙球与点球大战。</p>
-    <h2>球员介绍</h2>
-    <p class="catalog-intro"><?= $model->intro ? nl2br(Html::encode($model->intro)) : '暂无球员介绍。' ?></p>
-    <h2>世界杯参赛经历</h2>
-    <?php if (!$participations): ?><p>尚未录入参赛经历。</p><?php else: ?>
+    <?php if ($model->intro): ?>
+        <h2 class="section-title">球员介绍</h2>
+        <p class="catalog-intro"><?= nl2br(Html::encode($model->intro)) ?></p>
+    <?php endif ?>
+    <h2 class="section-title">世界杯参赛经历</h2>
+    <?php if (!$participations): ?>
+        <div class="empty-state">
+            <h3>暂无参赛经历</h3>
+            <p>该球员的世界杯参赛记录尚未录入,稍后再来。</p>
+        </div>
+    <?php else: ?>
     <div class="table-responsive"><table class="table catalog-table">
         <caption class="sr-only">球员历届参赛球队、号码和位置</caption>
-        <thead><tr><th scope="col">届次</th><th scope="col">代表球队</th><th scope="col">球衣号</th><th scope="col">位置</th></tr></thead>
+        <thead><tr><th scope="col">届次</th><th scope="col">代表球队</th><th scope="col" class="num">球衣号</th><th scope="col">位置</th></tr></thead>
         <tbody><?php foreach ($participations as $row): ?><tr>
             <td><?= Html::encode($row['name']) ?></td>
             <td><?= Html::a(Html::encode($row['team_name']), ['/team/view', 'id' => $row['team_id']]) ?></td>
-            <td><?= Html::encode($row['shirt_number'] ?? '—') ?></td>
+            <td class="num"><?= Html::encode($row['shirt_number'] ?? '—') ?></td>
             <td><?= Html::encode($row['position'] ?: ($model->position ?: '—')) ?></td>
         </tr><?php endforeach ?></tbody>
-    </table></div><?php endif ?>
-    <h2>各届进球与助攻</h2>
-    <?php if (!$statistics): ?><p>暂无进球或助攻记录。</p><?php else: ?>
+    </table></div>
+    <?php endif ?>
+    <h2 class="section-title">各届进球与助攻</h2>
+    <?php if (!$statistics): ?>
+        <div class="empty-state">
+            <h3>暂无进球或助攻记录</h3>
+            <p>统计以已结束比赛为准,不含乌龙球与点球大战。</p>
+        </div>
+    <?php else: ?>
     <div class="table-responsive"><table class="table catalog-table">
         <caption class="sr-only">球员各届进球与助攻统计</caption>
-        <thead><tr><th scope="col">年份</th><th scope="col">进球</th><th scope="col">助攻</th></tr></thead>
+        <thead><tr><th scope="col">年份</th><th scope="col" class="num">进球</th><th scope="col" class="num">助攻</th></tr></thead>
         <tbody><?php foreach ($statistics as $row): ?><tr>
-            <td><?= (int) $row['year'] ?></td><td><?= (int) $row['goals'] ?></td><td><?= (int) $row['assists'] ?></td>
+            <td><?= (int) $row['year'] ?></td><td class="num"><?= (int) $row['goals'] ?></td><td class="num"><?= (int) $row['assists'] ?></td>
         </tr><?php endforeach ?></tbody>
-    </table></div><?php endif ?>
+    </table></div>
+    <?php endif ?>
 </article>
 
 <?= CommentSection::widget([

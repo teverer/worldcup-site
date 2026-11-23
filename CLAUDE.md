@@ -20,7 +20,7 @@
 5. 合入 `dev`,队长定期合 `main`
 6. 多会话并行时,先声明你要改哪些文件,避免两个会话改同一处
 7. 改了 CSS 但页面没变化:删除 `frontend/web/assets/` 下的哈希目录,刷新重新发布
-8. UI 完成定义:`php -l` 通过 + `curl` 200 + 在 390 / 768 / 1440 三档宽度实际查看 + 对照 `docs/界面设计规范.md` 第 1–6 节
+8. UI 完成定义:`php -l` 通过 + `curl` 200 + 在 390 / 768 / 1440 三档宽度实际查看 + 对照 `docs/界面设计规范.md` §0–1 与总纲 §11
 
 ## 本地环境
 
@@ -35,7 +35,28 @@
 - 截图与备份:`runtime/qa/`、`runtime/backup/`(已 gitignore)
 - 网络:git 代理 `127.0.0.1:7897`;只读应急镜像 `https://ghproxy.net/https://github.com/...`
 - Chrome:`C:\Program Files\Google\Chrome\Application\chrome.exe`(无头截图)
-- 设计参考:`E:\aaawendang\references\modern-web-guidance`
+
+## GitHub 连接与推送
+
+- remote:`origin` → `https://github.com/teverer/worldcup-site.git`
+- 认证:Git Credential Manager(`git config --get credential.helper` 返回 `manager`)。首次可能弹浏览器授权一次,之后由系统凭据管理器保存;**仓库里没有任何 token 或密码**。
+- 代理:git 全局配置 `http.proxy` / `https.proxy` 为 `http://127.0.0.1:7897`(Clash)。推送前确认代理已开启,否则会报 `Failed to connect to 127.0.0.1 port 7897`。
+- 标准推送流程:
+  ```bash
+  git status                 # 先看改了哪些文件
+  git add <文件路径>          # 按路径添加,不用 -A
+  git commit -m "type(scope): 说明"
+  git push origin <当前分支>
+  git status -sb             # 确认与远端同步
+  ```
+- 代理抖动或 TLS 报错时,依次尝试:
+  1. 等几秒重试一次;
+  2. 绕过代理直连:`git -c http.proxy= -c https.proxy= push origin <分支>`;
+  3. 在 Clash 里换节点后再试。
+- 只读应急(代理不可用、只想看远端):
+  `git -c http.proxy= -c https.proxy= ls-remote --heads https://ghproxy.net/https://github.com/teverer/worldcup-site.git`
+  镜像**只用于读**,不要用它 push——凭据会发给第三方。
+- 分支:`feature/xxx`、`fix/xxx`;先合 `dev`,`main` 只由队长合;禁止 `push --force`。
 
 ## 绝对不能做
 
@@ -45,15 +66,12 @@
 - 在视图/控制器里拼接 SQL 字符串;必须用 AR / QueryBuilder 参数绑定
 - **编造比赛数据**;真实数据来源见 `docs/数据来源说明.md`
 - 把未经检查的子代理产出直接提交
-- 运行 `composer install/update/require`(`vendor/` 已提交);需要新库先问队长
-- 引入新的 CDN、npm / Node 构建链或外部字体;前端库一律放 `frontend/web/js/vendor/` 并提交(ECharts 已本地化)
 - 用 `git reset --hard`、`git checkout -- .` 丢弃改动;提交前用 `git status` 核对,按路径 `git add`
 - 手工对演示库执行临时 `UPDATE/INSERT/DELETE` 做数据修正;数据变更写进 `data/*.sql` 并保持幂等(测试可用临时库)
 
 ## 核心约定
 
-- 比赛表叫 **`game`**,不叫 `match`(`match` 是 PHP 8 保留字,模型类无法编译)
-- 留言/点赞需要登录;`comment.user_id` 非空
+设计参考:优先读仓库内 `docs/设计改造-01-感觉与工作流.md`;代码实例:<https://github.com/GoogleChrome/modern-web-guidance-src>
 - 统计口径:
   - 积分榜只算 `stage='小组赛' AND status=2`;胜场积分取 `tournament.win_points`(1986/1990 为 2 分)
   - 射手榜排除乌龙球(`is_own_goal=1`)与点球大战进球(`is_shootout=1`)
@@ -67,8 +85,11 @@
    */
   ```
 - 命名与格式见 `docs/编码规范与注释头模板.md`;UTF-8 无 BOM、LF、4 空格、PHP 文件结尾不加 `?>`
-- 图表配色只取 `theme.css` 令牌(绿 `#0E7C4A` / `#16A34A`、金 `#F2B705`、藏青 `#0B1F3A`、灰 `#6B7280` / `#9CA3AF`);不用 ECharts 默认色板,同一指标在不同图表里颜色一致
+- 写 / 改文档前先读 `docs/README.md`「文档写作约定」;规格只写意图、边界、验收,不写像素 / 列数 / 实现处方。
+
 - 新页面或改版前先读 `docs/页面设计指南.md`(页面组织),视觉细节看 `docs/界面设计规范.md`
+- 视觉改造以 `docs/设计改造-00-总纲.md` 为准;根页 = 记分牌墙,全站统一母版
+- 规则是下限,不是上限:与“感觉”冲突时先提案突破并记录理由,不要为了守规则牺牲视觉
 
 ## 课程硬性要求
 
@@ -106,28 +127,31 @@
 | 图表 | `frontend/controllers/ChartController.php`、`frontend/views/chart/_charts.php`、`frontend/web/js/charts.js` |
 | 建库与数据 | `data/install.sql`、`data/real_worldcup_data.sql`、`data/real_worldcup_2026.sql` |
 
-## 当前状态(2026-11-22)
+## 当前状态(2026-11-23)
 
-- 分支:`main` = `ae7ca83`,`dev` = `ebfe22c`,工作区干净
-- 已完成:模块②③④、全站视觉设计、真实数据(11 届 / 708 场 / 2045 球 / 83 队 / 4282 球员)
+- 当前分支:`feature/design-tournament-detail`(第 3 步视觉重做);状态以 `docs/设计改造-00-总纲.md` §12 为准
+- 已完成:模块②③④、真实数据(11 届 / 708 场 / 2045 球 / 83 队 / 4282 球员);根页夜场记分牌墙
+- 进行中:第 3 步视觉重做完成、待验收;下一步按 `docs/设计改造-00-总纲.md` §16 做索引页母版(比赛先落地,球队 / 球员跟进),之后做单场页
 - 未完成:模块①(团队展示、后台编辑、下载页)、部署文档 + `deploy.bat`、6 份 PDF、最终实现文档汇总
 - 已知缺口:2026 届名单只含 190 名进球者;教练 / FIFA 排名 / 部分助攻为 NULL
 
 ## 协作与子代理规则(用户偏好)
 
-- 优先用子代理并行,但**不要把全部任务塞给同一个**;按文件边界拆分
-- 子代理产出必须先验收(`php -l`、curl、截图),再提交
+- 优先用子代理并行,但**不要把全部任务塞给同一个**;按任务边界拆分
+- 子代理产出必须先验收,再提交
 - 视觉判断可以交给用户;先自检到"可展示"再让用户看,不要拿半成品
-- 汇报简明,不粘贴大段代码或完整日志
-- 多会话协作:动手前先 `pull`;一个会话只负责一条分支 / 一组文件;冲突先沟通
+
+- 若多会话协作:动手前先 `pull`;一个会话只负责一条分支 / 一组文件;冲突先沟通
 
 ## 详细文档索引
 
 - [`docs/项目上下文.md`](docs/项目上下文.md) —— 背景、关键决策、数据管线、遗留问题
+- [`docs/设计改造-00-总纲.md`](docs/设计改造-00-总纲.md) —— 本次视觉改造的主要迭代日志,内容意义不大,仅做记录
+- [`docs/设计改造-01-感觉与工作流.md`](docs/设计改造-01-感觉与工作流.md) —— 记录的感觉词典、工作流、评审清单,参考性较高
 - [`docs/README.md`](docs/README.md) —— 全部文档与推荐阅读顺序
 - [`docs/数据来源说明.md`](docs/数据来源说明.md)
 - [`docs/界面设计规范.md`](docs/界面设计规范.md)
-- [`docs/页面设计指南.md`](docs/页面设计指南.md) —— 页面构成方法与开工模板
+- [`docs/页面设计指南.md`](docs/页面设计指南.md) —— 重要参考内容,写代码时必看第一文件
 - [`docs/编码规范与注释头模板.md`](docs/编码规范与注释头模板.md)
 - [`docs/Git使用说明.md`](docs/Git使用说明.md)
 - [`docs/数据库表详细设计.md`](docs/数据库表详细设计.md)

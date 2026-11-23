@@ -29,9 +29,8 @@ $date = $model->publish_time ?: $model->create_time;
             <?php if ($model->author): ?> · <?= Html::encode($model->author) ?><?php endif ?>
         </p>
         <h2><?= Html::a(Html::encode($model->title), ['view', 'id' => $model->id]) ?></h2>
-        <p class="news-excerpt"><?= Html::encode($excerpt ?: '阅读全文') ?></p>
-        <?= Html::a('阅读全文 <span aria-hidden="true">→</span>', ['view', 'id' => $model->id], [
-            'class' => 'news-read-more',
-        ]) ?>
+        <?php if ($excerpt !== ''): ?>
+            <p class="news-excerpt"><?= Html::encode($excerpt) ?></p>
+        <?php endif ?>
     </div>
 </article>
