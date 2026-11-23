@@ -68,6 +68,10 @@ $this->registerCss(<<<'CSS'
 CSS
 );
 
+// 夜场视觉 v2:在 theme.css 与模块 CSS 之后加载,只做覆盖,便于整包回退。
+$this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+$this->registerJsFile('@web/js/atmosphere.js', ['position' => \yii\web\View::POS_END]);
+
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
 $actionId = Yii::$app->controller !== null && Yii::$app->controller->action !== null
     ? Yii::$app->controller->action->id : '';
@@ -97,6 +101,16 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
 </head>
 <body class="site-body site-<?= Html::encode($controllerId) ?> site-<?= Html::encode($controllerId) ?>-<?= Html::encode($actionId) ?>">
 <?php $this->beginBody() ?>
+
+<div class="atmo" aria-hidden="true">
+    <span class="atmo-glow g1"></span>
+    <span class="atmo-glow g2"></span>
+    <span class="atmo-glow g3"></span>
+    <span class="atmo-glow g4"></span>
+    <span class="atmo-dots"></span>
+    <span class="atmo-pitch"></span>
+    <span class="atmo-era"></span>
+</div>
 
 <a class="skip-link" href="#main-content">跳到主要内容</a>
 
