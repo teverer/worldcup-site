@@ -53,6 +53,14 @@ if ($teamKeyword !== null) {
         <p>先看十一场决赛，或按届次、阶段、球队找到任意一场。</p>
     </header>
 
+    <?php $filterCount = count($activeFilters); ?>
+    <details class="game-filter-panel"<?= $filterCount > 0 ? ' open' : '' ?>>
+        <summary class="game-filter-summary">
+            <span>筛选比赛</span>
+            <span class="game-filter-summary-note">
+                <?= $filterCount > 0 ? '已应用 ' . (int) $filterCount . ' 项条件' : '按届次、阶段、小组、球队' ?>
+            </span>
+        </summary>
     <?= Html::beginForm(['index'], 'get', ['class' => 'catalog-filters game-filters']) ?>
     <div class="form-group">
         <?= Html::label('届次', 'game-tournament') ?>
@@ -92,6 +100,7 @@ if ($teamKeyword !== null) {
         <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
     </div>
     <?= Html::endForm() ?>
+    </details>
 
     <div class="game-list-head">
         <div>

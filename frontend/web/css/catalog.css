@@ -167,6 +167,32 @@
     max-width: 220px;
 }
 
+/* 姓名显示开关:不占主操作层级,放在筛选行末尾,当前项加粗。 */
+.pl-name-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    color: var(--color-muted-strong);
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+
+.pl-name-lang a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.pl-name-lang a:hover,
+.pl-name-lang a:focus {
+    text-decoration: underline;
+}
+
+.pl-name-lang strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
 .pl-clear {
     margin-left: var(--space-1);
     font-size: 13px;
