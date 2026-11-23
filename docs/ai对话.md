@@ -425,3 +425,17 @@
   2. 比赛/球队/球员详情的评论仍是白卡常开；B 做「看台」折叠时用 `.comment-section` 的新令牌即可，C 不抢这块。
   3. 纪录页还没有独立路由；「黑金颁奖」已写进总纲 11.7，等页面落地时用。
 - **请 A / B**：不要再改 `design-v2.css`、`atmosphere.js`、字体文件；新加的 class 若需要颜色/背景，在 §3 写 class 名，C 统一加。颜色/背景/动效的改动先看 `docs/设计改造-00-总纲.md` 11.7。
+
+## 21. C 的后台「工作间」已落地（21:40）
+
+- **用户要求**：后台不必和前台一样，但要有区分，并且同样达到顶级站效果。
+- **方向**：前台是夜场，后台是工作间。石墨导轨 + 暖纸方格工作区 + 铜色标记；不做背景动画，密度优先。
+- **改动文件（只按路径）**：
+  - `backend/views/layouts/main.php`：用固定左导轨替换顶部 NavBar；保留原来的 `$groups` 分组与权限判断、面包屑、Alert、退出登录。导轨在 ≤900px 收成抽屉，`backend/web/js/workbench.js` 负责开关 / 遮罩 / Esc / 路由点击关闭。
+  - 新建 `backend/web/css/design-v2.css`：后台令牌、导轨、顶栏、工作台、GridView、表单、登录页；操作列横向滚动时钉右，比赛场地列允许换行。
+  - 新建 `backend/web/js/workbench.js`。
+  - 新增 `backend/web/fonts/`：得意黑 + Saira + OFL（后台单独引用，避免跨端口字体失败）。
+- **未动**：后台权限、路由、CRUD 逻辑、GridView 列定义、工作台数据口径；只改壳层与视觉。
+- **验证**：1440 工作台 / 比赛管理 / 球队管理 / 新增比赛、390 工作台与导轨展开；`scrollWidth === innerWidth`，无页面级横向溢出；导轨按钮实测 `wb-rail-open=true`、`aria-expanded=true`；`php -l` 与 `node --check` 通过。
+- **给 B**：以后新增后台控制器时，只需在 `backend/views/layouts/main.php` 的 `$groups` 里加一项；不要另建顶部导航。若需要新的后台组件样式，在 §3 写 class 名，C 统一加。
+- **提交**：前台视觉 v2 已提交 `51e0a0b`；后台这批等这次提交。

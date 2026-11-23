@@ -10,6 +10,9 @@
  * 2026-11-23 信息架构调整:13 个平铺菜单按「赛事 / 球队球员 / 内容社区 / 团队」
  * 收成 4 组下拉,首位固定为工作台;当前所在组高亮,减少横向拥挤与找不到入口。
  *
+ * 2026-11-23 视觉 v2:后台独立为「工作间」——石墨导轨 + 暖纸工作区,
+ * 与前台夜场明确区分;数据密度优先,不做背景动画。
+ *
  * @var yii\web\View $this
  * @var string $content
  */
@@ -19,8 +22,7 @@
 
 use backend\assets\AppAsset;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
 
@@ -72,6 +74,16 @@ $groups = [
         ],
     ],
 ];
+
+$isDashboard = $controllerId === 'site' && $actionId === 'index';
+$isAdmin = !Yii::$app->user->isGuest
+    && Yii::$app->user->identity->role >= common\models\User::ROLE_ADMIN;
+
+// 后台视觉 v2:在模块 CSS 之后加载,只做覆盖。
+$this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+$this->registerJsFile('@web/js/workbench.js', ['position' => \yii\web\View::POS_END]);
+
+$groupNo = 2;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -84,83 +96,119 @@ $groups = [
     <title><?= Html::encode($this->title) ?> | <?= Html::encode(Yii::$app->name) ?> 后台</title>
     <?php $this->head() ?>
 </head>
-<body class="backend-body backend-<?= Html::encode($controllerId) ?>">
+<body class="backend-body backend-<?= Html::encode($controllerId) ?> backend-<?= Html::encode($controllerId) ?>-<?= Html::encode($actionId) ?><?= $isDashboard ? ' backend-is-dashboard' : '' ?>">
 <?php $this->beginBody() ?>
 
 <a class="skip-link" href="#backend-main">跳到主要内容</a>
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => '世界杯数据门户 · 后台',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
+<div class="workbench">
+    <aside class="wb-rail" id="wb-rail" aria-label="后台导航">
+        <div class="wb-brand">
+            <a class="wb-brand-link" href="<?= Html::encode(Yii::$app->homeUrl) ?>">
+                <span class="wb-brand-mark">WC</span>
+                <span class="wb-brand-text">
+                    <strong>世界杯档案</strong>
+                    <small>WORKBENCH 2026</small>
+                </span>
+            </a>
+        </div>
 
-    $menuItems = [
-        [
-            'label' => '工作台',
-            'url' => ['/site/index'],
-            'active' => $controllerId === 'site' && $actionId === 'index',
-        ],
-    ];
+        <nav class="wb-nav">
+            <a class="wb-item<?= $isDashboard ? ' is-active' : '' ?>"
+               href="<?= Html::encode(Url::to(['/site/index'])) ?>"
+               <?= $isDashboard ? 'aria-current="page"' : '' ?>>
+                <span class="wb-item-num">01</span>
+                <span class="wb-item-label">工作台</span>
+            </a>
 
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role >= common\models\User::ROLE_ADMIN) {
-        foreach ($groups as $group) {
-            $groupActive = in_array($controllerId, $group['controllers'], true);
-            $items = [];
-            foreach ($group['items'] as $item) {
-                $route = is_array($item['url']) ? ltrim($item['url'][0], '/') : '';
-                $target = explode('/', $route)[0];
-                $item['active'] = $target === $controllerId;
-                $items[] = $item;
-            }
-            $menuItems[] = [
-                'label' => $group['label'],
-                'items' => $items,
-                'active' => $groupActive,
-            ];
-        }
-    }
+            <?php if ($isAdmin): ?>
+                <?php foreach ($groups as $group): ?>
+                    <?php
+                    $groupActive = in_array($controllerId, $group['controllers'], true);
+                    $groupCode = sprintf('%02d', $groupNo++);
+                    ?>
+                    <div class="wb-group<?= $groupActive ? ' is-current' : '' ?>">
+                        <p class="wb-group-title">
+                            <span><?= Html::encode($groupCode) ?></span>
+                            <?= Html::encode($group['label']) ?>
+                        </p>
+                        <?php foreach ($group['items'] as $item): ?>
+                            <?php
+                            $route = is_array($item['url']) ? ltrim($item['url'][0], '/') : '';
+                            $target = explode('/', $route)[0];
+                            $itemActive = $target === $controllerId;
+                            ?>
+                            <a class="wb-item<?= $itemActive ? ' is-active' : '' ?>"
+                               href="<?= Html::encode(Url::to($item['url'])) ?>"
+                               <?= $itemActive ? 'aria-current="page"' : '' ?>>
+                                <span class="wb-item-label"><?= Html::encode($item['label']) ?></span>
+                            </a>
+                        <?php endforeach ?>
+                    </div>
+                <?php endforeach ?>
+            <?php endif ?>
+        </nav>
 
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => '登录', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                '退出 (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-        'encodeLabels' => false,
-    ]);
-    NavBar::end();
-    ?>
+        <div class="wb-rail-foot">
+            <?php if (Yii::$app->user->isGuest): ?>
+                <?= Html::a('登录后台', ['/site/login'], ['class' => 'wb-login']) ?>
+            <?php else: ?>
+                <?php $identity = Yii::$app->user->identity; ?>
+                <div class="wb-user">
+                    <span class="wb-user-avatar"><?= Html::encode(mb_strtoupper(mb_substr($identity->username, 0, 1))) ?></span>
+                    <span class="wb-user-text">
+                        <strong><?= Html::encode($identity->username) ?></strong>
+                        <small><?= $identity->role >= common\models\User::ROLE_ADMIN ? '管理员' : '编辑' ?></small>
+                    </span>
+                </div>
+                <?= Html::beginForm(['/site/logout'], 'post', ['class' => 'wb-logout-form']) ?>
+                <?= Html::submitButton('退出登录', ['class' => 'wb-logout']) ?>
+                <?= Html::endForm() ?>
+            <?php endif ?>
+            <p class="wb-build">VISUAL V2 · 工作间</p>
+        </div>
+    </aside>
 
-    <div class="container backend-main" id="backend-main">
-        <?= Breadcrumbs::widget([
-            'homeLink' => ['label' => '工作台', 'url' => Yii::$app->homeUrl],
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="wb-scrim" data-rail-close></div>
+
+    <div class="wb-main">
+        <header class="wb-top">
+            <button class="wb-rail-toggle" type="button" data-rail-toggle aria-controls="wb-rail" aria-expanded="false">
+                <span class="wb-rail-toggle-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="sr-only">展开后台导航</span>
+            </button>
+
+            <div class="wb-crumbs-wrap">
+                <?php if (empty($this->params['breadcrumbs']) && $isDashboard): ?>
+                    <nav class="wb-crumbs" aria-label="面包屑">
+                        <span class="wb-crumb-current">工作台</span>
+                    </nav>
+                <?php else: ?>
+                    <?= Breadcrumbs::widget([
+                        'homeLink' => ['label' => '工作台', 'url' => Yii::$app->homeUrl],
+                        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                        'options' => ['class' => 'breadcrumb wb-crumbs'],
+                    ]) ?>
+                <?php endif ?>
+            </div>
+
+            <div class="wb-top-meta">
+                <span class="wb-status"><i aria-hidden="true"></i> 内容维护</span>
+                <span class="wb-date"><?= date('Y.m.d') ?></span>
+            </div>
+        </header>
+
+        <main class="backend-main" id="backend-main">
+            <?= Alert::widget() ?>
+            <?= $content ?>
+        </main>
+
+        <footer class="wb-footer">
+            <span>&copy; <?= date('Y') ?> 国足世界杯夺冠队 · 课程设计</span>
+            <span>内容维护后台 · 数据只在这里改</span>
+        </footer>
     </div>
 </div>
-
-<footer class="footer backend-footer">
-    <div class="container">
-        <p class="pull-left">&copy; <?= date('Y') ?> 国足世界杯夺冠队 · 课程设计</p>
-        <p class="pull-right">内容维护后台</p>
-    </div>
-</footer>
 
 <?php $this->endBody() ?>
 </body>
