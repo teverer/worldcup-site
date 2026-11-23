@@ -49,6 +49,15 @@ $this->registerCss(<<<'CSS'
 .site-footer-col li + li { margin-top: 4px; }
 .site-footer-bottom { margin-top: var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--color-border); }
 .section-heading-inline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+/* 说明性入口:与五个档案入口分开,但仍能在页头找到 */
+.site-nav .navbar-nav > li.nav-utility { margin-left: 10px; }
+.site-nav .navbar-nav > li.nav-utility > a { padding-left: 18px; border-left: 1px solid rgba(243, 246, 242, .22); color: rgba(243, 246, 242, .72); }
+.site-nav .navbar-nav > li.nav-utility > a:hover,
+.site-nav .navbar-nav > li.nav-utility > a:focus { color: var(--flood); }
+@media (max-width: 767px) {
+    .site-nav .navbar-nav > li.nav-utility { margin-left: 0; }
+    .site-nav .navbar-nav > li.nav-utility > a { padding-left: 12px; border-left: 0; }
+}
 CSS
 );
 
@@ -63,6 +72,8 @@ $navItems = [
     ['label' => '球队', 'url' => ['/team/index'], 'controllers' => ['team']],
     ['label' => '球员', 'url' => ['/player/index'], 'controllers' => ['player']],
     ['label' => '资讯', 'url' => ['/news/index'], 'controllers' => ['news']],
+    // 说明性入口只保留一个,放在五项之后并用分隔线弱化;团队与下载已合并到该页。
+    ['label' => '关于', 'url' => ['/team-info/index'], 'controllers' => ['team-info'], 'utility' => true],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -113,7 +124,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                             $isActive = $actionId === 'index';
                         }
                         ?>
-                        <li<?= $isActive ? ' class="active"' : '' ?>>
+                        <li class="<?= trim(($isActive ? 'active ' : '') . (!empty($item['utility']) ? 'nav-utility' : '')) ?>">
                             <?= Html::a(Html::encode($item['label']), $item['url'], $isActive
                                 ? ['aria-current' => 'page']
                                 : []) ?>
@@ -157,7 +168,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">本站</p>
                     <ul>
-                        <li><?= Html::a('关于本站与文档', ['/team-info/index']) ?></li>
+                        <li><?= Html::a('关于与文档下载', ['/team-info/index']) ?></li>
                         <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
                         <li><?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
                             'target' => '_blank',
