@@ -12,7 +12,8 @@ use yii\db\ActiveRecord;
 use yii\db\Query;
 
 class Team extends ActiveRecord {
-    const CONTINENTS = ['亚洲', '欧洲', '非洲', '北美洲', '南美洲', '大洋洲'];
+    // 与已有数据一致:美加墨等中北美球队统一记作「中北美」。
+    const CONTINENTS = ['亚洲', '欧洲', '非洲', '中北美', '南美洲', '大洋洲'];
 
     public static function tableName() {
         return '{{%team}}';

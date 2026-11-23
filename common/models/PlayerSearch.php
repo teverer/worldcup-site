@@ -32,7 +32,7 @@ class PlayerSearch extends Model {
 
     public function search($params) {
         $query = Player::find();
-        $provider = new ActiveDataProvider(['query' => $query, 'pagination' => ['pageSize' => 12],
+        $provider = new ActiveDataProvider(['query' => $query, 'pagination' => ['pageSize' => 24],
             'sort' => ['defaultOrder' => ['name' => SORT_ASC, 'id' => SORT_ASC],
                 'attributes' => ['id', 'name', 'nationality', 'position', 'birth_date']]]);
         $this->load($params, '');

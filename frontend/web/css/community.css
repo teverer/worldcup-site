@@ -457,3 +457,163 @@
         transform: none;
     }
 }
+
+/* ==========================================================================
+   资讯索引(2026-11-23):时间顺序的单列阅读流,不用渐变占位图
+   ========================================================================== */
+.news-head {
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.news-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.news-head p {
+    margin: 0;
+    color: var(--color-muted-strong);
+}
+
+.news-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+}
+
+.news-search .form-control {
+    flex: 1 1 260px;
+    max-width: 420px;
+}
+
+.news-clear {
+    font-size: 13px;
+}
+
+.news-summary {
+    margin: var(--space-3) 0 0;
+    color: var(--color-muted-strong);
+    font-size: 12px;
+}
+
+.news-rows {
+    margin-top: var(--space-1);
+    border-top: 1px solid var(--color-border);
+}
+
+.news-row + .news-row {
+    border-top: 1px solid var(--color-border);
+}
+
+.news-row-link {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+    grid-template-areas: "date body read";
+    align-items: start;
+    gap: var(--space-3);
+    padding: 18px 8px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+.news-row-link:hover,
+.news-row-link:focus {
+    background-color: var(--color-surface-alt);
+    color: inherit;
+    text-decoration: none;
+}
+
+.news-row-link:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .35);
+    outline-offset: -1px;
+}
+
+.news-row-date {
+    grid-area: date;
+    padding-top: 3px;
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+}
+
+.news-row-body {
+    grid-area: body;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.news-row-title {
+    color: var(--color-text);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.news-row-excerpt {
+    max-width: 74ch;
+    color: var(--color-muted-strong);
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.news-row-author {
+    color: var(--color-muted);
+    font-size: 11px;
+}
+
+.news-row-read {
+    grid-area: read;
+    align-self: center;
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.news-empty {
+    padding: var(--space-6) var(--space-3);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    text-align: center;
+}
+
+.news-empty h2 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-lg);
+}
+
+.news-empty p {
+    margin: 0;
+    color: var(--color-muted-strong);
+}
+
+.news-empty p + p {
+    margin-top: var(--space-1);
+}
+
+@media (max-width: 640px) {
+    .news-row-link {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "date read"
+            "body body";
+        row-gap: 6px;
+        padding: 14px 4px;
+    }
+
+    .news-row-date {
+        padding-top: 0;
+        font-size: 12px;
+    }
+}
+.news-detail-home { margin-left: var(--space-1); font-size: 13px; }

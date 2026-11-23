@@ -109,3 +109,609 @@
         gap: var(--space-3);
     }
 }
+
+/* ==========================================================================
+   球员索引(2026-11-23):搜索优先 + 每届最佳射手默认集合
+   ========================================================================== */
+.pl-head {
+    padding: 0 0 var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.pl-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.pl-head p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--color-muted-strong);
+}
+
+.pl-search {
+    margin-top: var(--space-3);
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-alt);
+}
+
+.pl-search-main {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.pl-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.pl-search-main .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.pl-search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+}
+
+.pl-search-filters .form-control {
+    width: auto;
+    min-width: 150px;
+    max-width: 220px;
+}
+
+.pl-clear {
+    margin-left: var(--space-1);
+    font-size: 13px;
+}
+
+.pl-section {
+    margin-top: var(--space-5);
+}
+
+.pl-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.pl-section-head h2 {
+    margin: 0 0 2px;
+    font-size: var(--fs-xl);
+    letter-spacing: -.01em;
+}
+
+.pl-section-head p {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+.pl-section-link {
+    flex: 0 0 auto;
+    font-size: 13px;
+}
+
+.pl-scorers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+}
+
+.pl-scorer {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px 6px;
+    border-bottom: 1px solid var(--color-border);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+.pl-scorer:hover,
+.pl-scorer:focus {
+    background-color: var(--color-surface-alt);
+    color: inherit;
+    text-decoration: none;
+}
+
+.pl-scorer:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .35);
+    outline-offset: -1px;
+}
+
+.pl-scorer-year {
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.pl-scorer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.pl-scorer-text strong {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pl-scorer-text span {
+    overflow: hidden;
+    color: var(--color-muted-strong);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pl-scorer-goals {
+    color: var(--color-primary);
+    font-size: var(--fs-xl);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.pl-scorer-goals small {
+    margin-left: 2px;
+    color: var(--color-muted-strong);
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.pl-more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
+    font-size: 13px;
+}
+
+.pl-more span {
+    color: var(--color-muted-strong);
+    font-size: 12px;
+}
+
+.pl-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pl-table td {
+    vertical-align: middle !important;
+}
+
+.pl-table .pl-name {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.pl-empty {
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 767px) {
+    .pl-scorers {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pl-section-head {
+        display: block;
+    }
+
+    .pl-section-link {
+        display: inline-block;
+        margin-top: var(--space-1);
+    }
+}
+
+@media (max-width: 600px) {
+    .pl-search-main {
+        display: block;
+    }
+
+    .pl-search-main .btn {
+        width: 100%;
+        margin-top: var(--space-1);
+    }
+
+    .pl-search-filters .form-control {
+        width: 100%;
+        max-width: none;
+    }
+
+    .pl-scorer {
+        grid-template-columns: 3.6rem minmax(0, 1fr) auto;
+    }
+}
+
+/* ==========================================================================
+   球队索引(2026-11-23):按大洲分组的目录
+   ========================================================================== */
+.ti-summary {
+    margin: var(--space-2) 0 0;
+    color: var(--color-muted-strong);
+    font-size: 13px;
+}
+
+.ti-group {
+    margin-top: var(--space-4);
+}
+
+.ti-group-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.ti-group-head h2 {
+    margin: 0;
+    font-size: var(--fs-lg);
+    letter-spacing: -.01em;
+}
+
+.ti-group-head span {
+    color: var(--color-muted-strong);
+    font-size: 12px;
+}
+
+.ti-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 8px;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ti-team {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.ti-team:hover,
+.ti-team:focus {
+    border-color: #B9D8C6;
+    background-color: var(--color-surface-alt);
+    color: inherit;
+    text-decoration: none;
+}
+
+.ti-team:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .35);
+    outline-offset: 1px;
+}
+
+.ti-team-name {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ti-team-code {
+    flex: 0 0 auto;
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: .04em;
+}
+
+@media (max-width: 600px) {
+    .ti-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ==========================================================================
+   球队详情(2026-11-23):身份头、届次切换、名单
+   ========================================================================== */
+.td-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.td-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.td-meta {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+.td-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.td-secondary {
+    font-size: 13px;
+}
+
+.td-intro {
+    max-width: 70ch;
+    margin: var(--space-2) 0 0;
+    color: var(--color-ink-2);
+    line-height: 1.9;
+}
+
+.td-section {
+    margin-top: var(--space-4);
+}
+
+.td-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.td-section-head h2 {
+    margin: 0 0 2px;
+    font-size: var(--fs-xl);
+    letter-spacing: -.01em;
+}
+
+.td-section-head p {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: 13px;
+}
+
+.td-editions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-2);
+}
+
+.td-edition {
+    padding: 4px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    color: var(--color-ink-2);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.td-edition:hover,
+.td-edition:focus {
+    border-color: #B9D8C6;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.td-edition.is-active,
+.td-edition.is-active:hover,
+.td-edition.is-active:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+}
+
+.td-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.td-table td {
+    vertical-align: middle !important;
+}
+
+.td-table .td-player {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.td-empty {
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 767px) {
+    .td-head {
+        display: block;
+    }
+
+    .td-actions {
+        margin-top: var(--space-2);
+        flex-wrap: wrap;
+    }
+
+    .td-section-head {
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   球员详情(2026-11-23):身份头、生涯数字、经历与统计
+   ========================================================================== */
+.pd-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.pd-head-text {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.pd-photo {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 76px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
+.pd-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.pd-meta {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+.pd-actions {
+    flex: 0 0 auto;
+}
+
+.pd-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+}
+
+.pd-stat {
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+}
+
+.pd-stat dt {
+    color: var(--color-muted-strong);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.pd-stat dd {
+    margin: 2px 0 0;
+    color: var(--color-primary);
+    font-size: var(--fs-2xl);
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.pd-note {
+    margin: var(--space-1) 0 0;
+    color: var(--color-muted);
+    font-size: 12px;
+}
+
+.pd-section {
+    margin-top: var(--space-4);
+}
+
+.pd-section h2 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-xl);
+    letter-spacing: -.01em;
+}
+
+.pd-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.pd-section-head h2 {
+    margin: 0;
+}
+
+.pd-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pd-table td {
+    vertical-align: middle !important;
+}
+
+@media (max-width: 767px) {
+    .pd-head {
+        display: block;
+    }
+
+    .pd-actions {
+        margin-top: var(--space-2);
+    }
+
+    .pd-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-1);
+    }
+
+    .pd-stat {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pd-photo {
+        width: 56px;
+        height: 60px;
+    }
+
+    .pd-head h1 {
+        font-size: var(--fs-2xl);
+    }
+}

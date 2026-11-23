@@ -25,7 +25,6 @@ $date = $model->publish_time ?: $model->create_time;
 ?>
 <article class="community-page news-detail">
     <header class="news-detail-header">
-        <p class="community-kicker">世界杯资讯</p>
         <h1><?= Html::encode($model->title) ?></h1>
         <p class="news-detail-meta">
             <?= Html::encode(Yii::$app->formatter->asDate($date, 'php:Y-m-d')) ?>
@@ -44,7 +43,8 @@ $date = $model->publish_time ?: $model->create_time;
     </div>
 
     <footer class="news-detail-footer">
-        <?= Html::a('← 返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('回首页看届次', Yii::$app->homeUrl, ['class' => 'news-detail-home']) ?>
     </footer>
 
     <?= CommentSection::widget([

@@ -37,7 +37,7 @@ class Player extends ActiveRecord {
     }
 
     public function participations() {
-        return (new Query())->select(['t.year', 't.name', 'team_id' => 'tm.id', 'team_name' => 'tm.name',
+        return (new Query())->select(['tournament_id' => 't.id', 't.year', 't.name', 'team_id' => 'tm.id', 'team_name' => 'tm.name',
             's.shirt_number', 's.position'])->from(['s' => '{{%squad}}'])
             ->innerJoin(['t' => '{{%tournament}}'], 't.id = s.tournament_id')
             ->innerJoin(['tm' => '{{%team}}'], 'tm.id = s.team_id')

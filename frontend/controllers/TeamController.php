@@ -17,8 +17,44 @@ use yii\web\NotFoundHttpException;
 class TeamController extends Controller {
     public function actionIndex() {
         $searchModel = new TeamSearch();
-        return $this->render('index', ['searchModel' => $searchModel,
-            'dataProvider' => $searchModel->search(Yii::$app->request->queryParams)]);
+        $searchModel->load(Yii::$app->request->queryParams, '');
+        $searchModel->validate();
+
+        // 83 支球队一屏放得下,按大洲分组比「拼音分页表」更适合浏览。
+        $query = Team::find()->orderBy(['name' => SORT_ASC]);
+        $query->andFilterWhere(['or',
+            ['like', 'name', $searchModel->q],
+            ['like', 'code', $searchModel->q],
+        ]);
+        $query->andFilterWhere(['continent' => $searchModel->continent]);
+
+        $groups = [];
+        foreach ($query->all() as $team) {
+            $continent = $team->continent ?: '其他';
+            $groups[$continent][] = $team;
+        }
+
+        $ordered = [];
+        foreach (array_merge(Team::CONTINENTS, ['其他']) as $continent) {
+            if (!empty($groups[$continent])) {
+                $ordered[$continent] = $groups[$continent];
+            }
+            unset($groups[$continent]);
+        }
+        // 数据里若有未知大洲,放在最后,不要静默丢掉。
+        foreach ($groups as $continent => $teams) {
+            $ordered[$continent] = $teams;
+        }
+
+        $hasFilter = trim((string) $searchModel->q) !== ''
+            || ($searchModel->continent !== null && $searchModel->continent !== '');
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'groups' => $ordered,
+            'total' => (int) Team::find()->count(),
+            'hasFilter' => $hasFilter,
+        ]);
     }
 
     public function actionView($id, $tournamentId = null) {
