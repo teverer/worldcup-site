@@ -63,8 +63,13 @@ $renderWorks = static function (array $items) {
             <h1>关于本站</h1>
             <p class="about-lead"><?= Html::encode($team->slogan ?: '用数据看懂世界杯') ?></p>
             <div class="about-actions">
-                <a class="btn btn-accent" href="#docs">查看课程文档</a>
-                <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到记分牌墙</a>
+                <?php if ($hasWorks): ?>
+                    <a class="btn btn-primary" href="#docs">下载课程文档</a>
+                    <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到记分牌墙</a>
+                <?php else: ?>
+                    <a class="btn btn-primary" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到记分牌墙</a>
+                    <a class="btn btn-default" href="#docs">查看课程文档</a>
+                <?php endif ?>
             </div>
         </div>
         <?php if ($team->logo): ?>
@@ -108,7 +113,7 @@ $renderWorks = static function (array $items) {
     <section class="about-section" id="team" aria-labelledby="about-team-title">
         <div class="about-section-head">
             <h2 id="about-team-title">团队</h2>
-            <p><?= Html::encode($team->name ?: '国足世界杯夺冠队') ?> · <?= count($members) ?> 人 · 分工协作完成数据与页面。</p>
+            <p><?= Html::encode($team->name ?: '国足世界杯夺冠队') ?> · <?= count($members) ?> 人</p>
         </div>
 
         <?php if ($team->intro): ?>
@@ -172,5 +177,13 @@ $renderWorks = static function (array $items) {
                 <?= $renderWorks($personalWorks) ?>
             </div>
         <?php endif ?>
+
+        <p class="about-docs-note">
+            课程文档的 Markdown 底稿在
+            <?= Html::a('GitHub 仓库 docs/ 目录', 'https://github.com/teverer/worldcup-site/tree/dev/docs', [
+                'target' => '_blank',
+                'rel' => 'noopener noreferrer',
+            ]) ?>，最终 PDF 会在这里提供下载。
+        </p>
     </section>
 </div>

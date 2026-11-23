@@ -15,6 +15,7 @@
  * @var array $statusLabels
  */
 use common\components\CommentTarget;
+use common\models\Game;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -49,6 +50,29 @@ $this->registerCssFile('@web/css/game.css');
 $scoreLabel = $hasScore ? $model->home_score . ' 比 ' . $model->away_score : '比分待补';
 if ($penaltyText !== null) {
     $scoreLabel .= '，' . $penaltyText;
+}
+
+// 点球大战行不是常规进球，计数和“加时”判断都要排除。
+$lastGoalMinute = 0;
+$regularGoalCount = 0;
+$shootoutGoalCount = 0;
+foreach ($goals as $goal) {
+    if ((int) $goal->is_shootout === 1) {
+        $shootoutGoalCount++;
+        continue;
+    }
+    $regularGoalCount++;
+    $lastGoalMinute = max($lastGoalMinute, (int) $goal->minute);
+}
+$wentToExtraTime = $lastGoalMinute > 90;
+
+// 无进球有三种情况，空态要分别说清楚，不能一律说“数据待补”。
+if ($statusValue === Game::STATUS_PENDING) {
+    $noGoalMessage = '比赛尚未开始，暂无进球。';
+} elseif ($hasScore && (int) $model->home_score === 0 && (int) $model->away_score === 0) {
+    $noGoalMessage = '本场 0–0，没有进球。';
+} else {
+    $noGoalMessage = '这场比赛的进球会在数据补齐后显示；比分与赛果以上方比分为准。';
 }
 ?>
 <article class="catalog-page game-detail">
@@ -95,7 +119,12 @@ if ($penaltyText !== null) {
             </div>
             <div>
                 <dt>状态</dt>
-                <dd><?= Html::encode($statusText) ?></dd>
+                <dd>
+                    <?= Html::encode($statusText) ?>
+                    <?php if ($wentToExtraTime): ?>
+                        <span aria-hidden="true">·</span> 加时
+                    <?php endif ?>
+                </dd>
             </div>
         </dl>
     </header>
@@ -103,15 +132,22 @@ if ($penaltyText !== null) {
     <section class="game-section" aria-labelledby="game-goals-title">
         <div class="game-section-head">
             <h2 id="game-goals-title">进球时间线</h2>
-            <?php if ($goals): ?>
-                <p>共 <?= count($goals) ?> 个进球，按分钟排列。</p>
+            <?php if ($regularGoalCount > 0 || $shootoutGoalCount > 0): ?>
+                <p>
+                    <?php if ($regularGoalCount > 0): ?>
+                        共 <?= $regularGoalCount ?> 个进球，按分钟排列。
+                    <?php endif ?>
+                    <?php if ($shootoutGoalCount > 0): ?>
+                        点球大战另记 <?= $shootoutGoalCount ?> 罚。
+                    <?php endif ?>
+                </p>
             <?php endif ?>
         </div>
 
         <?php if (!$goals): ?>
             <div class="empty-state">
-                <h3>暂无进球记录</h3>
-                <p>这场比赛的进球会在数据补齐后显示；比分与赛果以上方比分为准。</p>
+                <h3><?= $statusValue === Game::STATUS_PENDING ? '比赛尚未开始' : '暂无进球记录' ?></h3>
+                <p><?= Html::encode($noGoalMessage) ?></p>
             </div>
         <?php else: ?>
             <ul class="goal-timeline">
@@ -143,9 +179,6 @@ if ($penaltyText !== null) {
                         <?php endif ?>
                         <?php if ((int) $goal->is_own_goal === 1): ?>
                             <span class="label label-warning">乌龙球</span>
-                        <?php endif ?>
-                        <?php if ((int) $goal->is_shootout === 1): ?>
-                            <span class="label label-default">点球大战</span>
                         <?php endif ?>
                         <?php if ($assist !== null): ?>
                             <span class="goal-assist">助攻：<?= Html::encode($assist->name) ?></span>
