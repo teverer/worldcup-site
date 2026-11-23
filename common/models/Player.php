@@ -38,6 +38,33 @@ class Player extends ActiveRecord {
     }
 
     /**
+     * 访客是否选择显示原名（cookie 记住；默认中文名）。
+     *
+     * @return bool
+     */
+    public static function prefersOriginalName()
+    {
+        // 读原生 $_COOKIE:该 cookie 不参与 Yii 签名,前端 JS 也要读同一份值。
+        return isset($_COOKIE['wc_player_name']) && $_COOKIE['wc_player_name'] === 'orig';
+    }
+
+    /**
+     * 按访客偏好格式化姓名:中文名优先,未收录或选择原名时回退原名。
+     *
+     * @param string|null $name 原名
+     * @param string|null $nameZh 中文名
+     * @return string
+     */
+    public static function formatName($name, $nameZh)
+    {
+        $name = (string) $name;
+        if (!self::prefersOriginalName() && $nameZh !== null && $nameZh !== '') {
+            return (string) $nameZh;
+        }
+        return $name;
+    }
+
+    /**
      * 面向中文读者的显示名:有中文名用中文名,否则回退原名。
      * 原名仍在详情页/搜索里保留,避免译名差异造成认不出人。
      *
@@ -45,7 +72,7 @@ class Player extends ActiveRecord {
      */
     public function displayName()
     {
-        return $this->name_zh !== null && $this->name_zh !== '' ? $this->name_zh : $this->name;
+        return self::formatName($this->name, $this->name_zh);
     }
 
     /**

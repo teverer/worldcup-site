@@ -13,6 +13,7 @@
  * @var int $totalPlayers
  */
 
+use common\models\Player;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -25,6 +26,8 @@ $hasFilter = trim((string) $searchModel->q) !== ''
     || ($searchModel->teamId !== null && $searchModel->teamId !== '')
     || trim((string) $searchModel->position) !== '';
 $isAll = Yii::$app->request->get('all') === '1';
+$prefersOriginal = Player::prefersOriginalName();
+$returnUrl = Url::current();
 ?>
 <section class="catalog-page player-index">
     <header class="pl-head">
@@ -65,6 +68,16 @@ $isAll = Yii::$app->request->get('all') === '1';
             <?php if ($hasFilter): ?>
                 <?= Html::a('清除条件', ['/player/index'], ['class' => 'pl-clear']) ?>
             <?php endif ?>
+            <span class="pl-name-lang">
+                姓名显示：
+                <?php if ($prefersOriginal): ?>
+                    <?= Html::a('中文名', ['/preference/name-lang', 'lang' => 'zh', 'return' => $returnUrl]) ?>
+                    · <strong>原名</strong>
+                <?php else: ?>
+                    <strong>中文名</strong>
+                    · <?= Html::a('原名', ['/preference/name-lang', 'lang' => 'orig', 'return' => $returnUrl]) ?>
+                <?php endif ?>
+            </span>
         </div>
     </form>
 
@@ -83,7 +96,7 @@ $isAll = Yii::$app->request->get('all') === '1';
                         <a class="pl-scorer" href="<?= Html::encode(Url::to(['/player/view', 'id' => $leader['player_id']])) ?>">
                             <span class="pl-scorer-year"><?= Html::encode((string) $leader['year']) ?></span>
                             <span class="pl-scorer-text">
-                                <strong><?= Html::encode($leader['name_zh'] ?: $leader['name']) ?></strong>
+                                <strong><?= Html::encode(Player::formatName($leader['name'], $leader['name_zh'])) ?></strong>
                                 <span>
                                     <?= Html::encode($leader['team_name'] ?: ($leader['nationality'] ?: '球队待补')) ?>
                                     <?php if ($leader['tied'] > 1): ?>

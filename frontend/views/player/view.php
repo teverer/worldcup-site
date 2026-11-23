@@ -13,6 +13,7 @@
  */
 
 use common\components\CommentTarget;
+use common\models\Player;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 
@@ -24,8 +25,9 @@ $this->registerCssFile('@web/css/catalog.css');
 $totalGoals = (int) array_sum(array_column($statistics, 'goals'));
 $totalAssists = (int) array_sum(array_column($statistics, 'assists'));
 $latestTeam = $participations ? $participations[0] : null;
+$showingChineseName = $model->hasChineseName() && !Player::prefersOriginalName();
 $metaParts = array_filter([
-    $model->hasChineseName() ? '原名 ' . $model->name : null,
+    $showingChineseName ? '原名 ' . $model->name : null,
     $model->nationality,
     $model->position,
     $model->birth_date,
