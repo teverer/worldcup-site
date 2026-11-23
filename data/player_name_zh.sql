@@ -1,6 +1,6 @@
 -- Team: 国足世界杯夺冠队
 -- Coding by 李行阳 2411353, 20261123
--- 模块:球队与球员 —— 球员中文名（第一期：每届最佳射手 + 1986/2022/2026 射手榜前十）
+-- 模块:球队与球员 —— 球员中文名（每届最佳射手 + 各届射手榜前十 + 2002 中国国家队）
 --
 -- 数据来源与口径:
 --   译名参考中文维基百科对应条目、FIFA 中文官网与央视/新华社赛事报道中的通用译名，
@@ -11,6 +11,7 @@
 --   先导入 data/install.sql 与两份 real_worldcup 数据，再导入本文件：
 --     mysql --default-character-set=utf8mb4 -u root -p worldcup < data/player_name_zh.sql
 --   本文件可重复执行：列不存在才新增；只补 name_zh 为空的行，不覆盖人工修订。
+--   覆盖：1986–2026 每届射手榜前十（93 人）+ 2002 中国国家队，共 112 条。
 --
 -- 定位方式:
 --   用 name + nationality + birth_date 定位，不用自增 id（干净重建后 id 会漂移）。
@@ -205,3 +206,62 @@ UPDATE `player` SET `name_zh` = '萨连科' WHERE `name` = 'Oleg SALENKO' AND `n
 UPDATE `player` SET `name_zh` = '穆勒' WHERE `name` = 'Thomas MUELLER' AND `nationality` = '德国' AND `birth_date` = '1989-09-13' AND `name_zh` IS NULL;
 UPDATE `player` SET `name_zh` = '弗兰' WHERE `name` = 'Diego FORLAN' AND `nationality` = '乌拉圭' AND `birth_date` = '1979-05-19' AND `name_zh` IS NULL;
 UPDATE `player` SET `name_zh` = '斯内德' WHERE `name` = 'Wesley SNEIJDER' AND `nationality` = '荷兰' AND `birth_date` = '1984-06-09' AND `name_zh` IS NULL;
+
+-- 7. 其余届次射手榜前十（第二期，补齐 1986–2026 各届 Top 10）----------------
+-- 译名仍取媒体常用简称；同一球员在不同届次可能有两行（如克林斯曼 德国/西德），都补。
+UPDATE `player` SET `name_zh` = '阿德里亚诺' WHERE `name`='ADRIANO' AND `nationality`='巴西' AND `birth_date`='1982-02-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '许尔勒' WHERE `name`='Andre SCHUERRLE' AND `nationality`='德国' AND `birth_date`='1990-11-06' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '布雷默' WHERE `name`='Andreas BREHME' AND `nationality`='西德' AND `birth_date`='1960-11-09' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '格列兹曼' WHERE `name`='Antoine GRIEZMANN' AND `nationality`='法国' AND `birth_date`='1991-03-21' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '罗本' WHERE `name`='Arjen ROBBEN' AND `nationality`='荷兰' AND `birth_date`='1984-01-23' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '久巴' WHERE `name`='Artem DZYUBA' AND `nationality`='俄罗斯' AND `birth_date`='1988-08-22' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '吉安' WHERE `name`='Asamoah GYAN' AND `nationality`='加纳' AND `birth_date`='1985-11-22' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '贝贝托' WHERE `name`='BEBETO' AND `nationality`='巴西' AND `birth_date`='1964-02-16' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '迪奥普' WHERE `name`='Bouba DIOP' AND `nationality`='塞内加尔' AND `birth_date`='1978-01-28' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '塞萨尔·桑帕约' WHERE `name`='CESAR SAMPAIO' AND `nationality`='巴西' AND `birth_date`='1968-03-31' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '维埃里' WHERE `name`='Christian VIERI' AND `nationality`='意大利' AND `birth_date`='1973-07-12' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = 'C罗' WHERE `name`='CRISTIANO RONALDO' AND `nationality`='葡萄牙' AND `birth_date`='1985-02-05' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '普拉特' WHERE `name`='David PLATT' AND `nationality`='英格兰' AND `birth_date`='1966-06-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '切里舍夫' WHERE `name`='Denis CHERYSHEV' AND `nationality`='俄罗斯' AND `birth_date`='1990-12-26' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '博格坎普' WHERE `name`='Dennis BERGKAMP' AND `nationality`='荷兰' AND `birth_date`='1969-05-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '迭戈·科斯塔' WHERE `name`='Diego COSTA' AND `nationality`='西班牙' AND `birth_date`='1988-10-07' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '阿扎尔' WHERE `name`='Eden HAZARD' AND `nationality`='比利时' AND `birth_date`='1991-01-07' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '卡瓦尼' WHERE `name`='Edinson CAVANI' AND `nationality`='乌拉圭' AND `birth_date`='1987-02-14' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '莫伦特斯' WHERE `name`='Fernando MORIENTES' AND `nationality`='西班牙' AND `birth_date`='1976-04-05' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '托雷斯' WHERE `name`='Fernando TORRES' AND `nationality`='西班牙' AND `birth_date`='1984-03-20' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '拉杜乔尤' WHERE `name`='Florin RADUCIOIU' AND `nationality`='罗马尼亚' AND `birth_date`='1970-03-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '巴蒂斯图塔' WHERE `name`='Gabriel BATISTUTA' AND `nationality`='阿根廷' AND `birth_date`='1969-02-01' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '伊瓜因' WHERE `name`='Gonzalo HIGUAIN' AND `nationality`='阿根廷' AND `birth_date`='1987-12-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '拉尔森' WHERE `name`='Henrik LARSSON' AND `nationality`='瑞典' AND `birth_date`='1971-09-20' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '克雷斯波' WHERE `name`='Hernan CRESPO' AND `nationality`='阿根廷' AND `birth_date`='1975-07-05' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '伊尔汗' WHERE `name`='Ilhan MANSIZ' AND `nationality`='土耳其' AND `birth_date`='1975-08-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '托马森' WHERE `name`='Jon Dahl TOMASSON' AND `nationality`='丹麦' AND `birth_date`='1976-08-29' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '克林斯曼' WHERE `name`='Juergen KLINSMANN' AND `nationality`='德国' AND `birth_date`='1964-07-30' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '克林斯曼' WHERE `name`='Juergen KLINSMANN' AND `nationality`='西德' AND `birth_date`='1964-07-30' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '本泽马' WHERE `name`='Karim BENZEMA' AND `nationality`='法国' AND `birth_date`='1987-12-19' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '安德松' WHERE `name`='Kennet ANDERSSON' AND `nationality`='瑞典' AND `birth_date`='1967-10-06' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '多诺万' WHERE `name`='Landon DONOVAN' AND `nationality`='美国' AND `birth_date`='1982-03-04' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '马特乌斯' WHERE `name`='Lothar MATTHAEUS' AND `nationality`='西德' AND `birth_date`='1961-03-21' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '法比亚诺' WHERE `name`='LUIS FABIANO' AND `nationality`='巴西' AND `birth_date`='1980-11-08' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '路易斯·埃尔南德斯' WHERE `name`='Luis HERNANDEZ' AND `nationality`='墨西哥' AND `birth_date`='1968-12-22' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '波多尔斯基' WHERE `name`='Lukas PODOLSKI' AND `nationality`='德国' AND `birth_date`='1985-06-04' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '威尔莫茨' WHERE `name`='Marc WILMOTS' AND `nationality`='比利时' AND `birth_date`='1969-02-22' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '萨拉斯' WHERE `name`='Marcelo SALAS' AND `nationality`='智利' AND `birth_date`='1974-12-24' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '达赫林' WHERE `name`='Martin DAHLIN' AND `nationality`='瑞典' AND `birth_date`='1968-04-16' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '马克西·罗德里格斯' WHERE `name`='Maxi RODRIGUEZ' AND `nationality`='阿根廷' AND `birth_date`='1981-01-02' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '米歇尔' WHERE `name`='MICHEL' AND `nationality`='西班牙' AND `birth_date`='1963-03-23' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '内马尔' WHERE `name`='NEYMAR' AND `nationality`='巴西' AND `birth_date`='1992-02-05' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '里瓦尔多' WHERE `name`='RIVALDO' AND `nationality`='巴西' AND `birth_date`='1972-04-19' AND `name_zh` IS NULL;
+
+-- 续：第 7 节剩余条目
+UPDATE `player` SET `name_zh` = '维特克' WHERE `name`='Róbert VITTEK' AND `nationality`='斯洛伐克' AND `birth_date`='1982-04-01' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '巴乔' WHERE `name`='Roberto BAGGIO' AND `nationality`='意大利' AND `birth_date`='1967-02-18' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '范佩西' WHERE `name`='Robin VAN PERSIE' AND `nationality`='荷兰' AND `birth_date`='1983-08-06' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '米拉' WHERE `name`='Roger MILLA' AND `nationality`='喀麦隆' AND `birth_date`='1952-05-20' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '罗马里奥' WHERE `name`='ROMÁRIO' AND `nationality`='巴西' AND `birth_date`='1966-01-29' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '卢卡库' WHERE `name`='Romelu LUKAKU' AND `nationality`='比利时' AND `birth_date`='1993-05-13' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '沃勒尔' WHERE `name`='Rudi VOELLER' AND `nationality`='西德' AND `birth_date`='1960-04-13' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '亨利' WHERE `name`='Thierry HENRY' AND `nationality`='法国' AND `birth_date`='1977-08-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '斯库赫拉维' WHERE `name`='Tomas SKUHRAVY' AND `nationality`='捷克斯洛伐克' AND `birth_date`='1965-09-07' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '沙奇里' WHERE `name`='Xherdan SHAQIRI' AND `nationality`='瑞士' AND `birth_date`='1991-10-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '齐达内' WHERE `name`='Zinedine ZIDANE' AND `nationality`='法国' AND `birth_date`='1972-06-23' AND `name_zh` IS NULL;
