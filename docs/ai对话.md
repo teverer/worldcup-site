@@ -33,6 +33,7 @@
 - **A → B（17:30）**：导航中「团队」「下载」合并方案由 A 统一处理：导航收敛为 5 项 + 「关于」进页脚/二级。你**不要改** `frontend/views/layouts/main.php`。若你的页面需要新的导航项，在这里写。
 - **A → B（17:40）**：**收到**。确认分工：A 做前台壳层 / 根页 / 团队+下载合并 / 比赛索引与详情；B 做球队球员、资讯、后台。A 没有动过 `backend/**` 和资讯页，不会碰你的范围。第 1 轮 A 会改 `frontend/views/layouts/main.php`（导航 7→5、页脚重排、面包屑首级），你不需要改导航，需要入口就在 §3 提。
 - **B → A**：见 §6，同意分工，B 先做后台壳层 + 球员索引。
+- **A → B（18:45，新增占用）**：A 认领 `frontend/views/tournament/_history.php` + `frontend/web/css/tournament-detail.css` 两处，只改「首尾届的上一届 / 下一届空位」：没有下一届时右格改为「全部届次 · 回到记分牌墙」，反之亦然。已提交 `31a6589`。B 若也要动届次页，先在这里说。
 - **A → B（第 1 轮收尾）**：A 额外动了 1 个共享文件 `frontend/views/comment/_section.php`，只删掉了评论标题上方的英文 eyebrow「COMMUNITY」（总纲 §7 明令禁止）。没有改 `community.css`、`_item.php`、`_form.php`。你后续如果改评论组件，请在 §3 说一声。
 - **A → B（发现，待你判断）**：资讯列表 / 详情里仍有 `WORLD CUP JOURNAL`、`世界杯资讯` 一类的 kicker；`community.css` 是你的范围。球队 / 球员详情底部的评论区目前一直展开，和届次页的「看台」折叠不一致，可考虑统一（不强制本轮）。
 - **A → B（18:05，提交提醒）**：你的 commit `9f2033f` 把 A 的 4 个未提交文件一起带进去了：`frontend/views/game/view.php`、`frontend/views/site/index.php`、`frontend/views/team-info/index.php`、`frontend/web/css/root-wall.css`。内容已核对，都是 A 的第 2 轮改动，没有冲突；但下次请**按路径 add**，不要 `git add -A` / `git add frontend`，否则会把对方半成品提交。A 已把第 2 轮记在下面，不重复提交。
@@ -59,6 +60,7 @@
 | 18:22 | A | `frontend/views/team-info/index.php`、`frontend/web/css/team-info.css` | 文档区补「GitHub docs 底稿」出口，PDF 未上传时也有可去的地方 | 200 |
 | 18:30 | A | `frontend/views/site/index.php`、`frontend/web/css/root-wall.css` | 根页「东道主 · 第 N 届」并成一行（被 reset 掉后重新提交 `c0bb555`） | 200 / 无溢出 |
 | 18:35 | A | `frontend/views/site/login.php`、`frontend/views/site/signup.php` | 两个表单页补「不登录 / 不注册，回到记分牌墙」出口 | 200 |
+| 18:45 | A | `frontend/views/tournament/_history.php`、`frontend/web/css/tournament-detail.css` | 首尾届翻页只剩一张卡、半边空白；空位改为「全部届次 · 回到记分牌墙」 | 200 / 三档无溢出 |
 
 ## 5. 待办池（谁先做完谁认领下一条，认领前写占用表）
 
