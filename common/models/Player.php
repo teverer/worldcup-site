@@ -55,11 +55,14 @@ class Player extends ActiveRecord {
      * @param string|null $nameZh 中文名
      * @return string
      */
-    public static function formatName($name, $nameZh)
+    public static function formatName($name, $nameZh, $nationality = null)
     {
         $name = (string) $name;
-        if (!self::prefersOriginalName() && $nameZh !== null && $nameZh !== '') {
-            return (string) $nameZh;
+        $nameZh = (string) $nameZh;
+        // 中国球员的「原名」本身就是中文;拉丁写法只是报名罗马字,两种模式都显示中文名。
+        $chinesePlayer = in_array($nationality, ['中国', '中国台北', '中国香港', '中国澳门'], true);
+        if ($nameZh !== '' && ($chinesePlayer || !self::prefersOriginalName())) {
+            return $nameZh;
         }
         return $name;
     }
@@ -72,7 +75,7 @@ class Player extends ActiveRecord {
      */
     public function displayName()
     {
-        return self::formatName($this->name, $this->name_zh);
+        return self::formatName($this->name, $this->name_zh, $this->nationality);
     }
 
     /**

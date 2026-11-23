@@ -114,6 +114,8 @@ $rosterTotal = (int) $dataProvider->totalCount;
             </div>
             <?php if (!$tournaments): ?>
                 <span class="badge badge-muted">暂无参赛记录</span>
+            <?php else: ?>
+                <?= $this->render('//partials/_name_lang') ?>
             <?php endif ?>
         </div>
 

@@ -41,15 +41,10 @@
     gap: 12px;
 }
 
-/* 只有并排的两张非 wide 卡需要这条例外:任一张展开数据表时,
-   网格按内容高度排,避免把另一张拉出空白下框;收起时两卡仍等底。 */
-@media (min-width: 861px) {
-    .chart-grid:has(.chart-card:not(.chart-card--wide) .chart-data[open]) {
-        align-items: start;
-    }
-}
+/* 数据表改为卡内覆盖层后,卡片高度不再变化;两张并排卡继续保持等底。 */
 
 .chart-card {
+    position: relative;
     min-width: 0;
     overflow: hidden;
     padding: 16px 18px 8px;
@@ -201,6 +196,60 @@
     margin-top: 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* 数据表展开:桌面端在同一张卡内覆盖图表,表格内部滚动。
+   卡片高度不变,所以不会把相邻图表卡拉高,也不会在旁边留下空白。 */
+@media (min-width: 861px) {
+    .chart-card .chart-data[open] .chart-table-wrap {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        margin: 0;
+        padding: 56px 18px 16px;
+        overflow: auto;
+        overscroll-behavior: contain;
+        background-color: var(--paper-2);
+    }
+
+    /* 覆盖层会盖住 details 的 summary;由 JS 在卡内放一个明确的关闭按钮。 */
+    .chart-data-close {
+        position: absolute;
+        top: 14px;
+        left: 18px;
+        z-index: 6;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--green-action);
+        font-family: inherit;
+        font-size: var(--fs-sm);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+    }
+
+    .chart-data-close:hover,
+    .chart-data-close:focus {
+        color: var(--green-action);
+        text-decoration: underline;
+    }
+
+    .chart-data-close:focus-visible {
+        outline: 3px solid rgba(20, 107, 69, .35);
+        outline-offset: 3px;
+    }
+}
+
+@media (max-width: 860px) {
+    .chart-data-close {
+        display: none;
+    }
+
+    .chart-card .chart-data[open] .chart-table-wrap {
+        max-height: 420px;
+        overflow: auto;
+        overscroll-behavior: contain;
+    }
 }
 
 .chart-table {

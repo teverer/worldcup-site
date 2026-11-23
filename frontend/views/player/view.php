@@ -100,6 +100,7 @@ $nameToggleUrl = [
             </div>
         </div>
         <div class="pd-actions">
+            <?= $this->render('//partials/_name_lang') ?>
             <?php if ($latestTeam): ?>
                 <?= Html::a('看' . $latestTeam['team_name'] . '队', ['/team/view', 'id' => $latestTeam['team_id']], ['class' => 'btn btn-primary']) ?>
             <?php else: ?>

@@ -158,6 +158,7 @@ class ChartController extends Controller
                 'player_id' => 'g.player_id',
                 'player_name' => 'p.name',
                 'player_name_zh' => 'p.name_zh',
+                'player_nationality' => 'p.nationality',
                 'team_id' => 'g.team_id',
                 'team_name' => 't.name',
                 'goals' => 'COUNT(g.id)',
@@ -171,7 +172,7 @@ class ChartController extends Controller
                 'g.is_shootout' => 0,
                 'g.is_own_goal' => 0,
             ])
-            ->groupBy(['g.player_id', 'p.name', 'p.name_zh', 'g.team_id', 't.name'])
+            ->groupBy(['g.player_id', 'p.name', 'p.name_zh', 'p.nationality', 'g.team_id', 't.name'])
             ->orderBy(['goals' => SORT_DESC, 'p.name' => SORT_ASC])
             ->limit(10)
             ->all();
@@ -183,6 +184,7 @@ class ChartController extends Controller
                 'playerId' => (int) $row['player_id'],
                 'playerName' => (string) $row['player_name'],
                 'playerNameZh' => (string) ($row['player_name_zh'] ?: ''),
+                'alwaysZh' => in_array($row['player_nationality'], ['中国', '中国台北', '中国香港', '中国澳门'], true),
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
                 'goals' => (int) $row['goals'],

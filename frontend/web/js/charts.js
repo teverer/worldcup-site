@@ -55,7 +55,7 @@
 
     // 有中文名优先显示中文名;没有或访客选择原名时回退原名。
     function displayPlayerName(row) {
-        if (!prefersOriginalName() && row && row.playerNameZh) {
+        if (row && row.playerNameZh && (row.alwaysZh || !prefersOriginalName())) {
             return String(row.playerNameZh);
         }
         return formatPlayerName(row ? row.playerName : '');
@@ -688,6 +688,33 @@
         });
     }
 
+    // 桌面端数据表以覆盖层展开,由脚本提供一个可见的关闭按钮。
+    function initChartDataToggles() {
+        Array.prototype.forEach.call(document.querySelectorAll('.chart-data'), function (details) {
+            details.addEventListener('toggle', function () {
+                var card = details.closest('.chart-card');
+                if (!card) {
+                    return;
+                }
+                var button = card.querySelector('.chart-data-close');
+                if (details.open) {
+                    if (!button) {
+                        button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'chart-data-close';
+                        button.textContent = '收起数据表，回到图表';
+                        button.addEventListener('click', function () {
+                            details.open = false;
+                        });
+                        card.appendChild(button);
+                    }
+                } else if (button) {
+                    button.remove();
+                }
+            });
+        });
+    }
+
     // 统计面板默认隐藏;tab 切到 #charts 后由页面脚本派发事件,再懒加载图表。
     window.addEventListener('worldcup:charts-shown', function () {
         if (!chartsInitialized) {
@@ -698,8 +725,12 @@
     });
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function () {
+            initChartDataToggles();
+            init();
+        });
     } else {
+        initChartDataToggles();
         init();
     }
 }());

@@ -292,6 +292,7 @@ class TournamentDetail
                 'is_shootout' => 'gl.is_shootout',
                 'player_name' => 'p.name',
                 'player_name_zh' => 'p.name_zh',
+                'player_nationality' => 'p.nationality',
                 'team_name' => 'tm.name',
                 'team_code' => 'tm.code',
             ])
@@ -321,7 +322,7 @@ class TournamentDetail
                 'is_own_goal' => (int) $row['is_own_goal'] === 1,
                 'is_shootout' => (int) $row['is_shootout'] === 1,
                 'player_name' => $row['player_name'] !== null
-                    ? Player::formatName($row['player_name'], $row['player_name_zh'])
+                    ? Player::formatName($row['player_name'], $row['player_name_zh'], $row['player_nationality'])
                     : '未知球员',
                 'team_name' => (string) $row['team_name'],
                 'team_code' => $row['team_code'] !== null ? (string) $row['team_code'] : null,
