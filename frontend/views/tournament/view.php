@@ -127,7 +127,7 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
     <header class="td-hero">
         <div class="td-hero-top">
             <a class="td-hero-back" href="<?= Html::encode(Url::to(['/site/index'])) ?>">← 记分牌墙</a>
-            <p class="td-hero-top-meta">第 <?= Html::encode((string) $ordinal) ?> 届 · 1986—2026</p>
+            <p class="td-hero-top-meta">第 <?= Html::encode((string) $ordinal) ?> 届</p>
         </div>
 
         <div class="td-hero-main">
@@ -175,18 +175,18 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
         </dl>
     </header>
 
-    <div class="td-switcher">
-        <nav class="td-tabs" aria-label="届次视图">
-            <a href="#knockout" aria-current="page">淘汰赛</a>
-            <a href="#groups">小组赛</a>
-            <a href="#charts">统计</a>
-            <a class="td-tabs-comments" href="#comments">
-                讨论 <span><?= Html::encode((string) (int) $comment_count) ?></span>
-            </a>
-        </nav>
+    <nav class="td-tabs" aria-label="届次视图">
+        <a href="#knockout" aria-current="page">淘汰赛</a>
+        <a href="#groups">小组赛</a>
+        <a href="#charts">统计</a>
+        <a class="td-tabs-comments" href="#comments">
+            讨论 <span><?= Html::encode((string) (int) $comment_count) ?></span>
+        </a>
+    </nav>
 
+    <div class="td-switcher">
         <div class="td-stage">
-            <section class="td-panel" id="knockout" tabindex="-1" aria-label="淘汰赛">
+            <section class="td-panel td-panel--knockout" id="knockout" tabindex="-1" aria-label="淘汰赛">
                 <?php if (is_file($bracketView)): ?>
                     <?= $this->render('_bracket', [
                         'bracket' => $bracket,
@@ -219,21 +219,29 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
         </div>
     </div>
 
-    <section class="td-section td-comments" id="comments" tabindex="-1"
-             aria-labelledby="td-comments-title">
-        <header class="td-section-head">
-            <h2 class="section-title" id="td-comments-title">讨论 <small>这一届的留言</small></h2>
-        </header>
-        <?= CommentSection::widget([
-            'targetType' => CommentTarget::TOURNAMENT,
-            'targetId' => $model->id,
-        ]) ?>
-    </section>
-
     <?= $this->render('_history', [
         'previous' => $previous,
         'next' => $next,
     ]) ?>
+
+    <?php /* 看台:页尾的社区区,默认收起;顶部“讨论 N”会展开并跳到这里。 */ ?>
+    <details class="td-stands" id="comments">
+        <summary class="td-stands__bar">
+            <span class="td-stands__name">看台</span>
+            <span class="td-stands__note">这一届的讨论 · <?= Html::encode((string) (int) $comment_count) ?> 条</span>
+            <span class="td-stands__toggle">
+                <span class="td-stands__toggle-open">打开讨论</span>
+                <span class="td-stands__toggle-close">收起</span>
+                <span class="td-stands__chevron" aria-hidden="true"></span>
+            </span>
+        </summary>
+        <div class="td-stands__body">
+            <?= CommentSection::widget([
+                'targetType' => CommentTarget::TOURNAMENT,
+                'targetId' => $model->id,
+            ]) ?>
+        </div>
+    </details>
 </div>
 <?php
 $this->registerJs(<<<'JS'
@@ -269,13 +277,48 @@ $this->registerJs(<<<'JS'
         }, 80);
     };
 
+    // 看台默认收起;顶部“讨论 N”跳转或直接带 #comments 打开时展开。
+    var stands = document.getElementById('comments');
+    var opensStandsFromNav = function () {
+        if (stands && stands.tagName.toLowerCase() === 'details') {
+            stands.open = true;
+        }
+    };
+    var standsTab = document.querySelector('.td-tabs-comments');
+    if (standsTab && stands) {
+        // 不改 hash:讨论不属于舞台面板,跳过去不应把小组赛 / 统计重置回淘汰赛。
+        standsTab.addEventListener('click', function (event) {
+            event.preventDefault();
+            opensStandsFromNav();
+            stands.scrollIntoView();
+        });
+    }
+
+    // 从外部带 #comments 进来时,收起后清掉 hash,避免留下“讨论”高亮。
+    if (stands && stands.tagName.toLowerCase() === 'details') {
+        stands.addEventListener('toggle', function () {
+            if (!stands.open && window.location.hash === '#comments') {
+                window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                syncTabs();
+            }
+        });
+    }
+
+    var syncStands = function () {
+        if (window.location.hash === '#comments') {
+            opensStandsFromNav();
+        }
+    };
+
     window.addEventListener('hashchange', function () {
         syncTabs();
         notifyCharts();
+        syncStands();
     });
 
     syncTabs();
     notifyCharts();
+    syncStands();
 })();
 JS
 , View::POS_END);

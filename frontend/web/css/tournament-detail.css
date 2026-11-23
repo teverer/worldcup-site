@@ -5,9 +5,14 @@
    数据区回到冷纸,淘汰赛样式由 bracket.css 独立维护。 */
 
 .tournament-detail {
-    --td-tab-h: 52px;
+    --td-tab-h: 56px;
     padding-bottom: var(--space-4);
     color: var(--ink);
+}
+
+/* 届次页是一块舞台,比其他页面宽一档:晋级树每列更宽,小组赛 3 列不挤。 */
+body.site-tournament-view .container {
+    max-width: 1320px;
 }
 
 /* 详情页整体回到冷纸;页头沉入夜色,页脚保持浅色。 */
@@ -65,7 +70,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .td-hero {
     position: relative;
     z-index: 1;
-    padding: 14px 0 0;
+    padding: 16px 0 0;
     background-color: var(--night);
     /* 横向出血到视口两侧,但不参与布局溢出计算 */
     box-shadow: 0 0 0 100vmax var(--night);
@@ -100,7 +105,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-2);
-    padding-bottom: 10px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--line-dark);
 }
 
@@ -127,10 +132,10 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-main {
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(300px, .55fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, .5fr);
     align-items: center;
-    gap: clamp(20px, 3vw, 48px);
-    padding: 14px 0 12px;
+    gap: clamp(24px, 3.4vw, 56px);
+    padding: 22px 0 20px;
 }
 
 .td-hero-identity {
@@ -150,7 +155,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .td-hero-year {
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(3.25rem, 4.6vw, 4.75rem);
+    font-size: clamp(4rem, 6.4vw, 6rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
@@ -159,16 +164,16 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-name {
     color: var(--flood);
-    font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
     font-weight: 700;
     letter-spacing: -.02em;
     line-height: 1.15;
 }
 
 .td-hero-sub {
-    margin: 8px 0 0;
+    margin: 10px 0 0;
     color: var(--steel);
-    font-size: var(--fs-xs);
+    font-size: 13px;
     letter-spacing: .02em;
 }
 
@@ -181,16 +186,16 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 6px;
     min-width: 0;
-    padding-left: clamp(0px, 2vw, 24px);
+    padding-left: clamp(0px, 2vw, 28px);
     border-left: 1px solid var(--line-dark);
 }
 
 .td-hero-champion {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 10px;
     margin: 0;
 }
 
@@ -203,7 +208,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-champion strong {
     color: var(--gold-light);
-    font-size: clamp(1.35rem, 1.9vw, 1.75rem);
+    font-size: clamp(1.75rem, 2.4vw, 2.4rem);
     font-weight: 700;
     letter-spacing: -.01em;
     line-height: 1.1;
@@ -248,7 +253,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .td-hero-final-score {
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    font-size: clamp(1.75rem, 2.2vw, 2.2rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -276,7 +281,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 }
 
 .td-hero-fact {
-    padding: 8px 16px 10px 0;
+    padding: 16px 20px 18px 0;
     border-right: 1px solid var(--line-dark);
 }
 
@@ -288,14 +293,14 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     color: var(--steel);
     font-size: var(--fs-xs);
     font-weight: 400;
-    letter-spacing: .08em;
+    letter-spacing: .1em;
 }
 
 .td-hero-fact dd {
-    margin: 2px 0 0;
+    margin: 4px 0 0;
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(1.35rem, 1.7vw, 1.75rem);
+    font-size: clamp(2rem, 2.6vw, 2.6rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -308,6 +313,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     position: relative;
 }
 
+/* tab 并入深色身份头:整条横向出血的夜场灯带 */
 .td-tabs {
     position: sticky;
     z-index: 30;
@@ -315,25 +321,20 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     display: flex;
     align-items: stretch;
     gap: 2px;
+    min-height: var(--td-tab-h);
     padding: 0 var(--space-1);
-    overflow-x: auto;
-    border-bottom: 1px solid var(--line);
-    background-color: rgba(233, 237, 233, .94);
-    scrollbar-width: none;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-}
-
-.td-tabs::-webkit-scrollbar {
-    display: none;
+    border-bottom: 1px solid var(--line-dark);
+    background-color: var(--night);
+    box-shadow: 0 0 0 100vmax var(--night);
+    clip-path: inset(0 -100vmax);
 }
 
 .td-tabs a {
     flex: 0 0 auto;
-    padding: 14px 20px 12px;
+    padding: 16px 22px 14px;
     border-bottom: 2px solid transparent;
-    color: var(--muted);
-    font-size: var(--fs-sm);
+    color: rgba(243, 246, 242, .62);
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
     text-decoration: none;
@@ -343,33 +344,32 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-tabs a:hover,
 .td-tabs a:focus {
-    color: var(--ink);
+    color: var(--flood);
     text-decoration: none;
 }
 
 .td-tabs a:focus-visible {
-    outline: 2px solid var(--green-action);
+    outline: 2px solid var(--green-light);
     outline-offset: -2px;
 }
 
 /* 默认高亮淘汰赛;hash 指向其他面板时让位 */
 .td-tabs a[href="#knockout"] {
-    border-bottom-color: var(--green-action);
-    color: var(--green-action);
+    border-bottom-color: var(--green-light);
+    color: var(--green-light);
 }
 
 .tournament-detail:has(#groups:target) .td-tabs a[href="#knockout"],
-.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"],
-.tournament-detail:has(#comments:target) .td-tabs a[href="#knockout"] {
+.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"] {
     border-bottom-color: transparent;
-    color: var(--muted);
+    color: rgba(243, 246, 242, .62);
 }
 
 .tournament-detail:has(#knockout:target) .td-tabs a[href="#knockout"],
 .tournament-detail:has(#groups:target) .td-tabs a[href="#groups"],
 .tournament-detail:has(#charts:target) .td-tabs a[href="#charts"] {
-    border-bottom-color: var(--green-action);
-    color: var(--green-action);
+    border-bottom-color: var(--green-light);
+    color: var(--green-light);
 }
 
 .td-tabs-comments {
@@ -378,20 +378,65 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-tabs-comments span {
     margin-left: 4px;
-    color: var(--ink);
+    color: var(--flood);
     font-variant-numeric: tabular-nums;
 }
 
+/* 看台展开时点亮右侧“讨论”;不改 hash,舞台 tab 的当前项保持不变 */
+.tournament-detail:has(.td-stands[open]) .td-tabs-comments,
 .tournament-detail:has(#comments:target) .td-tabs-comments {
-    color: var(--green-action);
+    color: var(--green-light);
 }
 
 .td-stage {
-    margin-top: var(--space-4);
+    margin-top: 0;
 }
 
 .td-panel {
     scroll-margin-top: calc(var(--td-tab-h) + 8px);
+}
+
+/* 面板由 hash 跳转获得焦点;整块舞台不适合画一圈焦点框 */
+.tournament-detail .td-panel:focus,
+.tournament-detail .td-panel:focus-visible,
+.tournament-detail .td-section:focus,
+.tournament-detail .td-section:focus-visible {
+    outline: none;
+}
+
+/* 淘汰赛面板:通栏深色舞台,树占满舞台宽度 */
+.td-panel--knockout {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(28px, 3vw, 40px) 0 clamp(32px, 4.4vw, 56px);
+    color: var(--flood);
+}
+
+.td-panel--knockout::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(90% 150% at 50% -10%, rgba(127, 200, 169, .10), transparent 60%),
+        var(--night);
+    box-shadow: 0 0 0 100vmax var(--night);
+    clip-path: inset(0 -100vmax);
+    content: "";
+}
+
+.td-panel--knockout .td-section-more a {
+    color: var(--green-light);
+}
+
+.td-panel--knockout .td-section-more a:hover,
+.td-panel--knockout .td-section-more a:focus {
+    color: var(--gold-light);
+}
+
+/* 小组赛 / 统计保持冷纸,从深色 tab 下开始就是纸面 */
+.td-panel--groups,
+.td-panel--stats {
+    padding-top: clamp(24px, 3.2vw, 40px);
 }
 
 /* 原生 :has 可用时一次只显示一个面板;不可用时全部面板保持可见。 */
@@ -473,10 +518,11 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 /* ==========================================================================
    4. 小组赛
    ========================================================================== */
+/* 本页容器加宽到 1320:12 组三列,每组约 410px,1280 下也不挤。 */
 .group-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
 }
 
 .group-card {
@@ -515,50 +561,50 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     -webkit-overflow-scrolling: touch;
 }
 
-body .group-table {
+body .td-panel--groups .group-table {
     margin-bottom: 0;
     color: var(--ink);
-    font-size: 11px;
+    font-size: 12px;
 }
 
-body .group-table > thead > tr > th {
-    padding: 5px 6px;
+body .td-panel--groups .group-table > thead > tr > th {
+    padding: 7px 7px;
     border-top: 0;
     border-bottom: 1px solid var(--line);
     background-color: var(--paper);
     color: var(--muted);
-    font-size: 10px;
+    font-size: 10.5px;
     letter-spacing: .02em;
     white-space: nowrap;
 }
 
-body .group-table > tbody > tr > td,
-body .group-table > tbody > tr > th {
-    padding: 5px 6px;
+body .td-panel--groups .group-table > tbody > tr > td,
+body .td-panel--groups .group-table > tbody > tr > th {
+    padding: 8px 7px;
     border-top: 1px solid var(--line);
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
-body .group-table > tbody > tr > th.group-team {
-    min-width: 92px;
+body .td-panel--groups .group-table > tbody > tr > th.group-team {
+    min-width: 96px;
     font-weight: 600;
     text-align: left;
 }
 
-body .group-table > tbody > tr.is-qualified {
+body .td-panel--groups .group-table > tbody > tr.is-qualified {
     background-color: rgba(20, 107, 69, .06);
 }
 
-body .group-table > tbody > tr.is-best-third {
+body .td-panel--groups .group-table > tbody > tr.is-best-third {
     background-color: rgba(201, 162, 39, .07);
 }
 
-body .group-table > tbody > tr:hover {
+body .td-panel--groups .group-table > tbody > tr:hover {
     background-color: rgba(20, 107, 69, .10);
 }
 
-body .group-table > thead > tr > th:first-child,
-body .group-table > tbody > tr > td.group-rank-cell {
+body .td-panel--groups .group-table > thead > tr > th:first-child,
+body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     width: 22px;
     text-align: center;
     white-space: nowrap;
@@ -638,27 +684,13 @@ body .group-table > tbody > tr > td.group-rank-cell {
 }
 
 /* ==========================================================================
-   6. 讨论与上一届 / 下一届
+   6. 上一届 / 下一届 · 看台
    ========================================================================== */
-.td-comments {
-    max-width: 760px;
-    margin-top: var(--space-6);
-}
-
-.td-comments .comment-section {
-    margin-top: 0;
-}
-
-/* 讨论区已有本页 h2;隐藏组件自带的 COMMUNITY 与重复评论数。 */
-.td-comments .comment-section-heading {
-    display: none;
-}
-
 .td-history {
     display: flex;
     justify-content: space-between;
     gap: var(--space-2);
-    margin-top: var(--space-6);
+    margin-top: var(--space-4);
 }
 
 .td-history-link {
@@ -710,10 +742,128 @@ body .group-table > tbody > tr > td.group-rank-cell {
     text-wrap: balance;
 }
 
+/* 看台:页尾的社区区,默认收起成一条深绿门;展开后是一张居中纸卡。
+   用 pitch 深绿和夜场舞台分开,讨论不再直接贴着比赛详情。 */
+.td-stands {
+    margin-top: var(--space-6);
+    background-color: var(--pitch);
+    box-shadow: 0 0 0 100vmax var(--pitch);
+    clip-path: inset(0 -100vmax);
+    color: var(--flood);
+    scroll-margin-top: calc(var(--td-tab-h) + 16px);
+}
+
+.td-stands__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+}
+
+.td-stands__bar::-webkit-details-marker {
+    display: none;
+}
+
+.td-stands__bar:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: -2px;
+}
+
+.td-stands__name {
+    color: var(--flood);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.2;
+}
+
+.td-stands__note {
+    color: rgba(243, 246, 242, .66);
+    font-size: 13px;
+}
+
+.td-stands__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--green-light);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.td-stands__bar:hover .td-stands__toggle {
+    color: var(--flood);
+}
+
+.td-stands__toggle-close {
+    display: none;
+}
+
+.td-stands[open] .td-stands__toggle-open {
+    display: none;
+}
+
+.td-stands[open] .td-stands__toggle-close {
+    display: inline;
+}
+
+.td-stands__chevron {
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 160ms ease, margin-top 160ms ease;
+}
+
+.td-stands[open] .td-stands__chevron {
+    margin-top: 4px;
+    transform: rotate(225deg);
+}
+
+.td-stands__body {
+    padding: 0 0 var(--space-5);
+}
+
+/* 纸卡坐在看台上,评论组件本身的视觉保持不变 */
+.td-stands .comment-section {
+    max-width: 760px;
+    margin: 0 auto;
+    border-radius: 2px;
+    background-color: var(--paper-2);
+    box-shadow: none;
+}
+
+.td-stands .comment-login-prompt {
+    border-radius: 2px;
+    background-color: var(--paper);
+}
+
+/* 看台标题在 summary 上;隐藏组件自带的 COMMUNITY 与重复评论数。 */
+.td-stands .comment-section-heading {
+    display: none;
+}
+
 /* ==========================================================================
    7. 响应式(PC 为主,窄屏只做结构收拢与不溢出兜底)
    ========================================================================== */
+@media (max-width: 1199px) {
+    .group-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 991px) {
+    .group-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .td-hero-main {
         grid-template-columns: minmax(0, 1fr);
         align-items: start;
@@ -757,16 +907,42 @@ body .group-table > tbody > tr > td.group-rank-cell {
     }
 
     .td-tabs a {
-        padding: 12px 14px 10px;
-        font-size: 13px;
+        padding: 14px 16px 12px;
+        font-size: 14px;
     }
 
-    .td-stage {
-        margin-top: var(--space-2);
+    @media (max-width: 380px) {
+        .td-tabs a {
+            padding: 13px 12px 11px;
+            font-size: 13.5px;
+        }
+    }
+
+    .td-panel--knockout {
+        padding: 28px 0;
     }
 
     .td-section {
         margin-top: var(--space-4);
+    }
+
+    /* 单列小组表仍要放下 8 列,收紧字号与内边距保证积分列可见 */
+    body .td-panel--groups .group-table {
+        font-size: 11px;
+    }
+
+    body .td-panel--groups .group-table > thead > tr > th {
+        padding: 5px 4px;
+        font-size: 10px;
+    }
+
+    body .td-panel--groups .group-table > tbody > tr > td,
+    body .td-panel--groups .group-table > tbody > tr > th {
+        padding: 5px 4px;
+    }
+
+    body .td-panel--groups .group-table > tbody > tr > th.group-team {
+        min-width: 84px;
     }
 
     .td-section-head {
@@ -792,6 +968,40 @@ body .group-table > tbody > tr > td.group-rank-cell {
     .td-history-link--next {
         margin-left: 0;
         text-align: left;
+    }
+
+    .td-stands {
+        margin-top: var(--space-5);
+    }
+
+    .td-stands__bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 2px 12px;
+        padding: 18px 0;
+    }
+
+    .td-stands__name {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: 20px;
+    }
+
+    .td-stands__note {
+        grid-column: 1;
+        grid-row: 2;
+        font-size: 12px;
+    }
+
+    .td-stands__toggle {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: center;
+        margin-left: 0;
+    }
+
+    .td-stands__body {
+        padding-bottom: var(--space-4);
     }
 }
 

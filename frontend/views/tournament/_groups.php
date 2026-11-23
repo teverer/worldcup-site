@@ -19,7 +19,7 @@ use yii\helpers\Url;
          aria-labelledby="td-groups-title">
     <header class="td-section-head">
         <h2 class="section-title" id="td-groups-title">小组赛 <small>积分榜</small></h2>
-        <p class="td-section-note">仅统计已结束的小组赛；每组前两名出线，24 / 48 队制另取成绩最好的小组第 3。</p>
+        <p class="td-section-note">仅统计已结束的小组赛；每组前两名出线，24 / 48 队制另取最佳小组第三。</p>
     </header>
 
     <?php if ($groups === []): ?>

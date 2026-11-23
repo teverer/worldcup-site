@@ -98,12 +98,6 @@ $matchesFor = static function ($key) use ($roundByKey) {
         ? array_values($roundByKey[$key]['matches'])
         : [];
 };
-$labelFor = static function ($key, $fallback) use ($roundByKey) {
-    return isset($roundByKey[$key]['label']) && $roundByKey[$key]['label'] !== ''
-        ? (string) $roundByKey[$key]['label']
-        : $fallback;
-};
-
 // 主树只放 1/8 以后;1/16 单独折叠。
 $r16Matches = array_slice($matchesFor('r16'), 0, 8);
 $qfMatches = array_slice($matchesFor('qf'), 0, 4);
@@ -209,22 +203,21 @@ $renderCard = static function (array $match, $level) use ($championPathIds, $cha
 };
 
 /**
- * 渲染一轮:左侧轮次名 + 右侧 8 列卡片。跨度由调用方给出。
+ * 渲染一轮:8 列网格里的卡片行,跨度由调用方给出。
+ * 不画轮次标签,轮次靠卡片尺寸与连线表达,树占满舞台宽度。
  */
-$renderRound = static function ($key, $fallbackLabel, $level, $span, array $matches) use ($labelFor, $renderCard) {
+$renderRound = static function ($key, $level, $span, array $matches) use ($renderCard) {
     if ($matches === []) {
         return '';
     }
 
-    $html = '<div class="tree-round tree-round--' . Html::encode((string) $key) . '">';
-    $html .= '<h3 class="tree-round__title">' . Html::encode($labelFor($key, $fallbackLabel)) . '</h3>';
-    $html .= '<div class="tree-row">';
+    $html = '<div class="tree-row tree-row--' . Html::encode((string) $key) . '">';
     foreach ($matches as $match) {
         $html .= '<div class="tree-slot" style="grid-column: span ' . (int) $span . '">';
         $html .= $renderCard($match, $level);
         $html .= '</div>';
     }
-    $html .= '</div></div>';
+    $html .= '</div>';
 
     return $html;
 };
@@ -289,23 +282,18 @@ $renderConnectors = static function (array $parents, array $children, $span) use
     </div>
 <?php else: ?>
     <section class="bracket" aria-labelledby="bracket-title">
-        <header class="bracket__head">
-            <div class="bracket__heading">
-                <h2 class="bracket__title" id="bracket-title">晋级图</h2>
-                <p class="bracket__note">决赛在顶，从 1/8 决赛向下展开；点击比赛进入详情。</p>
-            </div>
-        </header>
+        <h2 class="sr-only" id="bracket-title">淘汰赛对阵</h2>
 
         <?php if ($hasMainTree): ?>
             <div class="tree-scroll">
-                <div class="tree" role="group" aria-label="淘汰赛对阵，从决赛向下阅读">
-                    <?= $renderRound('final', '决赛', 'final', 8, $finalMatches) ?>
+                <div class="tree" role="group" aria-label="淘汰赛对阵，决赛在顶，从 1/8 决赛向下阅读">
+                    <?= $renderRound('final', 'final', 8, $finalMatches) ?>
                     <?= $renderConnectors($finalMatches, $sfMatches, 8) ?>
-                    <?= $renderRound('sf', '半决赛', 'sf', 4, $sfMatches) ?>
+                    <?= $renderRound('sf', 'sf', 4, $sfMatches) ?>
                     <?= $renderConnectors($sfMatches, $qfMatches, 4) ?>
-                    <?= $renderRound('qf', '1/4决赛', 'qf', 2, $qfMatches) ?>
+                    <?= $renderRound('qf', 'qf', 2, $qfMatches) ?>
                     <?= $renderConnectors($qfMatches, $r16Matches, 2) ?>
-                    <?= $renderRound('r16', '1/8决赛', 'r16', 1, $r16Matches) ?>
+                    <?= $renderRound('r16', 'r16', 1, $r16Matches) ?>
                 </div>
             </div>
         <?php endif ?>
