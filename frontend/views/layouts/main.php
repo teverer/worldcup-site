@@ -55,14 +55,14 @@ CSS
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
 $actionId = Yii::$app->controller !== null && Yii::$app->controller->action !== null
     ? Yii::$app->controller->action->id : '';
+// 主导航只放「看世界杯」的五个入口；团队、文档、统计口径属于说明性内容，
+// 统一收进页脚的「本站」列，避免和档案入口争层级（总纲 §4）。
 $navItems = [
     ['label' => '届次', 'url' => ['/site/index'], 'controllers' => ['site', 'tournament'], 'siteIndexOnly' => true],
     ['label' => '比赛', 'url' => ['/game/index'], 'controllers' => ['game']],
     ['label' => '球队', 'url' => ['/team/index'], 'controllers' => ['team']],
     ['label' => '球员', 'url' => ['/player/index'], 'controllers' => ['player']],
     ['label' => '资讯', 'url' => ['/news/index'], 'controllers' => ['news']],
-    ['label' => '团队', 'url' => ['/team-info/index'], 'controllers' => ['team-info'], 'actions' => ['index']],
-    ['label' => '下载', 'url' => ['/team-info/downloads'], 'controllers' => ['team-info'], 'actions' => ['downloads']],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -128,7 +128,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
 <main class="site-main" id="main-content">
     <div class="container">
         <?= Breadcrumbs::widget([
-            'homeLink' => ['label' => '档案', 'url' => Yii::$app->homeUrl],
+            'homeLink' => ['label' => '首页', 'url' => Yii::$app->homeUrl],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
@@ -141,31 +141,31 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
         <div class="site-footer-inner">
             <div class="site-footer-brand">
                 <p class="site-footer-name">世界杯数据门户</p>
-                <p class="site-footer-intro">收录 1986–2026 年十一届世界杯的届次、球队、球员、比赛与进球数据，用数据回看绿茵经典。</p>
+                <p class="site-footer-intro">1986–2026 十一届世界杯 · 届次、球队、球员、比赛与进球。</p>
             </div>
-            <div class="site-footer-links">
+            <nav class="site-footer-links" aria-label="页脚导航">
                 <div class="site-footer-col">
-                    <p class="site-footer-title">文档</p>
+                    <p class="site-footer-title">浏览</p>
                     <ul>
-                        <li><?= Html::a('项目文档', 'https://github.com/teverer/worldcup-site/tree/dev/docs', [
-                            'target' => '_blank',
-                            'rel' => 'noopener noreferrer',
-                        ]) ?></li>
+                        <li><?= Html::a('届次', Yii::$app->homeUrl) ?></li>
+                        <li><?= Html::a('比赛', ['/game/index']) ?></li>
+                        <li><?= Html::a('球队', ['/team/index']) ?></li>
+                        <li><?= Html::a('球员', ['/player/index']) ?></li>
+                        <li><?= Html::a('资讯', ['/news/index']) ?></li>
+                    </ul>
+                </div>
+                <div class="site-footer-col">
+                    <p class="site-footer-title">本站</p>
+                    <ul>
+                        <li><?= Html::a('关于本站与文档', ['/team-info/index']) ?></li>
+                        <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
                         <li><?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
                             'target' => '_blank',
                             'rel' => 'noopener noreferrer',
                         ]) ?></li>
                     </ul>
                 </div>
-                <div class="site-footer-col">
-                    <p class="site-footer-title">关于</p>
-                    <ul>
-                        <li><?= Html::a('团队展示', Url::to(['/team-info/index'])) ?></li>
-                        <li><?= Html::a('作业下载', Url::to(['/team-info/downloads'])) ?></li>
-                        <li><?= Html::a('最新资讯', ['/news/index']) ?></li>
-                    </ul>
-                </div>
-            </div>
+            </nav>
         </div>
     </div>
     <div class="site-footer-bottom">

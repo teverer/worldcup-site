@@ -1,195 +1,361 @@
-/* 团队展示与作业下载模块样式，复用 theme.css 中的设计令牌。 */
-.team-page {
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261123
+   模块:框架与团队主页 —— 关于本站（范围、团队、文档下载）样式。
+   2026-11-23 合并团队展示与作业下载两页，按「身份头 → 三节」重排；
+   颜色、字号、间距统一取 theme.css 令牌。 */
+
+.about-page {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-6);
+    color: var(--color-text);
+    padding-bottom: var(--space-6);
 }
 
-.team-hero {
+/* 身份头：轻量纸面，不做大 hero；左侧一条绿线标明「说明页」。 */
+.about-hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-6);
+    padding: var(--space-5) var(--space-5) var(--space-5) var(--space-4);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background:
-        radial-gradient(circle at 88% 8%, rgba(242, 183, 5, .18), transparent 32%),
-        linear-gradient(135deg, var(--color-surface), #EEF7F1);
-    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 4px;
+    background: var(--paper-2);
 }
 
-.team-kicker {
+.about-context {
     margin: 0 0 var(--space-1);
-    color: var(--color-primary);
+    color: var(--color-muted-strong);
     font-size: var(--fs-sm);
-    font-weight: 600;
-    letter-spacing: .08em;
 }
 
-.team-title {
+.about-hero h1 {
     margin: 0 0 var(--space-2);
     font-size: var(--fs-3xl);
+    font-weight: 700;
+    letter-spacing: -.02em;
 }
 
-.team-slogan {
+.about-lead {
     margin: 0;
     color: var(--color-muted-strong);
     font-size: var(--fs-lg);
 }
 
-.team-logo,
-.team-logo-placeholder {
-    width: 112px;
-    height: 112px;
-    border-radius: 28px;
-    box-shadow: var(--shadow-md);
-}
-
-.team-logo {
-    object-fit: cover;
-}
-
-.team-logo-placeholder {
-    display: grid;
-    place-items: center;
-    background: var(--color-text);
-    color: var(--color-accent);
-    font-size: 32px;
-    font-weight: 700;
-}
-
-.team-intro {
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-}
-
-.team-intro p:last-child {
-    margin-bottom: 0;
-}
-
-.member-grid,
-.work-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
-}
-
-.member-card,
-.work-card {
-    height: 100%;
-}
-
-.member-profile {
-    display: flex;
-    gap: var(--space-3);
-    align-items: center;
-}
-
-.member-avatar,
-.member-avatar-placeholder {
-    flex: 0 0 auto;
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-}
-
-.member-avatar {
-    object-fit: cover;
-}
-
-.member-avatar-placeholder {
-    display: grid;
-    place-items: center;
-    background: var(--color-primary);
-    color: #FFFFFF;
-    font-size: var(--fs-xl);
-    font-weight: 700;
-}
-
-.member-name {
-    margin: 0 0 4px;
-    font-size: var(--fs-lg);
-}
-
-.member-meta {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: var(--fs-sm);
-}
-
-.member-duty {
-    margin: var(--space-3) 0 var(--space-2);
-    padding: var(--space-2);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-alt);
-    color: var(--color-text);
-    font-weight: 600;
-}
-
-.member-intro {
-    margin: 0;
-    color: var(--color-muted-strong);
-}
-
-.team-actions {
+.about-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
+    margin-top: var(--space-3);
 }
 
-.download-group + .download-group {
-    margin-top: var(--space-5);
+.about-logo,
+.about-logo--fallback {
+    width: 96px;
+    height: 96px;
+    border-radius: 8px;
 }
 
-.work-card .card-body {
+.about-logo {
+    object-fit: cover;
+}
+
+.about-logo--fallback {
+    display: grid;
+    place-items: center;
+    background: var(--night);
+    color: var(--gold-light);
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+/* 三个区块：用一条细分隔线分节，标题带短绿线。 */
+.about-section {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+.about-section-head {
+    display: grid;
+    gap: var(--space-1);
+    margin-bottom: var(--space-4);
+}
+
+.about-section-head h2 {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: var(--space-2);
-    height: 100%;
-}
-
-.work-card h3 {
     margin: 0;
-    font-size: var(--fs-lg);
+    font-size: var(--fs-xl);
+    font-weight: 600;
 }
 
-.work-card p {
+.about-section-head h2::before {
+    flex: 0 0 auto;
+    width: 4px;
+    height: 1.1em;
+    border-radius: 999px;
+    background: var(--color-primary);
+    content: "";
+}
+
+.about-section-head p {
     margin: 0;
+    color: var(--color-muted-strong);
 }
 
-.work-meta {
+/* 收录范围：四个数字 → 三条口径 → 来源。 */
+.about-facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 0 0 var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+}
+
+.about-facts > div {
+    padding: var(--space-2) var(--space-3);
+}
+
+.about-facts > div + div {
+    border-left: 1px solid var(--color-border);
+}
+
+.about-facts dt {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+    font-weight: 400;
+}
+
+.about-facts dd {
+    margin: 2px 0 0;
+    font-family: var(--font-display);
+    font-size: var(--fs-2xl);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.about-notes {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.about-notes li {
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--color-border);
+    color: var(--color-muted-strong);
+}
+
+.about-notes strong {
+    color: var(--color-text);
+}
+
+.about-source {
+    margin: var(--space-3) 0 0;
     color: var(--color-muted);
     font-size: var(--fs-sm);
 }
 
-.work-card .btn {
-    align-self: flex-start;
-    margin-top: auto;
+/* 团队：一行一人，资料缺失时自动收起，不留空卡片。 */
+.about-intro {
+    max-width: 72ch;
+    margin: 0 0 var(--space-3);
+    line-height: 1.9;
+}
+
+.about-members {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.about-member {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.about-member-avatar {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--pitch);
+    color: var(--flood);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    object-fit: cover;
+}
+
+.about-member-main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.about-member-name {
+    font-size: var(--fs-base);
+    font-weight: 600;
+}
+
+.about-member-role {
+    margin-left: var(--space-1);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-xs);
+    font-weight: 400;
+}
+
+.about-member-meta {
+    color: var(--color-muted);
+    font-size: var(--fs-sm);
+}
+
+.about-member-intro {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+}
+
+/* 文档：整行可点，右侧「下载」是唯一动作。 */
+.about-doc-group + .about-doc-group {
+    margin-top: var(--space-4);
+}
+
+.about-doc-group h3 {
+    margin: 0 0 var(--space-2);
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.about-docs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+}
+
+.about-doc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-2) var(--space-1);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+.about-doc:hover,
+.about-doc:focus {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.about-doc-main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.about-doc-title {
+    font-weight: 600;
+}
+
+.about-doc-desc,
+.about-doc-meta {
+    color: var(--color-muted);
+    font-size: var(--fs-sm);
+}
+
+.about-doc-meta {
+    white-space: nowrap;
+}
+
+.about-doc-action {
+    color: var(--green-action);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.about-doc-empty {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--fs-sm);
+}
+
+.about-empty {
+    padding: var(--space-4);
+    border: 1px dashed var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-muted-strong);
+}
+
+.about-empty p {
+    margin: 0;
 }
 
 @media (max-width: 991px) {
-    .member-grid,
-    .work-grid {
+    .about-members {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 767px) {
-    .team-hero {
+    .about-hero {
         grid-template-columns: 1fr;
         padding: var(--space-4);
     }
 
-    .team-logo,
-    .team-logo-placeholder {
-        width: 84px;
-        height: 84px;
-        border-radius: 20px;
+    .about-logo,
+    .about-logo--fallback {
+        width: 64px;
+        height: 64px;
+        font-size: 24px;
     }
 
-    .team-title {
+    .about-hero h1 {
         font-size: var(--fs-2xl);
+    }
+
+    .about-facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .about-facts > div:nth-child(3) {
+        border-left: 0;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .about-facts > div:nth-child(4) {
+        border-top: 1px solid var(--color-border);
+    }
+
+    .about-doc {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .about-doc-meta {
+        display: none;
     }
 }

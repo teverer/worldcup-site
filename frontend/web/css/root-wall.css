@@ -334,6 +334,24 @@ body.site-site-index {
     color: var(--gold-light);
 }
 
+/* 说明性入口：不进入「找一届」的主路径，只留一行低调的出口。 */
+.wall-about {
+    margin: 18px 0 0;
+    font-size: var(--fs-sm);
+}
+
+.wall-about a {
+    color: var(--steel);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(243, 246, 242, .18);
+}
+
+.wall-about a:hover,
+.wall-about a:focus {
+    color: var(--flood);
+    border-color: var(--flood);
+}
+
 @media (max-width: 991px) {
     .wall-head {
         grid-template-columns: minmax(0, 1fr);
