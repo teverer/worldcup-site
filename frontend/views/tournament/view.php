@@ -126,7 +126,7 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
 <div class="tournament-detail">
     <header class="td-hero">
         <div class="td-hero-top">
-            <a class="td-hero-back" href="<?= Html::encode(Url::to(['/site/index'])) ?>">← 记分牌墙</a>
+            <a class="td-hero-back" href="<?= Html::encode(Url::to(['/site/index'])) ?>">← 首页</a>
             <p class="td-hero-top-meta">第 <?= Html::encode((string) $ordinal) ?> 届</p>
         </div>
 

@@ -38,7 +38,6 @@ use yii\helpers\Url;
                 <article class="group-card">
                     <header class="group-card__head">
                         <h3><?= Html::encode($groupTitle) ?></h3>
-                        <span class="group-card__count"><?= Html::encode((string) count($rows)) ?> 队</span>
                     </header>
                     <div class="group-card__table-wrap">
                         <table class="table table-compact group-table">
@@ -47,10 +46,9 @@ use yii\helpers\Url;
                             <tr>
                                 <th scope="col" class="num">#</th>
                                 <th scope="col">球队</th>
-                                <th scope="col" class="num">场</th>
-                                <th scope="col" class="num">胜</th>
-                                <th scope="col" class="num">平</th>
-                                <th scope="col" class="num">负</th>
+                                <th scope="col" class="num group-col-result">胜</th>
+                                <th scope="col" class="num group-col-result">平</th>
+                                <th scope="col" class="num group-col-result">负</th>
                                 <th scope="col" class="num">净胜</th>
                                 <th scope="col" class="num">积分</th>
                             </tr>
@@ -87,10 +85,9 @@ use yii\helpers\Url;
                                             <span class="sr-only">最佳第三名出线</span>
                                         <?php endif ?>
                                     </th>
-                                    <td class="num"><?= Html::encode((string) $row['played']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['won']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['drawn']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['lost']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['won']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['drawn']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['lost']) ?></td>
                                     <td class="num"><?= Html::encode($differenceText) ?></td>
                                     <td class="num group-points"><?= Html::encode((string) $row['points']) ?></td>
                                 </tr>

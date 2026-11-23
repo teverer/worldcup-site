@@ -6,7 +6,6 @@
  *
  * @var yii\web\View $this
  * @var array $editions 按年份倒序的届次数据
- * @var array $overview 全站概览统计
  */
 
 use yii\helpers\Html;
@@ -32,24 +31,6 @@ $dataUrl = $latestId !== null
             </p>
         </div>
 
-        <dl class="wall-scope" aria-label="全站数据范围">
-            <div class="wall-scope-item">
-                <dt class="wall-scope-label">届次</dt>
-                <dd class="wall-scope-value"><?= Html::encode((string) count($editions)) ?></dd>
-            </div>
-            <div class="wall-scope-item">
-                <dt class="wall-scope-label">球队</dt>
-                <dd class="wall-scope-value"><?= Html::encode((string) $overview['teams']) ?></dd>
-            </div>
-            <div class="wall-scope-item">
-                <dt class="wall-scope-label">比赛</dt>
-                <dd class="wall-scope-value"><?= Html::encode((string) $overview['games']) ?></dd>
-            </div>
-            <div class="wall-scope-item">
-                <dt class="wall-scope-label">进球</dt>
-                <dd class="wall-scope-value"><?= Html::encode((string) $overview['goals']) ?></dd>
-            </div>
-        </dl>
     </header>
 
     <section class="wall" aria-label="历届世界杯">

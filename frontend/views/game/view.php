@@ -52,19 +52,58 @@ if ($penaltyText !== null) {
     $scoreLabel .= '，' . $penaltyText;
 }
 
-// 点球大战行不是常规进球，计数和“加时”判断都要排除。
+// 点球大战行不是常规进球:单独成段、单独计数，也不参与“加时”判断。
 $lastGoalMinute = 0;
-$regularGoalCount = 0;
-$shootoutGoalCount = 0;
+$regularGoals = [];
+$shootoutGoals = [];
 foreach ($goals as $goal) {
     if ((int) $goal->is_shootout === 1) {
-        $shootoutGoalCount++;
+        $shootoutGoals[] = $goal;
         continue;
     }
-    $regularGoalCount++;
+    $regularGoals[] = $goal;
     $lastGoalMinute = max($lastGoalMinute, (int) $goal->minute);
 }
+$regularGoalCount = count($regularGoals);
+$shootoutGoalCount = count($shootoutGoals);
 $wentToExtraTime = $lastGoalMinute > 90;
+
+$renderGoalRow = static function ($goal, array $players, $model, $homeName, $awayName) {
+    $player = isset($players[(int) $goal->player_id])
+        ? $players[(int) $goal->player_id] : null;
+    $assist = $goal->assist_player_id !== null
+        && isset($players[(int) $goal->assist_player_id])
+        ? $players[(int) $goal->assist_player_id] : null;
+    $isShootout = (int) $goal->is_shootout === 1;
+    $goalTeamName = (int) $goal->team_id === (int) $model->home_team_id ? $homeName : $awayName;
+
+    if ($isShootout) {
+        $minuteLabel = '点球';
+    } elseif ($goal->minute !== null) {
+        $minuteLabel = $goal->minute . "'";
+    } else {
+        $minuteLabel = '—';
+    }
+
+    $html = '<li class="goal-item">';
+    $html .= '<span class="goal-minute">' . Html::encode($minuteLabel) . '</span>';
+    $html .= '<span class="goal-player"'
+        . ($player !== null ? ' title="' . Html::encode($player->name) . '"' : '') . '>'
+        . Html::encode($player !== null ? $player->displayName() : '未知球员') . '</span>';
+    $html .= '<span class="goal-team">' . Html::encode($goalTeamName) . '</span>';
+    if (!$isShootout && (int) $goal->is_penalty === 1) {
+        $html .= '<span class="label label-info">点球</span>';
+    }
+    if (!$isShootout && (int) $goal->is_own_goal === 1) {
+        $html .= '<span class="label label-warning">乌龙球</span>';
+    }
+    if ($assist !== null) {
+        $html .= '<span class="goal-assist" title="' . Html::encode($assist->name) . '">助攻：'
+            . Html::encode($assist->displayName()) . '</span>';
+    }
+
+    return $html . '</li>';
+};
 
 // 无进球有三种情况，空态要分别说清楚，不能一律说“数据待补”。
 if ($statusValue === Game::STATUS_PENDING) {
@@ -146,59 +185,55 @@ if ($statusValue === Game::STATUS_PENDING) {
             <?php endif ?>
         </div>
 
-        <?php if (!$goals): ?>
+        <?php if (!$regularGoals && !$shootoutGoals): ?>
             <div class="empty-state">
                 <h3><?= $statusValue === Game::STATUS_PENDING ? '比赛尚未开始' : '暂无进球记录' ?></h3>
                 <p><?= Html::encode($noGoalMessage) ?></p>
             </div>
         <?php else: ?>
-            <ul class="goal-timeline">
-                <?php foreach ($goals as $goal): ?>
-                    <?php
-                    $player = isset($players[(int) $goal->player_id])
-                        ? $players[(int) $goal->player_id] : null;
-                    $assist = $goal->assist_player_id !== null
-                        && isset($players[(int) $goal->assist_player_id])
-                        ? $players[(int) $goal->assist_player_id] : null;
-                    $isHomeGoal = (int) $goal->team_id === (int) $model->home_team_id;
-                    $goalTeamName = $isHomeGoal ? $homeName : $awayName;
+            <?php if ($regularGoals): ?>
+                <ul class="goal-timeline">
+                    <?php foreach ($regularGoals as $goal): ?>
+                        <?= $renderGoalRow($goal, $players, $model, $homeName, $awayName) ?>
+                    <?php endforeach ?>
+                </ul>
+            <?php endif ?>
 
-                    if ((int) $goal->is_shootout === 1) {
-                        $minuteLabel = '点球大战';
-                    } elseif ($goal->minute !== null) {
-                        $minuteLabel = $goal->minute . "'";
-                    } else {
-                        $minuteLabel = '—';
-                    }
-                    ?>
-                    <li class="goal-item">
-                        <span class="goal-minute"><?= Html::encode($minuteLabel) ?></span>
-                        <span class="goal-player"><?= Html::encode($player !== null
-                            ? $player->name : '未知球员') ?></span>
-                        <span class="goal-team"><?= Html::encode($goalTeamName) ?></span>
-                        <?php if ((int) $goal->is_penalty === 1 && (int) $goal->is_shootout !== 1): ?>
-                            <span class="label label-info">点球</span>
-                        <?php endif ?>
-                        <?php if ((int) $goal->is_own_goal === 1): ?>
-                            <span class="label label-warning">乌龙球</span>
-                        <?php endif ?>
-                        <?php if ($assist !== null): ?>
-                            <span class="goal-assist">助攻：<?= Html::encode($assist->name) ?></span>
-                        <?php endif ?>
-                    </li>
-                <?php endforeach ?>
-            </ul>
+            <?php if ($shootoutGoals): ?>
+                <div class="game-shootout">
+                    <?php if ($regularGoals): ?>
+                        <h3 class="game-shootout-title">
+                            点球大战
+                            <span>共 <?= $shootoutGoalCount ?> 罚，仅记录命中</span>
+                        </h3>
+                    <?php endif ?>
+                    <ul class="goal-timeline goal-timeline--shootout">
+                        <?php foreach ($shootoutGoals as $goal): ?>
+                            <?= $renderGoalRow($goal, $players, $model, $homeName, $awayName) ?>
+                        <?php endforeach ?>
+                    </ul>
+                </div>
+            <?php endif ?>
         <?php endif ?>
     </section>
 
     <nav class="game-next" aria-label="接下来">
         <?php if ($model->tournament !== null): ?>
-            <?= Html::a('看本届晋级图', ['/tournament/view', 'id' => $tournamentId, '#' => 'knockout'], [
-                'class' => 'btn btn-primary',
-            ]) ?>
-            <?= Html::a('同届全部比赛', ['index', 'tournamentId' => $tournamentId], [
-                'class' => 'btn btn-default',
-            ]) ?>
+            <?php if ($model->stage === Game::STAGE_GROUP): ?>
+                <?= Html::a('看小组积分', ['/tournament/view', 'id' => $tournamentId, '#' => 'groups'], [
+                    'class' => 'btn btn-primary',
+                ]) ?>
+                <?= Html::a('同届小组赛', ['index', 'tournamentId' => $tournamentId, 'stage' => '小组赛'], [
+                    'class' => 'btn btn-default',
+                ]) ?>
+            <?php else: ?>
+                <?= Html::a('看本届晋级图', ['/tournament/view', 'id' => $tournamentId, '#' => 'knockout'], [
+                    'class' => 'btn btn-primary',
+                ]) ?>
+                <?= Html::a('同届全部比赛', ['index', 'tournamentId' => $tournamentId], [
+                    'class' => 'btn btn-default',
+                ]) ?>
+            <?php endif ?>
         <?php endif ?>
         <?= Html::a('返回比赛列表', ['index'], ['class' => 'game-next-back']) ?>
     </nav>

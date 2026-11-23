@@ -173,7 +173,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .td-hero-sub {
     margin: 10px 0 0;
     color: var(--steel);
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: .02em;
 }
 
@@ -267,7 +267,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-final-note {
     color: var(--red-bright);
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 600;
     letter-spacing: .04em;
     white-space: nowrap;
@@ -496,7 +496,8 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     max-width: 62ch;
     margin: 0;
     color: var(--muted);
-    font-size: var(--fs-xs);
+    font-size: 14px;
+    line-height: 1.6;
     text-wrap: pretty;
 }
 
@@ -550,43 +551,38 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     letter-spacing: .02em;
 }
 
-.group-card__count {
-    color: var(--muted);
-    font-size: var(--fs-xs);
-    white-space: nowrap;
-}
-
 .group-card__table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
+/* 积分榜是数据表,不是标签:正文 14px、表头 12.5px,行高和内边距都要让数字好扫。 */
 body .td-panel--groups .group-table {
     margin-bottom: 0;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 14px;
 }
 
 body .td-panel--groups .group-table > thead > tr > th {
-    padding: 7px 7px;
+    padding: 9px 8px;
     border-top: 0;
     border-bottom: 1px solid var(--line);
     background-color: var(--paper);
-    color: var(--muted);
-    font-size: 10.5px;
+    color: var(--muted-strong, var(--muted));
+    font-size: 12.5px;
     letter-spacing: .02em;
     white-space: nowrap;
 }
 
 body .td-panel--groups .group-table > tbody > tr > td,
 body .td-panel--groups .group-table > tbody > tr > th {
-    padding: 8px 7px;
+    padding: 10px 8px;
     border-top: 1px solid var(--line);
-    line-height: 1.45;
+    line-height: 1.5;
 }
 
 body .td-panel--groups .group-table > tbody > tr > th.group-team {
-    min-width: 96px;
+    min-width: 112px;
     font-weight: 600;
     text-align: left;
 }
@@ -791,8 +787,8 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 }
 
 .td-stands__note {
-    color: rgba(243, 246, 242, .66);
-    font-size: 13px;
+    color: rgba(243, 246, 242, .76);
+    font-size: 14px;
 }
 
 .td-stands__toggle {
@@ -801,7 +797,7 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     gap: 8px;
     margin-left: auto;
     color: var(--green-light);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -936,23 +932,27 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
         margin-top: var(--space-4);
     }
 
-    /* 单列小组表仍要放下 8 列,收紧字号与内边距保证积分列可见 */
+    /* 移动端删列而不是压字号:只留 排名 / 球队 / 净胜 / 积分,胜平负收起。 */
     body .td-panel--groups .group-table {
-        font-size: 11px;
+        font-size: 13.5px;
     }
 
     body .td-panel--groups .group-table > thead > tr > th {
-        padding: 5px 4px;
-        font-size: 10px;
+        padding: 7px 6px;
+        font-size: 12px;
     }
 
     body .td-panel--groups .group-table > tbody > tr > td,
     body .td-panel--groups .group-table > tbody > tr > th {
-        padding: 5px 4px;
+        padding: 8px 6px;
     }
 
     body .td-panel--groups .group-table > tbody > tr > th.group-team {
-        min-width: 84px;
+        min-width: 92px;
+    }
+
+    body .td-panel--groups .group-table .group-col-result {
+        display: none;
     }
 
     .td-section-head {

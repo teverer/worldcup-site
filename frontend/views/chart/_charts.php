@@ -55,7 +55,7 @@ $this->registerJsFile('@web/js/charts.js', [
             <div class="chart-card-head chart-card-head--standings">
                 <div class="chart-card-head-text">
                     <h3>小组积分榜</h3>
-                    <p class="chart-caption">默认显示 A 组，可切换小组查看该组球队的积分；柱顶为积分，悬停可查看胜 / 平 / 负与进失球。</p>
+                    <p class="chart-caption">可切换小组；柱高为积分，悬停查看胜 / 平 / 负与进失球。</p>
                 </div>
                 <div class="chart-group-switch-wrap">
                     <span class="chart-group-switch-label" id="standings-group-label">小组</span>
@@ -77,7 +77,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>射手榜 Top 10</h3>
-                <p class="chart-caption">按进球数降序；乌龙球与点球大战进球不计入球员进球。</p>
+                <p class="chart-caption">按进球数降序；不计乌龙球与点球大战。</p>
             </div>
             <div id="chart-scorers" class="chart-canvas chart-canvas--scorers"
                  data-chart="scorers" role="img" aria-label="射手榜横向柱状图">
@@ -93,7 +93,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">按进球归属球队统计；乌龙球已计入受益球队，点球大战进球已排除。</p>
+                <p class="chart-caption">按进球归属球队统计。</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--pie"
                  data-chart="team-goals" role="img" aria-label="各队进球分布饼图">
@@ -106,4 +106,8 @@ $this->registerJsFile('@web/js/charts.js', [
             <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
         </article>
     </div>
+
+    <p class="chart-footnote">
+        口径：只统计已结束的比赛；乌龙球计入受益球队；点球大战进球单独统计，不计入球员进球，也不进入球队进球分布。
+    </p>
 </section>

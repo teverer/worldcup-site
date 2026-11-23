@@ -65,10 +65,9 @@ $renderWorks = static function (array $items) {
             <div class="about-actions">
                 <?php if ($hasWorks): ?>
                     <a class="btn btn-primary" href="#docs">下载课程文档</a>
-                    <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到记分牌墙</a>
+                    <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到首页</a>
                 <?php else: ?>
-                    <a class="btn btn-primary" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到记分牌墙</a>
-                    <a class="btn btn-default" href="#docs">查看课程文档</a>
+                    <a class="btn btn-primary" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到首页</a>
                 <?php endif ?>
             </div>
         </div>

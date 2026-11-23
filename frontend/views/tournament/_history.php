@@ -15,7 +15,7 @@ if ($previous === null && $next === null) {
     return;
 }
 
-// 首尾两届只有一侧有邻届；空出来的一格给「回到记分牌墙」，
+// 首尾两届只有一侧有邻届；空出来的一格给「回到首页」，
 // 既平衡版式，也避免页面在最后一届之后变成死路。
 $wallUrl = Url::to(['/site/index']);
 ?>
@@ -31,7 +31,7 @@ $wallUrl = Url::to(['/site/index']);
         <a class="td-history-link td-history-link--all" href="<?= Html::encode($wallUrl) ?>">
             <span class="td-history-dir">全部届次</span>
             <span class="td-history-year">1986—2026</span>
-            <span class="td-history-name">回到记分牌墙</span>
+            <span class="td-history-name">回到首页</span>
         </a>
     <?php endif ?>
 
@@ -47,7 +47,7 @@ $wallUrl = Url::to(['/site/index']);
            href="<?= Html::encode($wallUrl) ?>">
             <span class="td-history-dir">全部届次</span>
             <span class="td-history-year">1986—2026</span>
-            <span class="td-history-name">回到记分牌墙</span>
+            <span class="td-history-name">回到首页</span>
         </a>
     <?php endif ?>
 </nav>

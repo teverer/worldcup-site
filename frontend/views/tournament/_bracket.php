@@ -206,12 +206,16 @@ $renderCard = static function (array $match, $level) use ($championPathIds, $cha
  * 渲染一轮:8 列网格里的卡片行,跨度由调用方给出。
  * 不画轮次标签,轮次靠卡片尺寸与连线表达,树占满舞台宽度。
  */
-$renderRound = static function ($key, $level, $span, array $matches) use ($renderCard) {
+$renderRound = static function ($key, $level, $span, array $matches, $label = '') use ($renderCard) {
     if ($matches === []) {
         return '';
     }
 
-    $html = '<div class="tree-row tree-row--' . Html::encode((string) $key) . '">';
+    $html = '';
+    if ($label !== '') {
+        $html .= '<h3 class="tree-round-label">' . Html::encode($label) . '</h3>';
+    }
+    $html .= '<div class="tree-row tree-row--' . Html::encode((string) $key) . '">';
     foreach ($matches as $match) {
         $html .= '<div class="tree-slot" style="grid-column: span ' . (int) $span . '">';
         $html .= $renderCard($match, $level);
@@ -287,13 +291,13 @@ $renderConnectors = static function (array $parents, array $children, $span) use
         <?php if ($hasMainTree): ?>
             <div class="tree-scroll">
                 <div class="tree" role="group" aria-label="淘汰赛对阵，决赛在顶，从 1/8 决赛向下阅读">
-                    <?= $renderRound('final', 'final', 8, $finalMatches) ?>
+                    <?= $renderRound('final', 'final', 8, $finalMatches, '决赛') ?>
                     <?= $renderConnectors($finalMatches, $sfMatches, 8) ?>
-                    <?= $renderRound('sf', 'sf', 4, $sfMatches) ?>
+                    <?= $renderRound('sf', 'sf', 4, $sfMatches, '半决赛') ?>
                     <?= $renderConnectors($sfMatches, $qfMatches, 4) ?>
-                    <?= $renderRound('qf', 'qf', 2, $qfMatches) ?>
+                    <?= $renderRound('qf', 'qf', 2, $qfMatches, '1/4 决赛') ?>
                     <?= $renderConnectors($qfMatches, $r16Matches, 2) ?>
-                    <?= $renderRound('r16', 'r16', 1, $r16Matches) ?>
+                    <?= $renderRound('r16', 'r16', 1, $r16Matches, '1/8 决赛') ?>
                 </div>
             </div>
         <?php endif ?>

@@ -48,6 +48,19 @@
 
     // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
     // 同时处理空格、连字符与撇号后的首字母，兼容 Heung-min、O'Neill 等写法。
+    // 与 PHP 端 wc_player_name cookie 保持一致:默认中文名,选择原名后全部回退。
+    function prefersOriginalName() {
+        return /(?:^|;\s*)wc_player_name=orig(?:;|$)/.test(document.cookie);
+    }
+
+    // 有中文名优先显示中文名;没有或访客选择原名时回退原名。
+    function displayPlayerName(row) {
+        if (!prefersOriginalName() && row && row.playerNameZh) {
+            return String(row.playerNameZh);
+        }
+        return formatPlayerName(row ? row.playerName : '');
+    }
+
     function formatPlayerName(value) {
         var name = String(value === null || value === undefined ? '' : value)
             .replace(/\s+/g, ' ')
@@ -266,7 +279,7 @@
                     axisPointer: { type: 'shadow' },
                     backgroundColor: INK.surface,
                     borderColor: INK.grid,
-                    textStyle: { color: INK.primary, fontSize: 12 },
+                    textStyle: { color: INK.primary, fontSize: 13 },
                     formatter: function (params) {
                         var row = chartRows[params[0].dataIndex];
                         if (!row) {
@@ -289,7 +302,7 @@
                     axisLabel: {
                         interval: 0,
                         color: INK.secondary,
-                        fontSize: 12,
+                        fontSize: 13,
                         margin: 10,
                         // 单组最多 4 支球队,横轴标签不旋转即可完整显示。
                         rotate: categories.length > 6 ? 30 : 0
@@ -298,9 +311,9 @@
                 yAxis: {
                     type: 'value',
                     name: '积分',
-                    nameTextStyle: { color: INK.muted, fontSize: 11, padding: [0, 0, 4, 0] },
+                    nameTextStyle: { color: INK.muted, fontSize: 13, padding: [0, 0, 4, 0] },
                     minInterval: 1,
-                    axisLabel: { color: INK.secondary, fontSize: 11 },
+                    axisLabel: { color: INK.secondary, fontSize: 13 },
                     axisLine: { show: false },
                     axisTick: { show: false },
                     splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -320,7 +333,7 @@
                         show: true,
                         position: 'top',
                         color: INK.primary,
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: 'bold'
                     },
                     emphasis: { itemStyle: { color: HOVER_SERIES } }
@@ -370,7 +383,7 @@
 
         renderTable(byId('table-scorers'), [
             { label: '排名', value: function (row) { return row.rank; }, numeric: true },
-            { label: '球员', value: function (row) { return formatPlayerName(row.playerName); } },
+            { label: '球员', value: function (row) { return displayPlayerName(row); } },
             { label: '球队', value: function (row) { return row.teamName; } },
             { label: '进球', value: function (row) { return row.goals; }, numeric: true }
         ], scorers);
@@ -381,7 +394,7 @@
         }
 
         var names = chartRows.map(function (row) {
-            return formatPlayerName(row.playerName) + ' · ' + row.teamName;
+            return displayPlayerName(row) + ' · ' + row.teamName;
         });
         // y 轴保留完整「姓名 · 球队」,按最长标签动态留宽,避免截断。
         var maxNameWidth = names.reduce(function (maxWidth, name) {
@@ -407,13 +420,17 @@
                 axisPointer: { type: 'shadow' },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 12 },
+                textStyle: { color: INK.primary, fontSize: 13 },
                 formatter: function (params) {
                     var row = chartRows[params[0].dataIndex];
                     if (!row) {
                         return '';
                     }
-                    return '<strong>' + escapeHtml(formatPlayerName(row.playerName)) + '</strong>'
+                    var label = displayPlayerName(row);
+                    if (row.playerNameZh) {
+                        label += '（' + formatPlayerName(row.playerName) + '）';
+                    }
+                    return '<strong>' + escapeHtml(label) + '</strong>'
                         + '<br>球队：' + escapeHtml(row.teamName)
                         + '<br>进球：' + row.goals;
                 }
@@ -421,9 +438,9 @@
             xAxis: {
                 type: 'value',
                 name: '进球',
-                nameTextStyle: { color: INK.muted, fontSize: 11 },
+                nameTextStyle: { color: INK.muted, fontSize: 13 },
                 minInterval: 1,
-                axisLabel: { color: INK.secondary, fontSize: 11 },
+                axisLabel: { color: INK.secondary, fontSize: 13 },
                 axisLine: { show: false },
                 axisTick: { show: false },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -435,7 +452,7 @@
                 axisLine: { lineStyle: { color: INK.axis } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: 11,
+                    fontSize: 13,
                     width: yLabelWidth,
                     overflow: 'none'
                 }
@@ -455,7 +472,7 @@
                     show: true,
                     position: 'right',
                     color: INK.primary,
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: 'bold'
                 },
                 emphasis: { itemStyle: { color: HOVER_SERIES } }
@@ -534,13 +551,13 @@
                 top: '32%',
                 textAlign: 'center',
                 textStyle: { color: INK.primary, fontSize: 26, fontWeight: 'bold' },
-                subtextStyle: { color: INK.muted, fontSize: 11 }
+                subtextStyle: { color: INK.muted, fontSize: 13 }
             },
             tooltip: {
                 trigger: 'item',
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 12 },
+                textStyle: { color: INK.primary, fontSize: 13 },
                 formatter: function (params) {
                     return '<strong>' + escapeHtml(params.name) + '</strong>'
                         + '<br>进球：' + params.value
@@ -554,7 +571,7 @@
                 icon: 'circle',
                 itemWidth: 10,
                 itemHeight: 10,
-                textStyle: { color: INK.secondary, fontSize: 11 }
+                textStyle: { color: INK.secondary, fontSize: 13 }
             },
             series: [{
                 name: '各队进球',
@@ -575,8 +592,8 @@
                             : '';
                     },
                     color: INK.secondary,
-                    fontSize: 11,
-                    lineHeight: 15
+                    fontSize: 13,
+                    lineHeight: 16
                 },
                 labelLine: {
                     length: 8,

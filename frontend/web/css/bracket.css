@@ -92,8 +92,8 @@
 
 .tree-team-name {
     overflow: hidden;
-    color: rgba(243, 246, 242, .55);
-    font-size: 13px;
+    color: rgba(243, 246, 242, .74);
+    font-size: 14px;
     line-height: 1.3;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -113,7 +113,7 @@
 .tree-team-score.is-pending {
     color: var(--steel);
     font-family: var(--font-sans);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
 }
 
@@ -144,7 +144,7 @@
 }
 
 .tree-match--qf .tree-team-name {
-    font-size: 13.5px;
+    font-size: 14px;
 }
 
 .tree-match--qf .tree-team-score {
@@ -381,13 +381,31 @@
     }
 }
 
+/* 桌面靠卡片尺寸和连线表达轮次;窄屏连线与尺寸差消失,用文字轮次补回身份。 */
+.tree-round-label {
+    display: none;
+}
+
 @media (max-width: 767px) {
+    .tree-round-label {
+        display: block;
+        margin: 20px 0 6px;
+        color: var(--steel);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: .08em;
+    }
+
+    .tree-round-label:first-child {
+        margin-top: 0;
+    }
+
     .tree-match--final {
         max-width: none;
     }
 
     .tree-team-name {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .tree-consolation {

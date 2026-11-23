@@ -32,8 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php ActiveForm::end(); ?>
 
     <p class="form-page-footer">
+        忘记密码？<?= Html::a('找回密码', ['/site/request-password-reset']) ?>
+    </p>
+    <p class="form-page-footer">
         还没有账号？<?= Html::a('立即注册', ['/site/signup']) ?>
         <span aria-hidden="true">·</span>
-        <?= Html::a('不登录，回到记分牌墙', Yii::$app->homeUrl) ?>
+        <?= Html::a('不登录，回到首页', Yii::$app->homeUrl) ?>
     </p>
 </div>

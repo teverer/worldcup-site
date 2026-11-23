@@ -17,7 +17,6 @@ use yii\helpers\Html;
          aria-labelledby="td-charts-title">
     <header class="td-section-head">
         <h2 class="section-title" id="td-charts-title">统计 <small>积分榜 · 射手榜 · 进球分布</small></h2>
-        <p class="td-section-note">图表只读取已结束比赛的进球与积分，点球大战进球单列统计。</p>
     </header>
 
     <?= $this->render('@frontend/views/chart/_charts', ['tournamentId' => $model->id]) ?>

@@ -54,6 +54,13 @@ $this->registerCss(<<<'CSS'
 .site-nav .navbar-nav > li.nav-utility > a { padding-left: 18px; border-left: 1px solid rgba(243, 246, 242, .22); color: rgba(243, 246, 242, .72); }
 .site-nav .navbar-nav > li.nav-utility > a:hover,
 .site-nav .navbar-nav > li.nav-utility > a:focus { color: var(--flood); }
+/* 说明性入口当前页:只加底线,不抢五项主入口的实心高亮 */
+.site-nav .navbar-nav > li.nav-utility.active > a,
+.site-nav .navbar-nav > li.nav-utility > a[aria-current="page"] {
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--green-light);
+    color: var(--flood);
+}
 @media (max-width: 767px) {
     .site-nav .navbar-nav > li.nav-utility { margin-left: 0; }
     .site-nav .navbar-nav > li.nav-utility > a { padding-left: 12px; border-left: 0; }
@@ -67,13 +74,13 @@ $actionId = Yii::$app->controller !== null && Yii::$app->controller->action !== 
 // 主导航只放「看世界杯」的五个入口；团队、文档、统计口径属于说明性内容，
 // 统一收进页脚的「本站」列，避免和档案入口争层级（总纲 §4）。
 $navItems = [
-    ['label' => '届次', 'url' => ['/site/index'], 'controllers' => ['site', 'tournament'], 'siteIndexOnly' => true],
+    ['label' => '首页', 'url' => ['/site/index'], 'controllers' => ['site', 'tournament'], 'siteIndexOnly' => true],
     ['label' => '比赛', 'url' => ['/game/index'], 'controllers' => ['game']],
     ['label' => '球队', 'url' => ['/team/index'], 'controllers' => ['team']],
     ['label' => '球员', 'url' => ['/player/index'], 'controllers' => ['player']],
     ['label' => '资讯', 'url' => ['/news/index'], 'controllers' => ['news']],
-    // 说明性入口只保留一个,放在五项之后并用分隔线弱化;团队与下载已合并到该页。
-    ['label' => '关于', 'url' => ['/team-info/index'], 'controllers' => ['team-info'], 'utility' => true],
+    // 说明性入口只保留一个,放在五项之后并用分隔线弱化;团队、文档、统计口径都在这一页。
+    ['label' => '关于与文档', 'url' => ['/team-info/index'], 'controllers' => ['team-info'], 'utility' => true],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -158,7 +165,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">浏览</p>
                     <ul>
-                        <li><?= Html::a('届次', Yii::$app->homeUrl) ?></li>
+                        <li><?= Html::a('首页', Yii::$app->homeUrl) ?></li>
                         <li><?= Html::a('比赛', ['/game/index']) ?></li>
                         <li><?= Html::a('球队', ['/team/index']) ?></li>
                         <li><?= Html::a('球员', ['/player/index']) ?></li>
@@ -168,7 +175,6 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">本站</p>
                     <ul>
-                        <li><?= Html::a('关于与文档下载', ['/team-info/index']) ?></li>
                         <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
                         <li><?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
                             'target' => '_blank',

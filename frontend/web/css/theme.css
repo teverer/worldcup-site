@@ -69,9 +69,9 @@
     --space-7: 64px;
     --space-8: 80px;
 
-    /* 字体 */
+    /* 字体:--fs-xs 只给可删的脚注/徽标,不再用 10/11px 承载正文信息 */
     --font-sans: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    --fs-xs: 12px;
+    --fs-xs: 13px;
     --fs-sm: 14px;
     --fs-base: 16px;
     --fs-lg: 18px;
@@ -1552,11 +1552,12 @@ input[type="radio"] {
 
 @media (max-width: 767px) {
     :root {
-        --fs-base: 15px;
-        --fs-lg: 17px;
-        --fs-xl: 20px;
-        --fs-2xl: 24px;
-        --fs-3xl: 30px;
+        /* 移动端不靠缩小正文换空间:正文保持 16px,次要信息用删减解决 */
+        --fs-base: 16px;
+        --fs-lg: 18px;
+        --fs-xl: 21px;
+        --fs-2xl: 26px;
+        --fs-3xl: 32px;
     }
 
     /* 比分板在窄屏保持“主队 - 比分 - 客队”同一行,避免折成两行 */

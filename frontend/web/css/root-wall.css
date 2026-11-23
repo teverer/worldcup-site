@@ -86,10 +86,6 @@ body.site-site-index {
 }
 
 .wall-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
-    align-items: end;
-    gap: clamp(32px, 6vw, 80px);
     padding-bottom: clamp(32px, 5vw, 64px);
     border-bottom: 1px solid var(--line-dark);
 }
@@ -124,41 +120,6 @@ body.site-site-index {
     color: var(--steel);
     font-size: var(--fs-lg);
     line-height: 1.6;
-}
-
-.wall-scope {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 28px;
-    margin: 0;
-    padding: 0;
-}
-
-.wall-scope-item {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    padding-top: 12px;
-    border-top: 1px solid var(--line-dark);
-}
-
-.wall-scope-value {
-    display: block;
-    margin: 0;
-    color: var(--flood);
-    font-family: var(--font-display);
-    font-size: clamp(36px, 4vw, 56px);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-}
-
-.wall-scope-label {
-    display: block;
-    margin-top: 6px;
-    color: var(--steel);
-    font-size: var(--fs-xs);
-    letter-spacing: .06em;
 }
 
 .wall {
@@ -256,11 +217,11 @@ body.site-site-index {
 
 .board-badge {
     display: inline-block;
-    padding: 1px 6px;
+    padding: 2px 7px;
     border: 1px solid var(--red);
     border-radius: 2px;
     color: var(--red-bright);
-    font-size: 11px;
+    font-size: 12.5px;
     letter-spacing: .04em;
     line-height: 1.5;
 }
@@ -345,15 +306,6 @@ body.site-site-index {
 }
 
 @media (max-width: 991px) {
-    .wall-head {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 32px;
-    }
-
-    .wall-scope {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
     .wall-board {
         grid-template-columns: 120px minmax(0, 1fr) 64px;
     }
@@ -370,11 +322,6 @@ body.site-site-index {
 
     .wall-range {
         font-size: clamp(52px, 14vw, 76px);
-    }
-
-    .wall-scope {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px 20px;
     }
 
     .wall-board {

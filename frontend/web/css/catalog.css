@@ -263,7 +263,7 @@
 .pl-scorer-text span {
     overflow: hidden;
     color: var(--color-muted-strong);
-    font-size: 12px;
+    font-size: 13.5px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -279,7 +279,7 @@
 .pl-scorer-goals small {
     margin-left: 2px;
     color: var(--color-muted-strong);
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 400;
 }
 
@@ -289,17 +289,17 @@
     align-items: baseline;
     gap: var(--space-2);
     margin: var(--space-2) 0 0;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .pl-more span {
     color: var(--color-muted-strong);
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .pl-table th {
     background-color: var(--color-surface-alt);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
 }
 
@@ -357,7 +357,7 @@
 .ti-summary {
     margin: var(--space-2) 0 0;
     color: var(--color-muted-strong);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .ti-group {
@@ -381,7 +381,7 @@
 
 .ti-group-head span {
     color: var(--color-muted-strong);
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .ti-grid {
@@ -433,7 +433,7 @@
     flex: 0 0 auto;
     color: var(--color-muted-strong);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .04em;
 }
 
@@ -475,7 +475,7 @@
 }
 
 .td-secondary {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .td-intro {
@@ -506,7 +506,7 @@
 .td-section-head p {
     margin: 0;
     color: var(--color-muted-strong);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .td-editions {
@@ -517,12 +517,12 @@
 }
 
 .td-edition {
-    padding: 4px 11px;
+    padding: 5px 12px;
     border: 1px solid var(--color-border);
     border-radius: 999px;
     background-color: var(--color-surface);
     color: var(--color-ink-2);
-    font-size: 13px;
+    font-size: 14px;
     font-variant-numeric: tabular-nums;
     text-decoration: none;
 }
@@ -544,7 +544,7 @@
 
 .td-table th {
     background-color: var(--color-surface-alt);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
 }
 
@@ -635,7 +635,7 @@
 
 .pd-stat dt {
     color: var(--color-muted-strong);
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 400;
 }
 
@@ -651,7 +651,7 @@
 .pd-note {
     margin: var(--space-1) 0 0;
     color: var(--color-muted);
-    font-size: 12px;
+    font-size: 13.5px;
 }
 
 .pd-section {
@@ -678,7 +678,7 @@
 
 .pd-table th {
     background-color: var(--color-surface-alt);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
 }
 

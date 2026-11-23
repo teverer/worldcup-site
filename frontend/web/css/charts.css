@@ -38,15 +38,13 @@
 .chart-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    /* 每张卡按自身内容决定高度:一张展开数据表时,不能把同排另一张拉长。 */
-    align-items: start;
     gap: 12px;
 }
 
-/* 展开某张图的「数据表」时,不要让同一行的另一张图被 grid 拉伸到同高;
-   收起时仍保留两卡底边齐平。:has 不支持时退回原状,不影响阅读。 */
+/* 只有并排的两张非 wide 卡需要这条例外:任一张展开数据表时,
+   网格按内容高度排,避免把另一张拉出空白下框;收起时两卡仍等底。 */
 @media (min-width: 861px) {
-    .chart-grid:has(.chart-data[open]) {
+    .chart-grid:has(.chart-card:not(.chart-card--wide) .chart-data[open]) {
         align-items: start;
     }
 }
@@ -73,9 +71,9 @@
 }
 
 .chart-caption {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: var(--muted);
-    font-size: var(--fs-xs);
+    font-size: 14px;
     line-height: 1.6;
     text-wrap: pretty;
 }
@@ -103,7 +101,7 @@
 
 .chart-group-switch-label {
     color: var(--muted);
-    font-size: var(--fs-xs);
+    font-size: 13px;
     font-weight: var(--font-weight-semibold);
 }
 
@@ -116,13 +114,14 @@
 .chart-group-switch-btn {
     appearance: none;
     -webkit-appearance: none;
-    padding: 3px 9px;
+    min-height: 32px;
+    padding: 5px 11px;
     border: 1px solid var(--line);
     border-radius: 2px;
     background-color: var(--paper-2);
     color: var(--muted);
     font: inherit;
-    font-size: var(--fs-xs);
+    font-size: 13px;
     line-height: 1.4;
     cursor: pointer;
     transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
@@ -172,6 +171,14 @@
     text-align: center;
 }
 
+.chart-footnote {
+    max-width: 90ch;
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
 .chart-notice {
     margin: 16px 0;
 }
@@ -199,13 +206,13 @@
 .chart-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--fs-xs);
+    font-size: 13.5px;
     white-space: nowrap;
 }
 
 .chart-table th,
 .chart-table td {
-    padding: 6px 8px;
+    padding: 8px 10px;
     border-bottom: 1px solid var(--line);
     text-align: left;
 }
