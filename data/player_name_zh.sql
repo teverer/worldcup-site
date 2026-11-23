@@ -178,3 +178,30 @@ UPDATE `player` SET `name_zh` = '萨卡' WHERE `name_zh` = '布卡约·萨卡';
 UPDATE `player` SET `name_zh` = '加克波' WHERE `name_zh` = '科迪·加克波';
 UPDATE `player` SET `name_zh` = '拉什福德' WHERE `name_zh` = '马库斯·拉什福德';
 UPDATE `player` SET `name_zh` = '马拉多纳' WHERE `name_zh` = '迭戈·马拉多纳';
+
+-- 6. 2002 中国国家队（原名为拼音，中文读者最需要这一组）---------------------
+UPDATE `player` SET `name_zh` = '杜威' WHERE `name` = 'DU Wei' AND `nationality` = '中国' AND `birth_date` = '1982-02-09' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '范志毅' WHERE `name` = 'FAN Zhiyi' AND `nationality` = '中国' AND `birth_date` = '1970-01-22' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '郝海东' WHERE `name` = 'HAO Haidong' AND `nationality` = '中国' AND `birth_date` = '1970-08-25' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '江津' WHERE `name` = 'JIANG Jin' AND `nationality` = '中国' AND `birth_date` = '1968-10-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '李铁' WHERE `name` = 'LI Tie' AND `nationality` = '中国' AND `birth_date` = '1977-05-18' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '李玮锋' WHERE `name` = 'LI Weifeng' AND `nationality` = '中国' AND `birth_date` = '1978-01-26' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '李霄鹏' WHERE `name` = 'LI Xiaopeng' AND `nationality` = '中国' AND `birth_date` = '1976-11-05' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '马明宇' WHERE `name` = 'MA Mingyu' AND `nationality` = '中国' AND `birth_date` = '1972-08-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '祁宏' WHERE `name` = 'QI Hong' AND `nationality` = '中国' AND `birth_date` = '1976-06-03' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '曲波' WHERE `name` = 'QU Bo' AND `nationality` = '中国' AND `birth_date` = '1981-07-15' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '邵佳一' WHERE `name` = 'SHAO Jiayi' AND `nationality` = '中国' AND `birth_date` = '1980-04-10' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '宿茂臻' WHERE `name` = 'SU Maozhen' AND `nationality` = '中国' AND `birth_date` = '1972-07-30' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '孙继海' WHERE `name` = 'SUN Jihai' AND `nationality` = '中国' AND `birth_date` = '1977-09-30' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '吴承瑛' WHERE `name` = 'WU Chengying' AND `nationality` = '中国' AND `birth_date` = '1975-04-21' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '徐云龙' WHERE `name` = 'XU Yunlong' AND `nationality` = '中国' AND `birth_date` = '1979-02-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '杨晨' WHERE `name` = 'YANG Chen' AND `nationality` = '中国' AND `birth_date` = '1974-01-17' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '杨璞' WHERE `name` = 'YANG Pu' AND `nationality` = '中国' AND `birth_date` = '1978-03-30' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '于根伟' WHERE `name` = 'YU Genwei' AND `nationality` = '中国' AND `birth_date` = '1976-08-19' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '肇俊哲' WHERE `name` = 'ZHAO Junzhe' AND `nationality` = '中国' AND `birth_date` = '1979-04-18' AND `name_zh` IS NULL;
+
+-- 7. 补齐“每届最佳射手（含并列）”中遗漏的 4 人 ----------------------------
+UPDATE `player` SET `name_zh` = '萨连科' WHERE `name` = 'Oleg SALENKO' AND `nationality` = '俄罗斯' AND `birth_date` = '1969-10-25' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '穆勒' WHERE `name` = 'Thomas MUELLER' AND `nationality` = '德国' AND `birth_date` = '1989-09-13' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '弗兰' WHERE `name` = 'Diego FORLAN' AND `nationality` = '乌拉圭' AND `birth_date` = '1979-05-19' AND `name_zh` IS NULL;
+UPDATE `player` SET `name_zh` = '斯内德' WHERE `name` = 'Wesley SNEIJDER' AND `nationality` = '荷兰' AND `birth_date` = '1984-06-09' AND `name_zh` IS NULL;
