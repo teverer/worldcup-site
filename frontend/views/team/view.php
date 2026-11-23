@@ -108,7 +108,7 @@ $rosterTotal = (int) $dataProvider->totalCount;
                 <h2 id="td-roster-title">参赛球员</h2>
                 <p>
                     <?= $currentTournament && !$allRoster
-                        ? Html::encode($currentTournament['name']) . ' 的名单，共 ' . $rosterTotal . ' 人。'
+                        ? Html::encode($currentTournament['name']) . '的名单，共 ' . $rosterTotal . ' 人。'
                         : '所有届次去重后共 ' . $rosterTotal . ' 人；点年份只看那一届。' ?>
                 </p>
             </div>
