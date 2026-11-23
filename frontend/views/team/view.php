@@ -80,9 +80,7 @@ $rosterTotal = (int) $dataProvider->totalCount;
                             <th scope="col">届次</th>
                             <th scope="col">最终阶段</th>
                             <th scope="col">场</th>
-                            <th scope="col">胜</th>
-                            <th scope="col">平</th>
-                            <th scope="col">负</th>
+                            <th scope="col">胜-平-负</th>
                             <th scope="col">进 / 失</th>
                         </tr>
                     </thead>
@@ -94,9 +92,7 @@ $rosterTotal = (int) $dataProvider->totalCount;
                                 ]) ?></td>
                                 <td><?= Html::encode($record['stage']) ?></td>
                                 <td><?= (int) $record['played'] ?></td>
-                                <td><?= (int) $record['won'] ?></td>
-                                <td><?= (int) $record['drawn'] ?></td>
-                                <td><?= (int) $record['lost'] ?></td>
+                                <td><?= (int) $record['won'] ?>-<?= (int) $record['drawn'] ?>-<?= (int) $record['lost'] ?></td>
                                 <td><?= (int) $record['goals_for'] ?> / <?= (int) $record['goals_against'] ?></td>
                             </tr>
                         <?php endforeach ?>
