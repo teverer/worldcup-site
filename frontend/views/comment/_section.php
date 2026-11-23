@@ -23,7 +23,6 @@ $sectionId = 'comments-' . $targetType . '-' . $targetId;
 <section class="comment-section" id="<?= Html::encode($sectionId) ?>" aria-labelledby="<?= Html::encode($sectionId) ?>-title">
     <header class="comment-section-heading">
         <div>
-            <p class="community-kicker">COMMUNITY</p>
             <h2 id="<?= Html::encode($sectionId) ?>-title"><?= Html::encode($targetLabel) ?>留言</h2>
         </div>
         <span class="comment-total"><?= count($comments) ?> 条讨论</span>
