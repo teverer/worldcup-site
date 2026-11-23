@@ -16,6 +16,7 @@ use common\models\News;
 use common\models\Player;
 use common\models\Team;
 use common\models\Tournament;
+use yii\db\Expression;
 use yii\db\Query;
 
 /**
@@ -88,7 +89,7 @@ class HomeStats
         $query = (new Query())
             ->select([
                 'player_id' => 'g.player_id',
-                'player_name' => 'p.name',
+                'player_name' => new Expression("COALESCE(NULLIF(p.name_zh, ''), p.name)"),
                 'team_name' => 'MAX(t.name)',
                 'goals' => 'COUNT(*)',
             ])
@@ -103,7 +104,7 @@ class HomeStats
         }
 
         return $query
-            ->groupBy(['g.player_id', 'p.name'])
+            ->groupBy(['g.player_id', 'p.name', 'p.name_zh'])
             ->orderBy(['goals' => SORT_DESC, 'player_name' => SORT_ASC])
             ->limit($limit)
             ->all();

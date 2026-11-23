@@ -289,7 +289,7 @@ class TournamentDetail
                 'is_penalty' => 'gl.is_penalty',
                 'is_own_goal' => 'gl.is_own_goal',
                 'is_shootout' => 'gl.is_shootout',
-                'player_name' => 'p.name',
+                'player_name' => new Expression("COALESCE(NULLIF(p.name_zh, ''), p.name)"),
                 'team_name' => 'tm.name',
                 'team_code' => 'tm.code',
             ])

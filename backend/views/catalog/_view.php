@@ -12,7 +12,7 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => $model instanceof Team ? '球队管理' : '球员管理', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$attributes = $model instanceof Team ? ['id', 'name', 'code', 'continent', 'flag', 'logo'] : ['id', 'name', 'birth_date', 'nationality', 'position', 'photo'];
+$attributes = $model instanceof Team ? ['id', 'name', 'code', 'continent', 'flag', 'logo'] : ['id', 'name', 'name_zh', 'birth_date', 'nationality', 'position', 'photo'];
 $attributes = array_merge($attributes, ['intro:ntext', 'create_time']);
 ?>
 <h1><?= Html::encode($this->title) ?></h1>

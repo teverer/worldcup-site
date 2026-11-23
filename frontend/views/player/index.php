@@ -40,7 +40,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
             <label class="sr-only" for="pl-q">球员姓名或国籍</label>
             <input class="form-control pl-input" type="search" id="pl-q" name="q"
                    value="<?= Html::encode((string) $searchModel->q) ?>"
-                   placeholder="输入姓名或国籍，如 Messi、阿根廷" maxlength="100">
+                   placeholder="输入中文名、原名或国籍，如 姆巴佩、Messi、阿根廷" maxlength="100">
             <button class="btn btn-primary" type="submit">查找球员</button>
         </div>
         <div class="pl-search-filters">
@@ -83,7 +83,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
                         <a class="pl-scorer" href="<?= Html::encode(Url::to(['/player/view', 'id' => $leader['player_id']])) ?>">
                             <span class="pl-scorer-year"><?= Html::encode((string) $leader['year']) ?></span>
                             <span class="pl-scorer-text">
-                                <strong><?= Html::encode($leader['name']) ?></strong>
+                                <strong><?= Html::encode($leader['name_zh'] ?: $leader['name']) ?></strong>
                                 <span>
                                     <?= Html::encode($leader['team_name'] ?: ($leader['nationality'] ?: '球队待补')) ?>
                                     <?php if ($leader['tied'] > 1): ?>
@@ -99,7 +99,6 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
 
             <p class="pl-more">
                 <?= Html::a('浏览全部 ' . (int) $totalPlayers . ' 名球员', ['/player/index', 'all' => 1]) ?>
-                <span>或按球队、国籍、位置在上方缩小范围。</span>
             </p>
         </section>
     <?php else: ?>
@@ -142,7 +141,10 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
                             <?php foreach ($dataProvider->getModels() as $player): ?>
                                 <tr>
                                     <td>
-                                        <?= Html::a(Html::encode($player->name), ['/player/view', 'id' => $player->id], ['class' => 'pl-name']) ?>
+                                        <?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], [
+                                            'class' => 'pl-name',
+                                            'title' => $player->name,
+                                        ]) ?>
                                     </td>
                                     <td><?= Html::encode($player->nationality ?: '—') ?></td>
                                     <td><?= Html::encode($player->position ?: '待补') ?></td>

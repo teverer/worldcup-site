@@ -19,10 +19,10 @@ class Player extends ActiveRecord {
 
     public function rules() {
         return [
-            [['name', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'trim'],
-            [['birth_date', 'nationality', 'position', 'photo', 'intro'], 'default', 'value' => null],
+            [['name', 'name_zh', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'trim'],
+            [['name_zh', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'default', 'value' => null],
             ['name', 'required'],
-            [['name', 'nationality'], 'string', 'max' => 50],
+            [['name', 'name_zh', 'nationality'], 'string', 'max' => 50],
             ['position', 'string', 'max' => 20],
             ['birth_date', 'date', 'format' => 'php:Y-m-d', 'max' => date('Y-m-d'), 'tooBig' => '出生日期不能晚于今天。'],
             ['photo', 'string', 'max' => 255],
@@ -32,8 +32,30 @@ class Player extends ActiveRecord {
     }
 
     public function attributeLabels() {
-        return ['id' => '编号', 'name' => '球员姓名', 'birth_date' => '出生日期', 'nationality' => '国籍',
-            'position' => '主要位置', 'photo' => '照片路径', 'intro' => '球员简介', 'create_time' => '创建时间'];
+        return ['id' => '编号', 'name' => '球员姓名(原名)', 'name_zh' => '中文名', 'birth_date' => '出生日期',
+            'nationality' => '国籍', 'position' => '主要位置', 'photo' => '照片路径', 'intro' => '球员简介',
+            'create_time' => '创建时间'];
+    }
+
+    /**
+     * 面向中文读者的显示名:有中文名用中文名,否则回退原名。
+     * 原名仍在详情页/搜索里保留,避免译名差异造成认不出人。
+     *
+     * @return string
+     */
+    public function displayName()
+    {
+        return $this->name_zh !== null && $this->name_zh !== '' ? $this->name_zh : $this->name;
+    }
+
+    /**
+     * 是否已收录中文名。
+     *
+     * @return bool
+     */
+    public function hasChineseName()
+    {
+        return $this->name_zh !== null && $this->name_zh !== '';
     }
 
     public function participations() {

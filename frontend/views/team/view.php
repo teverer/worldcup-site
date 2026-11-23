@@ -104,7 +104,10 @@ $rosterTotal = (int) $dataProvider->totalCount;
                     <tbody>
                         <?php foreach ($dataProvider->getModels() as $player): ?>
                             <tr>
-                                <td><?= Html::a(Html::encode($player->name), ['/player/view', 'id' => $player->id], ['class' => 'td-player']) ?></td>
+                                <td><?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], [
+                                    'class' => 'td-player',
+                                    'title' => $player->name,
+                                ]) ?></td>
                                 <td><?= Html::encode($player->position ?: '待补') ?></td>
                                 <td><?= Html::encode($player->birth_date ? substr($player->birth_date, 0, 4) : '—') ?></td>
                             </tr>

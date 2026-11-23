@@ -16,7 +16,7 @@ use common\components\CommentTarget;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 
-$this->title = $model->name;
+$this->title = $model->displayName();
 $this->params['breadcrumbs'][] = ['label' => '球员', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/catalog.css');
@@ -24,7 +24,12 @@ $this->registerCssFile('@web/css/catalog.css');
 $totalGoals = (int) array_sum(array_column($statistics, 'goals'));
 $totalAssists = (int) array_sum(array_column($statistics, 'assists'));
 $latestTeam = $participations ? $participations[0] : null;
-$metaParts = array_filter([$model->nationality, $model->position, $model->birth_date]);
+$metaParts = array_filter([
+    $model->hasChineseName() ? '原名 ' . $model->name : null,
+    $model->nationality,
+    $model->position,
+    $model->birth_date,
+]);
 ?>
 <article class="catalog-page player-detail">
     <header class="pd-head">
@@ -33,13 +38,13 @@ $metaParts = array_filter([$model->nationality, $model->position, $model->birth_
                 <?= Html::img('@web/' . $model->photo, ['alt' => $model->name . '照片', 'class' => 'pd-photo']) ?>
             <?php endif ?>
             <div>
-                <h1><?= Html::encode($model->name) ?></h1>
+                <h1><?= Html::encode($model->displayName()) ?></h1>
                 <p class="pd-meta"><?= Html::encode($metaParts ? implode(' · ', $metaParts) : '资料待补') ?></p>
             </div>
         </div>
         <div class="pd-actions">
             <?php if ($latestTeam): ?>
-                <?= Html::a('看 ' . $latestTeam['team_name'], ['/team/view', 'id' => $latestTeam['team_id']], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('看' . $latestTeam['team_name'] . '队', ['/team/view', 'id' => $latestTeam['team_id']], ['class' => 'btn btn-primary']) ?>
             <?php else: ?>
                 <?= Html::a('回到球员索引', ['/player/index'], ['class' => 'btn btn-primary']) ?>
             <?php endif ?>

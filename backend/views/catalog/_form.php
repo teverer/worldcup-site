@@ -18,6 +18,7 @@ if ($model instanceof Team) {
     echo $form->field($model, 'flag')->textInput(['maxlength' => 255])->hint('填写前台 images/ 或 uploads/ 下的图片相对路径，例如 uploads/team/bra.png。');
     echo $form->field($model, 'logo')->textInput(['maxlength' => 255]);
 } else {
+    echo $form->field($model, 'name_zh')->textInput(['maxlength' => 50])->hint('选填。填写后前台优先显示中文名，原名仍保留在详情页与搜索中。');
     echo $form->field($model, 'birth_date')->input('date', ['max' => date('Y-m-d')]);
     echo $form->field($model, 'nationality')->textInput(['maxlength' => 50]);
     echo $form->field($model, 'position')->textInput(['maxlength' => 20])->hint('例如：门将、后卫、中场、前锋。');

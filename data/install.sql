@@ -72,7 +72,8 @@ CREATE TABLE `team` (
 DROP TABLE IF EXISTS `player`;
 CREATE TABLE `player` (
   `id`          int          NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name`        varchar(50)  NOT NULL COMMENT '姓名',
+  `name`        varchar(50)  NOT NULL COMMENT '姓名(原名)',
+  `name_zh`     varchar(50)  DEFAULT NULL COMMENT '中文名(可空;空则展示原名)',
   `birth_date`  date         DEFAULT NULL COMMENT '出生日期',
   `nationality` varchar(50)  DEFAULT NULL COMMENT '国籍(仅展示;代表哪队以 squad 为准)',
   `position`    varchar(20)  DEFAULT NULL COMMENT '主要位置',
