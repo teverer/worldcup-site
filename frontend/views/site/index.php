@@ -99,5 +99,5 @@ $dataUrl = $latestId !== null
         <?= Html::a('看数据', $dataUrl) ?>
     </nav>
 
-    <p class="wall-about"><?= Html::a('关于本站 · 团队与文档', ['/team-info/index']) ?></p>
+    <p class="wall-about"><?= Html::a('关于与文档', ['/team-info/index']) ?></p>
 </div>

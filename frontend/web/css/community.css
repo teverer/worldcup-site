@@ -511,8 +511,8 @@
 
 .news-row-link {
     display: grid;
-    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
-    grid-template-areas: "date body read";
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    grid-template-areas: "date body";
     align-items: start;
     gap: var(--space-3);
     padding: 18px 8px;
@@ -570,15 +570,6 @@
     font-size: 13px;
 }
 
-.news-row-read {
-    grid-area: read;
-    align-self: center;
-    color: var(--color-primary);
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
 .news-empty {
     padding: var(--space-6) var(--space-3);
     border: 1px dashed var(--color-border);
@@ -603,10 +594,10 @@
 
 @media (max-width: 640px) {
     .news-row-link {
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr);
         grid-template-areas:
-            "date read"
-            "body body";
+            "date"
+            "body";
         row-gap: 6px;
         padding: 14px 4px;
     }

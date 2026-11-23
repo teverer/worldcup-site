@@ -576,13 +576,14 @@ body .td-panel--groups .group-table > thead > tr > th {
 
 body .td-panel--groups .group-table > tbody > tr > td,
 body .td-panel--groups .group-table > tbody > tr > th {
-    padding: 10px 8px;
+    padding: 11px 8px;
     border-top: 1px solid var(--line);
     line-height: 1.5;
 }
 
 body .td-panel--groups .group-table > tbody > tr > th.group-team {
     min-width: 112px;
+    font-size: 15px;
     font-weight: 600;
     text-align: left;
 }
@@ -934,12 +935,12 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 
     /* 移动端删列而不是压字号:只留 排名 / 球队 / 净胜 / 积分,胜平负收起。 */
     body .td-panel--groups .group-table {
-        font-size: 13.5px;
+        font-size: 14px;
     }
 
     body .td-panel--groups .group-table > thead > tr > th {
-        padding: 7px 6px;
-        font-size: 12px;
+        padding: 8px 6px;
+        font-size: 12.5px;
     }
 
     body .td-panel--groups .group-table > tbody > tr > td,
