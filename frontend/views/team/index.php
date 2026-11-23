@@ -59,6 +59,17 @@ foreach ($groups as $teams) {
         <p class="ti-summary">找到 <?= (int) $shown ?> 支球队。</p>
     <?php endif ?>
 
+    <?php if (count($groups) > 1): ?>
+        <nav class="td-editions ti-jump" aria-label="按大洲跳转">
+            <span class="ti-jump-label">直接到大洲</span>
+            <?php $jumpIndex = 0; foreach ($groups as $continent => $teams): $jumpIndex++; ?>
+                <a class="td-edition" href="#ti-group-<?= $jumpIndex ?>">
+                    <?= Html::encode($continent) ?> <span><?= count($teams) ?></span>
+                </a>
+            <?php endforeach ?>
+        </nav>
+    <?php endif ?>
+
     <?php if (!$groups): ?>
         <div class="empty-state pl-empty">
             <h3>没有找到球队</h3>

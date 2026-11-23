@@ -25,6 +25,42 @@ $this->registerCssFile('@web/css/catalog.css');
 $totalGoals = (int) array_sum(array_column($statistics, 'goals'));
 $totalAssists = (int) array_sum(array_column($statistics, 'assists'));
 $latestTeam = $participations ? $participations[0] : null;
+
+// 参赛经历与各届进球/助攻按届次合成一张生涯表,避免两张表都要读一遍。
+$career = [];
+foreach ($participations as $row) {
+    $year = (int) $row['year'];
+    $career[$year] = [
+        'year' => $year,
+        'tournament_id' => $row['tournament_id'],
+        'tournament_name' => $row['name'],
+        'team_id' => $row['team_id'],
+        'team_name' => $row['team_name'],
+        'shirt' => $row['shirt_number'],
+        'position' => $row['position'] ?: $model->position,
+        'goals' => 0,
+        'assists' => 0,
+    ];
+}
+foreach ($statistics as $row) {
+    $year = (int) $row['year'];
+    if (!isset($career[$year])) {
+        $career[$year] = [
+            'year' => $year,
+            'tournament_id' => null,
+            'tournament_name' => (string) $year,
+            'team_id' => null,
+            'team_name' => '—',
+            'shirt' => null,
+            'position' => $model->position,
+            'goals' => 0,
+            'assists' => 0,
+        ];
+    }
+    $career[$year]['goals'] = (int) $row['goals'];
+    $career[$year]['assists'] = (int) $row['assists'];
+}
+krsort($career);
 $showingChineseName = $model->hasChineseName() && !Player::prefersOriginalName();
 $metaParts = array_filter([
     $showingChineseName ? '原名 ' . $model->name : null,
@@ -78,9 +114,10 @@ $metaParts = array_filter([
 
     <section class="pd-section" aria-labelledby="pd-history-title">
         <div class="pd-section-head">
-            <h2 id="pd-history-title">世界杯参赛经历</h2>
+            <h2 id="pd-history-title">世界杯生涯</h2>
+            <p>按届次倒序；进球与助攻只计已结束比赛，不含乌龙球与点球大战。</p>
         </div>
-        <?php if (!$participations): ?>
+        <?php if (!$career): ?>
             <div class="empty-state">
                 <h3>暂无参赛经历</h3>
                 <p>该球员的世界杯参赛记录尚未录入；可以先从球队名单找到他。</p>
@@ -89,54 +126,32 @@ $metaParts = array_filter([
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table pd-table pd-table--history">
-                    <caption class="sr-only">球员历届参赛球队、号码和位置</caption>
+                    <caption class="sr-only">球员历届参赛球队、号码、位置、进球与助攻</caption>
                     <thead>
                         <tr>
                             <th scope="col">届次</th>
                             <th scope="col">代表球队</th>
                             <th scope="col">球衣号</th>
                             <th scope="col">位置</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($participations as $row): ?>
-                            <tr>
-                                <td><?= Html::a(Html::encode($row['name']), ['/tournament/view', 'id' => $row['tournament_id']]) ?></td>
-                                <td><?= Html::a(Html::encode($row['team_name']), ['/team/view', 'id' => $row['team_id']]) ?></td>
-                                <td><?= Html::encode($row['shirt_number'] ?? '—') ?></td>
-                                <td><?= Html::encode($row['position'] ?: ($model->position ?: '—')) ?></td>
-                            </tr>
-                        <?php endforeach ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif ?>
-    </section>
-
-    <section class="pd-section" aria-labelledby="pd-stats-title">
-        <div class="pd-section-head">
-            <h2 id="pd-stats-title">各届进球与助攻</h2>
-        </div>
-        <?php if (!$statistics): ?>
-            <div class="empty-state">
-                <h3>暂无进球或助攻记录</h3>
-                <p>统计以已结束比赛为准，不含乌龙球与点球大战。</p>
-            </div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="table pd-table pd-table--stats">
-                    <caption class="sr-only">球员各届进球与助攻统计</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">年份</th>
                             <th scope="col">进球</th>
                             <th scope="col">助攻</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($statistics as $row): ?>
+                        <?php foreach ($career as $row): ?>
                             <tr>
-                                <td><?= (int) $row['year'] ?></td>
+                                <td>
+                                    <?= $row['tournament_id']
+                                        ? Html::a(Html::encode($row['tournament_name']), ['/tournament/view', 'id' => $row['tournament_id']])
+                                        : Html::encode($row['tournament_name']) ?>
+                                </td>
+                                <td>
+                                    <?= $row['team_id']
+                                        ? Html::a(Html::encode($row['team_name']), ['/team/view', 'id' => $row['team_id']])
+                                        : Html::encode($row['team_name']) ?>
+                                </td>
+                                <td><?= Html::encode($row['shirt'] ?? '—') ?></td>
+                                <td><?= Html::encode($row['position'] ?: '—') ?></td>
                                 <td><?= (int) $row['goals'] ?></td>
                                 <td><?= (int) $row['assists'] ?></td>
                             </tr>

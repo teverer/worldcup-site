@@ -66,15 +66,34 @@ class TeamController extends Controller {
             throw new NotFoundHttpException('球队不存在。');
         }
         $tournaments = $model->tournaments();
-        if ($tournamentId !== null && $tournamentId !== ''
-            && (!is_scalar($tournamentId) || !ctype_digit((string) $tournamentId)
-                || !in_array((int) $tournamentId, array_map('intval', array_column($tournaments, 'id')), true))) {
-            throw new NotFoundHttpException('该球队没有此届参赛名单。');
+        $allRoster = $tournamentId === 'all';
+        $selectedTournamentId = null;
+        if (!$allRoster && $tournamentId !== null && $tournamentId !== '') {
+            if (!is_scalar($tournamentId) || !ctype_digit((string) $tournamentId)
+                || !in_array((int) $tournamentId, array_map('intval', array_column($tournaments, 'id')), true)) {
+                throw new NotFoundHttpException('该球队没有此届参赛名单。');
+            }
+            $selectedTournamentId = (int) $tournamentId;
         }
-        return $this->render('view', ['model' => $model, 'tournaments' => $tournaments,
-            'tournamentId' => $tournamentId, 'dataProvider' => new ActiveDataProvider([
-                'query' => $model->rosterQuery($tournamentId), 'pagination' => ['pageSize' => 20],
+
+        // 默认看最近一届的当届阵容;想看所有届次去重,显式点「全部届次」。
+        $rosterTournamentId = $allRoster
+            ? null
+            : ($selectedTournamentId !== null
+                ? $selectedTournamentId
+                : ($tournaments ? (int) $tournaments[0]['id'] : null));
+
+        return $this->render('view', [
+            'model' => $model,
+            'tournaments' => $tournaments,
+            'tournamentId' => $allRoster ? 'all' : $selectedTournamentId,
+            'rosterTournamentId' => $rosterTournamentId,
+            'allRoster' => $allRoster,
+            'records' => $model->tournamentRecords(),
+            'dataProvider' => new ActiveDataProvider([
+                'query' => $model->rosterQuery($rosterTournamentId), 'pagination' => ['pageSize' => 20],
                 'sort' => ['defaultOrder' => ['name' => SORT_ASC], 'attributes' => ['name', 'position']],
-            ])]);
+            ]),
+        ]);
     }
 }

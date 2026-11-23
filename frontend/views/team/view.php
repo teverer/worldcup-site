@@ -9,7 +9,10 @@
  * @var yii\web\View $this
  * @var common\models\Team $model
  * @var array $tournaments
- * @var string|null $tournamentId
+ * @var string|int|null $tournamentId
+ * @var int|null $rosterTournamentId
+ * @var bool $allRoster
+ * @var array $records 历届战绩
  * @var yii\data\ActiveDataProvider $dataProvider
  */
 
@@ -26,7 +29,7 @@ $this->registerCssFile('@web/css/catalog.css');
 
 $currentTournament = null;
 foreach ($tournaments as $tournament) {
-    if ((string) $tournament['id'] === (string) $tournamentId) {
+    if ((string) $tournament['id'] === (string) $rosterTournamentId) {
         $currentTournament = $tournament;
         break;
     }
@@ -54,12 +57,61 @@ $rosterTotal = (int) $dataProvider->totalCount;
         <p class="td-intro"><?= nl2br(Html::encode($model->intro)) ?></p>
     <?php endif ?>
 
+    <section class="td-section" aria-labelledby="td-records-title">
+        <div class="td-section-head">
+            <div>
+                <h2 id="td-records-title">历届战绩</h2>
+                <p>只计已结束比赛；点年份进入那一届的晋级图与统计。</p>
+            </div>
+        </div>
+
+        <?php if (!$records): ?>
+            <div class="empty-state td-empty">
+                <h3>还没有比赛记录</h3>
+                <p>这支队的世界杯比赛尚未录入；可以先去比赛索引按队名查。</p>
+                <p><?= Html::a('看这队比赛', ['/game/index', 'team' => $model->name]) ?></p>
+            </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table catalog-table td-records">
+                    <caption class="sr-only"><?= Html::encode($model->name) ?> 历届世界杯战绩</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">届次</th>
+                            <th scope="col">最终阶段</th>
+                            <th scope="col">场</th>
+                            <th scope="col">胜</th>
+                            <th scope="col">平</th>
+                            <th scope="col">负</th>
+                            <th scope="col">进 / 失</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($records as $record): ?>
+                            <tr>
+                                <td><?= Html::a(Html::encode((string) $record['year']), [
+                                    '/tournament/view', 'id' => $record['tournament_id'],
+                                ]) ?></td>
+                                <td><?= Html::encode($record['stage']) ?></td>
+                                <td><?= (int) $record['played'] ?></td>
+                                <td><?= (int) $record['won'] ?></td>
+                                <td><?= (int) $record['drawn'] ?></td>
+                                <td><?= (int) $record['lost'] ?></td>
+                                <td><?= (int) $record['goals_for'] ?> / <?= (int) $record['goals_against'] ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif ?>
+    </section>
+
     <section class="td-section" aria-labelledby="td-roster-title">
         <div class="td-section-head">
             <div>
                 <h2 id="td-roster-title">参赛球员</h2>
                 <p>
-                    <?= $currentTournament
+                    <?= $currentTournament && !$allRoster
                         ? Html::encode($currentTournament['name']) . ' 的名单，共 ' . $rosterTotal . ' 人。'
                         : '所有届次去重后共 ' . $rosterTotal . ' 人；点年份只看那一届。' ?>
                 </p>
@@ -71,14 +123,14 @@ $rosterTotal = (int) $dataProvider->totalCount;
 
         <?php if ($tournaments): ?>
             <nav class="td-editions" aria-label="按届次筛选名单">
-                <?= Html::a('全部届次', ['/team/view', 'id' => $model->id], [
-                    'class' => 'td-edition' . ($tournamentId === null || $tournamentId === '' ? ' is-active' : ''),
+                <?= Html::a('全部届次', ['/team/view', 'id' => $model->id, 'tournamentId' => 'all'], [
+                    'class' => 'td-edition' . ($allRoster ? ' is-active' : ''),
                 ]) ?>
                 <?php foreach ($tournaments as $tournament): ?>
                     <?= Html::a(Html::encode((string) $tournament['year']), [
                         '/team/view', 'id' => $model->id, 'tournamentId' => $tournament['id'],
                     ], [
-                        'class' => 'td-edition' . ((string) $tournament['id'] === (string) $tournamentId ? ' is-active' : ''),
+                        'class' => 'td-edition' . (!$allRoster && (string) $tournament['id'] === (string) $rosterTournamentId ? ' is-active' : ''),
                     ]) ?>
                 <?php endforeach ?>
             </nav>
