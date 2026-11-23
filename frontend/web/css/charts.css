@@ -38,7 +38,17 @@
 .chart-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* 每张卡按自身内容决定高度:一张展开数据表时,不能把同排另一张拉长。 */
+    align-items: start;
     gap: 12px;
+}
+
+/* 展开某张图的「数据表」时,不要让同一行的另一张图被 grid 拉伸到同高;
+   收起时仍保留两卡底边齐平。:has 不支持时退回原状,不影响阅读。 */
+@media (min-width: 861px) {
+    .chart-grid:has(.chart-data[open]) {
+        align-items: start;
+    }
 }
 
 .chart-card {
