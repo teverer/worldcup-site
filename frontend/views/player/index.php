@@ -21,16 +21,16 @@ $this->title = '球员';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/catalog.css');
 
-$hasResultContext = trim((string) $searchModel->q) !== ''
+$hasFilter = trim((string) $searchModel->q) !== ''
     || ($searchModel->teamId !== null && $searchModel->teamId !== '')
-    || trim((string) $searchModel->position) !== ''
-    || Yii::$app->request->get('all') === '1';
+    || trim((string) $searchModel->position) !== '';
+$isAll = Yii::$app->request->get('all') === '1';
 ?>
 <section class="catalog-page player-index">
     <header class="pl-head">
         <h1>球员</h1>
         <p>
-            <?= (int) $totalPlayers ?> 名球员，跨越十一届。先搜名字；不记得名字，就从每届最佳射手进入。
+            <?= (int) $totalPlayers ?> 名球员，跨越十一届。先搜中文名或原名；不记得名字，就从每届最佳射手进入。
         </p>
     </header>
 
@@ -62,7 +62,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
                     </option>
                 <?php endforeach ?>
             </select>
-            <?php if ($hasResultContext): ?>
+            <?php if ($hasFilter): ?>
                 <?= Html::a('清除条件', ['/player/index'], ['class' => 'pl-clear']) ?>
             <?php endif ?>
         </div>
@@ -73,7 +73,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
             <div class="pl-section-head">
                 <div>
                     <h2 id="pl-spotlight-title">每届最佳射手</h2>
-                    <p>每届进球最多的球员；统计不含乌龙球与点球大战。</p>
+                    <p>每届进球最多的球员；中文名优先，未收录通用译名的球员保留原名。</p>
                 </div>
             </div>
 
@@ -105,7 +105,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
         <section class="pl-section" aria-labelledby="pl-results-title">
             <div class="pl-section-head">
                 <div>
-                    <h2 id="pl-results-title">搜索结果</h2>
+                    <h2 id="pl-results-title"><?= $isAll ? '全部球员' : '搜索结果' ?></h2>
                     <?php if ($dataProvider->totalCount > 0): ?>
                         <p>
                             共 <?= (int) $dataProvider->totalCount ?> 人<?php if ($dataProvider->totalCount > $dataProvider->pagination->pageSize): ?>，
@@ -128,7 +128,7 @@ $hasResultContext = trim((string) $searchModel->q) !== ''
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table pl-table">
-                        <caption class="sr-only">球员搜索结果</caption>
+                        <caption class="sr-only"><?= $isAll ? '全部球员' : '球员搜索结果' ?></caption>
                         <thead>
                             <tr>
                                 <th scope="col">球员</th>

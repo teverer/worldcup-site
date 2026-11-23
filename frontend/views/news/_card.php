@@ -29,6 +29,5 @@ $dateText = Yii::$app->formatter->asDate($date, 'php:Y-m-d');
                 <span class="news-row-author"><?= Html::encode($model->author) ?></span>
             <?php endif ?>
         </span>
-        <span class="news-row-read">阅读</span>
     </a>
 </article>

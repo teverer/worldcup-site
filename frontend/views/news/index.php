@@ -44,7 +44,7 @@ $this->registerCssFile('@web/css/community.css');
         'summary' => '共 {totalCount} 篇资讯',
         'emptyText' => '<div class="news-empty"><h2>没有找到资讯</h2>'
             . '<p>换一个标题或作者试试，或者回首页从届次进入。</p>'
-            . '<p><a href="' . Html::encode(Yii::$app->homeUrl) . '">回首页看届次</a></p></div>',
+            . '<p><a href="' . Html::encode(Yii::$app->homeUrl) . '">回首页</a></p></div>',
         'emptyTextOptions' => ['class' => 'news-empty-wrap'],
         'options' => ['class' => 'news-rows'],
         'itemOptions' => ['tag' => false],

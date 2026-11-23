@@ -44,7 +44,7 @@ $date = $model->publish_time ?: $model->create_time;
 
     <footer class="news-detail-footer">
         <?= Html::a('返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
-        <?= Html::a('回首页看届次', Yii::$app->homeUrl, ['class' => 'news-detail-home']) ?>
+        <?= Html::a('回首页', Yii::$app->homeUrl, ['class' => 'news-detail-home']) ?>
     </footer>
 
     <?= CommentSection::widget([
