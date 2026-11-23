@@ -14,6 +14,10 @@ use yii\helpers\Url;
 if ($previous === null && $next === null) {
     return;
 }
+
+// 首尾两届只有一侧有邻届；空出来的一格给「回到记分牌墙」，
+// 既平衡版式，也避免页面在最后一届之后变成死路。
+$wallUrl = Url::to(['/site/index']);
 ?>
 <nav class="td-history" aria-label="届次翻页">
     <?php if ($previous !== null): ?>
@@ -23,6 +27,12 @@ if ($previous === null && $next === null) {
             <span class="td-history-year"><?= Html::encode((string) $previous['year']) ?></span>
             <span class="td-history-name"><?= Html::encode((string) $previous['name']) ?></span>
         </a>
+    <?php else: ?>
+        <a class="td-history-link td-history-link--all" href="<?= Html::encode($wallUrl) ?>">
+            <span class="td-history-dir">全部届次</span>
+            <span class="td-history-year">1986—2026</span>
+            <span class="td-history-name">回到记分牌墙</span>
+        </a>
     <?php endif ?>
 
     <?php if ($next !== null): ?>
@@ -31,6 +41,13 @@ if ($previous === null && $next === null) {
             <span class="td-history-dir">下一届</span>
             <span class="td-history-year"><?= Html::encode((string) $next['year']) ?></span>
             <span class="td-history-name"><?= Html::encode((string) $next['name']) ?></span>
+        </a>
+    <?php else: ?>
+        <a class="td-history-link td-history-link--next td-history-link--all"
+           href="<?= Html::encode($wallUrl) ?>">
+            <span class="td-history-dir">全部届次</span>
+            <span class="td-history-year">1986—2026</span>
+            <span class="td-history-name">回到记分牌墙</span>
         </a>
     <?php endif ?>
 </nav>

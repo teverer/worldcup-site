@@ -722,6 +722,16 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     text-align: right;
 }
 
+/* 首尾届：空出来的一格是「全部届次」出口，文字退一级，不抢邻届。 */
+.td-history-link--all .td-history-year {
+    color: var(--muted);
+}
+
+.td-history-link--all:hover .td-history-year,
+.td-history-link--all:focus .td-history-year {
+    color: var(--green-action);
+}
+
 .td-history-dir {
     color: var(--muted);
     font-size: var(--fs-xs);
