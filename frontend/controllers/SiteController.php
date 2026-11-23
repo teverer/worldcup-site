@@ -156,7 +156,7 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        return $this->redirect(['/team-info/index']);
     }
 
     /**

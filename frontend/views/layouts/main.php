@@ -1,8 +1,9 @@
 <?php
 /**
  * Team: 国足世界杯夺冠队
+ * Coding by 李佳婕 2413745, 20261122
  * Coding by 李行阳 2411353, 20261117
- * 模块:界面设计 —— 前台公共布局(页头、导航、页脚)
+ * 模块:界面设计、框架与团队主页 —— 前台公共布局及团队、下载导航
  *
  * @var yii\web\View $this
  * @var string $content
@@ -60,6 +61,8 @@ $navItems = [
     ['label' => '球队', 'url' => ['/team/index'], 'controllers' => ['team']],
     ['label' => '球员', 'url' => ['/player/index'], 'controllers' => ['player']],
     ['label' => '资讯', 'url' => ['/news/index'], 'controllers' => ['news']],
+    ['label' => '团队', 'url' => ['/team-info/index'], 'controllers' => ['team-info'], 'actions' => ['index']],
+    ['label' => '下载', 'url' => ['/team-info/downloads'], 'controllers' => ['team-info'], 'actions' => ['downloads']],
 ];
 $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::$app->name;
 ?>
@@ -103,6 +106,9 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                         <?php
                         // “届次”在根页与届次详情页保持高亮；登录/关于等 site 页面不误亮。
                         $isActive = in_array($controllerId, $item['controllers'], true);
+                        if ($isActive && !empty($item['actions'])) {
+                            $isActive = in_array($actionId, $item['actions'], true);
+                        }
                         if ($isActive && !empty($item['siteIndexOnly']) && $controllerId === 'site') {
                             $isActive = $actionId === 'index';
                         }
@@ -154,7 +160,8 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">关于</p>
                     <ul>
-                        <li><?= Html::a('关于本站', Url::to(['/site/about'])) ?></li>
+                        <li><?= Html::a('团队展示', Url::to(['/team-info/index'])) ?></li>
+                        <li><?= Html::a('作业下载', Url::to(['/team-info/downloads'])) ?></li>
                         <li><?= Html::a('最新资讯', ['/news/index']) ?></li>
                     </ul>
                 </div>
