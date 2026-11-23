@@ -44,8 +44,10 @@ class Player extends ActiveRecord {
      */
     public static function prefersOriginalName()
     {
+        // 默认显示原名,访客主动切到中文名后才显示中文名。
         // 读原生 $_COOKIE:该 cookie 不参与 Yii 签名,前端 JS 也要读同一份值。
-        return isset($_COOKIE['wc_player_name']) && $_COOKIE['wc_player_name'] === 'orig';
+        $value = isset($_COOKIE['wc_player_name_v2']) ? $_COOKIE['wc_player_name_v2'] : 'orig';
+        return $value !== 'zh';
     }
 
     /**

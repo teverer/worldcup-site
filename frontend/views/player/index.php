@@ -75,7 +75,7 @@ $isAll = Yii::$app->request->get('all') === '1';
             <div class="pl-section-head">
                 <div>
                     <h2 id="pl-spotlight-title">每届最佳射手</h2>
-                    <p>每届进球最多的球员；中文名优先，未收录通用译名的球员保留原名。</p>
+                    <p>每届进球最多的球员；默认显示原名，可在上方切换中文名；未收录译名的球员保留原名。</p>
                 </div>
             </div>
 

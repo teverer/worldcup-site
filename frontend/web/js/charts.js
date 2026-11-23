@@ -5,20 +5,20 @@
     'use strict';
 
     var INK = {
-        primary: '#0B1A22',
-        secondary: '#33454C',
-        muted: '#5F6B66',
-        grid: '#D3DBD6',
-        axis: '#8A9AA1',
-        surface: '#F5F7F4'
+        primary: '#0B1418',
+        secondary: '#34433F',
+        muted: '#5C6963',
+        grid: '#E0DBCC',
+        axis: '#8A9690',
+        surface: '#F8F6F0'
     };
 
-    // 冷纸底六色:金只给第一名,其余用深绿到灰的五色;红不进入图表。
-    var TEAM_COLORS = ['#146B45', '#4F8A6B', '#7FC8A9', '#8A9AA1', '#33454C'];
-    var PRIMARY_SERIES = '#146B45';
-    var HOVER_SERIES = '#0E3B2E';
-    var ACCENT_SERIES = '#C9A227';
-    var OTHER_COLOR = '#8A9AA1';
+    // 冷纸底五色:金只给第一名,其余用深绿到灰的五色;红不进入图表。
+    var TEAM_COLORS = ['#0E5138', '#2E7D5B', '#57B894', '#8C9B95', '#2E4250'];
+    var PRIMARY_SERIES = '#0E5138';
+    var HOVER_SERIES = '#093B29';
+    var ACCENT_SERIES = '#B8892A';
+    var OTHER_COLOR = '#8C9B95';
 
     var chartInstances = {};
     var resizeTimer = null;
@@ -48,9 +48,9 @@
 
     // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
     // 同时处理空格、连字符与撇号后的首字母，兼容 Heung-min、O'Neill 等写法。
-    // 与 PHP 端 wc_player_name cookie 保持一致:默认中文名,选择原名后全部回退。
+    // 与 PHP 端 wc_player_name_v2 cookie 保持一致:默认原名,只有主动切到中文名才用中文。
     function prefersOriginalName() {
-        return /(?:^|;\s*)wc_player_name=orig(?:;|$)/.test(document.cookie);
+        return !/(?:^|;\s*)wc_player_name_v2=zh(?:;|$)/.test(document.cookie);
     }
 
     // 有中文名优先显示中文名;没有或访客选择原名时回退原名。

@@ -25,7 +25,7 @@ class PreferenceController extends Controller
 
         // 用原生 setcookie 而不是 Yii 的 Cookie 组件:
         // Yii 会默认对 cookie 值做签名,前端 charts.js 读不到原文,无法同步图表姓名。
-        setcookie('wc_player_name', $lang, [
+        setcookie('wc_player_name_v2', $lang, [
             'expires' => time() + 31536000,
             'path' => '/',
             'httponly' => false,

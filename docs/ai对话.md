@@ -261,6 +261,7 @@
 - 已改：`Player::displayName()` / `hasChineseName()`、`PlayerSearch` 搜中文名、球员索引/详情/球队名单、`PlayerIndex`、`TournamentDetail`、`HomeStats`、`ChartController`、后台球员表单/详情。搜索「姆巴佩」返回 1 人，图表 JSON 增加 `playerNameZh`。
 - **共享文件未提交**：`frontend/web/js/charts.js`（我的字号 + `displayPlayerName`）与 `frontend/views/game/view.php`（进球者显示中文名）里有 B 的小改动，但文件同时有 A 未提交的改动，B 不单独提交，交给 A 一并提交。其余文件都不在 A 本轮范围。
 - 未做：全局「中文名/原名」开关。当前按“有则中文、无则原名”处理，避免一半人切换后仍是英文；若用户坚持要开关，再在球员索引加一个 cookie 记忆的切换条（需要 A 加 CSS）。
+- **21:25 调整**：用户确认原名更好看，默认改为**原名**；点击「中文名」才切换。cookie 改名为 `wc_player_name_v2`，避免旧测试 cookie 干扰。中国球员仍始终中文名。文案同步改为“默认显示原名”。
 - 19:45 修订：按 A 的建议把译名统一成媒体常用简称（梅西、姆巴佩、克洛泽、莱因克尔等，共 30 条），提交 7bc6215；`data/player_name_zh.sql` 末尾有幂等“常见译名修订”块，不覆盖后台人工修订。
 - 球员页修正：「浏览全部」模式标题改为「全部球员」，不再出现「搜索结果 / 清除条件」；资讯列表删掉「阅读」（整行已是链接），「回首页看届次」统一为「回首页」。
 - 需要 A 的 CSS 配合：`.news-row-link` 现在少了 `.news-row-read`，桌面 grid 仍是三列，需要改成两列或让 body 占满；属于 A 的 community.css 范围。
@@ -407,3 +408,20 @@
 - **球员详情姓名切换**：中文模式显示「原名 Kylian MBAPPE / 显示原名」；原名模式显示「中文名 姆巴佩 / 显示中文名」。两种模式都保留另一种写法，cookie 全局生效。
 - **部署文档**：`docs/部署文档.md` 的自动与手动导入都补上 `data/player_name_zh.sql`。
 - **仍未做**：`HomeStats::topScorers()` 的 COALESCE（目前未被调用，留作 B 的清理项）；中文名第二期；评论折叠；会话 C 的颜色方向。
+
+## 20. C 的视觉 v2 已落地（21:15，全站覆盖层）
+
+- **用户已确认**：深色入口用 C 极光球场，浅色数据页用 D 暖纸，标题用得意黑，全站一次落地。
+- **实际改动（只按路径改，未 `git add -A`）**：
+  - 新建 `frontend/web/css/design-v2.css`：色板覆盖、极光/点阵/球场线、卡片/表格/按钮/页头/图表容器、动效。**不是**原计划的 `palette-v2.css`，以这个文件名为准。
+  - 新建 `frontend/web/js/atmosphere.js`：记分牌指针灯光、悬停届次切年代色、键盘焦点等价；`prefers-reduced-motion` 直接跳过。
+  - 新增 `frontend/web/fonts/SmileySans-Oblique.woff2` + `SmileySans-OFL.txt`，README 补来源/许可/使用边界。
+  - `frontend/views/layouts/main.php`：只加 `design-v2.css`、`atmosphere.js` 注册和 `aria-hidden` 氛围容器；未动导航、页脚结构。
+  - `frontend/web/js/charts.js`：只换 INK / TEAM_COLORS / PRIMARY / ACCENT / OTHER 五个配色常量，未动逻辑。
+  - **没有改** `theme.css`、`root-wall.css`、`tournament-detail.css`、`charts.css`、`game.css`、`team-info.css`、`catalog.css`、`community.css`、`bracket.css`，全部靠 `design-v2.css` 后加载覆盖。
+- **验证**：CDP 实测根页 390/768/1440、球队索引 390、届次页 390、小组赛/统计 1440、球队/球员/比赛/关于 1440，`scrollWidth === innerWidth`，无页面级横向溢出；`php -l` 布局通过；新资源 200。
+- **已知但仍未处理（不属于 C 的结构范围）**：
+  1. 根页每块牌名字仍是「2026年美加墨世界杯」，与左侧大年份重复；建议 A 在 `site/index.php` 去掉年份前缀（只留「美加墨世界杯」）。
+  2. 比赛/球队/球员详情的评论仍是白卡常开；B 做「看台」折叠时用 `.comment-section` 的新令牌即可，C 不抢这块。
+  3. 纪录页还没有独立路由；「黑金颁奖」已写进总纲 11.7，等页面落地时用。
+- **请 A / B**：不要再改 `design-v2.css`、`atmosphere.js`、字体文件；新加的 class 若需要颜色/背景，在 §3 写 class 名，C 统一加。颜色/背景/动效的改动先看 `docs/设计改造-00-总纲.md` 11.7。
