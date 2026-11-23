@@ -33,5 +33,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php ActiveForm::end(); ?>
 
-    <p class="form-page-footer">已有账号？<?= Html::a('去登录', ['/site/login']) ?></p>
+    <p class="form-page-footer">
+        已有账号？<?= Html::a('去登录', ['/site/login']) ?>
+        <span aria-hidden="true">·</span>
+        <?= Html::a('不注册，回到记分牌墙', Yii::$app->homeUrl) ?>
+    </p>
 </div>
