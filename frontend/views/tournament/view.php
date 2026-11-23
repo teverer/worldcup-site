@@ -224,24 +224,11 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
         'next' => $next,
     ]) ?>
 
-    <?php /* 看台:页尾的社区区,默认收起;顶部“讨论 N”会展开并跳到这里。 */ ?>
-    <details class="td-stands" id="comments">
-        <summary class="td-stands__bar">
-            <span class="td-stands__name">看台</span>
-            <span class="td-stands__note">这一届的讨论 · <?= Html::encode((string) (int) $comment_count) ?> 条</span>
-            <span class="td-stands__toggle">
-                <span class="td-stands__toggle-open">打开讨论</span>
-                <span class="td-stands__toggle-close">收起</span>
-                <span class="td-stands__chevron" aria-hidden="true"></span>
-            </span>
-        </summary>
-        <div class="td-stands__body">
-            <?= CommentSection::widget([
-                'targetType' => CommentTarget::TOURNAMENT,
-                'targetId' => $model->id,
-            ]) ?>
-        </div>
-    </details>
+    <?php /* 留言簿:页尾的社区记录;顶部“讨论 N”直接锚到这里。 */ ?>
+    <?= CommentSection::widget([
+        'targetType' => CommentTarget::TOURNAMENT,
+        'targetId' => $model->id,
+    ]) ?>
 </div>
 <?php
 $this->registerJs(<<<'JS'
@@ -252,7 +239,11 @@ $this->registerJs(<<<'JS'
     }
 
     var syncTabs = function () {
-        var hash = window.location.hash || '#knockout';
+        var hash = window.location.hash;
+        // 讨论不属于舞台面板:停在留言簿时,舞台仍保持淘汰赛默认态。
+        if (!hash || hash === '#comments' || hash.indexOf('#comment-') === 0) {
+            hash = '#knockout';
+        }
         Array.prototype.forEach.call(tabs, function (tab) {
             if (tab.getAttribute('href') === hash) {
                 tab.setAttribute('aria-current', 'page');
@@ -277,48 +268,14 @@ $this->registerJs(<<<'JS'
         }, 80);
     };
 
-    // 看台默认收起;顶部“讨论 N”跳转或直接带 #comments 打开时展开。
-    var stands = document.getElementById('comments');
-    var opensStandsFromNav = function () {
-        if (stands && stands.tagName.toLowerCase() === 'details') {
-            stands.open = true;
-        }
-    };
-    var standsTab = document.querySelector('.td-tabs-comments');
-    if (standsTab && stands) {
-        // 不改 hash:讨论不属于舞台面板,跳过去不应把小组赛 / 统计重置回淘汰赛。
-        standsTab.addEventListener('click', function (event) {
-            event.preventDefault();
-            opensStandsFromNav();
-            stands.scrollIntoView();
-        });
-    }
-
-    // 从外部带 #comments 进来时,收起后清掉 hash,避免留下“讨论”高亮。
-    if (stands && stands.tagName.toLowerCase() === 'details') {
-        stands.addEventListener('toggle', function () {
-            if (!stands.open && window.location.hash === '#comments') {
-                window.history.replaceState(null, '', window.location.pathname + window.location.search);
-                syncTabs();
-            }
-        });
-    }
-
-    var syncStands = function () {
-        if (window.location.hash === '#comments') {
-            opensStandsFromNav();
-        }
-    };
-
+    // “讨论 N”是普通锚点:滚到页尾留言簿,不改舞台 tab 的当前态。
     window.addEventListener('hashchange', function () {
         syncTabs();
         notifyCharts();
-        syncStands();
     });
 
     syncTabs();
     notifyCharts();
-    syncStands();
 })();
 JS
 , View::POS_END);

@@ -11,6 +11,7 @@ use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -102,6 +103,11 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            // 从留言簿登录后回到原来的记录附近。
+            $returnUrl = $this->safeReturnUrl();
+            if ($returnUrl !== null) {
+                return $this->redirect($returnUrl);
+            }
             return $this->goBack();
         } else {
             $model->password = '';
@@ -167,6 +173,11 @@ class SiteController extends Controller
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', '注册成功,请登录。');
+            // 从留言簿来注册的，登录后回到同一页。
+            $returnUrl = $this->safeReturnUrl();
+            if ($returnUrl !== null) {
+                return $this->redirect(['/site/login', 'returnUrl' => $returnUrl]);
+            }
             return $this->goHome();
         }
 
@@ -268,5 +279,23 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    /**
+     * 只接受站内相对地址，避免登录 / 注册后的开放跳转。
+     *
+     * @return string|null
+     */
+    private function safeReturnUrl()
+    {
+        $returnUrl = Yii::$app->request->get('returnUrl');
+        if (is_string($returnUrl)
+            && $returnUrl !== ''
+            && $returnUrl[0] === '/'
+            && strpos($returnUrl, '\\') === false
+            && Url::isRelative($returnUrl)) {
+            return $returnUrl;
+        }
+        return null;
     }
 }

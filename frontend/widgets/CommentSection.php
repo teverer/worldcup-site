@@ -2,7 +2,8 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 石子川 2411966, 20261108
- * 模块:留言与资讯 —— 可复用的多态留言展示组件。
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:留言与资讯 —— 可复用的多态留言展示组件（留言簿）。
  */
 
 namespace frontend\widgets;
@@ -15,11 +16,142 @@ use common\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Widget;
 use yii\db\Expression;
+use yii\web\View;
 
 class CommentSection extends Widget
 {
     public $targetType;
     public $targetId;
+
+    /**
+     * 每个目标页的固定提问：不是“添加评论”，而是把这一页的记忆问出来。
+     *
+     * @return string[]
+     */
+    public static function prompts()
+    {
+        return [
+            CommentTarget::TOURNAMENT => '这一届，你记住了哪一夜？',
+            CommentTarget::GAME => '这一场，你记得哪一刻？',
+            CommentTarget::TEAM => '你和这支球队，从哪一届开始？',
+            CommentTarget::PLAYER => '关于他，你记得哪一个球？',
+            CommentTarget::NEWS => '读完这一篇，你想起了什么？',
+        ];
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    public static function promptFor($type)
+    {
+        $prompts = self::prompts();
+        return isset($prompts[$type]) ? $prompts[$type] : '这一页，你想留下什么？';
+    }
+
+    /**
+     * 输入框里的引导语；不重复标题下的提问。
+     *
+     * @param string $type
+     * @return string
+     */
+    public static function composerPlaceholderFor($type)
+    {
+        $placeholders = [
+            CommentTarget::TOURNAMENT => '写下你记得的那一夜……',
+            CommentTarget::GAME => '写下你记得的那一刻……',
+            CommentTarget::TEAM => '写下你和这支球队的记忆……',
+            CommentTarget::PLAYER => '写下你记得的那个球……',
+            CommentTarget::NEWS => '写下读完这一篇的想法……',
+        ];
+        return isset($placeholders[$type]) ? $placeholders[$type] : '写下你想留下的那句话……';
+    }
+
+    /**
+     * 空留言簿里的三个起点。点击后直接填进输入框。
+     *
+     * @param string $type
+     * @return string[]
+     */
+    public static function startersFor($type)
+    {
+        $starters = [
+            CommentTarget::TOURNAMENT => [
+                '你当时在哪看的？',
+                '这一届，你记住了哪一夜？',
+                '比分之外，你还记得什么？',
+            ],
+            CommentTarget::GAME => [
+                '你当时在哪看的？',
+                '哪一刻让你站了起来？',
+                '比分之外，你还记得什么？',
+            ],
+            CommentTarget::TEAM => [
+                '你从哪一届开始看这支球队？',
+                '你记得他们的哪一场？',
+                '哪个球员让你记住了这支球队？',
+            ],
+            CommentTarget::PLAYER => [
+                '你第一次记住他，是哪一届？',
+                '你记得他的哪一个球？',
+                '关于他，你还有什么想说？',
+            ],
+            CommentTarget::NEWS => [
+                '读完这篇，你想起了什么？',
+                '你同意作者的观点吗？',
+                '你还有什么想补充的？',
+            ],
+        ];
+        return isset($starters[$type]) ? $starters[$type] : ['写下你想留下的那句话……'];
+    }
+
+    /**
+     * 名字印章的六种深色：像不同人的深色外套，不做彩虹头像。
+     *
+     * @return string[]
+     */
+    public static function sealPalette()
+    {
+        return [
+            '#0E5138',
+            '#2F4A55',
+            '#5A3A2E',
+            '#3E4A46',
+            '#4A4A2A',
+            '#0B1418',
+        ];
+    }
+
+    /**
+     * @param int $userId
+     * @return string
+     */
+    public static function sealColor($userId)
+    {
+        $palette = self::sealPalette();
+        $index = abs((int) $userId) % count($palette);
+        return $palette[$index];
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public static function sealInitial($name)
+    {
+        $name = trim((string) $name);
+        return $name === '' ? '?' : mb_substr($name, 0, 1, 'UTF-8');
+    }
+
+    /**
+     * @param Comment $comment
+     * @return string
+     */
+    public static function authorName(Comment $comment)
+    {
+        $user = $comment->user;
+        return $user ? ($user->nickname ?: $user->username) : '未知用户';
+    }
 
     /**
      * {@inheritdoc}
@@ -49,15 +181,21 @@ class CommentSection extends Widget
      */
     public function run()
     {
-        $this->view->registerCssFile('@web/css/community.css');
+        $this->view->registerJsFile('@web/js/ledger.js', ['position' => View::POS_END]);
 
         $comments = Comment::findForTarget($this->targetType, $this->targetId)
             ->with('user')
             ->all();
         $childrenByParent = [];
+        $authorsById = [];
+        $participantIds = [];
         foreach ($comments as $comment) {
             $parentKey = $comment->parent_id === null ? 0 : (int) $comment->parent_id;
             $childrenByParent[$parentKey][] = $comment;
+            $authorsById[(int) $comment->id] = self::authorName($comment);
+            if ((int) $comment->user_id > 0) {
+                $participantIds[(int) $comment->user_id] = true;
+            }
         }
         $roots = isset($childrenByParent[0]) ? $childrenByParent[0] : [];
         $commentIds = array_map('intval', array_column($comments, 'id'));
@@ -88,13 +226,18 @@ class CommentSection extends Widget
         return $this->render('_section', [
             'targetType' => $this->targetType,
             'targetId' => $this->targetId,
-            'targetLabel' => CommentTarget::label($this->targetType),
             'comments' => $comments,
             'roots' => $roots,
             'childrenByParent' => $childrenByParent,
+            'authorsById' => $authorsById,
             'likeCounts' => $likeCounts,
             'likedIds' => $likedIds,
             'isAdmin' => $identity !== null && (int) $identity->role >= User::ROLE_ADMIN,
+            'currentUserId' => $identity !== null ? (int) $identity->id : null,
+            'prompt' => self::promptFor($this->targetType),
+            'placeholder' => self::composerPlaceholderFor($this->targetType),
+            'starters' => self::startersFor($this->targetType),
+            'participantCount' => count($participantIds),
         ]);
     }
 }

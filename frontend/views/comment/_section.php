@@ -2,62 +2,94 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 石子川 2411966, 20261108
- * 模块:留言与资讯 —— 留言区容器与顶层发表入口。
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:留言与资讯 —— 留言簿：页尾的社区记录、输入与空态。
  *
  * @var frontend\widgets\CommentSection $this
  * @var string $targetType
  * @var int $targetId
- * @var string $targetLabel
  * @var common\models\Comment[] $comments
  * @var common\models\Comment[] $roots
  * @var array $childrenByParent
+ * @var array $authorsById
  * @var array $likeCounts
  * @var array $likedIds
  * @var bool $isAdmin
+ * @var int|null $currentUserId
+ * @var string $prompt
+ * @var string $placeholder
+ * @var string[] $starters
+ * @var int $participantCount
  */
 
 use yii\helpers\Html;
 
-$sectionId = 'comments-' . $targetType . '-' . $targetId;
+$total = count($comments);
+$isGuest = $currentUserId === null;
+$loginReturnUrl = Yii::$app->request->url . '#comments';
 ?>
-<section class="comment-section" id="<?= Html::encode($sectionId) ?>" aria-labelledby="<?= Html::encode($sectionId) ?>-title">
-    <header class="comment-section-heading">
-        <div>
-            <h2 id="<?= Html::encode($sectionId) ?>-title"><?= Html::encode($targetLabel) ?>留言</h2>
+<section class="ledger" id="comments" aria-labelledby="comments-title">
+    <header class="ledger-head">
+        <div class="ledger-title-row">
+            <h2 class="ledger-title" id="comments-title">留言簿</h2>
         </div>
-        <span class="comment-total"><?= count($comments) ?> 条讨论</span>
+        <?php if ($total > 0): ?>
+            <span class="ledger-count">
+                <b><?= $total ?></b> 条<?php if ($participantCount > 0): ?> · <b><?= $participantCount ?></b> 人<?php endif ?>
+            </span>
+        <?php endif ?>
     </header>
+    <p class="ledger-prompt"><?= Html::encode($prompt) ?></p>
 
-    <?php if (Yii::$app->user->isGuest): ?>
-        <div class="comment-login-prompt">
-            <span>登录后可以发表留言、回复和点赞。</span>
-            <?= Html::a('前往登录', ['/site/login'], ['class' => 'btn btn-primary']) ?>
+    <div class="ledger-compose">
+        <div class="ledger-rail"><span class="day">今天</span></div>
+        <div class="ledger-body">
+            <?php if ($isGuest): ?>
+                <p class="guest-line">
+                    登录后，在这一页留一笔。<?= Html::a('登录', ['/site/login', 'returnUrl' => $loginReturnUrl]) ?>
+                    <span class="muted">还没有账号？<?= Html::a('注册', ['/site/signup', 'returnUrl' => $loginReturnUrl]) ?></span>
+                </p>
+            <?php else: ?>
+                <?= $this->render('_form', [
+                    'targetType' => $targetType,
+                    'targetId' => $targetId,
+                    'parentId' => null,
+                    'placeholder' => $placeholder,
+                    'submitLabel' => '记下',
+                    'isReply' => false,
+                ]) ?>
+            <?php endif ?>
         </div>
-    <?php else: ?>
-        <div class="comment-compose">
-            <?= $this->render('_form', [
-                'targetType' => $targetType,
-                'targetId' => $targetId,
-                'parentId' => null,
-                'placeholder' => '分享你的观点……',
-                'submitLabel' => '发表留言',
-            ]) ?>
-        </div>
-    <?php endif ?>
+    </div>
 
     <?php if (!$roots): ?>
-        <p class="comment-empty">还没有留言，来写下第一条讨论吧。</p>
+        <div class="ledger-empty">
+            <p class="ledger-empty-title">这一页还没有人留言。</p>
+            <?php if ($isGuest): ?>
+                <p class="ledger-empty-sub">登录后，成为第一个留下记忆的人。</p>
+            <?php else: ?>
+                <p class="ledger-empty-sub">第一个坐下来的人，通常记得最清楚。可以从这些开始：</p>
+                <div class="ledger-starters">
+                    <?php foreach ($starters as $starter): ?>
+                        <button type="button" class="ledger-starter"
+                                data-ledger-starter="<?= Html::encode($starter) ?>"><?= Html::encode($starter) ?></button>
+                    <?php endforeach ?>
+                </div>
+            <?php endif ?>
+        </div>
     <?php else: ?>
-        <div class="comment-list">
+        <div class="ledger-list">
             <?php foreach ($roots as $comment): ?>
                 <?= $this->render('_item', [
                     'comment' => $comment,
                     'childrenByParent' => $childrenByParent,
+                    'authorsById' => $authorsById,
                     'likeCounts' => $likeCounts,
                     'likedIds' => $likedIds,
                     'targetType' => $targetType,
                     'targetId' => $targetId,
                     'isAdmin' => $isAdmin,
+                    'currentUserId' => $currentUserId,
                     'depth' => 0,
                 ]) ?>
             <?php endforeach ?>

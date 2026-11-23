@@ -382,9 +382,10 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     font-variant-numeric: tabular-nums;
 }
 
-/* 看台展开时点亮右侧“讨论”;不改 hash,舞台 tab 的当前项保持不变 */
-.tournament-detail:has(.td-stands[open]) .td-tabs-comments,
-.tournament-detail:has(#comments:target) .td-tabs-comments {
+/* 跳到页尾留言簿或某条记录时，点亮右侧“讨论”；舞台 tab 的当前项保持不变 */
+.tournament-detail:has(#comments:target) .td-tabs-comments,
+.tournament-detail:has(.ledger-entry:target) .td-tabs-comments,
+.tournament-detail:has(.ledger-reply:target) .td-tabs-comments {
     color: var(--green-light);
 }
 
@@ -681,7 +682,7 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 }
 
 /* ==========================================================================
-   6. 上一届 / 下一届 · 看台
+   6. 上一届 / 下一届
    ========================================================================== */
 .td-history {
     display: flex;
@@ -747,114 +748,6 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     color: var(--ink);
     font-size: var(--fs-sm);
     text-wrap: balance;
-}
-
-/* 看台:页尾的社区区,默认收起成一条深绿门;展开后是一张居中纸卡。
-   用 pitch 深绿和夜场舞台分开,讨论不再直接贴着比赛详情。 */
-.td-stands {
-    margin-top: var(--space-6);
-    background-color: var(--pitch);
-    box-shadow: 0 0 0 100vmax var(--pitch);
-    clip-path: inset(0 -100vmax);
-    color: var(--flood);
-    scroll-margin-top: calc(var(--td-tab-h) + 16px);
-}
-
-.td-stands__bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 16px;
-    padding: 20px 0;
-    cursor: pointer;
-    list-style: none;
-}
-
-.td-stands__bar::-webkit-details-marker {
-    display: none;
-}
-
-.td-stands__bar:focus-visible {
-    outline: 2px solid var(--green-light);
-    outline-offset: -2px;
-}
-
-.td-stands__name {
-    color: var(--flood);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    line-height: 1.2;
-}
-
-.td-stands__note {
-    color: rgba(243, 246, 242, .76);
-    font-size: 14px;
-}
-
-.td-stands__toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-    color: var(--green-light);
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.td-stands__bar:hover .td-stands__toggle {
-    color: var(--flood);
-}
-
-.td-stands__toggle-close {
-    display: none;
-}
-
-.td-stands[open] .td-stands__toggle-open {
-    display: none;
-}
-
-.td-stands[open] .td-stands__toggle-close {
-    display: inline;
-}
-
-.td-stands__chevron {
-    width: 7px;
-    height: 7px;
-    margin-top: -4px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg);
-    transition: transform 160ms ease, margin-top 160ms ease;
-}
-
-.td-stands[open] .td-stands__chevron {
-    margin-top: 4px;
-    transform: rotate(225deg);
-}
-
-.td-stands__body {
-    padding: 0 0 var(--space-5);
-}
-
-/* 纸卡坐在看台上,评论组件本身的视觉保持不变 */
-.td-stands .comment-section {
-    max-width: 760px;
-    margin: 0 auto;
-    border-radius: 2px;
-    background-color: var(--paper-2);
-    box-shadow: none;
-}
-
-.td-stands .comment-login-prompt {
-    border-radius: 2px;
-    background-color: var(--paper);
-}
-
-/* 看台标题在 summary 上;隐藏组件自带的 COMMUNITY 与重复评论数。 */
-.td-stands .comment-section-heading {
-    display: none;
 }
 
 /* ==========================================================================
@@ -979,40 +872,6 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     .td-history-link--next {
         margin-left: 0;
         text-align: left;
-    }
-
-    .td-stands {
-        margin-top: var(--space-5);
-    }
-
-    .td-stands__bar {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 2px 12px;
-        padding: 18px 0;
-    }
-
-    .td-stands__name {
-        grid-column: 1;
-        grid-row: 1;
-        font-size: 20px;
-    }
-
-    .td-stands__note {
-        grid-column: 1;
-        grid-row: 2;
-        font-size: 12px;
-    }
-
-    .td-stands__toggle {
-        grid-column: 2;
-        grid-row: 1 / span 2;
-        align-self: center;
-        margin-left: 0;
-    }
-
-    .td-stands__body {
-        padding-bottom: var(--space-4);
     }
 }
 

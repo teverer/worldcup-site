@@ -17,6 +17,7 @@ use yii\db\IntegrityException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -68,10 +69,12 @@ class CommentController extends Controller
             return $this->redirectToTargetOrHome($form->targetType, $form->targetId);
         }
 
-        Yii::$app->session->setFlash('success', $comment->parent_id
-            ? '回复已发布。'
-            : '留言已发布。');
-        return $this->redirectToTarget($comment->target_type, $comment->target_id);
+        // 新留言本身就是反馈：落在自己那条记录上并高亮，不再把用户丢回页顶。
+        return $this->redirectToTarget(
+            $comment->target_type,
+            $comment->target_id,
+            'comment-' . (int) $comment->id
+        );
     }
 
     /**
@@ -87,15 +90,22 @@ class CommentController extends Controller
         ]);
 
         try {
-            if ($like->save()) {
-                Yii::$app->session->setFlash('success', '点赞成功。');
-            } elseif ($like->hasErrors('comment_id')) {
-                Yii::$app->session->setFlash('info', '你已经点赞过这条留言。');
-            } else {
-                Yii::$app->session->setFlash('error', '点赞失败，请稍后重试。');
+            if ($like->save() || $like->hasErrors('comment_id')) {
+                // 已同感 / 刚点过都一样：停在原记录上，数字就是反馈。
+                return $this->redirectToTarget(
+                    $comment->target_type,
+                    $comment->target_id,
+                    'comment-' . (int) $comment->id
+                );
             }
+            Yii::$app->session->setFlash('error', '同感提交失败，请稍后重试。');
         } catch (IntegrityException $exception) {
-            Yii::$app->session->setFlash('info', '你已经点赞过这条留言。');
+            // 唯一索引兜底：重复同感不报错，停在原记录上。
+            return $this->redirectToTarget(
+                $comment->target_type,
+                $comment->target_id,
+                'comment-' . (int) $comment->id
+            );
         }
 
         return $this->redirectToTarget($comment->target_type, $comment->target_id);
@@ -116,8 +126,7 @@ class CommentController extends Controller
         }
 
         $comment->softDeleteTree();
-        Yii::$app->session->setFlash('success', '留言已删除。');
-        return $this->redirectToTarget($comment->target_type, $comment->target_id);
+        return $this->redirectToTarget($comment->target_type, $comment->target_id, 'comments');
     }
 
     /**
@@ -165,11 +174,20 @@ class CommentController extends Controller
     /**
      * @param string $type
      * @param int $id
+     * @param string|null $fragment 不带 # 的锚点，如 comment-12 / comments
      * @return \yii\web\Response
      */
-    private function redirectToTarget($type, $id)
+    private function redirectToTarget($type, $id, $fragment = null)
     {
         $route = CommentTarget::route($type, $id);
-        return $route ? $this->redirect($route) : $this->redirect(Yii::$app->homeUrl);
+        if ($route === null) {
+            return $this->redirect(Yii::$app->homeUrl);
+        }
+
+        $url = Url::to($route);
+        if ($fragment !== null && $fragment !== '') {
+            $url .= '#' . ltrim($fragment, '#');
+        }
+        return $this->redirect($url);
     }
 }
