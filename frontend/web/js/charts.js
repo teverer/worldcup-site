@@ -1487,28 +1487,51 @@
 
         var group = root.getAttribute('data-group') || '';
         var goalTimingUrl = buildApiUrl(root.getAttribute('data-goal-timing-url'), tournamentId, '');
+        var standingsUrl = buildApiUrl(root.getAttribute('data-standings-url'), tournamentId, group);
         var scorersUrl = buildApiUrl(root.getAttribute('data-scorers-url'), tournamentId, '');
         var teamGoalsUrl = buildApiUrl(root.getAttribute('data-team-goals-url'), tournamentId, '');
 
-        if (!goalTimingUrl || !scorersUrl || !teamGoalsUrl) {
-            failChart('chart-goal-timing', 'table-goal-timing', '统计接口地址缺失，无法加载图表。');
-            failChart('chart-scorers', 'table-scorers', '统计接口地址缺失，无法加载图表。');
-            failChart('chart-team-goals', 'table-team-goals', '统计接口地址缺失，无法加载图表。');
-            return;
+        // 大图是「进球时间」或「小组积分榜」二选一：只请求当前存在的那张，
+        // 另一张保留为视图切换，不再默认铺开。
+        if (byId('chart-goal-timing')) {
+            if (!goalTimingUrl) {
+                failChart('chart-goal-timing', 'table-goal-timing', '统计接口地址缺失，无法加载图表。');
+            } else {
+                fetchJson(goalTimingUrl).then(renderGoalTiming).catch(function () {
+                    failChart('chart-goal-timing', 'table-goal-timing', '进球时间分布加载失败，请稍后重试。');
+                });
+            }
         }
 
-        // 三个请求并行发出;单个失败不影响另外两个图表。
-        fetchJson(goalTimingUrl).then(renderGoalTiming).catch(function () {
-            failChart('chart-goal-timing', 'table-goal-timing', '进球时间分布加载失败，请稍后重试。');
-        });
+        if (byId('chart-standings')) {
+            if (!standingsUrl) {
+                failChart('chart-standings', 'table-standings', '统计接口地址缺失，无法加载图表。');
+            } else {
+                fetchJson(standingsUrl).then(renderStandings).catch(function () {
+                    failChart('chart-standings', 'table-standings', '小组积分榜加载失败，请稍后重试。');
+                });
+            }
+        }
 
-        fetchJson(scorersUrl).then(renderScorers).catch(function () {
-            failChart('chart-scorers', 'table-scorers', '射手榜加载失败，请稍后重试。');
-        });
+        if (byId('chart-scorers')) {
+            if (!scorersUrl) {
+                failChart('chart-scorers', 'table-scorers', '统计接口地址缺失，无法加载图表。');
+            } else {
+                fetchJson(scorersUrl).then(renderScorers).catch(function () {
+                    failChart('chart-scorers', 'table-scorers', '射手榜加载失败，请稍后重试。');
+                });
+            }
+        }
 
-        fetchJson(teamGoalsUrl).then(renderTeamGoals).catch(function () {
-            failChart('chart-team-goals', 'table-team-goals', '各队进球分布加载失败，请稍后重试。');
-        });
+        if (byId('chart-team-goals')) {
+            if (!teamGoalsUrl) {
+                failChart('chart-team-goals', 'table-team-goals', '统计接口地址缺失，无法加载图表。');
+            } else {
+                fetchJson(teamGoalsUrl).then(renderTeamGoals).catch(function () {
+                    failChart('chart-team-goals', 'table-team-goals', '各队进球分布加载失败，请稍后重试。');
+                });
+            }
+        }
     }
 
     // 桌面端数据表以覆盖层展开,由脚本提供一个可见的关闭按钮。

@@ -27,6 +27,12 @@ $tournamentId = isset($tournamentId) && is_scalar($tournamentId)
 $requestGroup = isset($group) ? $group : Yii::$app->request->get('group', '');
 $group = is_scalar($requestGroup) ? trim((string) $requestGroup) : '';
 
+// 统计页的大图可在「进球时间分布」与「小组积分榜」之间切换。
+// 默认仍是新图；小组积分榜作为用户要求的备用视图保留，不再单独铺一张卡。
+$chartView = Yii::$app->request->get('chartView') === 'standings' ? 'standings' : 'timing';
+$timingViewUrl = Url::current(['chartView' => null]) . '#charts';
+$standingsViewUrl = Url::current(['chartView' => 'standings']) . '#charts';
+
 if ($tournamentId < 1) {
     echo Html::tag('div', '请先选择届次后再查看统计图表。', ['class' => 'alert alert-info chart-notice']);
     return;
@@ -46,26 +52,61 @@ $this->registerJsFile('@web/js/charts.js', [
          data-group="<?= Html::encode($group) ?>"
          data-echarts-src="<?= Html::encode(Url::to('@web/js/vendor/echarts.min.js')) ?>"
          data-goal-timing-url="<?= Html::encode(Url::to(['/chart/goal-timing'])) ?>"
+         data-standings-url="<?= Html::encode(Url::to(['/chart/standings'])) ?>"
          data-scorers-url="<?= Html::encode(Url::to(['/chart/scorers'])) ?>"
          data-team-goals-url="<?= Html::encode(Url::to(['/chart/team-goals'])) ?>">
+
+    <nav class="chart-view-switch" aria-label="大图视图">
+        <span class="chart-view-switch-label">大图</span>
+        <a href="<?= Html::encode($timingViewUrl) ?>"
+           <?= $chartView === 'timing' ? 'aria-current="page"' : '' ?>>进球时间分布</a>
+        <a href="<?= Html::encode($standingsViewUrl) ?>"
+           <?= $chartView === 'standings' ? 'aria-current="page"' : '' ?>>小组积分榜（旧版）</a>
+    </nav>
+
     <div class="chart-grid">
-        <article class="chart-card chart-card--wide">
-            <div class="chart-card-head">
-                <div class="chart-card-head-text">
-                    <h3>进球时间分布</h3>
-                    <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列 91–120；不计点球大战。</p>
+        <?php if ($chartView === 'standings'): ?>
+            <article class="chart-card chart-card--wide">
+                <div class="chart-card-head chart-card-head--standings">
+                    <div class="chart-card-head-text">
+                        <h3>小组积分榜</h3>
+                        <p class="chart-caption">可切换小组；条长为积分，悬停查看胜 / 平 / 负与进失球。此图作为备用视图保留。</p>
+                    </div>
+                    <div class="chart-group-switch-wrap">
+                        <span class="chart-group-switch-label" id="standings-group-label">小组</span>
+                        <div id="standings-group-switch" class="chart-group-switch"
+                             role="group" aria-labelledby="standings-group-label"></div>
+                    </div>
                 </div>
-            </div>
-            <div id="chart-goal-timing" class="chart-canvas chart-canvas--timing"
-                 data-chart="goal-timing" role="img" aria-label="进球时间分布柱状图">
-                <p class="chart-loading">图表加载中…</p>
-            </div>
-            <details class="chart-data">
-                <summary>查看进球时间数据表</summary>
-                <div id="table-goal-timing" class="chart-table-wrap"></div>
-            </details>
-            <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
-        </article>
+                <div id="chart-standings" class="chart-canvas chart-canvas--standings"
+                     data-chart="standings" role="img" aria-label="小组积分榜柱状图">
+                    <p class="chart-loading">图表加载中…</p>
+                </div>
+                <details class="chart-data">
+                    <summary>查看积分榜数据表</summary>
+                    <div id="table-standings" class="chart-table-wrap"></div>
+                </details>
+                <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
+            </article>
+        <?php else: ?>
+            <article class="chart-card chart-card--wide">
+                <div class="chart-card-head">
+                    <div class="chart-card-head-text">
+                        <h3>进球时间分布</h3>
+                        <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列 91–120；不计点球大战。</p>
+                    </div>
+                </div>
+                <div id="chart-goal-timing" class="chart-canvas chart-canvas--timing"
+                     data-chart="goal-timing" role="img" aria-label="进球时间分布柱状图">
+                    <p class="chart-loading">图表加载中…</p>
+                </div>
+                <details class="chart-data">
+                    <summary>查看进球时间数据表</summary>
+                    <div id="table-goal-timing" class="chart-table-wrap"></div>
+                </details>
+                <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
+            </article>
+        <?php endif ?>
 
         <article class="chart-card">
             <div class="chart-card-head">

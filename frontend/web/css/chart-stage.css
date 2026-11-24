@@ -216,3 +216,55 @@ body.site-game .game-progress .game-section-head p {
     font-size: 15px;
     line-height: 1.7;
 }
+
+/* 大图视图切换：进球时间 / 小组积分榜（旧版备用）。
+   两档都是统计页的主图，所以用页面级文字下划线，不用胶囊按钮。 */
+.chart-view-switch {
+    display: flex;
+    align-items: baseline;
+    gap: 22px;
+    margin: 14px 0 22px;
+    border-bottom: 1px solid var(--line);
+}
+
+.chart-view-switch-label {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .06em;
+}
+
+.chart-view-switch a {
+    margin-bottom: -1px;
+    padding: 0 2px 9px;
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+}
+
+.chart-view-switch a:hover,
+.chart-view-switch a:focus {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom-color: var(--line);
+}
+
+.chart-view-switch a[aria-current="page"] {
+    color: var(--ink);
+    border-bottom-color: var(--green-action);
+}
+
+.chart-view-switch a:focus-visible {
+    outline: 2px solid var(--green-action);
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .chart-view-switch {
+        gap: 18px;
+    }
+
+    .chart-view-switch a {
+        font-size: 13px;
+    }
+}
