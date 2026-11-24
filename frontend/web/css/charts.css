@@ -153,6 +153,23 @@
     height: 400px;
 }
 
+/* 进球时间分布：7 根竖柱，桌面给足高度，窄屏压缩。 */
+#chart-goal-timing {
+    height: 440px;
+}
+
+@media (max-width: 991px) {
+    #chart-goal-timing {
+        height: 360px;
+    }
+}
+
+@media (max-width: 480px) {
+    #chart-goal-timing {
+        height: 320px;
+    }
+}
+
 .chart-loading,
 .chart-empty-state {
     display: flex;

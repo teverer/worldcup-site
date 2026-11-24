@@ -63,7 +63,6 @@ $pointY = static function ($value) use ($min, $max, $padT, $plotH) {
 };
 
 $linePoints = [];
-$dots = '';
 $flags = '';
 $yearLabels = '';
 foreach ($series as $index => $item) {
@@ -79,7 +78,11 @@ foreach ($series as $index => $item) {
         ? (int) $final['champion_score'] . '–' . (int) $final['opponent_score']
         : '';
     $penalty = !empty($final['penalty_text']) ? '（点球 ' . $final['penalty_text'] . '）' : '';
-    $title = $item['year'] . ' ' . $item['name']
+    $editionLabel = (string) $item['name'];
+    if (mb_strpos($editionLabel, (string) $item['year']) === false) {
+        $editionLabel = $item['year'] . ' ' . $editionLabel;
+    }
+    $title = $editionLabel
         . ' · 冠军 ' . $champion
         . ($score !== '' ? ' · 决赛 ' . $score . ' ' . $opponent . $penalty : '')
         . ' · ' . (int) $item['games'] . ' 场 ' . (int) $item['goals'] . ' 球'
@@ -87,8 +90,10 @@ foreach ($series as $index => $item) {
 
     $url = Url::to(['/tournament/view', 'id' => $item['id']]);
     $flagUrl = TeamFlag::url(isset($final['champion_code']) ? $final['champion_code'] : null);
+    $tipX = max(76, min($viewW - 76, $x));
+    $tipText = $item['year'] . ' · ' . $champion . ' · ' . number_format($item['avg'], 2);
 
-    $flags .= '<a class="era-point" href="' . Html::encode($url) . '" aria-label="' . Html::encode($title) . '">'
+    $flags .= '<a class="era-point" href="' . Html::encode($url) . '" tabindex="0" aria-label="' . Html::encode($title) . '">'
         . '<title>' . Html::encode($title) . '</title>'
         . '<line class="era-guide" x1="' . round($x, 2) . '" y1="' . $padT . '" x2="' . round($x, 2) . '" y2="' . $baselineY . '"/>'
         . ($flagUrl !== null
@@ -97,16 +102,18 @@ foreach ($series as $index => $item) {
             : '<text class="era-flag-code" x="' . round($x, 2) . '" y="' . round($y - 32, 2) . '">'
                 . Html::encode(isset($final['champion_code']) ? $final['champion_code'] : '—') . '</text>')
         . '<circle class="era-dot" cx="' . round($x, 2) . '" cy="' . round($y, 2) . '" r="4.6"/>'
+        . '<g class="era-tip" transform="translate(' . round($tipX, 2) . ',' . round($y - 64, 2) . ')">'
+        . '<rect x="-72" y="-20" width="144" height="24" rx="2"/>'
+        . '<text x="0" y="-4" text-anchor="middle">' . Html::encode($tipText) . '</text>'
+        . '</g>'
         . '</a>';
 
     $yearLabels .= '<text class="era-year" x="' . round($x, 2) . '" y="' . ($baselineY + 26) . '">'
         . Html::encode((string) $item['year']) . '</text>';
-    $dots .= '';
 }
 
 $line = implode(' ', $linePoints);
-$area = $line . ' ' . round($pointX($count - 1), 2) . ',' . $baselineY
-    . ' ' . round($pointX(0), 2) . ',' . $baselineY;
+$mean = array_sum($values) / $count;
 
 $grid = '';
 $ticks = max(1, (int) round(($max - $min) / 0.2));
@@ -131,36 +138,34 @@ foreach ($series as $item) {
     }
 }
 
-$summary = '从 ' . number_format($first['avg'], 2) . ' 到 ' . number_format($last['avg'], 2)
-    . '；最高 ' . $maxItem['year'] . ' 的 ' . number_format($maxItem['avg'], 2)
+$delta = $last['avg'] - $first['avg'];
+$trendWord = $delta >= 0 ? '整体变多' : '整体变少';
+$summary = $trendWord . '：' . ($delta >= 0 ? '+' : '') . number_format($delta, 2)
+    . '（' . number_format($first['avg'], 2) . ' → ' . number_format($last['avg'], 2) . '）；'
+    . '最高 ' . $maxItem['year'] . ' 的 ' . number_format($maxItem['avg'], 2)
     . '，最低 ' . $minItem['year'] . ' 的 ' . number_format($minItem['avg'], 2) . '。';
 ?>
 <section class="era-trend" aria-labelledby="era-trend-title">
     <header class="era-trend-head">
         <div class="era-trend-head-main">
-            <h2 id="era-trend-title">四十年，进球是多了还是少了？</h2>
-            <p>1986—2026 十一届世界杯的场均进球。旗是当届冠军；点一届，进入那一年。</p>
+            <h2 id="era-trend-title">1990 触底，2026 反弹</h2>
+            <p>四十年，十一届世界杯的场均进球并非一路下滑。旗是当届冠军；点一届，进入那一年。</p>
         </div>
         <p class="era-trend-insight"><?= Html::encode($summary) ?></p>
     </header>
 
+    <p class="era-scroll-hint" hidden>左右滑动看完整曲线</p>
     <div class="era-chart-scroll">
         <svg class="era-chart" viewBox="0 0 <?= $viewW ?> <?= $viewH ?>"
              preserveAspectRatio="xMidYMid meet" role="img"
              aria-labelledby="era-chart-title era-chart-desc">
             <title id="era-chart-title">1986 至 2026 年世界杯场均进球折线</title>
             <desc id="era-chart-desc"><?= Html::encode($summary . ' 每个点标注当届冠军国旗，可进入该届。') ?></desc>
-            <defs>
-                <linearGradient id="era-area-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#F4F2EC" stop-opacity=".16"/>
-                    <stop offset="100%" stop-color="#F4F2EC" stop-opacity="0"/>
-                </linearGradient>
-            </defs>
-
             <?= $grid ?>
             <line class="era-baseline" x1="<?= $padL ?>" y1="<?= $baselineY ?>" x2="<?= $viewW - $padR ?>" y2="<?= $baselineY ?>"/>
 
-            <path class="era-area" d="M<?= $area ?>" fill="url(#era-area-fill)"/>
+            <line class="era-mean" x1="<?= $padL ?>" y1="<?= round($pointY($mean), 2) ?>" x2="<?= $viewW - $padR ?>" y2="<?= round($pointY($mean), 2) ?>"/>
+            <text class="era-mean-label" x="<?= $viewW - $padR ?>" y="<?= round($pointY($mean) - 7, 2) ?>">均值 <?= number_format($mean, 2) ?></text>
             <polyline class="era-line" pathLength="1" points="<?= Html::encode($line) ?>"/>
             <?= $flags ?>
             <?= $yearLabels ?>
@@ -168,9 +173,8 @@ $summary = '从 ' . number_format($first['avg'], 2) . ' 到 ' . number_format($l
             <text class="era-axis-title" x="<?= $padL - 14 ?>" y="<?= $padT - 34 ?>">场均进球</text>
         </svg>
     </div>
-    <p class="era-scroll-hint">左右滑动看完整曲线</p>
 
-    <p class="era-trend-note">口径：只统计已结束的比赛；点球大战进球不计入。场均进球 = 总进球 ÷ 场次。</p>
+    <p class="era-trend-note">口径：只统计已结束的比赛；点球大战进球不计入。场均进球 = 总进球 ÷ 场次。2026 年起为 48 队 / 104 场，赛制变化会影响场均；纵轴从 <?= number_format($min, 1) ?> 起，不是 0 基线。</p>
 
     <details class="era-data">
         <summary>查看十一届数据表</summary>
@@ -212,4 +216,19 @@ $summary = '从 ' . number_format($first['avg'], 2) . ' 到 ' . number_format($l
             </table>
         </div>
     </details>
+
+    <script>
+    (function () {
+        var scroller = document.querySelector('.era-chart-scroll');
+        var hint = document.querySelector('.era-scroll-hint');
+        if (!scroller || !hint) {
+            return;
+        }
+        var sync = function () {
+            hint.hidden = scroller.scrollWidth <= scroller.clientWidth + 2;
+        };
+        sync();
+        window.addEventListener('resize', sync);
+    })();
+    </script>
 </section>

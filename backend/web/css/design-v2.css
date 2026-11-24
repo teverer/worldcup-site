@@ -331,6 +331,7 @@ textarea:focus-visible,
 @media (max-height: 800px) and (min-width: 992px) {
     .wb-nav {
         padding-top: 10px;
+        padding-bottom: 10px;
     }
 
     .wb-group {

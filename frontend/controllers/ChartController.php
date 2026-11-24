@@ -9,6 +9,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\TeamFlag;
+use yii\db\Expression;
 use yii\db\Query;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -249,6 +250,88 @@ class ChartController extends Controller
             'tournamentId' => $tournamentId,
             'totalGoals' => $totalGoals,
             'teams' => $teams,
+        ];
+    }
+
+    /**
+     * 进球时间分布:按 15 分钟分桶,排除点球大战;45+/90+ 含补时,加时单列。
+     * 分母是计入的进球数(不是 goal 表行数),与各队分布口径一致。
+     *
+     * @param int|string|null $tournamentId 届次 id
+     * @return array
+     */
+    public function actionGoalTiming($tournamentId = null)
+    {
+        list($tournamentId) = $this->resolveTournament($tournamentId);
+
+        $bucketCase = new Expression(
+            "CASE"
+            . " WHEN g.minute IS NULL THEN 'unknown'"
+            . " WHEN g.minute <= 15 THEN '1-15'"
+            . " WHEN g.minute <= 30 THEN '16-30'"
+            . " WHEN g.minute <= 45 THEN '31-45'"
+            . " WHEN g.minute <= 60 THEN '46-60'"
+            . " WHEN g.minute <= 75 THEN '61-75'"
+            . " WHEN g.minute <= 90 THEN '76-90'"
+            . " ELSE '91-120' END"
+        );
+
+        $rows = (new Query())
+            ->select([
+                'bucket' => $bucketCase,
+                'goals' => 'COUNT(*)',
+            ])
+            ->from(['g' => '{{%goal}}'])
+            ->innerJoin(['gm' => '{{%game}}'], 'gm.id = g.game_id')
+            ->where([
+                'gm.tournament_id' => $tournamentId,
+                'gm.status' => 2,
+                'g.is_shootout' => 0,
+            ])
+            ->groupBy('bucket')
+            ->all();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[(string) $row['bucket']] = (int) $row['goals'];
+        }
+
+        $defs = [
+            ['key' => '1-15', 'label' => '1–15'],
+            ['key' => '16-30', 'label' => '16–30'],
+            ['key' => '31-45', 'label' => '31–45+'],
+            ['key' => '46-60', 'label' => '46–60'],
+            ['key' => '61-75', 'label' => '61–75'],
+            ['key' => '76-90', 'label' => '76–90+'],
+            ['key' => '91-120', 'label' => '加时 91–120'],
+        ];
+
+        $total = 0;
+        foreach ($defs as $def) {
+            $total += isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
+        }
+
+        $buckets = [];
+        $secondHalf = 0;
+        foreach ($defs as $def) {
+            $count = isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
+            if (in_array($def['key'], ['46-60', '61-75', '76-90'], true)) {
+                $secondHalf += $count;
+            }
+            $buckets[] = [
+                'key' => $def['key'],
+                'label' => $def['label'],
+                'goals' => $count,
+                'percent' => $total > 0 ? round($count / $total * 1000) / 10 : 0,
+            ];
+        }
+
+        return [
+            'tournamentId' => $tournamentId,
+            'totalGoals' => $total,
+            'secondHalfGoals' => $secondHalf,
+            'secondHalfPercent' => $total > 0 ? round($secondHalf / $total * 1000) / 10 : 0,
+            'buckets' => $buckets,
         ];
     }
 

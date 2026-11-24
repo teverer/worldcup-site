@@ -782,8 +782,18 @@ body.site-site-index {
     stroke-linejoin: round;
 }
 
-.era-area {
-    opacity: .6;
+.era-mean {
+    stroke: rgba(244, 242, 236, .34);
+    stroke-width: 1;
+    stroke-dasharray: 4 6;
+}
+
+.era-mean-label {
+    fill: var(--steel-2);
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: .04em;
+    text-anchor: end;
 }
 
 .era-year {
@@ -849,11 +859,49 @@ body.site-site-index {
     outline: none;
 }
 
+/* 键盘焦点：不要沿整条导引线画大框，改成点上的金环 + 数据标签。 */
+body.site-site-index .era-chart .era-point:focus-visible {
+    outline: none;
+}
+
+.era-point:focus-visible .era-dot {
+    r: 7px;
+    stroke: var(--gold-light);
+    stroke-width: 3;
+}
+
+.era-tip {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .12s ease;
+}
+
+.era-tip rect {
+    fill: rgba(4, 7, 11, .96);
+    stroke: rgba(244, 242, 236, .28);
+    stroke-width: 1;
+}
+
+.era-tip text {
+    fill: var(--flood);
+    font-family: var(--font-cn-body);
+    font-size: 12px;
+}
+
+.era-point:hover .era-tip,
+.era-point:focus-visible .era-tip {
+    opacity: 1;
+}
+
 .era-scroll-hint {
-    display: none;
-    margin: 6px 0 0;
+    margin: 0 0 8px;
     color: var(--steel-2);
     font-size: 12px;
+    text-align: right;
+}
+
+.era-scroll-hint[hidden] {
+    display: none;
 }
 
 .era-trend-note {
@@ -933,10 +981,6 @@ body.site-site-index {
         animation: era-draw 1.2s ease-out .15s both;
     }
 
-    .era-area {
-        animation: era-fade-area .9s ease-out .45s both;
-    }
-
     .era-point {
         animation: era-fade .45s ease-out both;
     }
@@ -970,11 +1014,6 @@ body.site-site-index {
     to { opacity: 1; }
 }
 
-@keyframes era-fade-area {
-    from { opacity: 0; }
-    to { opacity: .6; }
-}
-
 @media (max-width: 767px) {
     .era-trend {
         margin-top: 56px;
@@ -991,7 +1030,4 @@ body.site-site-index {
         min-width: 720px;
     }
 
-    .era-scroll-hint {
-        display: block;
-    }
 }

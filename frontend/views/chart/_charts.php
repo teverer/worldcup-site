@@ -45,29 +45,24 @@ $this->registerJsFile('@web/js/charts.js', [
          data-tournament-id="<?= (int) $tournamentId ?>"
          data-group="<?= Html::encode($group) ?>"
          data-echarts-src="<?= Html::encode(Url::to('@web/js/vendor/echarts.min.js')) ?>"
-         data-standings-url="<?= Html::encode(Url::to(['/chart/standings'])) ?>"
+         data-goal-timing-url="<?= Html::encode(Url::to(['/chart/goal-timing'])) ?>"
          data-scorers-url="<?= Html::encode(Url::to(['/chart/scorers'])) ?>"
          data-team-goals-url="<?= Html::encode(Url::to(['/chart/team-goals'])) ?>">
     <div class="chart-grid">
         <article class="chart-card chart-card--wide">
-            <div class="chart-card-head chart-card-head--standings">
+            <div class="chart-card-head">
                 <div class="chart-card-head-text">
-                    <h3>小组积分榜</h3>
-                    <p class="chart-caption">可切换小组；条长为积分，悬停查看胜 / 平 / 负与进失球。</p>
-                </div>
-                <div class="chart-group-switch-wrap">
-                    <span class="chart-group-switch-label" id="standings-group-label">小组</span>
-                    <div id="standings-group-switch" class="chart-group-switch"
-                         role="group" aria-labelledby="standings-group-label"></div>
+                    <h3>进球时间分布</h3>
+                    <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列；不计点球大战。</p>
                 </div>
             </div>
-            <div id="chart-standings" class="chart-canvas chart-canvas--standings"
-                 data-chart="standings" role="img" aria-label="小组积分榜柱状图">
+            <div id="chart-goal-timing" class="chart-canvas chart-canvas--timing"
+                 data-chart="goal-timing" role="img" aria-label="进球时间分布柱状图">
                 <p class="chart-loading">图表加载中…</p>
             </div>
             <details class="chart-data">
-                <summary>查看积分榜数据表</summary>
-                <div id="table-standings" class="chart-table-wrap"></div>
+                <summary>查看进球时间数据表</summary>
+                <div id="table-goal-timing" class="chart-table-wrap"></div>
             </details>
             <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
         </article>
@@ -91,10 +86,10 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">前 12 队单列，其余队在标题里合计；条长为进球，占比固定以全届总进球为分母。</p>
+                <p class="chart-caption">前 8 队 + 其他；扇面为占全届总进球的比例，分母固定。</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
-                 data-chart="team-goals" role="img" aria-label="各队进球排名条形图">
+                 data-chart="team-goals" role="img" aria-label="各队进球占比圆环图">
                 <p class="chart-loading">图表加载中…</p>
             </div>
             <details class="chart-data">
@@ -106,6 +101,6 @@ $this->registerJsFile('@web/js/charts.js', [
     </div>
 
     <p class="chart-footnote">
-        口径：只统计已结束的比赛；乌龙球计入受益球队；点球大战进球单独统计，不计入球员进球，也不进入球队进球分布。
+        口径：只统计已结束的比赛；乌龙球计入受益球队；点球大战进球单独统计，不计入球员进球、球队进球分布与进球时间分布。45+ / 90+ 含补时，加时单列。
     </p>
 </section>

@@ -91,7 +91,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'label' => '比分汇总',
             'value' => $model->scoreText,
         ],
-        'create_time:datetime',
+        [
+            'attribute' => 'create_time',
+            'format' => ['datetime', 'php:Y-m-d H:i'],
+        ],
     ],
 ]) ?>
 
