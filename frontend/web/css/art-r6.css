@@ -859,3 +859,19 @@ body.site-site-index .wall-coda {
         linear-gradient(180deg, rgba(10, 27, 34, .72), rgba(4, 9, 10, .86));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
 }
+
+/* 收场带上方加一层暖光过渡，避免从记分牌墙“硬切”进另一块深色 */
+body.site-site-index .wall-closing {
+    position: relative;
+}
+
+body.site-site-index .wall-closing::before {
+    position: absolute;
+    top: -140px;
+    right: 8%;
+    left: 8%;
+    height: 200px;
+    background: radial-gradient(58% 100% at 50% 100%, rgba(224, 180, 87, .10), transparent 72%);
+    content: "";
+    pointer-events: none;
+}
