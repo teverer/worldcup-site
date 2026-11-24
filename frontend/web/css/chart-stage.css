@@ -4,16 +4,11 @@
    只覆盖图表容器与排版,系列颜色与几何在 charts.js 里。 */
 
 /* --------------------------------------------------------------------------
-   1. 统计页:一张主图 + 两张并排副图,一屏读完“何时—谁—哪些队”
+   1. 统计页:两张并排图,回答“谁进球 / 哪些队进球”
    -------------------------------------------------------------------------- */
 #charts-panel .chart-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
-}
-
-#charts-panel .chart-card--wide,
-#charts-panel .chart-card--hero {
-    grid-column: 1 / -1;
 }
 
 #charts-panel .chart-card {
@@ -34,68 +29,10 @@
     letter-spacing: .02em;
 }
 
-/* 主图右上角的关键数字:用 HTML 排,比 canvas 文字更清晰,也能被读屏。 */
-.chart-card-head--hero {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px 32px;
-}
-
-.chart-card-head--hero .chart-card-head-text {
-    flex: 1 1 420px;
-}
-
-.chart-hero-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 30px;
-    margin: 0;
-    padding: 2px 0 0;
-}
-
-.chart-hero-figure {
-    min-width: 88px;
-    margin: 0;
-}
-
-.chart-hero-figure dt {
-    margin-bottom: 2px;
-    color: var(--steel);
-    font-size: 13px;
-    line-height: 1.4;
-    white-space: nowrap;
-}
-
-.chart-hero-figure dd {
-    margin: 0;
-    color: var(--flood);
-    font-family: var(--font-display);
-    font-size: 42px;
-    font-weight: 700;
-    line-height: .95;
-    letter-spacing: .01em;
-    font-variant-numeric: tabular-nums;
-}
-
-.chart-hero-unit {
-    margin-left: .12em;
-    color: var(--steel);
-    font-family: var(--font-sans);
-    font-size: .38em;
-    font-weight: 600;
-    letter-spacing: 0;
-}
-
 @media (max-width: 1080px) {
     #charts-panel .chart-grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 18px;
-    }
-
-    .chart-hero-figure dd {
-        font-size: 34px;
     }
 }
 
@@ -135,31 +72,12 @@ body.site-game .game-progress .game-section-head p {
     height: 440px;
 }
 
-.chart-canvas--standings {
-    height: 380px;
-}
-
-/* 主图是横向时间轴:矮一点,让三张图的比例接近 16:9,不再竖着占三屏。 */
-.chart-canvas--timing {
-    height: 320px;
-}
-
 .chart-canvas--scorers {
     height: 440px;
 }
 
 .chart-canvas--teams {
     height: 440px;
-}
-
-.chart-group-switch-btn {
-    min-height: 40px;
-    padding: 7px 14px;
-    font-size: 15px;
-}
-
-.chart-group-switch-label {
-    font-size: 14px;
 }
 
 .chart-data summary {
@@ -234,13 +152,8 @@ body.site-game .game-progress .game-section-head p {
         margin-bottom: 12px;
     }
 
-    .chart-canvas,
-    .chart-canvas--standings {
+    .chart-canvas {
         height: 380px;
-    }
-
-    .chart-canvas--timing {
-        height: 300px;
     }
 
     .chart-canvas--scorers {
@@ -249,14 +162,6 @@ body.site-game .game-progress .game-section-head p {
 
     .chart-canvas--teams {
         height: 500px;
-    }
-
-    .chart-hero-stats {
-        gap: 6px 22px;
-    }
-
-    .chart-hero-figure dd {
-        font-size: 30px;
     }
 
     .td-history-chart .chart-card-head h3,
@@ -275,13 +180,8 @@ body.site-game .game-progress .game-section-head p {
         font-size: 21px;
     }
 
-    .chart-canvas,
-    .chart-canvas--standings {
+    .chart-canvas {
         height: 340px;
-    }
-
-    .chart-canvas--timing {
-        height: 280px;
     }
 
     .chart-canvas--scorers {
@@ -309,68 +209,3 @@ body.site-game .game-progress .game-section-head p {
     line-height: 1.7;
 }
 
-/* 大图视图切换：进球时间 / 小组积分榜（旧版备用）。
-   两档都是统计页的主图，所以用页面级文字下划线，不用胶囊按钮。 */
-.chart-view-switch {
-    display: flex;
-    align-items: baseline;
-    gap: 8px 22px;
-    margin: 12px 0 20px;
-    border-bottom: 1px solid rgba(244, 242, 236, .16);
-}
-
-.chart-view-switch-label {
-    color: var(--steel);
-    font-size: 13px;
-    letter-spacing: .04em;
-}
-
-.chart-view-switch a {
-    margin-bottom: -1px;
-    padding: 0 2px 9px;
-    color: var(--steel);
-    font-size: 15px;
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-}
-
-.chart-view-switch a:hover,
-.chart-view-switch a:focus {
-    color: var(--flood);
-    text-decoration: none;
-    border-bottom-color: rgba(244, 242, 236, .3);
-}
-
-.chart-view-switch a[aria-current="page"] {
-    color: var(--flood);
-    border-bottom-color: var(--green-light);
-}
-
-.chart-view-switch a:focus-visible {
-    outline: 2px solid var(--green-action);
-    outline-offset: 3px;
-}
-
-@media (max-width: 480px) {
-    .chart-view-switch {
-        gap: 18px;
-    }
-
-    .chart-view-switch a {
-        font-size: 13px;
-    }
-}
-
-/* 统计页 → 纪录页四强版图的跨页入口：只做一行文字链接，不抢主图。 */
-.td-section-note .td-crosslink {
-    margin-left: 6px;
-    color: var(--green-action);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(19, 85, 60, .35);
-}
-
-.td-section-note .td-crosslink:hover,
-.td-section-note .td-crosslink:focus {
-    color: var(--ink);
-    border-bottom-color: var(--ink);
-}
