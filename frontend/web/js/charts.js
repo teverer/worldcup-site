@@ -13,16 +13,16 @@
         surface: '#F8F6F0'
     };
 
-    // 冷纸底球队色:金只给第一名;其余按深绿→青→灰蓝排开,
-    // 相邻切片保持明度差,避免同一张饼里有两种几乎一样的绿。
+    // 冷纸底球队色:金只给第一名;其余按「深—浅」交替排开,
+    // 相邻切片一定有一档明度差,不会出现两片几乎一样的绿。
     var TEAM_COLORS = [
-        '#0E5138', '#2E7D5B', '#57B894', '#7FA893',
-        '#9BB0A4', '#2E4250', '#5C7180', '#8FA3AD'
+        '#0B3B2A', '#2E7D5B', '#8FB3A3', '#2E4250',
+        '#57B894', '#6F8794', '#A9B8AE'
     ];
     var PRIMARY_SERIES = '#0E5138';
     var HOVER_SERIES = '#093B29';
     var ACCENT_SERIES = '#B8892A';
-    var OTHER_COLOR = '#8C9B95';
+    var OTHER_COLOR = '#B9B3A4';
 
     var chartInstances = {};
     var resizeTimer = null;
