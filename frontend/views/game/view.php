@@ -244,6 +244,5 @@ if ($statusValue === Game::STATUS_PENDING) {
                 ]) ?>
             <?php endif ?>
         <?php endif ?>
-        <?= Html::a('返回比赛列表', ['index'], ['class' => 'game-next-back']) ?>
     </nav>
 </article>

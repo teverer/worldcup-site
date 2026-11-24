@@ -488,6 +488,12 @@ body.site-news-view .breadcrumb {
     color: var(--color-muted-strong);
 }
 
+/* 资讯索引：与资讯详情共用 980 阅读列，检索带不再横跨 1272 只填 40%。 */
+.news-search,
+.news-rows {
+    max-width: 980px;
+}
+
 .news-search {
     display: flex;
     flex-wrap: wrap;

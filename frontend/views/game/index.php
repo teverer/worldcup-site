@@ -50,8 +50,13 @@ if ($teamKeyword !== null) {
 ?>
 <section class="catalog-page game-page">
     <header class="game-heading">
-        <h1>比赛</h1>
-        <p>先看十一场决赛，或按届次、阶段、球队找到任意一场。</p>
+        <div class="game-heading-main">
+            <h1>比赛</h1>
+            <p>先看十一场决赛，或按届次、阶段、球队找到任意一场。</p>
+        </div>
+        <div class="idx-total" aria-label="共 <?= (int) $totalGames ?> 场比赛，十一届">
+            <b><?= (int) $totalGames ?></b><span>场比赛 · 十一届</span>
+        </div>
     </header>
 
     <?php $filterCount = count($activeFilters); ?>

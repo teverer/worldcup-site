@@ -27,8 +27,13 @@ foreach ($groups as $teams) {
 ?>
 <section class="catalog-page team-index">
     <header class="pl-head">
-        <h1>球队</h1>
-        <p><?= (int) $total ?> 支国家队，按大洲浏览；知道名字或代码，就在上方直接搜。</p>
+        <div class="pl-head-main">
+            <h1>球队</h1>
+            <p>按大洲浏览；知道名字或代码，就在下方直接搜。</p>
+        </div>
+        <div class="idx-total" aria-label="共 <?= (int) $total ?> 支国家队">
+            <b><?= (int) $total ?></b><span>支国家队</span>
+        </div>
     </header>
 
     <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>

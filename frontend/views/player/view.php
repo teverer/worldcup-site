@@ -144,7 +144,7 @@ $nameToggleUrl = [
     <section class="pd-section" aria-labelledby="pd-history-title">
         <div class="pd-section-head">
             <h2 id="pd-history-title">世界杯生涯</h2>
-            <p>按届次倒序；进球与助攻只计已结束比赛，不含乌龙球与点球大战。</p>
+            <p>按届次倒序；只列有出场记录的届次。</p>
         </div>
         <?php if (!$career): ?>
             <div class="empty-state">

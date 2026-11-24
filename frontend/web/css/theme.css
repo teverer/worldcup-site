@@ -1008,6 +1008,54 @@ body .grid-view .table > tbody > tr > td[colspan] {
     margin: 0;
 }
 
+/* 索引页页头：左边是页面任务，右边是一个根页式的大计数。 */
+.pl-head,
+.game-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px 32px;
+}
+
+.pl-head-main,
+.game-heading-main {
+    min-width: 0;
+}
+
+.idx-total {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--color-muted-strong);
+}
+
+.idx-total b {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: clamp(54px, 5.6vw, 84px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+    line-height: .8;
+}
+
+.idx-total span {
+    font-size: 13px;
+    letter-spacing: .05em;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .idx-total {
+        flex-basis: 100%;
+    }
+
+    .idx-total b {
+        font-size: 56px;
+    }
+}
+
 /* 错误页：一个大数字 + 一条左轴，和首页的年份牌同一套语言。 */
 .site-error {
     max-width: 780px;

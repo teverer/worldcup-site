@@ -29,10 +29,13 @@ $isAll = Yii::$app->request->get('all') === '1';
 ?>
 <section class="catalog-page player-index">
     <header class="pl-head">
-        <h1>球员</h1>
-        <p>
-            <?= (int) $totalPlayers ?> 名球员，跨越十一届。先搜中文名或原名；不记得名字，就从每届最佳射手进入。
-        </p>
+        <div class="pl-head-main">
+            <h1>球员</h1>
+            <p>跨越十一届；先搜中文名或原名，不记得名字，就从每届最佳射手进入。</p>
+        </div>
+        <div class="idx-total" aria-label="共 <?= (int) $totalPlayers ?> 名球员">
+            <b><?= (int) $totalPlayers ?></b><span>名球员</span>
+        </div>
     </header>
 
     <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
