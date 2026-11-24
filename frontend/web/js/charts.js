@@ -445,12 +445,15 @@
                     name: '积分',
                     type: 'bar',
                     data: values,
-                    barMaxWidth: compact ? 38 : 46,
+                    barMaxWidth: compact ? 30 : 34,
+                    barCategoryGap: '44%',
+                    showBackground: true,
+                    backgroundStyle: { color: 'rgba(244, 242, 236, .035)' },
                     itemStyle: {
                         color: function (params) {
                             return groupLeaders[params.dataIndex] ? HOVER_SERIES : PRIMARY_SERIES;
                         },
-                        borderRadius: [0, 4, 4, 0]
+                        borderRadius: [0, 2, 2, 0]
                     },
                     label: {
                         show: true,
@@ -520,21 +523,21 @@
         var container = byId('chart-scorers');
         var compact = container.clientWidth < 560;
         var flagRich = compact ? {} : addFlagRich({}, chartRows, 'pf');
-        // 窄屏只留姓名,球队放在 tooltip;桌面保留「姓名 · 球队」。
+        // 窄屏只留「队码 + 姓名」;桌面把姓名和球队分成两行,
+        // 这样 10 个长名字不会被「· 国家」挤成省略号,队名也能完整读。
         var names = chartRows.map(function (row) {
             var name = displayPlayerName(row);
             if (compact) {
-                // 窄屏去掉国旗后，用队码区分同名 / 同国球员；队码在前，截断也看得到。
                 return row.teamCode ? row.teamCode + ' · ' + name : name;
             }
-            return name + ' · ' + row.teamName;
+            return name;
         });
         var maxNameWidth = names.reduce(function (maxWidth, name) {
-            return Math.max(maxWidth, estimateTextWidth(name, compact ? 14 : 17));
+            return Math.max(maxWidth, estimateTextWidth(name, compact ? 14 : 16));
         }, 0);
         var yLabelWidth = compact
             ? 120
-            : Math.min(330, Math.max(210, Math.ceil(maxNameWidth) + 42));
+            : Math.min(250, Math.max(160, Math.ceil(maxNameWidth) + 38));
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
         });
@@ -592,11 +595,27 @@
                     overflow: 'truncate',
                     ellipsis: '…',
                     formatter: function (value, index) {
-                        return compact
-                            ? value
-                            : flagTag(chartRows[index], index, 'pf') + value;
+                        if (compact) {
+                            return value;
+                        }
+                        var row = chartRows[index] || {};
+                        return flagTag(row, index, 'pf')
+                            + '{nm|' + value + '}\n{tm|' + (row.teamName || '') + '}';
                     },
-                    rich: flagRich
+                    rich: Object.assign({}, flagRich, {
+                        nm: {
+                            color: INK.primary,
+                            fontSize: 16,
+                            lineHeight: 20,
+                            fontFamily: CN_FONT
+                        },
+                        tm: {
+                            color: INK.muted,
+                            fontSize: 12.5,
+                            lineHeight: 17,
+                            fontFamily: CN_FONT
+                        }
+                    })
                 }
             },
             series: [{
@@ -864,6 +883,9 @@
             '#7BE8C0', '#5BD0A6', '#46BB8F', '#37A47C',
             '#2D8C6A', '#267558', '#205E47', '#1C4A38'
         ];
+        // 第一名并列时两片同色,不把其中一支单独涂金。
+        var leaderIsClear = topRows.length === 1
+            || Number(topRows[0].goals) > Number(topRows[1].goals);
         var slices = topRows.map(function (row, index) {
             return {
                 name: row.teamName,
@@ -871,9 +893,9 @@
                 percent: row.percent,
                 rank: row.rank,
                 itemStyle: {
-                    color: index === 0
+                    color: index === 0 && leaderIsClear
                         ? ACCENT_SERIES
-                        : PIE_COLORS[(index - 1) % PIE_COLORS.length]
+                        : PIE_COLORS[index % PIE_COLORS.length]
                 }
             };
         });

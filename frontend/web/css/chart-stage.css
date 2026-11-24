@@ -136,7 +136,7 @@ body.site-game .game-progress .game-section-head p {
 }
 
 .chart-canvas--standings {
-    height: 460px;
+    height: 380px;
 }
 
 /* 主图是横向时间轴:矮一点,让三张图的比例接近 16:9,不再竖着占三屏。 */
@@ -236,7 +236,7 @@ body.site-game .game-progress .game-section-head p {
 
     .chart-canvas,
     .chart-canvas--standings {
-        height: 420px;
+        height: 380px;
     }
 
     .chart-canvas--timing {
@@ -277,7 +277,7 @@ body.site-game .game-progress .game-section-head p {
 
     .chart-canvas,
     .chart-canvas--standings {
-        height: 360px;
+        height: 340px;
     }
 
     .chart-canvas--timing {
