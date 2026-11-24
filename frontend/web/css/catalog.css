@@ -1135,9 +1135,11 @@ body.site-team-view .td-intro {
     }
 }
 
-/* 名单只有三列:在宽屏上锁到可读行宽,不被拉到 1200px 散开。 */
+/* 名单只有三列:在宽屏上锁到可读行宽,不被拉到 1200px 散开;
+   锁窄后居中,不在右侧留 400px 空。 */
 @media (min-width: 1101px) {
     .team-detail .td-section[aria-labelledby="td-roster-title"] {
-        max-width: 860px;
+        max-width: 920px;
+        margin-inline: auto;
     }
 }
