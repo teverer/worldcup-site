@@ -59,6 +59,14 @@
     color: var(--muted);
 }
 
+.backend-main .dash-panel {
+    border: 1px solid var(--line);
+    border-top: 1px solid var(--ink);
+    border-radius: 2px;
+    background-color: var(--panel);
+    box-shadow: none;
+}
+
 /* ==========================================================================
    3. 检索行：工作区的抬头线
    ========================================================================== */
@@ -205,6 +213,7 @@
 
 /* 表单页主操作仍是实心，不做降噪 */
 .backend-main > .btn-success,
+.backend-main .form-inline .btn-success,
 .backend-main .form-group + .btn-success {
     box-shadow: inset 0 -2px 0 rgba(201, 138, 46, .65);
 }

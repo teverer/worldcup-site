@@ -196,7 +196,7 @@ body:not(.site-site-index) .form-control:focus {
 body:not(.site-site-index) .td-edition,
 body:not(.site-site-index) .game-chip {
     border-color: transparent;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid transparent;
     border-radius: 0;
     background-color: transparent;
     color: var(--muted);
@@ -302,13 +302,24 @@ body:not(.site-site-index) .num {
     font-variant-numeric: tabular-nums;
 }
 
-/* 身份头的统计卡：去掉盒子，留一条上墨线 */
+/* 身份头的统计带：一条上墨线 + 下细线，内部只留竖分隔 */
+body:not(.site-site-index) .pd-stats {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
 body:not(.site-site-index) .td-stat,
 body:not(.site-site-index) .pd-stat {
     border: 0;
-    border-top: 2px solid var(--ink);
     border-radius: 0;
     background-color: transparent;
+}
+
+body:not(.site-site-index) .pd-stat + .pd-stat {
+    border-left: 1px solid var(--line);
 }
 
 body:not(.site-site-index) .pd-stat dt,
@@ -442,6 +453,15 @@ body:not(.site-site-index) .form-page {
 
 body:not(.site-site-index) .chart-card {
     border-top: 2px solid var(--ink);
+}
+
+/* 球员页只有一张图：让它和下面的生涯表同一条纸面语法，不做孤立的卡片 */
+body:not(.site-site-index) .pd-career-card {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
 }
 
 body:not(.site-site-index) .chart-card-head {
