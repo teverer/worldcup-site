@@ -319,6 +319,22 @@
     font-weight: 400;
 }
 
+/* 第 12 格：把“浏览全部”收进榜单，11 届不再留一个孤行。 */
+.pl-scorer--all {
+    background-color: rgba(244, 242, 236, .035);
+}
+
+.pl-scorer--all .pl-scorer-year {
+    color: var(--color-primary-light);
+    font-family: var(--font-cn-body);
+    font-size: 12px;
+    letter-spacing: .04em;
+}
+
+.pl-scorer--all .pl-scorer-text strong {
+    color: var(--color-primary-light);
+}
+
 .pl-more {
     display: flex;
     flex-wrap: wrap;

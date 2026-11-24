@@ -100,11 +100,17 @@ $isAll = Yii::$app->request->get('all') === '1';
                         </a>
                     </li>
                 <?php endforeach ?>
+                <?php // 11 届正好差一格；第 12 格做成“全部球员”，两列收齐，不留孤行。 ?>
+                <li>
+                    <a class="pl-scorer pl-scorer--all" href="<?= Html::encode(Url::to(['/player/index', 'all' => 1])) ?>">
+                        <span class="pl-scorer-year">全部</span>
+                        <span class="pl-scorer-text">
+                            <strong>浏览全部 <?= (int) $totalPlayers ?> 名球员</strong>
+                            <span>按姓名、球队、位置继续筛</span>
+                        </span>
+                    </a>
+                </li>
             </ol>
-
-            <p class="pl-more">
-                <?= Html::a('浏览全部 ' . (int) $totalPlayers . ' 名球员', ['/player/index', 'all' => 1]) ?>
-            </p>
         </section>
     <?php else: ?>
         <section class="pl-section" aria-labelledby="pl-results-title">
