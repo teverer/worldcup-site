@@ -5,6 +5,7 @@
  * 模块:球队与球员 —— 球员姓名显示方式切换（中文名 / 原名）。
  *
  * @var yii\web\View $this
+ * @var string|null $returnUrl 切换后回到的站内地址;带 #hash 可回到同一个 tab
  */
 
 use common\models\Player;
@@ -12,7 +13,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $prefersOriginal = Player::prefersOriginalName();
-$returnUrl = Url::current();
+$returnUrl = (isset($returnUrl) && is_string($returnUrl) && $returnUrl !== '')
+    ? $returnUrl
+    : Url::current();
 ?>
 <span class="pl-name-lang">
     姓名显示：

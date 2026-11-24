@@ -8,19 +8,34 @@
  *
  * @var yii\web\View $this
  * @var array $statistics 由 Player::statistics() 提供,每行含 year / goals / assists
+ * @var array $participations 由 Player::participations() 提供,补上没有进球/助攻的届次
  */
 
 use yii\web\View;
 
-$points = [];
-foreach ($statistics as $row) {
-    $points[] = [
+// 兼容旧调用:只传 statistics 时仍能按有进球的届次画图。
+$participations = isset($participations) && is_array($participations) ? $participations : [];
+
+// 先以参赛届次建轴,再把进球/助攻覆盖上去:
+// statistics() 只返回有进球或助攻的届次,不补零的话,中间的空白届会被轴跳过。
+$byYear = [];
+foreach ($participations as $row) {
+    $byYear[(int) $row['year']] = [
         'year' => (int) $row['year'],
+        'goals' => 0,
+        'assists' => 0,
+    ];
+}
+foreach ($statistics as $row) {
+    $year = (int) $row['year'];
+    $byYear[$year] = [
+        'year' => $year,
         'goals' => (int) $row['goals'],
         'assists' => (int) $row['assists'],
     ];
 }
 
+$points = array_values($byYear);
 usort($points, function ($a, $b) {
     return $a['year'] <=> $b['year'];
 });
