@@ -6,7 +6,6 @@
  *
  * @var yii\web\View $this
  * @var array $editions 按年份倒序的届次数据
- * @var array $latestComments 首页“最新留言”摘要
  */
 
 use common\components\CommentTarget;
@@ -17,13 +16,7 @@ use yii\helpers\Url;
 
 $this->title = '世界杯档案 · 1986—2026';
 $this->registerCssFile('@web/css/root-wall.css');
-$this->registerJsFile('@web/js/ledger.js', ['position' => \yii\web\View::POS_END]);
 
-$identity = Yii::$app->user->identity;
-$bookUrl = Url::to(['/site/discussion']);
-// 从首页去登录/注册，回来仍落在这一段的输入框旁，不用再找一次。
-$hereUrl = Url::to(['/site/index']) . '#comments';
-$loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
 ?>
 <div class="root-wall">
     <header class="wall-head">
@@ -107,81 +100,17 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
         <?php endif ?>
     </section>
 
-    <?php // 收场不是墙尾的“更多入口”：墙看完了，这里只做一件事——把记忆留下。 ?>
-    <section class="wall-closing" id="comments" aria-labelledby="wall-closing-title">
+    <?php // 收场不是墙尾的“更多入口”：墙看完了，这里只做一件事——把记忆留下。
+    // 首页直接嵌入全站留言区本身，输入后就在本页落到自己的记录上，不再跳走。 ?>
+    <section class="wall-closing" id="comments" aria-label="留言簿">
         <div class="wall-coda-inner">
-            <header class="wall-coda-inner-head">
-                <h2 id="wall-closing-title">继续看，或者留一句</h2>
-            </header>
-
-            <section class="wall-book" data-ledger-scope aria-labelledby="wall-book-title">
-                <header class="wall-book-head">
-                    <h3 class="wall-book-title" id="wall-book-title">留言簿</h3>
-                    <?= Html::a('翻整本留言簿', $bookUrl, ['class' => 'wall-book-all']) ?>
-                </header>
-
-                <div class="wall-book-compose">
-                    <?php if ($identity === null): ?>
-                        <p class="wall-book-guest">
-                            你和世界杯的故事，从哪一届开始？
-                            <?= Html::a('登录后写一句', $loginUrl) ?>
-                            <span class="wall-book-guest-sub">还没有账号？<?= Html::a('注册', Url::to(['/site/signup', 'returnUrl' => $hereUrl])) ?></span>
-                        </p>
-                    <?php else: ?>
-                        <?= Html::beginForm(['/comment/create'], 'post', ['class' => 'wall-book-form']) ?>
-                            <?= Html::hiddenInput('CommentForm[targetType]', CommentTarget::SITE) ?>
-                            <?= Html::hiddenInput('CommentForm[targetId]', (string) CommentTarget::SITE_ID) ?>
-                            <span class="seal seal--lg"
-                                  style="background:<?= Html::encode(CommentSection::sealColor((int) $identity->id)) ?>"
-                                  aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($identity->nickname ?: $identity->username)) ?></span>
-                            <div class="wall-book-field">
-                                <label class="sr-only" for="wall-book-content">留言内容</label>
-                                <?= Html::textarea('CommentForm[content]', '', [
-                                    'id' => 'wall-book-content',
-                                    'class' => 'composer-input',
-                                    'rows' => 1,
-                                    'maxlength' => 5000,
-                                    'required' => true,
-                                    'placeholder' => '写下你和世界杯的一件小事……',
-                                    'data-ledger-input' => '1',
-                                ]) ?>
-                                <div class="composer-foot">
-                                    <?= Html::submitButton('记下', ['class' => 'btn-record']) ?>
-                                </div>
-                            </div>
-                        <?= Html::endForm() ?>
-                    <?php endif ?>
-                </div>
-
-                <?php if (!empty($latestComments)): ?>
-                    <ol class="wall-book-list">
-                        <?php foreach ($latestComments as $item): ?>
-                            <li>
-                                <a class="wall-book-row" href="<?= Html::encode($item['url']) ?>">
-                                    <span class="seal wall-book-seal"
-                                          style="background:<?= Html::encode(CommentSection::sealColor($item['userId'])) ?>"
-                                          aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($item['author'])) ?></span>
-                                    <span class="wall-book-body">
-                                        <span class="wall-book-meta">
-                                            <span class="wall-book-name"><?= Html::encode($item['author']) ?></span>
-                                            <span class="wall-book-source"><?= Html::encode($item['source']) ?></span>
-                                            <time class="wall-book-time"
-                                                  datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
-                                        </span>
-                                        <span class="wall-book-text"><?= Html::encode($item['excerpt']) ?></span>
-                                    </span>
-                                </a>
-                            </li>
-                        <?php endforeach ?>
-                    </ol>
-                <?php elseif ($identity !== null): ?>
-                    <?php // 游客已经没有可读的留言时,上面那张登录卡就是空态;不再叠第二个邀请。 ?>
-                    <div class="wall-book-empty">
-                        <p class="wall-book-empty-title">留言簿还是空的。</p>
-                        <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。上面就是第一行。</p>
-                    </div>
-                <?php endif ?>
-            </section>
+            <?= CommentSection::widget([
+                'targetType' => CommentTarget::SITE,
+                'targetId' => CommentTarget::SITE_ID,
+                'heading' => '继续看，或者留一句',
+                'headingTag' => 'h2',
+                'emptyTitle' => '留言簿还是空的。',
+            ]) ?>
         </div>
     </section>
 </div>

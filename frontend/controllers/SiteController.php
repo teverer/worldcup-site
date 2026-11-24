@@ -7,7 +7,6 @@
 namespace frontend\controllers;
 
 use frontend\models\EditionWall;
-use frontend\models\LatestComments;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -88,18 +87,17 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'editions' => $wall['editions'],
-            'latestComments' => LatestComments::latest(4),
         ]);
     }
 
     /**
-     * 全站留言簿：世界杯整体的一本簿。
+     * 旧的全站留言簿地址：留言区已并入首页收场，301 回首页 #comments。
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionDiscussion()
     {
-        return $this->render('discussion');
+        return $this->redirect(['/site/index', '#' => 'comments'], 301);
     }
 
     /**

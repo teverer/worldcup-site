@@ -30,7 +30,7 @@
 }
 
 /* 夜场页面：留言组件是一块比背景更深的板，边界用灯线。 */
-body:not(.site-site-index) .ledger {
+body .ledger {
     --ledger-surface: rgba(4, 7, 11, .55);
     --ledger-panel: rgba(4, 7, 11, .34);
     --ledger-input: rgba(244, 242, 236, .05);
@@ -680,4 +680,16 @@ body.site-site-discussion .site-discussion {
 body.site-site-discussion .site-discussion .ledger {
     max-width: 100%;
     margin-top: 28px;
+}
+
+
+/* 首页收场：直接嵌全站留言区，宽度跟收场一致。 */
+body.site-site-index .wall-closing .ledger {
+    max-width: 100%;
+    padding-top: clamp(24px, 3vw, 36px);
+    border-top: 1px solid rgba(224, 180, 87, .38);
+}
+
+body.site-site-index .wall-closing .ledger-title {
+    font-size: clamp(38px, 4.2vw, 54px);
 }

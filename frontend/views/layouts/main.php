@@ -199,7 +199,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">本站</p>
                     <ul>
-                        <li><?= Html::a('世界杯留言簿', ['/site/discussion']) ?></li>
+                        <li><?= Html::a('世界杯留言簿', ['/site/index', '#' => 'comments']) ?></li>
                         <li><?= Html::a('关于与文档', ['/team-info/index']) ?></li>
                         <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
                         <li><?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [

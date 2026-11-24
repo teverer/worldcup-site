@@ -139,7 +139,8 @@ class CommentTarget
             self::GAME => '/game/view',
             self::NEWS => '/news/view',
             self::TOURNAMENT => '/tournament/view',
-            self::SITE => '/site/discussion',
+            // 全站留言区已并入首页收场；发帖 / 点赞 / 删除都落回首页的留言区。
+            self::SITE => '/site/index',
         ];
 
         if (!isset($routes[$type])) {
