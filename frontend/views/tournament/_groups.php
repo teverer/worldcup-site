@@ -12,6 +12,7 @@
  * @var common\models\Tournament $model
  */
 
+use common\components\TeamFlag;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
@@ -75,15 +76,18 @@ use yii\helpers\Url;
                                         <span class="group-rank"><?= Html::encode((string) ($index + 1)) ?></span>
                                     </td>
                                     <th scope="row" class="group-team">
-                                        <a href="<?= Html::encode(Url::to(['/team/view', 'id' => $teamId])) ?>"
-                                           title="<?= Html::encode($teamName) ?>"><?= Html::encode($teamName) ?></a>
-                                        <?php if ($qualification === 'top2'): ?>
-                                            <span class="group-qual group-qual--top" aria-hidden="true"></span>
-                                            <span class="sr-only">出线</span>
-                                        <?php elseif ($qualification === 'best_third'): ?>
-                                            <span class="group-qual group-qual--third" aria-hidden="true"></span>
-                                            <span class="sr-only">最佳第三名出线</span>
-                                        <?php endif ?>
+                                        <span class="group-team-inner">
+                                            <?= TeamFlag::html(isset($row['code']) ? $row['code'] : null, $teamName, 'group-flag') ?>
+                                            <a href="<?= Html::encode(Url::to(['/team/view', 'id' => $teamId])) ?>"
+                                               title="<?= Html::encode($teamName) ?>"><?= Html::encode($teamName) ?></a>
+                                            <?php if ($qualification === 'top2'): ?>
+                                                <span class="group-qual group-qual--top" aria-hidden="true"></span>
+                                                <span class="sr-only">出线</span>
+                                            <?php elseif ($qualification === 'best_third'): ?>
+                                                <span class="group-qual group-qual--third" aria-hidden="true"></span>
+                                                <span class="sr-only">最佳第三名出线</span>
+                                            <?php endif ?>
+                                        </span>
                                     </th>
                                     <td class="num group-col-result"><?= Html::encode((string) $row['won']) ?></td>
                                     <td class="num group-col-result"><?= Html::encode((string) $row['drawn']) ?></td>

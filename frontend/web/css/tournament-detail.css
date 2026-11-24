@@ -613,6 +613,45 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     white-space: nowrap;
 }
 
+.group-team-inner {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+
+.group-flag {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 15px;
+    overflow: hidden;
+    border-radius: 1px;
+    line-height: 0;
+}
+
+.group-flag img {
+    display: block;
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+}
+
+.group-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(244, 242, 236, .08);
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: 8px;
+    letter-spacing: .03em;
+}
+
+.group-team-inner > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .group-team a {
     color: var(--ink);
     text-decoration: none;
