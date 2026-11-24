@@ -89,12 +89,26 @@ $this->registerJsFile('@web/js/charts.js', [
                 <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
             </article>
         <?php else: ?>
-            <article class="chart-card chart-card--wide">
-                <div class="chart-card-head">
+            <article class="chart-card chart-card--hero">
+                <div class="chart-card-head chart-card-head--hero">
                     <div class="chart-card-head-text">
                         <h3>进球时间分布</h3>
                         <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列 91–120；不计点球大战。</p>
                     </div>
+                    <dl class="chart-hero-stats" id="chart-timing-stats" hidden>
+                        <div class="chart-hero-figure">
+                            <dt>全届进球</dt>
+                            <dd id="timing-total">—</dd>
+                        </div>
+                        <div class="chart-hero-figure">
+                            <dt>下半场占比</dt>
+                            <dd id="timing-second">—</dd>
+                        </div>
+                        <div class="chart-hero-figure">
+                            <dt>最密集的 15 分钟</dt>
+                            <dd id="timing-peak">—</dd>
+                        </div>
+                    </dl>
                 </div>
                 <div id="chart-goal-timing" class="chart-canvas chart-canvas--timing"
                      data-chart="goal-timing" role="img" aria-label="进球时间分布柱状图">
@@ -111,7 +125,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>射手榜 Top 10</h3>
-                <p class="chart-caption">按进球数降序；不计乌龙球与点球大战。</p>
+                <p class="chart-caption">按进球数降序；不计乌龙球与点球大战。金色为最佳射手。</p>
             </div>
             <div id="chart-scorers" class="chart-canvas chart-canvas--scorers"
                  data-chart="scorers" role="img" aria-label="射手榜横向柱状图">
@@ -127,7 +141,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">前 8 队 + 其他；扇面为占全届总进球的比例，分母固定。</p>
+                <p class="chart-caption">前 8 队 + 其他；扇面为占全届总进球的比例，分母固定，颜色越亮进球越多。</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
                  data-chart="team-goals" role="img" aria-label="各队进球占比圆环图">

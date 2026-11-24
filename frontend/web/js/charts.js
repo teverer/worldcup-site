@@ -17,6 +17,8 @@
     // 夜场图表:主序列青绿、第二序列蓝、成就金。
     var PRIMARY_SERIES = '#2FAE83';
     var HOVER_SERIES = '#57D9AE';
+    var PEAK_SERIES = '#7BE8C0';
+    var EXTRA_SERIES = '#D24A52';
     var ACCENT_SERIES = '#E0B457';
 
     // 数字用 Saira Condensed(站内已预加载),中文名回退系统黑体。
@@ -546,7 +548,7 @@
 
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
-            grid: { left: 10, right: compact ? 54 : 74, top: 12, bottom: 16, containLabel: true },
+            grid: { left: 10, right: compact ? 54 : 64, top: 12, bottom: 16, containLabel: true },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
@@ -571,10 +573,10 @@
                 type: 'value',
                 name: '',
                 minInterval: 1,
-                axisLabel: { color: INK.secondary, fontSize: compact ? 13 : 16, fontFamily: NUM_FONT },
+                axisLabel: { color: INK.muted, fontSize: compact ? 13 : 15, fontFamily: NUM_FONT },
                 axisLine: { show: false },
                 axisTick: { show: false },
-                splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
+                splitLine: { lineStyle: { color: 'rgba(244, 242, 236, .075)', width: 1, type: 'solid' } }
             },
             yAxis: {
                 type: 'category',
@@ -601,12 +603,15 @@
                 name: '进球数',
                 type: 'bar',
                 data: goals,
-                barMaxWidth: compact ? 24 : 28,
+                barMaxWidth: compact ? 24 : 30,
+                barCategoryGap: '46%',
+                showBackground: true,
+                backgroundStyle: { color: 'rgba(244, 242, 236, .035)' },
                 itemStyle: {
                     color: function (params) {
                         return params.dataIndex === leaderIndex ? ACCENT_SERIES : PRIMARY_SERIES;
                     },
-                    borderRadius: [0, 3, 3, 0]
+                    borderRadius: [0, 2, 2, 0]
                 },
                 label: {
                     show: true,
@@ -655,37 +660,50 @@
         var values = buckets.map(function (row) {
             return Number(row.goals) || 0;
         });
+        // 常规时段里进球最多的一段,用来做一句结论;加时不参与“15 分钟”比较。
+        var peakIndex = 0;
+        values.forEach(function (value, index) {
+            if (index < values.length - 1 && value > values[peakIndex]) {
+                peakIndex = index;
+            }
+        });
         var colors = values.map(function (value, index) {
-            if (index === buckets.length - 1) {
-                return ACCENT_SERIES;
+            if (index === values.length - 1) {
+                return EXTRA_SERIES;
+            }
+            if (index === peakIndex) {
+                return PEAK_SERIES;
             }
             return index >= 3 ? HOVER_SERIES : PRIMARY_SERIES;
         });
 
+        // 关键数字放进 HTML,不画进 canvas:更清晰、可选中、屏幕阅读器能读。
+        var totalEl = byId('timing-total');
+        var secondEl = byId('timing-second');
+        var peakEl = byId('timing-peak');
+        var statsEl = byId('chart-timing-stats');
+        if (totalEl) {
+            totalEl.textContent = String(total);
+        }
+        if (secondEl) {
+            secondEl.textContent = secondHalfPercent + '%';
+        }
+        if (peakEl) {
+            // 单位用小子号,让数字本身站住,而不是把「球」也放大成标题。
+            peakEl.innerHTML = String(values[peakIndex])
+                + '<span class="chart-hero-unit">球</span>';
+        }
+        if (statsEl) {
+            statsEl.hidden = false;
+        }
+
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
-            title: {
-                text: String(total),
-                subtext: '全届进球 · 下半场 ' + secondHalf + ' 球（' + secondHalfPercent + '%）',
-                left: 0,
-                top: 0,
-                textStyle: {
-                    color: INK.primary,
-                    fontSize: compact ? 40 : 54,
-                    fontFamily: NUM_FONT,
-                    fontWeight: 'bold'
-                },
-                subtextStyle: {
-                    color: INK.muted,
-                    fontSize: compact ? 12 : 14,
-                    fontFamily: CN_FONT
-                }
-            },
             grid: {
-                left: 10,
-                right: 16,
-                top: compact ? 78 : 104,
-                bottom: 8,
+                left: 6,
+                right: 8,
+                top: 22,
+                bottom: 4,
                 containLabel: true
             },
             tooltip: {
@@ -710,18 +728,25 @@
                 axisLine: { lineStyle: { color: INK.grid } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: compact ? 11 : 14,
+                    fontSize: compact ? 12 : 15,
                     fontFamily: CN_FONT,
                     interval: 0,
-                    rotate: compact ? 28 : 0
+                    rotate: compact ? 28 : 0,
+                    margin: 12
                 }
             },
+            // 有刻度才能读出“42 球”大概多高;三条细线足够,不铺满网格。
             yAxis: {
                 type: 'value',
-                show: false,
-                max: function (value) {
-                    return Math.ceil(value.max * 1.16);
-                }
+                splitNumber: 3,
+                axisLabel: {
+                    color: INK.muted,
+                    fontSize: compact ? 11 : 13,
+                    fontFamily: NUM_FONT
+                },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { lineStyle: { color: INK.grid, width: 1 } }
             },
             series: [{
                 name: '进球',
@@ -731,16 +756,37 @@
                         value: value,
                         itemStyle: {
                             color: colors[index],
-                            borderRadius: [3, 3, 0, 0]
+                            borderRadius: [2, 2, 0, 0]
                         }
                     };
                 }),
-                barMaxWidth: compact ? 26 : 52,
+                // 柱子之间留出呼吸;不靠阴影和渐变,只靠色相和高度表达。
+                barMaxWidth: compact ? 30 : 64,
+                barCategoryGap: '42%',
+                showBackground: true,
+                backgroundStyle: { color: 'rgba(244, 242, 236, .045)' },
+                // 把 7 根柱子分成“上半场 / 下半场”两段读,而不是让读者自己数到第 4 根。
+                markArea: {
+                    silent: true,
+                    itemStyle: { color: 'rgba(87, 217, 174, .035)' },
+                    label: {
+                        show: true,
+                        position: 'insideTop',
+                        color: INK.muted,
+                        fontSize: compact ? 11 : 13,
+                        fontFamily: CN_FONT,
+                        padding: [8, 0, 0, 0]
+                    },
+                    data: [
+                        [{ name: '上半场', xAxis: 0 }, { xAxis: 2 }],
+                        [{ name: '下半场', xAxis: 3 }, { xAxis: 5 }]
+                    ]
+                },
                 label: {
                     show: true,
                     position: 'top',
                     color: INK.primary,
-                    fontSize: compact ? 12 : 15,
+                    fontSize: compact ? 13 : 17,
                     fontFamily: NUM_FONT,
                     fontWeight: 'bold',
                     formatter: function (params) {
@@ -812,9 +858,11 @@
             legendIndex[row.teamName] = index;
         });
 
+        // 占比是“多少”而不是“哪一类”:用同一色相的明度阶梯,
+        // 进球越多越亮;不拿彩虹色当分类,避免读者以为颜色有别的含义。
         var PIE_COLORS = [
-            '#57D9AE', '#7FA8C9', '#8FB89A', '#C9A66B',
-            '#9C8FC4', '#B5795A', '#6C8FA8'
+            '#7BE8C0', '#5BD0A6', '#46BB8F', '#37A47C',
+            '#2D8C6A', '#267558', '#205E47', '#1C4A38'
         ];
         var slices = topRows.map(function (row, index) {
             return {
@@ -879,21 +927,21 @@
                 icon: 'circle',
                 textStyle: {
                     color: INK.secondary,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontFamily: CN_FONT
                 },
                 formatter: legendFormatter
             } : {
                 orient: 'vertical',
-                right: '3%',
+                right: '2%',
                 top: 'middle',
                 itemWidth: 9,
                 itemHeight: 9,
-                itemGap: 12,
+                itemGap: 14,
                 icon: 'circle',
                 textStyle: {
                     color: INK.secondary,
-                    fontSize: 14,
+                    fontSize: 15,
                     fontFamily: CN_FONT,
                     rich: legendRich
                 },

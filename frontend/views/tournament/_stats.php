@@ -17,12 +17,12 @@ use yii\helpers\Url;
 <section class="td-panel td-panel--stats" id="charts" tabindex="-1"
          aria-labelledby="td-charts-title">
     <header class="td-section-head" id="td-stats-head">
-        <h2 class="section-title" id="td-charts-title">统计图表</h2>
+        <h2 class="section-title" id="td-charts-title">这一届的进球</h2>
         <?php /* 带 #charts 回跳:切换姓名后仍停留在“统计”,不要掉回淘汰赛。 */ ?>
         <?= $this->render('//partials/_name_lang', ['returnUrl' => Url::current() . '#charts']) ?>
     </header>
 
-    <p class="td-section-note">统计页的大图可在「进球时间分布 / 小组积分榜」切换；另外两张是射手榜与各队进球分布。小组积分的完整表格仍在「小组赛」标签里。</p>
+    <p class="td-section-note">什么时候进、谁进、哪些队进了多少。主图可切换小组积分榜（旧版）；完整积分表在「小组赛」。</p>
 
     <?= $this->render('@frontend/views/chart/_charts', ['tournamentId' => $model->id]) ?>
 </section>
