@@ -72,6 +72,20 @@
     box-shadow: none;
 }
 
+/* 登录页：一张登记表，不浮在网格上的白卡 */
+.backend-main .site-login {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.backend-main .site-login .btn-primary {
+    box-shadow: inset 0 -2px 0 rgba(201, 138, 46, .65);
+}
+
 /* ==========================================================================
    3. 检索行：工作区的抬头线
    ========================================================================== */
