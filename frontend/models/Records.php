@@ -18,6 +18,53 @@ use yii\db\Query;
 class Records
 {
     /**
+     * 统计页「历史坐标」需要的三块：四强、决赛常客、生涯射手。
+     * 不计算进球时钟与四十年之最，避免把已删除的内容继续查一遍。
+     *
+     * @return array
+     */
+    public static function history()
+    {
+        $finals = self::finals();
+
+        return [
+            'totals' => self::totals(),
+            'four' => self::finalFour(),
+            'nations' => self::finalNations($finals),
+            'scorers' => self::careerScorers(11),
+        ];
+    }
+
+    /**
+     * 某一届的球员进球数，排除乌龙球与点球大战，只算已结束比赛。
+     *
+     * @param int|string $tournamentId
+     * @return array<int,int> player_id => goals
+     */
+    public static function currentEditionScorers($tournamentId)
+    {
+        $rows = (new Query())
+            ->select(['player_id' => 'g.player_id', 'goals' => new Expression('COUNT(*)')])
+            ->from(['g' => '{{%goal}}'])
+            ->innerJoin(['ga' => '{{%game}}'], 'ga.id = g.game_id')
+            ->where([
+                'ga.tournament_id' => (int) $tournamentId,
+                'ga.status' => Game::STATUS_FINISHED,
+                'g.is_own_goal' => 0,
+                'g.is_shootout' => 0,
+            ])
+            ->groupBy('g.player_id')
+            ->all();
+
+        $goals = [];
+        foreach ($rows as $row) {
+            $goals[(int) $row['player_id']] = (int) $row['goals'];
+        }
+
+        return $goals;
+    }
+
+    /**
      * 一次取回纪录页需要的全部数据。
      *
      * @return array
@@ -26,6 +73,25 @@ class Records
     {
         $finals = self::finals();
         $scorers = self::careerScorers(11);
+
+        return [
+            'totals' => self::totals(),
+            'moments' => self::moments($finals, $scorers),
+            'clock' => self::goalClock(),
+            'four' => self::finalFour(),
+            'finals' => $finals,
+            'nations' => self::finalNations($finals),
+            'scorers' => $scorers,
+        ];
+    }
+
+    /**
+     * 十一届的总场次、总进球与届数。
+     *
+     * @return array
+     */
+    private static function totals()
+    {
         $totals = (new Query())
             ->select([
                 'games' => new Expression('COUNT(*)'),
@@ -36,17 +102,9 @@ class Records
             ->one();
 
         return [
-            'totals' => [
-                'games' => (int) $totals['games'],
-                'goals' => (int) $totals['goals'],
-                'editions' => (int) (new Query())->from('{{%tournament}}')->count(),
-            ],
-            'moments' => self::moments($finals, $scorers),
-            'clock' => self::goalClock(),
-            'four' => self::finalFour(),
-            'finals' => $finals,
-            'nations' => self::finalNations($finals),
-            'scorers' => $scorers,
+            'games' => (int) $totals['games'],
+            'goals' => (int) $totals['goals'],
+            'editions' => (int) (new Query())->from('{{%tournament}}')->count(),
         ];
     }
 

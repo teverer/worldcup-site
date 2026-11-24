@@ -8,6 +8,7 @@
 namespace frontend\controllers;
 
 use common\models\Tournament;
+use frontend\models\Records;
 use frontend\models\TournamentDetail;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -57,6 +58,11 @@ class TournamentController extends Controller
             throw new NotFoundHttpException('届次不存在。');
         }
 
-        return $this->render('view', TournamentDetail::build($model));
+        $data = TournamentDetail::build($model);
+        // 统计页的历史坐标：只取四强、决赛常客、生涯射手三块。
+        $data['history'] = Records::history();
+        $data['currentGoals'] = Records::currentEditionScorers($model->id);
+
+        return $this->render('view', $data);
     }
 }

@@ -19,6 +19,8 @@
  * @var array $stats
  * @var int $comment_count
  * @var array $champion_path
+ * @var array $history 跨届三块：四强 / 决赛常客 / 生涯射手
+ * @var array $currentGoals 本届球员进球数 player_id => goals
  */
 use common\components\CommentTarget;
 use common\models\Tournament;
@@ -212,6 +214,11 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
 
             <?= $this->render('_stats', [
                 'model' => $model,
+                'history' => $history,
+                'currentGoals' => $currentGoals,
+                'champion' => $champion,
+                'runnerUp' => $runner_up,
+                'stats' => $stats,
             ]) ?>
         </div>
     </div>

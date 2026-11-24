@@ -365,14 +365,22 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 }
 
 .tournament-detail:has(#groups:target) .td-tabs a[href="#knockout"],
-.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"] {
+.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#history:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-scorers:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-nations:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-four:target) .td-tabs a[href="#knockout"] {
     border-bottom-color: transparent;
     color: rgba(243, 246, 242, .62);
 }
 
 .tournament-detail:has(#knockout:target) .td-tabs a[href="#knockout"],
 .tournament-detail:has(#groups:target) .td-tabs a[href="#groups"],
-.tournament-detail:has(#charts:target) .td-tabs a[href="#charts"] {
+.tournament-detail:has(#charts:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#history:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-scorers:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-nations:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-four:target) .td-tabs a[href="#charts"] {
     border-bottom-color: var(--green-light);
     color: var(--green-light);
 }
@@ -457,12 +465,20 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
     .td-stage:has(#knockout:target) > #knockout,
     .td-stage:has(#groups:target) > #groups,
-    .td-stage:has(#charts:target) > #charts {
+    .td-stage:has(#charts:target) > #charts,
+    .td-stage:has(#history:target) > #charts,
+    .td-stage:has(#hist-scorers:target) > #charts,
+    .td-stage:has(#hist-nations:target) > #charts,
+    .td-stage:has(#hist-four:target) > #charts {
         display: block;
     }
 
     .td-stage:has(#groups:target) > #knockout,
     .td-stage:has(#charts:target) > #knockout,
+    .td-stage:has(#history:target) > #knockout,
+    .td-stage:has(#hist-scorers:target) > #knockout,
+    .td-stage:has(#hist-nations:target) > #knockout,
+    .td-stage:has(#hist-four:target) > #knockout,
     .td-stage:has(#knockout:target) > #groups,
     .td-stage:has(#knockout:target) > #charts {
         display: none;

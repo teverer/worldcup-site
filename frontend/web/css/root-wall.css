@@ -376,8 +376,9 @@ body.site-site-index .site-main {
    而不是一块硬塞进来的色板。上下都不出现硬边。 */
 .wall-closing {
     position: relative;
-    margin-top: clamp(64px, 8vw, 112px);
-    padding: clamp(56px, 6vw, 88px) 0 clamp(40px, 5vw, 64px);
+    /* 40 年曲线移除后，墙直接接收场；不再为图留一段 240px 的空。 */
+    margin-top: clamp(32px, 4vw, 56px);
+    padding: clamp(32px, 4vw, 48px) 0 clamp(40px, 5vw, 64px);
     isolation: isolate;
 }
 
