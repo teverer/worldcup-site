@@ -67,7 +67,6 @@
 - **编造比赛数据**;真实数据来源见 `docs/数据来源说明.md`
 - 把未经检查的子代理产出直接提交
 - 用 `git reset --hard`、`git checkout -- .` 丢弃改动;提交前用 `git status` 核对,按路径 `git add`
-- 手工对演示库执行临时 `UPDATE/INSERT/DELETE` 做数据修正;数据变更写进 `data/*.sql` 并保持幂等(测试可用临时库)
 
 ## 核心约定
 
