@@ -744,7 +744,7 @@ body.site-site-index {
 .era-chart {
     display: block;
     width: 100%;
-    min-width: 760px;
+    min-width: 1200px;
     height: auto;
 }
 
@@ -946,6 +946,18 @@ body.site-site-index .era-chart .era-point:focus-visible {
 .era-table-wrap {
     margin-top: 12px;
     overflow-x: auto;
+    scrollbar-color: rgba(244, 242, 236, .3) transparent;
+    scrollbar-width: thin;
+}
+
+.era-table-wrap::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.era-table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(244, 242, 236, .28);
 }
 
 .era-table {
@@ -1028,6 +1040,16 @@ body.site-site-index .era-chart .era-point:focus-visible {
     to { opacity: 1; }
 }
 
+@media (max-width: 600px) {
+    /* 窄屏优先保留 年份 / 冠军 / 场次 / 进球 / 场均；东道主与决赛在届次页可看。 */
+    .era-table th:nth-child(2),
+    .era-table td:nth-child(2),
+    .era-table th:nth-child(4),
+    .era-table td:nth-child(4) {
+        display: none;
+    }
+}
+
 @media (max-width: 767px) {
     .era-trend {
         margin-top: 56px;
@@ -1038,10 +1060,6 @@ body.site-site-index .era-chart .era-point:focus-visible {
         flex-basis: 100%;
         max-width: 100%;
         text-align: left;
-    }
-
-    .era-chart {
-        min-width: 720px;
     }
 
 }

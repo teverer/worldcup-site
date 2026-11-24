@@ -153,6 +153,13 @@
     height: 400px;
 }
 
+/* 移动端圆环图例两行，按内容收一点高度，避免环体下方 200px 空白。 */
+@media (max-width: 480px) {
+    #chart-team-goals {
+        height: 380px;
+    }
+}
+
 /* 进球时间分布：7 根竖柱，桌面给足高度，窄屏压缩。 */
 #chart-goal-timing {
     height: 440px;

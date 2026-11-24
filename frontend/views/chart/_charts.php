@@ -53,7 +53,7 @@ $this->registerJsFile('@web/js/charts.js', [
             <div class="chart-card-head">
                 <div class="chart-card-head-text">
                     <h3>进球时间分布</h3>
-                    <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列；不计点球大战。</p>
+                    <p class="chart-caption">按 15 分钟分桶；45+ / 90+ 含补时，加时单列 91–120；不计点球大战。</p>
                 </div>
             </div>
             <div id="chart-goal-timing" class="chart-canvas chart-canvas--timing"

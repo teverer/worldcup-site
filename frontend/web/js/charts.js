@@ -114,15 +114,25 @@
     // 国旗放在轴标签最前面:24×15 的小图,没有可靠旗源时直接不占位。
     function addFlagRich(rich, rows, prefix) {
         rows.forEach(function (row, index) {
-            if (!row || !row.teamFlag) {
+            if (row && row.teamFlag) {
+                rich[prefix + index] = {
+                    backgroundColor: { image: row.teamFlag },
+                    width: 24,
+                    height: 15,
+                    borderRadius: 2,
+                    borderColor: 'rgba(244, 242, 236, .22)',
+                    borderWidth: 1
+                };
                 return;
             }
+            // 没有可靠旗源（苏联 / 南斯拉夫 / 塞黑）：留一个同尺寸空框，
+            // 保证图例 / 轴名整列对齐，不因缺旗左移。
             rich[prefix + index] = {
-                backgroundColor: { image: row.teamFlag },
+                backgroundColor: 'rgba(244, 242, 236, .06)',
                 width: 24,
                 height: 15,
                 borderRadius: 2,
-                borderColor: 'rgba(244, 242, 236, .22)',
+                borderColor: 'rgba(244, 242, 236, .16)',
                 borderWidth: 1
             };
         });
@@ -130,7 +140,7 @@
     }
 
     function flagTag(row, index, prefix) {
-        return row && row.teamFlag ? '{' + prefix + index + '|}  ' : '';
+        return row ? '{' + prefix + index + '|}  ' : '';
     }
 
     // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
@@ -511,13 +521,17 @@
         // 窄屏只留姓名,球队放在 tooltip;桌面保留「姓名 · 球队」。
         var names = chartRows.map(function (row) {
             var name = displayPlayerName(row);
-            return compact ? name : name + ' · ' + row.teamName;
+            if (compact) {
+                // 窄屏去掉国旗后，用队码区分同名 / 同国球员；队码在前，截断也看得到。
+                return row.teamCode ? row.teamCode + ' · ' + name : name;
+            }
+            return name + ' · ' + row.teamName;
         });
         var maxNameWidth = names.reduce(function (maxWidth, name) {
             return Math.max(maxWidth, estimateTextWidth(name, compact ? 14 : 17));
         }, 0);
         var yLabelWidth = compact
-            ? 108
+            ? 120
             : Math.min(330, Math.max(210, Math.ceil(maxNameWidth) + 42));
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
@@ -786,7 +800,7 @@
             return;
         }
         var compact = container.clientWidth < 560;
-        var topCount = compact ? 6 : 8;
+        var topCount = 8;
         var topRows = tableRows.slice(0, topCount);
         var restRows = tableRows.slice(topCount);
         var restGoals = restRows.reduce(function (sum, row) {

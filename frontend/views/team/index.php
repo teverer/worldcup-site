@@ -88,7 +88,8 @@ foreach ($groups as $teams) {
                 <ul class="ti-grid">
                     <?php foreach ($teams as $team): ?>
                         <li>
-                            <a class="ti-team" href="<?= Html::encode(Url::to(['/team/view', 'id' => $team->id])) ?>">
+                            <a class="ti-team" href="<?= Html::encode(Url::to(['/team/view', 'id' => $team->id])) ?>"
+                               title="<?= Html::encode($team->name) ?>">
                                 <span class="ti-team-id">
                                     <?= TeamFlag::html($team->code, $team->name) ?>
                                     <span class="ti-team-name"><?= Html::encode($team->name) ?></span>
