@@ -611,9 +611,8 @@ body:not(.site-site-index) .pd-head {
     box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .45);
 }
 
-body:not(.site-site-index) .td-hero {
-    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .50);
-}
+/* 届次 hero 用 100vmax box-shadow 做出血；不要覆盖它，否则会露出纸边。
+   铜线交给它下方的 tab 栏，不动 hero 的出血。 */
 
 body:not(.site-site-index) .td-tabs {
     border-bottom-color: rgba(224, 180, 87, .22);
@@ -699,7 +698,7 @@ body:not(.site-site-index) .site-error .empty-state {
 
 /* 比赛详情：比分牌压铜线，进球时间线像一条比赛记录 */
 body:not(.site-site-index) .game-scoreboard {
-    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .50);
+    box-shadow: inset 0 1px 0 rgba(244, 242, 236, .10), inset 0 -2px 0 rgba(224, 180, 87, .50);
 }
 
 body:not(.site-site-index) .goal-timeline {
