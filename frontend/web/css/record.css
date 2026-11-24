@@ -194,7 +194,7 @@ body.site-record-index.site-body .atmo-dots {
 .record-totals dd small {
     color: var(--gold);
     font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 400;
 }
 
@@ -292,7 +292,7 @@ body.site-record-index.site-body .atmo-dots {
 .moment-value small {
     color: var(--gold);
     font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     letter-spacing: .04em;
 }
@@ -709,6 +709,14 @@ body.site-record-index.site-body .atmo-dots {
     margin: 0 0 18px;
     color: var(--steel);
     font-size: 15px;
+}
+
+.record-outro .record-scope {
+    max-width: 52em;
+    margin: 26px auto 0;
+    color: var(--steel-2);
+    font-size: 13px;
+    line-height: 1.8;
 }
 
 .record-cta {

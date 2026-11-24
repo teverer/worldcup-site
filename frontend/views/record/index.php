@@ -189,6 +189,7 @@ $this->title = '纪录';
         <div class="record-wrap">
             <p>纪录只是结论。四十年真正的样子，在十一块记分牌里。</p>
             <a class="record-cta" href="<?= Html::encode(Yii::$app->homeUrl) ?>">回到记分牌墙</a>
+            <p class="record-scope">口径：只统计已结束比赛；射手不含乌龙球与点球大战；决赛聚合把西德计入德国。</p>
         </div>
     </section>
 </div>
