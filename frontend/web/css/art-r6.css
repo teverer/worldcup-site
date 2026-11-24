@@ -1117,40 +1117,6 @@ body:not(.site-site-index) .goal-item .goal-dot {
     }
 }
 
-/* 球队目录：把队码变成左侧身份章，先认章再读名 */
-@media (min-width: 1200px) {
-    body:not(.site-site-index) .ti-team {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 12px;
-    }
-
-    body:not(.site-site-index) .ti-team-name {
-        order: 2;
-        flex: 1 1 auto;
-        min-width: 0;
-    }
-
-    body:not(.site-site-index) .ti-team-code {
-        order: 1;
-        display: inline-flex;
-        flex: 0 0 auto;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 32px;
-        margin: 0;
-        border: 1px solid rgba(127, 221, 184, .35);
-        border-radius: 2px;
-        background-color: rgba(127, 221, 184, .06);
-        color: var(--ink);
-        font-family: var(--font-display);
-        font-size: 12px;
-        letter-spacing: .02em;
-    }
-}
-
 /* 小组积分表：出线队用左缘色轨，位置+颜色双编码 */
 body:not(.site-site-index) .group-table > tbody > tr:has(.group-qual--top) > td:first-child {
     box-shadow: inset 3px 0 0 var(--green-light);
