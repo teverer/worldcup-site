@@ -939,6 +939,9 @@
             },
             legend: compact ? {
                 type: 'plain',
+                // 图例只做标注，不允许点击隐藏切片：扇面占比以全届总进球为分母，
+                // 隐藏任一项都会让其余扇面重算、造成“占比变大”的误读。
+                selectedMode: false,
                 orient: 'horizontal',
                 bottom: 2,
                 left: 'center',
@@ -954,6 +957,8 @@
                 },
                 formatter: legendFormatter
             } : {
+                // 同上：桌面图例也不参与筛选。
+                selectedMode: false,
                 orient: 'vertical',
                 right: '2%',
                 top: 'middle',
