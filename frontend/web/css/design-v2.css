@@ -17,14 +17,15 @@
    字体为按站内实际用字生成的字集(1234 字形,约 135KB,覆盖页面渲染文字与
    数据库中的队名 / 球员名 / 届次 / 资讯);完整原字保留在
    SmileySans-Oblique.woff2,新增生僻字时用 tools/build_font_subset.php 重新生成。
-   font-display: optional + 布局里的 preload:字体没在首屏前就绪时不换字,
-   避免切页时看到一次字体跳变。 */
+   font-display: block + 布局里的 preload:标题先等字体,不在回退字与得意黑之间
+   闪一次。字集只有 135KB 且已预载,块期通常在一帧内结束;字体若失败,3 秒后
+   仍会回退,不会永久空白。 */
 @font-face {
     font-family: "Smiley Sans";
     src: url("../fonts/SmileySans-Subset.woff2") format("woff2");
     font-style: normal;
     font-weight: 400;
-    font-display: optional;
+    font-display: block;
 }
 
 /* ==========================================================================

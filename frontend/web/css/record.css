@@ -1,0 +1,721 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:纪录页 —— 黑金颁奖层
+
+   这一页是总纲里的「颁奖」：只留黑、泛光白、哑光金。
+   纪录数字是主角，其余信息退到周边；不用卡片、不用阴影、不用图表。
+   金只给纪录与冠军，绿留给离场动作。 */
+
+body.site-record-index {
+    background: #04070B;
+    color: var(--flood);
+}
+
+.site-record-index .atmo {
+    background:
+        radial-gradient(70% 46% at 50% -6%, rgba(224, 180, 87, .16), transparent 62%),
+        radial-gradient(46% 32% at 82% 12%, rgba(224, 180, 87, .07), transparent 68%),
+        linear-gradient(180deg, #04070B 0%, #05090C 58%, #04070B 100%);
+}
+
+.site-record-index .atmo-glow {
+    display: none;
+}
+
+.site-record-index .atmo-dots {
+    opacity: .28;
+}
+
+.site-record-index .site-main {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 0;
+}
+
+.site-record-index .breadcrumb {
+    margin: 18px 0 0;
+    padding: 0;
+    background: transparent;
+    color: var(--steel);
+    font-size: 13px;
+}
+
+.site-record-index .breadcrumb > li + li::before {
+    color: rgba(224, 180, 87, .5);
+}
+
+.site-record-index .breadcrumb a {
+    color: var(--steel);
+    border-bottom: 1px solid transparent;
+}
+
+.site-record-index .breadcrumb a:hover,
+.site-record-index .breadcrumb a:focus {
+    color: var(--gold-light);
+    border-bottom-color: rgba(224, 180, 87, .5);
+    text-decoration: none;
+}
+
+.record-wrap {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --------------------------------------------------------------------------
+   1. 开场：一个标题 + 三个总数
+   -------------------------------------------------------------------------- */
+.record-hero {
+    margin: 0 calc(50% - 50vw);
+    padding: 56px 0 48px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+    background:
+        radial-gradient(52% 120% at 50% 118%, rgba(224, 180, 87, .10), transparent 70%);
+}
+
+.record-kicker {
+    margin: 0 0 18px;
+    color: var(--steel);
+    font-size: 14px;
+    letter-spacing: .08em;
+}
+
+.record-kicker::before {
+    content: "";
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    margin-right: 12px;
+    vertical-align: middle;
+    background: var(--gold);
+}
+
+.record-hero-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 48px;
+    align-items: end;
+}
+
+.record-hero h1 {
+    margin: 0 0 14px;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: clamp(76px, 8.6vw, 128px);
+    font-weight: 400;
+    line-height: .98;
+    letter-spacing: .02em;
+}
+
+.record-lede {
+    max-width: 36em;
+    margin: 0;
+    color: #C9D3D2;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.record-totals {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid rgba(224, 180, 87, .28);
+}
+
+.record-totals > div {
+    padding: 4px 0 4px 26px;
+}
+
+.record-totals dt {
+    margin: 0 0 2px;
+    color: var(--steel);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    white-space: nowrap;
+}
+
+.record-totals dd {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 0;
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 54px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.record-totals dd small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   2. 区块骨架
+   -------------------------------------------------------------------------- */
+.record-section {
+    padding: 56px 0 20px;
+}
+
+.record-section + .record-section {
+    border-top: 1px solid rgba(244, 242, 236, .10);
+}
+
+.record-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 26px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+}
+
+.record-section-head h2 {
+    margin: 0;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: clamp(30px, 2.6vw, 40px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.record-section-head p {
+    max-width: 44em;
+    margin: 0;
+    color: var(--steel);
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   3. 四十年之最：两列，大数字，细线分隔
+   -------------------------------------------------------------------------- */
+.moment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    column-gap: 72px;
+}
+
+.moment {
+    border-top: 1px solid rgba(244, 242, 236, .10);
+}
+
+.moment:nth-child(-n + 2) {
+    border-top: 0;
+}
+
+.moment-link {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(0, 1fr);
+    gap: 8px 28px;
+    padding: 30px 0 30px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .2s ease;
+}
+
+.moment-link:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+    text-decoration: none;
+}
+
+.moment-value {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: clamp(64px, 6.4vw, 98px);
+    font-weight: 700;
+    line-height: .86;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+    transition: color .2s ease;
+}
+
+.moment-value small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: .04em;
+}
+
+.moment-body {
+    display: block;
+    padding-top: 8px;
+}
+
+.moment-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gold-light);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: .03em;
+}
+
+.moment-text {
+    display: block;
+    color: #C9D3D2;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.moment-meta {
+    display: block;
+    margin-top: 10px;
+    color: var(--steel-2);
+    font-size: 12px;
+    letter-spacing: .04em;
+}
+
+.moment-action {
+    grid-column: 2;
+    align-self: end;
+    justify-self: start;
+    margin-top: 14px;
+    padding-bottom: 2px;
+    color: var(--gold);
+    font-size: 13px;
+    border-bottom: 1px solid rgba(224, 180, 87, .34);
+}
+
+.moment-link:hover .moment-value,
+.moment-link:focus .moment-value {
+    color: var(--gold-light);
+}
+
+.moment-link:hover .moment-action,
+.moment-link:focus .moment-action {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+}
+
+/* --------------------------------------------------------------------------
+   4. 冠军的十一夜
+   -------------------------------------------------------------------------- */
+.final-list,
+.scorer-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.final-row {
+    border-top: 1px solid rgba(244, 242, 236, .08);
+}
+
+.final-row:first-child {
+    border-top: 0;
+}
+
+.final-row > a {
+    display: grid;
+    grid-template-columns: 104px minmax(220px, 1.25fr) 200px minmax(160px, 1fr);
+    gap: 24px;
+    align-items: center;
+    min-height: 88px;
+    padding: 12px 16px 12px 0;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.final-row > a:hover,
+.final-row > a:focus {
+    background: rgba(224, 180, 87, .06);
+    text-decoration: none;
+}
+
+.final-row > a:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: -2px;
+}
+
+.final-year {
+    color: var(--steel);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.final-champ {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.final-champ strong {
+    overflow: hidden;
+    color: var(--gold-light);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: .03em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.final-champ-label {
+    flex: none;
+    padding: 1px 6px;
+    color: var(--gold);
+    font-size: 11px;
+    line-height: 1.6;
+    border: 1px solid rgba(224, 180, 87, .36);
+}
+
+.final-score {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+    white-space: nowrap;
+}
+
+.final-score small {
+    color: var(--red-bright);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .02em;
+}
+
+.final-runner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: var(--steel);
+    font-size: 16px;
+    text-align: right;
+}
+
+.final-flag,
+.final-flag img,
+.final-flag.team-flag--code {
+    width: 28px;
+    height: 21px;
+}
+
+.final-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .22);
+    object-fit: cover;
+}
+
+.final-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   5. 历届总射手
+   -------------------------------------------------------------------------- */
+.scorer-row {
+    border-top: 1px solid rgba(244, 242, 236, .08);
+}
+
+.scorer-row:first-child {
+    border-top: 0;
+}
+
+.scorer-row > a {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 132px;
+    gap: 24px;
+    align-items: center;
+    min-height: 74px;
+    padding: 10px 16px 10px 0;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.scorer-row > a:hover,
+.scorer-row > a:focus {
+    background: rgba(224, 180, 87, .06);
+    text-decoration: none;
+}
+
+.scorer-row > a:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: -2px;
+}
+
+.scorer-rank {
+    color: rgba(224, 180, 87, .62);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.scorer-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.scorer-name strong {
+    overflow: hidden;
+    color: var(--flood);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: .01em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scorer-name small {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--steel);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .02em;
+}
+
+.scorer-flag,
+.scorer-flag img,
+.scorer-flag.team-flag--code {
+    width: 20px;
+    height: 15px;
+}
+
+.scorer-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .2);
+    object-fit: cover;
+}
+
+.scorer-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+}
+
+.scorer-goals {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.scorer-goals small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   6. 收场
+   -------------------------------------------------------------------------- */
+.record-outro {
+    margin-top: 64px;
+    padding: 72px 0 88px;
+    border-top: 1px solid rgba(224, 180, 87, .22);
+    background:
+        radial-gradient(52% 130% at 50% -20%, rgba(224, 180, 87, .10), transparent 70%);
+    text-align: center;
+}
+
+.record-outro p {
+    margin: 0 0 18px;
+    color: var(--steel);
+    font-size: 15px;
+}
+
+.record-cta {
+    display: inline-block;
+    padding: 0 2px 5px;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 26px;
+    letter-spacing: .03em;
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    transition: color .18s ease, border-color .18s ease;
+}
+
+.record-cta:hover,
+.record-cta:focus {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+    text-decoration: none;
+}
+
+.record-cta:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   7. 窄屏：只做不溢出兜底（桌面优先）
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+    .record-hero-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 30px;
+    }
+
+    .record-totals {
+        justify-self: start;
+    }
+
+    .final-row > a {
+        grid-template-columns: 84px minmax(180px, 1.2fr) 160px minmax(120px, 1fr);
+        gap: 18px;
+    }
+}
+
+@media (max-width: 860px) {
+    .record-section-head {
+        display: block;
+    }
+
+    .record-section-head p {
+        margin-top: 10px;
+        text-align: left;
+    }
+
+    .moment-grid {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
+
+    .moment:nth-child(2) {
+        border-top: 1px solid rgba(244, 242, 236, .10);
+    }
+
+    .final-row > a {
+        grid-template-columns: 76px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "year champ score"
+            "year runner runner";
+        gap: 6px 16px;
+        padding: 14px 0;
+    }
+
+    .final-year { grid-area: year; }
+    .final-champ { grid-area: champ; }
+    .final-score { grid-area: score; font-size: 32px; }
+    .final-runner { grid-area: runner; justify-content: flex-start; font-size: 14px; }
+}
+
+@media (max-width: 560px) {
+    .record-wrap {
+        padding: 0 18px;
+    }
+
+    .record-hero {
+        padding: 36px 0 34px;
+    }
+
+    .record-hero h1 {
+        font-size: 72px;
+    }
+
+    .record-lede {
+        font-size: 15px;
+    }
+
+    .record-totals {
+        width: 100%;
+        border-left: 0;
+        border-top: 1px solid rgba(224, 180, 87, .28);
+    }
+
+    .record-totals > div {
+        padding: 14px 18px 4px 0;
+    }
+
+    .record-totals dd {
+        font-size: 42px;
+    }
+
+    .record-section {
+        padding-top: 40px;
+    }
+
+    .moment-link {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .moment-value {
+        font-size: 66px;
+    }
+
+    .moment-action {
+        grid-column: 1;
+    }
+
+    .final-champ strong {
+        font-size: 20px;
+    }
+
+    .final-champ-label,
+    .final-runner .final-flag {
+        display: none;
+    }
+
+    .scorer-row > a {
+        grid-template-columns: 44px minmax(0, 1fr) 84px;
+        gap: 14px;
+    }
+
+    .scorer-name strong {
+        font-size: 18px;
+    }
+
+    .scorer-goals {
+        font-size: 34px;
+    }
+
+    .record-outro {
+        margin-top: 48px;
+        padding: 52px 0 64px;
+    }
+}

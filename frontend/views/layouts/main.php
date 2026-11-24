@@ -103,6 +103,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
     <title><?= Html::encode($pageTitle) ?> | <?= Html::encode(Yii::$app->name) ?></title>
     <?php // 显示字体在 CSS 之前预加载,避免切页时先看到回退字再跳变 ?>
     <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SmileySans-Subset.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SairaCondensed-600.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SairaCondensed-700.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <?php $this->head() ?>
 </head>
@@ -196,6 +197,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">本站</p>
                     <ul>
+                        <li><?= Html::a('纪录', ['/record/index']) ?></li>
                         <li><?= Html::a('世界杯留言簿', ['/site/discussion']) ?></li>
                         <li><?= Html::a('关于与文档', ['/team-info/index']) ?></li>
                         <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
