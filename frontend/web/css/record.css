@@ -11,15 +11,22 @@ body.site-record-index {
     color: var(--flood);
 }
 
-.site-record-index .atmo {
+/* 这一页不要全站的青绿极光层：art-r6 给非根页也开了 atmo，
+   记录页用黑金，所以更具体地盖掉它，避免页面中段出现一条绿色断带。 */
+body.site-record-index.site-body .atmo {
     background:
         radial-gradient(70% 46% at 50% -6%, rgba(224, 180, 87, .16), transparent 62%),
-        radial-gradient(46% 32% at 82% 12%, rgba(224, 180, 87, .07), transparent 68%),
         linear-gradient(180deg, #04070B 0%, #05090C 58%, #04070B 100%);
 }
 
-.site-record-index .atmo-glow {
+body.site-record-index.site-body .atmo-glow,
+body.site-record-index.site-body .atmo-pitch,
+body.site-record-index.site-body .atmo-era {
     display: none;
+}
+
+body.site-record-index.site-body .atmo-dots {
+    opacity: .22;
 }
 
 .site-record-index .atmo-dots {
@@ -56,6 +63,11 @@ body.site-record-index {
     text-decoration: none;
 }
 
+.record-page {
+    position: relative;
+    z-index: 1;
+}
+
 .record-wrap {
     width: 100%;
     max-width: 1320px;
@@ -69,7 +81,6 @@ body.site-record-index {
 .record-hero {
     position: relative;
     overflow: hidden;
-    margin: 0 calc(50% - 50vw);
     padding: 56px 0 48px;
     border-bottom: 1px solid rgba(224, 180, 87, .22);
     background:
