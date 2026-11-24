@@ -129,10 +129,18 @@ $this->title = '纪录';
                     <?php foreach ($nations as $nation): ?>
                         <tr>
                             <th scope="row">
-                                <a class="nation-name" href="<?= Html::encode(Url::to(['/team/view', 'id' => $nation['id']])) ?>">
-                                    <?= TeamFlag::html($nation['code'], $nation['name'], 'nation-flag') ?>
-                                    <strong><?= Html::encode($nation['name']) ?></strong>
-                                </a>
+                                <?php if ($nation['code'] === 'GER'): ?>
+                                    <?php // 西德与德国合并在这一行，任何单个球队页都只覆盖一半，所以不做链接。 ?>
+                                    <span class="nation-name">
+                                        <?= TeamFlag::html($nation['code'], $nation['name'], 'nation-flag') ?>
+                                        <strong><?= Html::encode($nation['name']) ?></strong>
+                                    </span>
+                                <?php else: ?>
+                                    <a class="nation-name" href="<?= Html::encode(Url::to(['/team/view', 'id' => $nation['id']])) ?>">
+                                        <?= TeamFlag::html($nation['code'], $nation['name'], 'nation-flag') ?>
+                                        <strong><?= Html::encode($nation['name']) ?></strong>
+                                    </a>
+                                <?php endif ?>
                             </th>
                             <td class="nation-title"><?= (int) $nation['titles'] ?></td>
                             <td class="nation-count"><?= (int) $nation['runner_up'] ?></td>
