@@ -1,0 +1,280 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— 后台美术层（R5）
+
+   和前台 art-r5.css 同一套“登记册”语言，但后台仍是工作间：
+   石墨导轨不动，工作区把白表降成纸面表格，铜色只做结构标记。
+   本文件最后加载，只覆盖颜色、边框、背景、焦点与悬停；
+   不改字号、间距、栅格、GridView 列定义与任何视图结构。 */
+
+/* ==========================================================================
+   1. 导轨：当前组与当前项的铜线
+   ========================================================================== */
+.wb-item.is-active,
+.wb-item[aria-current="page"] {
+    box-shadow: inset 2px 0 0 var(--accent);
+    color: var(--ink);
+}
+
+.wb-group.is-current > .wb-group-title {
+    color: var(--accent-2);
+}
+
+.wb-rail-foot {
+    border-top-color: var(--rail-line);
+}
+
+.wb-build {
+    color: var(--rail-muted);
+}
+
+/* ==========================================================================
+   2. 工作台：数字卡从白盒改成登记卡
+   ========================================================================== */
+.backend-main .dash-stat {
+    border: 0;
+    border-top: 2px solid var(--accent);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: var(--panel);
+    box-shadow: none;
+}
+
+.backend-main .dash-stat:hover,
+.backend-main .dash-stat:focus {
+    border-top-color: var(--ink);
+    background-color: var(--panel);
+    box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.backend-main .dash-stat-value {
+    color: var(--ink);
+}
+
+.backend-main .dash-stat-label {
+    color: var(--ink-2);
+}
+
+.backend-main .dash-stat-hint {
+    color: var(--muted);
+}
+
+/* ==========================================================================
+   3. 检索行：工作区的抬头线
+   ========================================================================== */
+.backend-main .form-inline {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.backend-main .form-control {
+    border-color: var(--line);
+    border-radius: 2px;
+    background-color: var(--panel);
+    box-shadow: none;
+}
+
+.backend-main .form-control:focus {
+    border-color: var(--green);
+    background-color: #FFFFFF;
+    box-shadow: inset 0 -2px 0 rgba(201, 138, 46, .55), 0 0 0 3px rgba(47, 107, 87, .10);
+}
+
+/* ==========================================================================
+   4. GridView：纸面表格，去掉表格盒与斑马底色
+   ========================================================================== */
+.backend-main .grid-view .table,
+.backend-main .table {
+    border: 0;
+    background-color: transparent;
+    color: var(--ink);
+}
+
+.backend-main .grid-view .table > thead > tr > th,
+.backend-main .table > thead > tr > th {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink-2);
+    background-color: var(--panel);
+    color: var(--ink-2);
+}
+
+.backend-main .table-bordered,
+.backend-main .table-bordered > thead > tr > th,
+.backend-main .table-bordered > tbody > tr > td,
+.backend-main .table-bordered > tbody > tr > th,
+.backend-main .table-bordered > tfoot > tr > td,
+.backend-main .table-bordered > tfoot > tr > th {
+    border-left: 0;
+    border-right: 0;
+}
+
+.backend-main .table > tbody > tr > td,
+.backend-main .table > tbody > tr > th {
+    border-top: 1px solid var(--line-soft);
+}
+
+.backend-main .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(18, 24, 20, .018);
+}
+
+.backend-main .table > tbody > tr:hover {
+    background-color: rgba(201, 138, 46, .055);
+}
+
+.backend-main .table > tbody > tr:last-child > td {
+    border-bottom: 1px solid var(--line);
+}
+
+.backend-main .table td {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 状态：细线标签，不再是彩色实心块 */
+.backend-main .label {
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    background-color: transparent;
+    font-weight: 500;
+}
+
+.backend-main .label-success {
+    border-color: rgba(47, 107, 87, .35);
+    background-color: transparent;
+    color: var(--green);
+}
+
+.backend-main .label-warning,
+.backend-main .label-danger {
+    background-color: transparent;
+}
+
+/* ==========================================================================
+   5. 操作按钮：查看 / 编辑 / 删除降成三种“印章”
+   ========================================================================== */
+.backend-main .table .btn,
+.backend-main .grid-view .btn {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: 500;
+}
+
+.backend-main .table .btn-default {
+    border-color: rgba(18, 24, 20, .22);
+    color: var(--ink-2);
+}
+
+.backend-main .table .btn-primary,
+.backend-main .table .btn-success {
+    border-color: rgba(47, 107, 87, .40);
+    color: var(--green);
+}
+
+.backend-main .table .btn-danger {
+    border-color: rgba(168, 35, 47, .35);
+    color: var(--red);
+}
+
+.backend-main .table .btn-default:hover,
+.backend-main .table .btn-default:focus {
+    border-color: var(--ink);
+    background-color: var(--ink);
+    color: var(--panel);
+}
+
+.backend-main .table .btn-primary:hover,
+.backend-main .table .btn-primary:focus,
+.backend-main .table .btn-success:hover,
+.backend-main .table .btn-success:focus {
+    border-color: var(--green);
+    background-color: var(--green);
+    color: var(--panel);
+}
+
+.backend-main .table .btn-danger:hover,
+.backend-main .table .btn-danger:focus {
+    border-color: var(--red);
+    background-color: var(--red);
+    color: var(--panel);
+}
+
+/* 表单页主操作仍是实心，不做降噪 */
+.backend-main > .btn-success,
+.backend-main .form-group + .btn-success {
+    box-shadow: inset 0 -2px 0 rgba(201, 138, 46, .65);
+}
+
+/* ==========================================================================
+   6. 提示 / 错误 / 分页
+   ========================================================================== */
+.backend-main .alert {
+    border: 0;
+    border-left: 2px solid var(--accent);
+    border-radius: 0;
+    background-color: rgba(201, 138, 46, .06);
+    color: var(--ink);
+    box-shadow: none;
+}
+
+.backend-main .alert-success {
+    border-left-color: var(--green);
+    background-color: rgba(47, 107, 87, .06);
+}
+
+.backend-main .alert-danger,
+.backend-main .alert-error {
+    border-left-color: var(--red);
+    background-color: rgba(168, 35, 47, .05);
+}
+
+.backend-main .help-block,
+.backend-main .has-error .help-block {
+    color: var(--red);
+}
+
+.backend-main .has-error .form-control {
+    border-color: var(--red);
+    box-shadow: none;
+}
+
+.backend-main .pagination > li > a,
+.backend-main .pagination > li > span {
+    border-color: transparent;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--ink-2);
+}
+
+.backend-main .pagination > li > a:hover,
+.backend-main .pagination > li > a:focus {
+    border-color: var(--line);
+    background-color: var(--panel);
+    color: var(--ink);
+}
+
+.backend-main .pagination > .active > a,
+.backend-main .pagination > .active > span {
+    border-color: var(--ink);
+    background-color: var(--ink);
+    color: var(--panel);
+}
+
+/* ==========================================================================
+   7. 焦点与选择
+   ========================================================================== */
+.backend-main ::selection {
+    background-color: rgba(47, 107, 87, .85);
+    color: var(--panel);
+}
+
+.backend-main a:focus-visible,
+.backend-main button:focus-visible,
+.backend-main [tabindex]:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+}
