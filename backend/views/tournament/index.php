@@ -16,41 +16,70 @@ use yii\helpers\Html;
 
 $this->title = '届次管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$activeFilters = [];
+$keyword = trim((string) $searchModel->q);
+if ($keyword !== '') {
+    $activeFilters[] = '关键词：' . $keyword;
+}
+$year = trim((string) $searchModel->year);
+if ($year !== '') {
+    $activeFilters[] = '年份：' . $year;
+}
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p><?= Html::a('新增届次', ['create'], ['class' => 'btn btn-success']) ?></p>
+<div class="admin-page-head">
+    <div>
+        <h1><?= Html::encode($this->title) ?></h1>
+        <p class="admin-page-sub">1986—2026 共十一届；年份决定记分牌墙的顺序与统计口径。</p>
+    </div>
+    <?= Html::a('新增届次', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
+</div>
 
 <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline', 'style' => 'margin:20px 0']) ?>
-    <div class="form-group">
-        <?= Html::label('关键词', 'tournament-q', ['class' => 'sr-only']) ?>
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'name' => 'q',
-            'id' => 'tournament-q',
-            'class' => 'form-control',
-            'placeholder' => '届次名称 / 东道主 / 赛制',
-            'maxlength' => 100,
-        ]) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::activeTextInput($searchModel, 'q', [
+                'name' => 'q',
+                'id' => 'tournament-q',
+                'class' => 'form-control',
+                'placeholder' => '届次名称、东道主或赛制',
+                'maxlength' => 100,
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--year">
+            <span class="admin-filter-label">年份</span>
+            <?= Html::activeTextInput($searchModel, 'year', [
+                'name' => 'year',
+                'id' => 'tournament-year',
+                'class' => 'form-control',
+                'placeholder' => '如 2022',
+                'inputmode' => 'numeric',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::label('年份', 'tournament-year', ['class' => 'sr-only']) ?>
-        <?= Html::activeTextInput($searchModel, 'year', [
-            'name' => 'year',
-            'id' => 'tournament-year',
-            'class' => 'form-control',
-            'placeholder' => '年份',
-            'style' => 'width:100px',
-        ]) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
+
+<?php if ($activeFilters): ?>
+    <div class="admin-filter-active" aria-label="当前筛选">
+        <span class="admin-filter-active-label">当前筛选</span>
+        <?php foreach ($activeFilters as $filterText): ?>
+            <span class="admin-chip"><?= Html::encode($filterText) ?></span>
+        <?php endforeach ?>
+        <?= Html::a('清除全部', ['index'], ['class' => 'admin-chip-clear']) ?>
+    </div>
+<?php endif ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '共 {totalCount} 届赛事,当前显示 {begin}–{end} 条',
-        'emptyText' => '暂无符合条件的届次。',
+        'emptyText' => '<div class="admin-empty"><strong>没有符合条件的届次。</strong><p>换一个年份，或</p>' . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm']) . '</div>',
         'columns' => [
             'year',
             [

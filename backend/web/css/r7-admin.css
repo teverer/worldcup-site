@@ -66,6 +66,7 @@
 
 .admin-filter-field--wide {
     flex: 1 1 190px;
+    max-width: 380px;
 }
 
 .admin-filter-field--year {
@@ -90,7 +91,7 @@
     flex: 0 0 auto;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
+    margin-left: 4px;
 }
 
 .admin-filter-actions .btn {
