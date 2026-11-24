@@ -22,7 +22,7 @@ use yii\helpers\Url;
         <?= $this->render('//partials/_name_lang', ['returnUrl' => Url::current() . '#charts']) ?>
     </header>
 
-    <p class="td-section-note">三张图：什么时候进、谁进、哪些队进了多少。小组积分的完整表格在「小组赛」。</p>
+    <p class="td-section-note">三张图：什么时候进、谁进、哪些队进了多少。小组积分的完整表格在「小组赛」。<?= Html::a('看四十年四强版图', Url::to(['/record/index', 'edition' => $model->id]) . '#four', ['class' => 'td-crosslink']) ?>。</p>
 
     <?= $this->render('@frontend/views/chart/_charts', ['tournamentId' => $model->id]) ?>
 </section>

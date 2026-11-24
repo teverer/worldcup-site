@@ -467,7 +467,245 @@ body.site-record-index.site-body .atmo-dots {
 }
 
 /* --------------------------------------------------------------------------
-   5. 冠军的十一夜
+   5. 四强版图：11 届 × 大洲的 100% 堆叠行
+   -------------------------------------------------------------------------- */
+.four-current {
+    margin: -4px 0 18px;
+    color: #C9D3D2;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.four-current strong {
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.four-current a {
+    margin-left: 8px;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(224, 180, 87, .4);
+}
+
+.four-current a:hover,
+.four-current a:focus {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+}
+
+.four-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 0 0 12px;
+    color: var(--steel);
+    font-size: 12px;
+    letter-spacing: .03em;
+}
+
+.four-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.four-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.four-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.four-row {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) minmax(0, 300px);
+    gap: 20px;
+    align-items: center;
+    min-height: 54px;
+    padding: 5px 10px 5px 4px;
+    border-top: 1px solid rgba(244, 242, 236, .08);
+    transition: background-color .18s ease;
+}
+
+.four-row:first-child {
+    border-top: 0;
+}
+
+.four-row.is-current {
+    background: linear-gradient(90deg, rgba(224, 180, 87, .12), rgba(224, 180, 87, 0) 78%);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.four-year {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.four-year:hover,
+.four-year:focus {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.four-year:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 3px;
+}
+
+.four-tag {
+    padding: 1px 5px;
+    color: #04070B;
+    background: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+.four-bar {
+    display: flex;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgba(244, 242, 236, .05);
+}
+
+.four-seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--w, 25) * 1%);
+    color: #04070B;
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    box-shadow: inset -1px 0 0 rgba(4, 7, 11, .5);
+}
+
+.four-seg:last-child {
+    box-shadow: none;
+}
+
+.cont-europe {
+    background: #E0B457;
+}
+
+.cont-south-america {
+    background: #7FC8A9;
+}
+
+.cont-africa {
+    background: #C97A4A;
+}
+
+.cont-asia {
+    background: #7FA8C9;
+}
+
+.cont-north-america {
+    background: #9C8FC4;
+}
+
+.cont-oceania,
+.cont-other {
+    background: #6E8389;
+}
+
+.four-names {
+    overflow: hidden;
+    color: var(--steel);
+    font-size: 12px;
+    letter-spacing: .02em;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.four-row:hover .four-names {
+    color: #C9D3D2;
+}
+
+/* 从某一届进入时：其余行退后但仍可读；悬停或键盘聚焦立即恢复。 */
+.four-list.has-current .four-row:not(.is-current) .four-year,
+.four-list.has-current .four-row:not(.is-current) .four-bar,
+.four-list.has-current .four-row:not(.is-current) .four-names {
+    opacity: .55;
+    transition: opacity .18s ease;
+}
+
+.four-list.has-current .four-row:not(.is-current):hover .four-year,
+.four-list.has-current .four-row:not(.is-current):hover .four-bar,
+.four-list.has-current .four-row:not(.is-current):hover .four-names,
+.four-list.has-current .four-row:not(.is-current):focus-within .four-year,
+.four-list.has-current .four-row:not(.is-current):focus-within .four-bar,
+.four-list.has-current .four-row:not(.is-current):focus-within .four-names {
+    opacity: 1;
+}
+
+.four-data {
+    margin-top: 18px;
+}
+
+.four-data summary {
+    color: var(--steel);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.four-data summary:hover,
+.four-data summary:focus {
+    color: var(--gold-light);
+}
+
+.four-table {
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: collapse;
+    color: #C9D3D2;
+    font-size: 13px;
+}
+
+.four-table th,
+.four-table td {
+    padding: 9px 12px;
+    font-weight: 400;
+    text-align: left;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+}
+
+.four-table thead th {
+    color: var(--steel);
+    font-size: 12px;
+    letter-spacing: .05em;
+}
+
+.four-table tbody th {
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   6. 冠军的十一夜
    -------------------------------------------------------------------------- */
 .final-list,
 .scorer-list {
@@ -877,6 +1115,11 @@ body.site-record-index.site-body .atmo-dots {
         grid-template-columns: 84px minmax(180px, 1.2fr) 160px minmax(120px, 1fr);
         gap: 18px;
     }
+
+    .four-row {
+        grid-template-columns: 88px minmax(0, 1fr) minmax(0, 240px);
+        gap: 16px;
+    }
 }
 
 @media (max-width: 860px) {
@@ -920,6 +1163,20 @@ body.site-record-index.site-body .atmo-dots {
             "year runner runner";
         gap: 6px 16px;
         padding: 14px 0;
+    }
+
+    .four-row {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 12px;
+        padding-right: 0;
+    }
+
+    .four-names {
+        display: none;
+    }
+
+    .four-current {
+        font-size: 14px;
     }
 
     .final-year { grid-area: year; }
@@ -974,6 +1231,27 @@ body.site-record-index.site-body .atmo-dots {
 
     .moment-action {
         grid-column: 1;
+    }
+
+    .four-row {
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .four-year {
+        font-size: 21px;
+    }
+
+    .four-tag {
+        font-size: 9px;
+    }
+
+    .four-bar {
+        height: 26px;
+    }
+
+    .four-seg {
+        font-size: 13px;
     }
 
     .final-champ strong {

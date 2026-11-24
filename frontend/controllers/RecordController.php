@@ -8,6 +8,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Records;
+use Yii;
 use yii\web\Controller;
 
 class RecordController extends Controller
@@ -28,6 +29,15 @@ class RecordController extends Controller
             'depends' => [\yii\bootstrap\BootstrapAsset::class],
         ]);
 
-        return $this->render('index', Records::all());
+        // 从某一届的统计页跳进来时带 ?edition=<id>：四强版图会把那一行标成「本届」，
+        // 其余行退后，但不隐藏，读者仍能横向比较。
+        $requestedEdition = Yii::$app->request->get('edition');
+        $currentEditionId = is_scalar($requestedEdition) && ctype_digit((string) $requestedEdition)
+            ? (int) $requestedEdition
+            : null;
+
+        return $this->render('index', array_merge(Records::all(), [
+            'currentEditionId' => $currentEditionId,
+        ]));
     }
 }

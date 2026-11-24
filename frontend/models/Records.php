@@ -43,6 +43,7 @@ class Records
             ],
             'moments' => self::moments($finals, $scorers),
             'clock' => self::goalClock(),
+            'four' => self::finalFour(),
             'finals' => $finals,
             'nations' => self::finalNations($finals),
             'scorers' => $scorers,
@@ -209,6 +210,105 @@ class Records
             'editions' => $editions,
             'max_late' => $maxLate,
             'min_late' => $minLate,
+        ];
+    }
+
+    /**
+     * 「四强版图」：每届半决赛四支球队按大洲的构成。
+     *
+     * 一行一届，四支球队各占四分之一；按洲着色，占比天然是 25% 的倍数。
+     * 这里只做跨届聚合，球队名保留在行 title / 当前届上下文里。
+     *
+     * @return array
+     */
+    private static function finalFour()
+    {
+        $rows = (new Query())
+            ->select([
+                'tournament_id' => 't.id',
+                'year' => 't.year',
+                'host' => 't.host_country',
+                'team_id' => 'tm.id',
+                'team_name' => 'tm.name',
+                'team_code' => 'tm.code',
+                'continent' => 'tm.continent',
+            ])
+            ->from(['g' => '{{%game}}'])
+            ->innerJoin(['t' => '{{%tournament}}'], 't.id = g.tournament_id')
+            ->innerJoin(['tm' => '{{%team}}'], 'tm.id = g.home_team_id OR tm.id = g.away_team_id')
+            ->where(['g.stage' => Game::STAGE_SEMI_FINAL, 'g.status' => Game::STATUS_FINISHED])
+            ->orderBy(['t.year' => SORT_DESC, 'tm.id' => SORT_ASC])
+            ->all();
+
+        $order = ['欧洲', '南美洲', '非洲', '亚洲', '中北美', '大洋洲', '其他'];
+        $editions = [];
+        foreach ($rows as $row) {
+            $id = (int) $row['tournament_id'];
+            if (!isset($editions[$id])) {
+                $editions[$id] = [
+                    'tournament_id' => $id,
+                    'year' => (int) $row['year'],
+                    'host' => (string) $row['host'],
+                    'teams' => [],
+                ];
+            }
+            $teamId = (int) $row['team_id'];
+            if (!isset($editions[$id]['teams'][$teamId])) {
+                $editions[$id]['teams'][$teamId] = [
+                    'name' => (string) $row['team_name'],
+                    'code' => (string) $row['team_code'],
+                    'continent' => $row['continent'] !== null && $row['continent'] !== ''
+                        ? (string) $row['continent']
+                        : '其他',
+                ];
+            }
+        }
+
+        $usedContinents = [];
+        foreach ($editions as $id => $edition) {
+            $teams = array_values($edition['teams']);
+            $counts = [];
+            foreach ($teams as $team) {
+                $counts[$team['continent']] = isset($counts[$team['continent']])
+                    ? $counts[$team['continent']] + 1
+                    : 1;
+            }
+
+            $segments = [];
+            foreach ($order as $continent) {
+                if (empty($counts[$continent])) {
+                    continue;
+                }
+                $count = (int) $counts[$continent];
+                $segments[] = [
+                    'continent' => $continent,
+                    'count' => $count,
+                    'percent' => $count * 25,
+                ];
+                $usedContinents[$continent] = true;
+            }
+
+            usort($teams, static function ($a, $b) use ($order) {
+                $orderIndex = array_flip($order);
+
+                return $orderIndex[$a['continent']] <=> $orderIndex[$b['continent']]
+                    ?: strcmp($a['name'], $b['name']);
+            });
+
+            $editions[$id]['teams'] = $teams;
+            $editions[$id]['segments'] = $segments;
+        }
+
+        $legends = [];
+        foreach ($order as $continent) {
+            if (isset($usedContinents[$continent])) {
+                $legends[] = $continent;
+            }
+        }
+
+        return [
+            'legends' => $legends,
+            'editions' => array_values($editions),
         ];
     }
 

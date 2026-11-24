@@ -8,6 +8,8 @@
  * @var array $totals
  * @var array $moments
  * @var array $clock
+ * @var array $four
+ * @var int|null $currentEditionId
  * @var array $finals
  * @var array $nations
  * @var array $scorers
@@ -123,6 +125,110 @@ $this->title = '纪录';
                 </table>
             </div>
             <p class="heat-hint">左右滑动看完整时段</p>
+        </div>
+    </section>
+
+    <section class="record-section record-section--four" id="four" aria-labelledby="record-four-title">
+        <div class="record-wrap">
+            <header class="record-section-head">
+                <h2 id="record-four-title">四强版图</h2>
+                <p>每一行是一届的半决赛四强，按大洲着色、格内是人数。点年份进入那一届。</p>
+            </header>
+
+            <?php
+            $currentFour = null;
+            foreach ($four['editions'] as $edition) {
+                if ($currentEditionId !== null && (int) $edition['tournament_id'] === (int) $currentEditionId) {
+                    $currentFour = $edition;
+                    break;
+                }
+            }
+            $contSlug = [
+                '欧洲' => 'europe',
+                '南美洲' => 'south-america',
+                '非洲' => 'africa',
+                '亚洲' => 'asia',
+                '中北美' => 'north-america',
+                '大洋洲' => 'oceania',
+                '其他' => 'other',
+            ];
+            ?>
+
+            <?php if ($currentFour !== null): ?>
+                <p class="four-current">
+                    你从 <strong><?= (int) $currentFour['year'] ?></strong> 届进来 · 四强：
+                    <?= Html::encode(implode('、', array_map(static function ($team) {
+                        return $team['name'];
+                    }, $currentFour['teams']))) ?>
+                    <a href="<?= Html::encode(Url::to(['/tournament/view', 'id' => $currentFour['tournament_id']])) ?>">回到这一届</a>
+                </p>
+            <?php endif ?>
+
+            <div class="four-legend" aria-hidden="true">
+                <?php foreach ($four['legends'] as $continent): ?>
+                    <span class="four-legend-item">
+                        <i class="four-swatch cont-<?= Html::encode($contSlug[$continent] ?? 'other') ?>"></i>
+                        <?= Html::encode($continent) ?>
+                    </span>
+                <?php endforeach ?>
+            </div>
+
+            <ol class="four-list<?= $currentFour !== null ? ' has-current' : '' ?>">
+                <?php foreach ($four['editions'] as $edition): ?>
+                    <?php
+                    $isCurrent = $currentFour !== null && (int) $edition['tournament_id'] === (int) $currentFour['tournament_id'];
+                    $teamNames = implode('、', array_map(static function ($team) {
+                        return $team['name'];
+                    }, $edition['teams']));
+                    $composition = implode('，', array_map(static function ($segment) {
+                        return $segment['continent'] . ' ' . $segment['count'] . ' 队';
+                    }, $edition['segments']));
+                    ?>
+                    <li class="four-row<?= $isCurrent ? ' is-current' : '' ?>">
+                        <a class="four-year"
+                           href="<?= Html::encode(Url::to(['/tournament/view', 'id' => $edition['tournament_id']])) ?>"
+                           aria-label="<?= Html::encode($edition['year'] . ' 届四强：' . $teamNames) ?>"
+                           <?= $isCurrent ? 'aria-current="true"' : '' ?>>
+                            <?= (int) $edition['year'] ?>
+                            <?php if ($isCurrent): ?><span class="four-tag">本届</span><?php endif ?>
+                        </a>
+                        <span class="four-bar" role="img" aria-label="<?= Html::encode($composition) ?>">
+                            <?php foreach ($edition['segments'] as $segment): ?>
+                                <span class="four-seg cont-<?= Html::encode($contSlug[$segment['continent']] ?? 'other') ?>"
+                                      style="--w: <?= (int) $segment['percent'] ?>"
+                                      aria-hidden="true"><?= (int) $segment['count'] ?></span>
+                            <?php endforeach ?>
+                        </span>
+                        <span class="four-names" title="<?= Html::encode($teamNames) ?>"><?= Html::encode($teamNames) ?></span>
+                    </li>
+                <?php endforeach ?>
+            </ol>
+
+            <details class="four-data">
+                <summary>查看四强名单数据表</summary>
+                <table class="four-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">届次</th>
+                            <th scope="col">四强</th>
+                            <th scope="col">大洲构成</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($four['editions'] as $edition): ?>
+                            <tr>
+                                <th scope="row"><?= (int) $edition['year'] ?></th>
+                                <td><?= Html::encode(implode('、', array_map(static function ($team) {
+                                    return $team['name'];
+                                }, $edition['teams']))) ?></td>
+                                <td><?= Html::encode(implode(' / ', array_map(static function ($segment) {
+                                    return $segment['continent'] . ' ' . $segment['count'];
+                                }, $edition['segments']))) ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </details>
         </div>
     </section>
 

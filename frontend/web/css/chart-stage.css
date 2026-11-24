@@ -360,3 +360,17 @@ body.site-game .game-progress .game-section-head p {
         font-size: 13px;
     }
 }
+
+/* 统计页 → 纪录页四强版图的跨页入口：只做一行文字链接，不抢主图。 */
+.td-section-note .td-crosslink {
+    margin-left: 6px;
+    color: var(--green-action);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(19, 85, 60, .35);
+}
+
+.td-section-note .td-crosslink:hover,
+.td-section-note .td-crosslink:focus {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
