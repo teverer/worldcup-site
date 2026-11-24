@@ -417,6 +417,14 @@ body.site-site-index .site-footer {
     max-width: 1240px;
 }
 
+/* 1440 以上再放宽一档：内容 1320，和 1366 的左右留白接近，
+   大屏不会显得“所有东西挤在中间”。 */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
 .card,
 .news-card,
 .tournament-card,

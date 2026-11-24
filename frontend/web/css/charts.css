@@ -38,7 +38,7 @@
 .chart-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 12px;
+    gap: 16px;
 }
 
 /* 数据表改为卡内覆盖层后,卡片高度不再变化;两张并排卡继续保持等底。 */
@@ -47,7 +47,7 @@
     position: relative;
     min-width: 0;
     overflow: hidden;
-    padding: 16px 18px 8px;
+    padding: 22px 24px 10px;
     border: 1px solid var(--line);
     border-radius: 2px;
     background-color: var(--paper-2);
@@ -59,16 +59,17 @@
 }
 
 .chart-card-head h3 {
-    margin: 0 0 4px;
+    margin: 0 0 6px;
     color: var(--ink);
-    font-size: var(--fs-lg);
+    font-size: 22px;
     font-weight: var(--font-weight-semibold);
+    letter-spacing: -.01em;
 }
 
 .chart-caption {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 14.5px;
     line-height: 1.6;
     text-wrap: pretty;
 }
