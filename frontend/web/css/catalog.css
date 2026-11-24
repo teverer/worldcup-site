@@ -659,6 +659,13 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .td-aside-link,
+    .td-aside-years a {
+        transition: none;
+    }
+}
+
 /* 三列表/五列表不需要铺满 1200px；把正文控制在可读行宽内。
    整段（标题 + 附表 / 筛选）一起收窄，右侧的姓名开关才能和表尾对齐。
    选择器带上容器，压过 Bootstrap 后加载的 .table { max-width:100% }。 */

@@ -623,6 +623,17 @@ body.site-site-index {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .wall-ways a,
+    .wall-empty-cta,
+    .wall-about-link {
+        transition: none;
+    }
+
+    .wall-ways a:hover,
+    .wall-ways a:focus {
+        padding-left: 0;
+    }
+
     .wall-comment-name {
         transition: none;
     }
