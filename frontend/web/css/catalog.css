@@ -685,13 +685,15 @@
     max-width: 880px;
 }
 
+/* 球员页只有一条主内容轴：读数带、生涯图、生涯表同宽，
+   在宽屏上铺满版心，不再让右侧空一大块。 */
 .pd-section:has(.pd-table),
 .pd-section.pd-career {
-    max-width: 960px;
+    max-width: none;
 }
 
 .pd-section .pd-table {
-    max-width: 960px;
+    max-width: none;
 }
 
 .td-section-head {
