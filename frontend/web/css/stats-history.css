@@ -1328,8 +1328,9 @@ body.site-tournament-view .site-main {
     position: relative;
     isolation: isolate;
     scroll-margin-top: calc(var(--td-tab-h) + 8px);
-    margin-top: clamp(56px, 7vw, 88px);
-    padding: clamp(44px, 5vw, 72px) 0 clamp(44px, 6vw, 80px);
+    /* 渐变已经承担过渡，不再用 160px 的 margin+padding 制造“断层”。 */
+    margin-top: clamp(16px, 2.2vw, 32px);
+    padding: clamp(24px, 2.8vw, 36px) 0 clamp(44px, 6vw, 80px);
     color: var(--flood);
 }
 
@@ -1538,8 +1539,8 @@ body.site-tournament-view .site-main {
 
 @media (max-width: 767px) {
     .stats-history {
-        margin-top: 48px;
-        padding-top: 36px;
+        margin-top: 20px;
+        padding-top: 32px;
     }
 
     .stats-history-nav {
@@ -1621,4 +1622,12 @@ body.site-tournament-view .site-main {
 .stats-history:has(#hist-four:target) .stats-history-nav a[href="#hist-four"] {
     border-color: var(--gold);
     color: var(--gold-light);
+}
+
+
+.stats-history-nav-label {
+    align-self: center;
+    color: var(--steel-2);
+    font-size: 12px;
+    letter-spacing: .10em;
 }

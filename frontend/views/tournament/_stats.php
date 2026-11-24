@@ -47,7 +47,8 @@ $this->registerCssFile('@web/css/stats-history.css');
             </p>
         </header>
 
-        <nav class="stats-history-nav" aria-label="历史坐标">
+        <nav class="stats-history-nav" aria-label="本页三块，可跳转">
+            <span class="stats-history-nav-label">跳到</span>
             <a href="#hist-scorers">历届总射手</a>
             <a href="#hist-nations">谁常在决赛</a>
             <a href="#hist-four">四强版图</a>

@@ -1139,7 +1139,7 @@ body.site-team-view .td-intro {
    锁窄后居中,不在右侧留 400px 空。 */
 @media (min-width: 1101px) {
     .team-detail .td-section[aria-labelledby="td-roster-title"] {
-        max-width: 920px;
-        margin-inline: auto;
+        max-width: 1060px;
+        margin-inline: 0;
     }
 }
