@@ -1150,3 +1150,30 @@ body:not(.site-site-index) .goal-item .goal-dot {
         letter-spacing: .02em;
     }
 }
+
+/* 小组积分表：出线队用左缘色轨，位置+颜色双编码 */
+body:not(.site-site-index) .group-table > tbody > tr:has(.group-qual--top) > td:first-child {
+    box-shadow: inset 3px 0 0 var(--green-light);
+}
+
+body:not(.site-site-index) .group-table > tbody > tr:has(.group-qual--third) > td:first-child {
+    box-shadow: inset 3px 0 0 var(--gold-light);
+}
+
+/* 品牌：给纯文字字标加一个 WC 印记，和数据页的 WC 章同一套 */
+body .site-brand::before {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border: 1px solid rgba(224, 180, 87, .62);
+    border-radius: 2px;
+    background-color: #0B1A15;
+    color: var(--gold);
+    font-family: var(--font-cn-display);
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: .04em;
+    content: "WC";
+}
