@@ -10,6 +10,7 @@
  */
 
 use common\components\CommentTarget;
+use common\components\TeamFlag;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -62,34 +63,48 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
 
                     <span class="board-main">
                         <span class="board-name"><?= Html::encode($edition['name']) ?></span>
-                        <span class="board-host">
-                            东道主 <?= Html::encode($edition['host']) ?>
-                            <span aria-hidden="true">·</span>
-                            第 <?= Html::encode((string) $edition['ordinal']) ?> 届
+                        <span class="board-meta">
+                            <span class="board-host">
+                                东道主 <?= Html::encode($edition['host']) ?>
+                                <span aria-hidden="true">·</span>
+                                第 <?= Html::encode((string) $edition['ordinal']) ?> 届
+                            </span>
+                            <span class="board-volume">
+                                <?= Html::encode((string) $edition['games']) ?> 场 /
+                                <?= Html::encode((string) $edition['goals']) ?> 球
+                            </span>
                         </span>
+                    </span>
+
+                    <?php if ($hasChampion): ?>
                         <span class="board-final">
-                            <?php if ($hasChampion): ?>
-                                <span>冠军 <strong class="board-champion"><?= Html::encode($final['champion']) ?></strong></span>
-                                <span>
-                                    决赛
-                                    <span class="board-score"><?= Html::encode($final['champion_score'] . '–' . $final['opponent_score']) ?></span>
-                                    <?= Html::encode($final['opponent']) ?>
+                            <span class="board-side board-side--champion">
+                                <?= TeamFlag::html($final['champion_code'], $final['champion'], 'board-flag') ?>
+                                <span class="board-side-text">
+                                    <span class="board-role">冠军</span>
+                                    <span class="board-team"><?= Html::encode($final['champion']) ?></span>
                                 </span>
+                            </span>
+                            <span class="board-score-wrap">
+                                <span class="board-score"><?= Html::encode($final['champion_score'] . '–' . $final['opponent_score']) ?></span>
                                 <?php if ($final['has_penalty']): ?>
                                     <span class="board-badge">点球 <?= Html::encode(str_replace('-', '–', $final['penalty_text'])) ?></span>
                                 <?php elseif ($final['extra_time']): ?>
                                     <span class="board-badge">加时</span>
                                 <?php endif ?>
-                            <?php else: ?>
-                                <span>决赛数据待补</span>
-                            <?php endif ?>
+                            </span>
+                            <span class="board-side board-side--runner">
+                                <span class="board-side-text">
+                                    <span class="board-role">亚军</span>
+                                    <span class="board-team"><?= Html::encode($final['opponent']) ?></span>
+                                </span>
+                                <?= TeamFlag::html($final['opponent_code'], $final['opponent'], 'board-flag') ?>
+                            </span>
                         </span>
-                    </span>
+                    <?php else: ?>
+                        <span class="board-final board-final--pending">决赛数据待补</span>
+                    <?php endif ?>
 
-                    <span class="board-volume">
-                        <?= Html::encode((string) $edition['games']) ?> 场 /
-                        <?= Html::encode((string) $edition['goals']) ?> 球
-                    </span>
                     <span class="board-enter">进入</span>
                 </a>
             <?php endforeach ?>
