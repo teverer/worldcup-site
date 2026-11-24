@@ -8,12 +8,12 @@
 }
 
 .chart-canvas--team {
-    height: 280px;
+    height: 380px;
 }
 
 @media (max-width: 860px) {
     .chart-canvas--team {
-        height: 250px;
+        height: 320px;
     }
 }
 
@@ -23,6 +23,6 @@
     }
 
     .chart-canvas--team {
-        height: 230px;
+        height: 300px;
     }
 }

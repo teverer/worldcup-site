@@ -81,6 +81,7 @@ $homeSeries[] = [$maxMinute, $homeScore];
 $awaySeries[] = [$maxMinute, $awayScore];
 
 $this->registerCssFile('@web/css/charts.css');
+$this->registerCssFile('@web/css/chart-stage.css');
 $this->registerCssFile('@web/css/game-chart.css');
 $this->registerJsFile('@web/js/charts.js', [
     'position' => View::POS_END,

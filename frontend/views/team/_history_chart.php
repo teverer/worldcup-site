@@ -43,6 +43,7 @@ usort($points, function ($a, $b) {
 });
 
 $this->registerCssFile('@web/css/charts.css');
+$this->registerCssFile('@web/css/chart-stage.css');
 $this->registerCssFile('@web/css/team-chart.css');
 $this->registerJsFile('@web/js/charts.js', [
     'position' => View::POS_END,

@@ -3,17 +3,17 @@
    模块:届次与比赛 —— 比赛详情「比分走势」图的容器尺寸 */
 
 .chart-canvas--game {
-    height: 240px;
+    height: 380px;
 }
 
 @media (max-width: 860px) {
     .chart-canvas--game {
-        height: 220px;
+        height: 320px;
     }
 }
 
 @media (max-width: 480px) {
     .chart-canvas--game {
-        height: 200px;
+        height: 300px;
     }
 }

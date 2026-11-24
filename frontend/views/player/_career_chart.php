@@ -50,6 +50,7 @@ if (!$points || $totalGoals + $totalAssists < 1) {
 }
 
 $this->registerCssFile('@web/css/charts.css');
+$this->registerCssFile('@web/css/chart-stage.css');
 $this->registerCssFile('@web/css/player-chart.css');
 $this->registerJsFile('@web/js/charts.js', [
     'position' => View::POS_END,

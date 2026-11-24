@@ -33,6 +33,7 @@ if ($tournamentId < 1) {
 }
 
 $this->registerCssFile('@web/css/charts.css');
+$this->registerCssFile('@web/css/chart-stage.css');
 // ECharts 不在首屏加载:charts.js 在统计面板第一次可见时才注入本地脚本。
 // 本地 /js/vendor/echarts.min.js(Apache-2.0),避免部署环境无外网或 CDN 不可用。
 $this->registerJsFile('@web/js/charts.js', [
@@ -90,10 +91,10 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">前 7 队单列，其余合并为「其他」；占比以全届总进球为分母，不随图例变化。</p>
+                <p class="chart-caption">前 7 队单列，其余合并为「其他」；条长与占比都固定以全届总进球为分母，不随图例变化。</p>
             </div>
-            <div id="chart-team-goals" class="chart-canvas chart-canvas--pie"
-                 data-chart="team-goals" role="img" aria-label="各队进球分布饼图">
+            <div id="chart-team-goals" class="chart-canvas chart-canvas--share"
+                 data-chart="team-goals" role="img" aria-label="各队进球占比构成条">
                 <p class="chart-loading">图表加载中…</p>
             </div>
             <details class="chart-data">

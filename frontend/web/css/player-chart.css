@@ -16,17 +16,17 @@
 }
 
 .chart-canvas--player {
-    height: 300px;
+    height: 400px;
 }
 
 /* 只有一届时不留一整块横轴空白,图也更矮。 */
 .chart-canvas--player.is-single {
-    height: 220px;
+    height: 300px;
 }
 
 @media (max-width: 860px) {
     .chart-canvas--player {
-        height: 260px;
+        height: 320px;
     }
 }
 
@@ -36,6 +36,6 @@
     }
 
     .chart-canvas--player {
-        height: 240px;
+        height: 300px;
     }
 }
