@@ -1161,3 +1161,25 @@ body .site-brand::before {
         color: var(--gold-light);
     }
 }
+
+/* 比赛卡：队旗略放大，和 24px 队名成比例 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .game-item-team {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    body:not(.site-site-index) .game-item-team:first-child {
+        justify-content: flex-end;
+    }
+
+    body:not(.site-site-index) .game-item-team:last-child {
+        justify-content: flex-start;
+    }
+
+    body:not(.site-site-index) .game-item-team .team-flag {
+        width: 30px;
+        height: 22px;
+    }
+}
