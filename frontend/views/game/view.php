@@ -30,6 +30,21 @@ $matchTime = $model->match_time !== null && $model->match_time !== ''
 $venue = $model->venue !== null && $model->venue !== '' ? $model->venue : null;
 $hasScore = $model->home_score !== null && $model->away_score !== null;
 $mainScore = $hasScore ? $model->home_score . '–' . $model->away_score : 'VS';
+
+// 决赛的胜者就是冠军；点球决胜按点球比分判定。其他轮次不标冠军。
+$championSide = null;
+if ($hasScore && $model->stage === Game::STAGE_FINAL) {
+    $homeScore = (int) $model->home_score;
+    $awayScore = (int) $model->away_score;
+    if ($homeScore > $awayScore) {
+        $championSide = 'home';
+    } elseif ($awayScore > $homeScore) {
+        $championSide = 'away';
+    } elseif ($model->home_penalty_score !== null && $model->away_penalty_score !== null) {
+        $championSide = (int) $model->home_penalty_score > (int) $model->away_penalty_score ? 'home' : 'away';
+    }
+}
+$championName = $championSide === 'home' ? $homeName : ($championSide === 'away' ? $awayName : null);
 $penaltyText = $model->home_penalty_score !== null && $model->away_penalty_score !== null
     ? '点球 ' . $model->home_penalty_score . '–' . $model->away_penalty_score
     : null;
@@ -121,10 +136,13 @@ if ($statusValue === Game::STATUS_PENDING) {
                 <span aria-hidden="true">·</span>
             <?php endif ?>
             <?= Html::encode($model->stage) ?>
+            <?php if ($championName !== null): ?>
+                <span class="game-champion">冠军 <?= Html::encode($championName) ?></span>
+            <?php endif ?>
         </p>
 
         <h1 class="game-scoreboard" aria-label="<?= Html::encode($homeName . ' 对 ' . $awayName . '，' . $scoreLabel) ?>">
-            <span class="game-team">
+            <span class="game-team<?= $championSide === 'home' ? ' is-champion' : '' ?>">
                 <?= TeamFlag::html($model->homeTeam !== null ? $model->homeTeam->code : '', $homeName, 'team-flag--lg') ?>
                 <?php if ($model->homeTeam !== null): ?>
                     <?= Html::a(Html::encode($homeName), ['/team/view', 'id' => $model->home_team_id]) ?>
@@ -138,7 +156,7 @@ if ($statusValue === Game::STATUS_PENDING) {
                     <span class="game-penalty"><?= Html::encode($penaltyText) ?></span>
                 <?php endif ?>
             </span>
-            <span class="game-team">
+            <span class="game-team<?= $championSide === 'away' ? ' is-champion' : '' ?>">
                 <?php if ($model->awayTeam !== null): ?>
                     <?= Html::a(Html::encode($awayName), ['/team/view', 'id' => $model->away_team_id]) ?>
                 <?php else: ?>

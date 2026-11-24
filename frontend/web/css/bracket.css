@@ -136,8 +136,8 @@
     flex: 1;
     min-width: 0;
     overflow: hidden;
-    color: rgba(244, 242, 236, .72);
-    font-size: 14px;
+    color: rgba(244, 242, 236, .74);
+    font-size: 15px;
     line-height: 1.35;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -149,7 +149,7 @@
     min-width: 1.2em;
     color: rgba(244, 242, 236, .6);
     font-family: var(--font-display);
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -198,11 +198,11 @@
 }
 
 .bt-card--qf .bt-name {
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .bt-card--qf .bt-score {
-    font-size: 18px;
+    font-size: 19px;
 }
 
 .bt-card--sf {
@@ -214,11 +214,11 @@
 }
 
 .bt-card--sf .bt-name {
-    font-size: 16px;
+    font-size: 17px;
 }
 
 .bt-card--sf .bt-score {
-    font-size: 22px;
+    font-size: 23px;
 }
 
 /* 决赛是整张赛程表的主角：最高、金色、带一点灯光 */
@@ -236,12 +236,12 @@
 }
 
 .bt-card--final .bt-name {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 500;
 }
 
 .bt-card--final .bt-score {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
 }
 
@@ -299,25 +299,55 @@
 }
 
 .bt-third {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(300px, 360px) minmax(0, 1fr);
     align-items: center;
-    gap: 16px;
+    gap: 12px 28px;
     margin-top: clamp(22px, 3vw, 30px);
-    padding-top: 18px;
-    border-top: 1px solid var(--line-dark);
+    padding: 16px 20px;
+    border: 1px solid var(--line-dark);
+    border-radius: 2px;
+    background-color: rgba(10, 27, 34, .55);
 }
 
 .bt-third__title {
     margin: 0;
     color: var(--steel);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: .06em;
     white-space: nowrap;
 }
 
 .bt-third__card {
-    width: min(100%, 300px);
+    width: 100%;
+}
+
+.bt-third__note {
+    margin: 0;
+    color: var(--steel-2);
+    font-size: 13.5px;
+    line-height: 1.6;
+    text-align: right;
+}
+
+.bt-extra__summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bt-extra__summary::after {
+    margin-left: auto;
+    color: var(--steel-2);
+    content: "展开";
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: .04em;
+}
+
+.bt-extra[open] .bt-extra__summary::after {
+    content: "收起";
 }
 
 /* ==========================================================================
@@ -390,13 +420,18 @@
     }
 
     .bt-third {
-        align-items: flex-start;
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
         gap: 10px;
+        padding: 14px;
     }
 
     .bt-third__card {
         width: 100%;
+    }
+
+    .bt-third__note {
+        text-align: left;
     }
 }
 

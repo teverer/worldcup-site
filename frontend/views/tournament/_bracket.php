@@ -445,6 +445,7 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
             <div class="bt-third">
                 <h3 class="bt-third__title">三四名决赛</h3>
                 <div class="bt-third__card"><?= $renderCard($thirdPlaceMatch, 'consolation') ?></div>
+                <p class="bt-third__note">两场半决赛的负者；季军战不计入冠军路径。</p>
             </div>
         <?php endif ?>
     </section>
