@@ -67,11 +67,39 @@ body.site-record-index {
    1. 开场：一个标题 + 三个总数
    -------------------------------------------------------------------------- */
 .record-hero {
+    position: relative;
+    overflow: hidden;
     margin: 0 calc(50% - 50vw);
     padding: 56px 0 48px;
     border-bottom: 1px solid rgba(224, 180, 87, .22);
     background:
         radial-gradient(52% 120% at 50% 118%, rgba(224, 180, 87, .10), transparent 70%);
+}
+
+/* 颁奖台：同心金环，只在标题右侧出现一次。是这一页唯一的装饰，
+   和「纪录 = 被留下的数字」对应，不作为卡片背景重复。 */
+.record-hero::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -6%;
+    width: 780px;
+    height: 780px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+        circle at center,
+        transparent 0 88px,
+        rgba(224, 180, 87, .14) 88px 89px
+    );
+    mask-image: radial-gradient(circle at center, #000 0 34%, rgba(0, 0, 0, .55) 60%, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 0 34%, rgba(0, 0, 0, .55) 60%, transparent 78%);
+    pointer-events: none;
+}
+
+.record-hero .record-wrap {
+    position: relative;
+    z-index: 1;
 }
 
 .record-kicker {
@@ -377,15 +405,6 @@ body.site-record-index {
     letter-spacing: .03em;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.final-champ-label {
-    flex: none;
-    padding: 1px 6px;
-    color: var(--gold);
-    font-size: 11px;
-    line-height: 1.6;
-    border: 1px solid rgba(224, 180, 87, .36);
 }
 
 .final-score {
@@ -696,7 +715,6 @@ body.site-record-index {
         font-size: 20px;
     }
 
-    .final-champ-label,
     .final-runner .final-flag {
         display: none;
     }

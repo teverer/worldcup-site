@@ -87,7 +87,6 @@ $this->title = '纪录';
                                     <?= TeamFlag::html($final['champion_code'], (string) $final['champion_name'], 'final-flag') ?>
                                 <?php endif ?>
                                 <strong><?= Html::encode($final['champion_name'] !== null ? $final['champion_name'] : '待补') ?></strong>
-                                <span class="final-champ-label">冠军</span>
                             </span>
                             <span class="final-score">
                                 <?= Html::encode($final['score']) ?>
