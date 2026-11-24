@@ -1183,3 +1183,15 @@ body .site-brand::before {
         height: 22px;
     }
 }
+
+/* 球队目录：国旗再大一档，和 17px 队名成比例 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .ti-team-id {
+        gap: 10px;
+    }
+
+    body:not(.site-site-index) .ti-team-id .team-flag {
+        width: 28px;
+        height: 20px;
+    }
+}
