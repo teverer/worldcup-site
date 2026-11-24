@@ -28,7 +28,14 @@ body:not(.site-site-index) {
     --color-bg: var(--paper);
     --color-surface: var(--paper-2);
     --color-text: var(--ink);
+    --color-text-soft: #DCE5E0;
     --color-muted: var(--muted);
+    --color-muted-strong: #B7C7C0;
+    --color-primary-dark: #7FDDB8;
+    --color-accent-ink: var(--gold);
+    --color-success: var(--green-light);
+    --color-primary-soft: rgba(99, 201, 164, .14);
+    --color-accent-soft: rgba(224, 180, 87, .18);
     --color-border: var(--line);
     --color-primary: #0E5138;
     --color-primary-light: var(--green-light);
@@ -49,19 +56,19 @@ body:not(.site-site-index) .atmo {
         radial-gradient(120% 80% at 50% 112%, rgba(11, 43, 37, .55), transparent 62%),
         linear-gradient(180deg, #03060A 0%, #050D13 56%, #06151B 100%);
     pointer-events: none;
-    opacity: .72;
+    opacity: .84;
 }
 
 body:not(.site-site-index) .atmo-glow {
-    opacity: .55;
+    opacity: .68;
 }
 
 body:not(.site-site-index) .atmo-dots {
-    opacity: .32;
+    opacity: .38;
 }
 
 body:not(.site-site-index) .atmo-pitch {
-    opacity: .30;
+    opacity: .34;
 }
 
 body:not(.site-site-index) .site-header,
@@ -77,7 +84,7 @@ body:not(.site-site-index) .site-header .navbar {
 }
 
 body:not(.site-site-index) .site-main {
-    background: linear-gradient(180deg, rgba(4, 8, 10, .30), rgba(4, 8, 10, .55));
+    background: linear-gradient(180deg, rgba(4, 8, 10, .12), rgba(4, 8, 10, .42));
 }
 
 /* 文字 */
@@ -118,7 +125,7 @@ body:not(.site-site-index) .about-section-head h2::before,
 body:not(.site-site-index) .td-section-head h2::before,
 body:not(.site-site-index) .pd-section-head h2::before,
 body:not(.site-site-index) .pl-section-head h2::before {
-    background-color: var(--gold);
+    background-color: var(--green-light);
 }
 
 body:not(.site-site-index) .td-section-head,
@@ -142,11 +149,13 @@ body:not(.site-site-index) .catalog-filters,
 body:not(.site-site-index) .news-search,
 body:not(.site-site-index) .game-filters {
     border: 1px solid var(--line);
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid rgba(127, 221, 184, .55);
     border-radius: 2px;
-    background-color: rgba(9, 19, 16, .82);
+    background-color: rgba(8, 18, 15, .78);
     background-image: none;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, .18);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .28);
 }
 
 body:not(.site-site-index) .form-control,
@@ -165,7 +174,7 @@ body:not(.site-site-index) .form-control:focus,
 body:not(.site-site-index) .pl-input:focus {
     border-color: var(--green-light);
     background-color: rgba(6, 14, 12, .95);
-    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .55), 0 0 0 3px rgba(99, 201, 164, .12);
+    box-shadow: inset 0 -2px 0 rgba(127, 221, 184, .55), 0 0 0 3px rgba(99, 201, 164, .12);
 }
 
 body:not(.site-site-index) .pl-name-lang {
@@ -218,7 +227,7 @@ body:not(.site-site-index) .table {
 }
 
 body:not(.site-site-index) .table > thead > tr > th {
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid rgba(244, 242, 236, .32);
     border-bottom: 1px solid rgba(244, 242, 236, .22);
     background-color: rgba(255, 255, 255, .025);
     color: var(--muted);
@@ -311,7 +320,7 @@ body:not(.site-site-index) .game-chip.is-active {
 /* 读数带 */
 body:not(.site-site-index) .pd-stats {
     border: 0;
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid rgba(244, 242, 236, .32);
     border-bottom: 1px solid var(--line);
     border-radius: 0;
     background-color: rgba(9, 19, 16, .62);
@@ -349,13 +358,15 @@ body:not(.site-site-index) .site-login,
 body:not(.site-site-index) .form-page {
     border-color: var(--line);
     border-radius: 2px;
-    background-color: rgba(9, 19, 16, .82);
+    background-color: rgba(8, 18, 15, .74);
     background-image: none;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .28);
 }
 
 body:not(.site-site-index) .chart-card {
-    border-top: 2px solid var(--gold);
+    border-top: 1px solid var(--line);
 }
 
 body:not(.site-site-index) .pd-career-card {
@@ -523,7 +534,7 @@ body:not(.site-site-index) .td-tabs {
 /* 届次页下半部分 */
 body:not(.site-site-index) .td-panel--groups .group-card {
     border-color: var(--line);
-    border-top: 2px solid var(--gold);
+    border-top: 1px solid rgba(244, 242, 236, .28);
     border-radius: 2px;
     background-color: rgba(9, 19, 16, .82);
 }
@@ -538,7 +549,7 @@ body:not(.site-site-index) .group-table {
 
 body:not(.site-site-index) .td-panel--stats .chart-card {
     border-color: var(--line);
-    border-top: 2px solid var(--gold);
+    border-top: 1px solid rgba(244, 242, 236, .28);
     border-radius: 2px;
     background-color: rgba(9, 19, 16, .82);
 }
@@ -547,7 +558,7 @@ body:not(.site-site-index) .td-panel--stats .chart-card {
 body:not(.site-site-index) .td-history-link {
     border-color: var(--line);
     background-color: rgba(9, 19, 16, .72);
-    box-shadow: inset 0 2px 0 var(--gold);
+    box-shadow: inset 0 1px 0 rgba(244, 242, 236, .22);
 }
 
 body:not(.site-site-index) .td-history-link:hover,
@@ -662,4 +673,107 @@ body:not(.site-site-index) .pd-meta {
 body:not(.site-site-index) .td-head a,
 body:not(.site-site-index) .pd-head a {
     color: var(--green-light);
+}
+
+/* ==========================================================================
+   R6.1 桌面字号层（1280 / 1366 / 1440）
+   用户反馈“字体与组件小、拥挤”；这里只抬桌面字号与行高，
+   不动间距、栅格与断点。移动端维持原样，390 只做不溢出兜底。
+   ========================================================================== */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) {
+        --fs-xs: 14px;
+        --fs-sm: 15px;
+        --fs-base: 17px;
+        --fs-lg: 19px;
+        --fs-xl: 24px;
+        --fs-2xl: 30px;
+        --fs-3xl: 40px;
+        font-size: 17px;
+    }
+
+    body:not(.site-site-index) .catalog-heading h1,
+    body:not(.site-site-index) .game-heading h1,
+    body:not(.site-site-index) .pl-head h1,
+    body:not(.site-site-index) .community-heading h1,
+    body:not(.site-site-index) .about-hero h1,
+    body:not(.site-site-index) .news-head h1 {
+        font-size: 56px;
+        line-height: 1.05;
+    }
+
+    body:not(.site-site-index) h2,
+    body:not(.site-site-index) .h2,
+    body:not(.site-site-index) .td-section-head h2,
+    body:not(.site-site-index) .pd-section-head h2,
+    body:not(.site-site-index) .pl-section-head h2,
+    body:not(.site-site-index) .about-section h2,
+    body:not(.site-site-index) .about-section-head h2,
+    body:not(.site-site-index) .chart-card h2,
+    body:not(.site-site-index) .chart-card h3 {
+        font-size: 30px;
+        line-height: 1.25;
+    }
+
+    body:not(.site-site-index) p,
+    body:not(.site-site-index) .about-notes,
+    body:not(.site-site-index) .pd-note,
+    body:not(.site-site-index) .td-section-note,
+    body:not(.site-site-index) .pl-section-head p,
+    body:not(.site-site-index) .pd-section-head p {
+        font-size: 17.5px;
+        line-height: 1.75;
+    }
+
+    body:not(.site-site-index) .news-row-title,
+    body:not(.site-site-index) .news-detail-header h1 {
+        font-size: 26px;
+    }
+
+    body:not(.site-site-index) .table {
+        font-size: 16px;
+    }
+
+    body:not(.site-site-index) .table > thead > tr > th {
+        font-size: 14px;
+    }
+
+    body:not(.site-site-index) .navbar-nav > li > a,
+    body:not(.site-site-index) .btn,
+    body:not(.site-site-index) .form-control {
+        font-size: 15px;
+    }
+
+    body:not(.site-site-index) .breadcrumb {
+        font-size: 14px;
+    }
+
+    body:not(.site-site-index) .ti-team-name {
+        font-size: 17px;
+    }
+
+    body:not(.site-site-index) .ti-team-code {
+        font-size: 13px;
+    }
+
+    body:not(.site-site-index) .pl-scorer-text strong {
+        font-size: 17px;
+    }
+
+    body:not(.site-site-index) .pl-scorer-goals {
+        font-size: 24px;
+    }
+
+    body:not(.site-site-index) .pl-scorer-year {
+        font-size: 24px;
+    }
+
+    body:not(.site-site-index) .pd-stat dd,
+    body:not(.site-site-index) .td-stat dd {
+        font-size: 40px;
+    }
+
+    body:not(.site-site-index) .site-footer {
+        font-size: 15px;
+    }
 }
