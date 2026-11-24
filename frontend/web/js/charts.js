@@ -1337,6 +1337,7 @@
             return;
         }
 
+        var compact = container.clientWidth < 560;
         var homeColor = PRIMARY_SERIES;
         var awayColor = '#4B8FD6';
         var homeName = data.homeName;
@@ -1488,7 +1489,20 @@
                     symbolSize: 16,
                     z: 10,
                     emphasis: { scale: 1.35 },
-                    tooltip: { show: true }
+                    tooltip: { show: true },
+                    // 点上直接标分钟,不必先悬停;进球多时自动隐藏重叠标签。
+                    label: {
+                        show: true,
+                        position: 'top',
+                        distance: 9,
+                        color: INK.secondary,
+                        fontSize: compact ? 11 : 13,
+                        fontFamily: NUM_FONT,
+                        formatter: function (params) {
+                            return params.value[0] + '′';
+                        }
+                    },
+                    labelLayout: { hideOverlap: true }
                 }
             ]
         });
