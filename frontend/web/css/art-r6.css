@@ -1000,3 +1000,153 @@ body:not(.site-site-index) .edition-action {
 body:not(.site-site-index) .goal-item .goal-dot {
     background-color: var(--green-light);
 }
+
+/* ==========================================================================
+   R6.5 桌面比赛墙：从纵向清单改成 2×2 记分卡
+   ========================================================================== */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .game-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        border-top: 0;
+    }
+
+    body:not(.site-site-index) .game-list > .game-item {
+        display: block;
+        min-width: 0;
+    }
+
+    body:not(.site-site-index) .game-item-link {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "year date"
+            "stage stage"
+            "teams teams"
+            "note note"
+            "go go";
+        gap: 6px 12px;
+        align-items: start;
+        min-height: 214px;
+        padding: 20px 22px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        background-color: rgba(9, 18, 15, .94);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    body:not(.site-site-index) .game-item-link:hover,
+    body:not(.site-site-index) .game-item-link:focus {
+        border-color: rgba(127, 221, 184, .55);
+        background-color: rgba(12, 26, 21, .98);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 40px rgba(0, 0, 0, .22);
+    }
+
+    body:not(.site-site-index) .game-item-main {
+        display: contents;
+    }
+
+    body:not(.site-site-index) .game-item-year {
+        grid-area: year;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.2;
+    }
+
+    body:not(.site-site-index) .game-item-date {
+        grid-area: date;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.2;
+    }
+
+    body:not(.site-site-index) .game-item-stage {
+        grid-area: stage;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    body:not(.site-site-index) .game-item-teams {
+        grid-area: teams;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    body:not(.site-site-index) .game-item-team {
+        color: var(--ink-2);
+        font-size: 24px;
+        font-weight: 600;
+        text-align: right;
+        white-space: normal;
+    }
+
+    body:not(.site-site-index) .game-item-team.is-winner {
+        color: var(--ink);
+        font-weight: 700;
+    }
+
+    body:not(.site-site-index) .game-item-team + .game-item-score + .game-item-team {
+        text-align: left;
+    }
+
+    body:not(.site-site-index) .game-item-score {
+        color: var(--ink);
+        font-size: 56px;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    body:not(.site-site-index) .game-item-note {
+        grid-area: note;
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+    }
+
+    body:not(.site-site-index) .game-item-go {
+        grid-area: go;
+        align-self: end;
+        justify-self: end;
+        color: var(--green-light);
+        font-size: 18px;
+    }
+}
+
+/* 球队目录：把队码变成左侧身份章，先认章再读名 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .ti-team {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    body:not(.site-site-index) .ti-team-name {
+        order: 2;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    body:not(.site-site-index) .ti-team-code {
+        order: 1;
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 32px;
+        margin: 0;
+        border: 1px solid rgba(127, 221, 184, .35);
+        border-radius: 2px;
+        background-color: rgba(127, 221, 184, .06);
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-size: 12px;
+        letter-spacing: .02em;
+    }
+}
