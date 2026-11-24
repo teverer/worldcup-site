@@ -1,0 +1,665 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— R6 夜场统一层
+
+   用户反馈：根页之外的其他页面与根页色调差太大；浅色纸面偏“后台”，
+   字体与组件偏小、拥挤。R6 的做法不是再换一套浅色，而是让整个前台
+   回到同一间球场：
+   - 所有前台页启用极光/点阵/球场线背景（与根页同一套 atmo 资产）；
+   - 纸面换成深绿黑表面，文字翻成暖白，青绿给动作，金色只给成就；
+   - 表格、检索、卡片、图表容器都按“夜场记分板”重做；
+   - 只覆盖颜色/边框/背景/焦点，不改字号、间距、布局与图表逻辑。 */
+body:not(.site-site-index) {
+    --paper: #050A0C;
+    --paper-2: #0A1512;
+    --color-surface-alt: #0D1B16;
+    --line: rgba(244, 242, 236, .14);
+    --line-soft: rgba(244, 242, 236, .09);
+    --ink: #F4F2EC;
+    --ink-2: #D3DDD7;
+    --muted: #A6B7B0;
+    --steel: #A9B8B2;
+    --steel-2: #95A8A1;
+    --green-action: #63C9A4;
+    --green-light: #7FDDB8;
+    --gold-ink: #E0B457;
+    --danger: #FF6B7C;
+    --line-dark: rgba(244, 242, 236, .14);
+    --color-bg: var(--paper);
+    --color-surface: var(--paper-2);
+    --color-text: var(--ink);
+    --color-muted: var(--muted);
+    --color-border: var(--line);
+    --color-primary: #0E5138;
+    --color-primary-light: var(--green-light);
+    --color-accent: var(--gold);
+    background-color: var(--paper);
+    color: var(--ink);
+    background-image: none;
+}
+
+/* 极光背景：所有前台页都和根页同一间球场 */
+body:not(.site-site-index) .atmo {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    overflow: hidden;
+    background:
+        radial-gradient(120% 80% at 50% 112%, rgba(11, 43, 37, .55), transparent 62%),
+        linear-gradient(180deg, #03060A 0%, #050D13 56%, #06151B 100%);
+    pointer-events: none;
+    opacity: .72;
+}
+
+body:not(.site-site-index) .atmo-glow {
+    opacity: .55;
+}
+
+body:not(.site-site-index) .atmo-dots {
+    opacity: .32;
+}
+
+body:not(.site-site-index) .atmo-pitch {
+    opacity: .30;
+}
+
+body:not(.site-site-index) .site-header,
+body:not(.site-site-index) .site-main,
+body:not(.site-site-index) .site-footer {
+    position: relative;
+    z-index: 1;
+}
+
+body:not(.site-site-index) .site-header .navbar {
+    border-bottom-color: rgba(224, 180, 87, .30);
+    background-color: rgba(4, 8, 10, .78);
+}
+
+body:not(.site-site-index) .site-main {
+    background: linear-gradient(180deg, rgba(4, 8, 10, .30), rgba(4, 8, 10, .55));
+}
+
+/* 文字 */
+body:not(.site-site-index) h1,
+body:not(.site-site-index) h2,
+body:not(.site-site-index) h3,
+body:not(.site-site-index) h4,
+body:not(.site-site-index) .h1,
+body:not(.site-site-index) .h2,
+body:not(.site-site-index) .h3 {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) a {
+    color: var(--green-light);
+}
+
+body:not(.site-site-index) a:hover,
+body:not(.site-site-index) a:focus {
+    color: var(--gold-light);
+}
+
+body:not(.site-site-index) .breadcrumb {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .breadcrumb a {
+    color: var(--green-light);
+}
+
+body:not(.site-site-index) .breadcrumb > li + li::before {
+    color: var(--gold-ink);
+}
+
+/* 区块标题 */
+body:not(.site-site-index) .section-title::before,
+body:not(.site-site-index) .about-section-head h2::before,
+body:not(.site-site-index) .td-section-head h2::before,
+body:not(.site-site-index) .pd-section-head h2::before,
+body:not(.site-site-index) .pl-section-head h2::before {
+    background-color: var(--gold);
+}
+
+body:not(.site-site-index) .td-section-head,
+body:not(.site-site-index) .pd-section-head,
+body:not(.site-site-index) .pl-section-head,
+body:not(.site-site-index) .about-section-head {
+    border-bottom-color: rgba(244, 242, 236, .18);
+}
+
+body:not(.site-site-index) .td-section-note,
+body:not(.site-site-index) .pd-section-head p,
+body:not(.site-site-index) .pl-section-head p,
+body:not(.site-site-index) .section-subtitle {
+    color: var(--muted);
+}
+
+/* 检索区：深色面板，金色抬头线 */
+body:not(.site-site-index) .pl-search,
+body:not(.site-site-index) .game-filter-panel,
+body:not(.site-site-index) .catalog-filters,
+body:not(.site-site-index) .news-search,
+body:not(.site-site-index) .game-filters {
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--gold);
+    border-radius: 2px;
+    background-color: rgba(9, 19, 16, .82);
+    background-image: none;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .18);
+}
+
+body:not(.site-site-index) .form-control,
+body:not(.site-site-index) .pl-input {
+    border-color: rgba(244, 242, 236, .18);
+    border-radius: 2px;
+    background-color: rgba(4, 9, 8, .75);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .form-control::placeholder {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .form-control:focus,
+body:not(.site-site-index) .pl-input:focus {
+    border-color: var(--green-light);
+    background-color: rgba(6, 14, 12, .95);
+    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .55), 0 0 0 3px rgba(99, 201, 164, .12);
+}
+
+body:not(.site-site-index) .pl-name-lang {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .pl-name-lang a {
+    color: var(--green-light);
+}
+
+body:not(.site-site-index) .pl-name-lang strong {
+    color: var(--ink);
+}
+
+/* 按钮 */
+body:not(.site-site-index) .btn-primary,
+body:not(.site-site-index) .btn-success {
+    border-color: #0E5138;
+    background-color: #0E5138;
+    background-image: none;
+    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .55);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .btn-primary:hover,
+body:not(.site-site-index) .btn-primary:focus,
+body:not(.site-site-index) .btn-success:hover,
+body:not(.site-site-index) .btn-success:focus {
+    border-color: var(--green-light);
+    background-color: var(--green-light);
+    color: #04120D;
+}
+
+body:not(.site-site-index) .btn-default {
+    border-color: rgba(244, 242, 236, .22);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .btn-default:hover,
+body:not(.site-site-index) .btn-default:focus {
+    border-color: var(--gold);
+    background-color: rgba(224, 180, 87, .08);
+    color: var(--ink);
+}
+
+/* 表格 */
+body:not(.site-site-index) .table {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .table > thead > tr > th {
+    border-top: 2px solid var(--gold);
+    border-bottom: 1px solid rgba(244, 242, 236, .22);
+    background-color: rgba(255, 255, 255, .025);
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .table > tbody > tr > td,
+body:not(.site-site-index) .table > tbody > tr > th {
+    border-top: 1px solid rgba(244, 242, 236, .10);
+}
+
+body:not(.site-site-index) .table > tbody > tr:last-child > td {
+    border-bottom: 1px solid rgba(244, 242, 236, .22);
+}
+
+body:not(.site-site-index) .table > tbody > tr:hover {
+    background-color: rgba(99, 201, 164, .07);
+}
+
+body:not(.site-site-index) .table-sticky-first > thead > tr > th:first-child,
+body:not(.site-site-index) .table-sticky-first > tbody > tr > td:first-child,
+body:not(.site-site-index) .table-sticky-first > tbody > tr > th:first-child {
+    background-color: #07100D;
+    box-shadow: 1px 0 0 var(--line);
+}
+
+/* 目录：印刷索引行，深底 */
+body:not(.site-site-index) .ti-team {
+    border: 0;
+    border-bottom: 1px solid rgba(244, 242, 236, .12);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: inset 2px 0 0 transparent;
+}
+
+body:not(.site-site-index) .ti-team:hover,
+body:not(.site-site-index) .ti-team:focus {
+    border-bottom-color: rgba(244, 242, 236, .28);
+    background-color: rgba(99, 201, 164, .07);
+    box-shadow: inset 2px 0 0 var(--gold);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .ti-team-code {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .ti-group-head {
+    border-bottom-color: rgba(244, 242, 236, .20);
+}
+
+body:not(.site-site-index) .ti-jump {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .ti-jump:hover,
+body:not(.site-site-index) .ti-jump:focus {
+    color: var(--gold);
+}
+
+/* 页签 */
+body:not(.site-site-index) .td-edition,
+body:not(.site-site-index) .game-chip {
+    border-color: transparent;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--muted);
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .td-edition:hover,
+body:not(.site-site-index) .td-edition:focus,
+body:not(.site-site-index) .game-chip:hover,
+body:not(.site-site-index) .game-chip:focus {
+    border-bottom-color: var(--gold);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .td-edition.is-active,
+body:not(.site-site-index) .game-chip.is-active {
+    border-color: transparent;
+    border-bottom-color: transparent;
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--gold);
+    color: var(--ink);
+}
+
+/* 读数带 */
+body:not(.site-site-index) .pd-stats {
+    border: 0;
+    border-top: 2px solid var(--gold);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: rgba(9, 19, 16, .62);
+}
+
+body:not(.site-site-index) .td-stat,
+body:not(.site-site-index) .pd-stat {
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .pd-stat + .pd-stat {
+    border-left: 1px solid var(--line);
+}
+
+body:not(.site-site-index) .pd-stat dt,
+body:not(.site-site-index) .td-stat dt {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .pd-stat dd,
+body:not(.site-site-index) .td-stat dd {
+    color: var(--ink);
+}
+
+/* 卡片 / 图表 / 表单 */
+body:not(.site-site-index) .card,
+body:not(.site-site-index) .news-card,
+body:not(.site-site-index) .tournament-card,
+body:not(.site-site-index) .chart-card,
+body:not(.site-site-index) .comment-section,
+body:not(.site-site-index) .panel,
+body:not(.site-site-index) .site-login,
+body:not(.site-site-index) .form-page {
+    border-color: var(--line);
+    border-radius: 2px;
+    background-color: rgba(9, 19, 16, .82);
+    background-image: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+}
+
+body:not(.site-site-index) .chart-card {
+    border-top: 2px solid var(--gold);
+}
+
+body:not(.site-site-index) .pd-career-card {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .chart-card-head,
+body:not(.site-site-index) .chart-card-head--standings {
+    border-bottom-color: rgba(244, 242, 236, .16);
+}
+
+body:not(.site-site-index) .chart-caption,
+body:not(.site-site-index) .chart-footnote,
+body:not(.site-site-index) .chart-note,
+body:not(.site-site-index) .chart-loading {
+    color: var(--muted);
+}
+
+/* 榜单 / 资讯 / 成员 */
+body:not(.site-site-index) .pl-scorer,
+body:not(.site-site-index) .news-row-link {
+    border-bottom-color: rgba(244, 242, 236, .12);
+}
+
+body:not(.site-site-index) .pl-scorer:hover,
+body:not(.site-site-index) .pl-scorer:focus,
+body:not(.site-site-index) .news-row-link:hover,
+body:not(.site-site-index) .news-row-link:focus {
+    background-color: rgba(99, 201, 164, .07);
+    box-shadow: inset 3px 0 0 var(--gold);
+}
+
+body:not(.site-site-index) .pl-scorer-goals,
+body:not(.site-site-index) .news-row-title {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .pl-scorer-year,
+body:not(.site-site-index) .news-row-date,
+body:not(.site-site-index) .news-row-author,
+body:not(.site-site-index) .news-row-excerpt {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .about-member {
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .about-member:hover {
+    background-color: rgba(99, 201, 164, .05);
+}
+
+body:not(.site-site-index) .about-facts {
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--gold);
+    border-bottom: 1px solid var(--line);
+    background-color: rgba(9, 19, 16, .85);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .about-facts > div + div {
+    border-left-color: var(--line);
+}
+
+body:not(.site-site-index) .about-facts dt {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .about-facts dd {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .about-notes {
+    border-left: 2px solid var(--gold);
+}
+
+body:not(.site-site-index) .about-source {
+    color: var(--muted);
+    border-top-color: var(--line);
+}
+
+/* 空态 */
+body:not(.site-site-index) .empty-state,
+body:not(.site-site-index) .community-empty,
+body:not(.site-site-index) .comment-empty,
+body:not(.site-site-index) .about-empty,
+body:not(.site-site-index) .ledger-empty,
+body:not(.site-site-index) .chart-empty-state {
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--muted);
+}
+
+/* 标签 */
+body:not(.site-site-index) .badge,
+body:not(.site-site-index) .label {
+    border: 1px solid currentColor;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .badge-accent,
+body:not(.site-site-index) .label-warning {
+    color: var(--gold);
+}
+
+body:not(.site-site-index) .badge-primary,
+body:not(.site-site-index) .label-success {
+    color: var(--green-light);
+}
+
+body:not(.site-site-index) .badge-muted,
+body:not(.site-site-index) .label-default,
+body:not(.site-site-index) .label-info {
+    color: var(--muted);
+}
+
+/* 分页 */
+body:not(.site-site-index) .pagination > li > a,
+body:not(.site-site-index) .pagination > li > span {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--ink-2);
+}
+
+body:not(.site-site-index) .pagination > li > a:hover,
+body:not(.site-site-index) .pagination > li > a:focus {
+    border-color: var(--line);
+    background-color: rgba(255, 255, 255, .04);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .pagination > .active > a,
+body:not(.site-site-index) .pagination > .active > span {
+    border-color: var(--gold);
+    background-color: transparent;
+    color: var(--gold);
+}
+
+/* 深色身份头：在夜场里再加一层边界 */
+body:not(.site-site-index) .td-head,
+body:not(.site-site-index) .pd-head {
+    border-color: rgba(244, 242, 236, .16);
+    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .45);
+}
+
+body:not(.site-site-index) .td-hero {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .td-tabs {
+    border-bottom-color: rgba(224, 180, 87, .22);
+}
+
+/* 届次页下半部分 */
+body:not(.site-site-index) .td-panel--groups .group-card {
+    border-color: var(--line);
+    border-top: 2px solid var(--gold);
+    border-radius: 2px;
+    background-color: rgba(9, 19, 16, .82);
+}
+
+body:not(.site-site-index) .group-card__head {
+    border-bottom-color: rgba(244, 242, 236, .16);
+}
+
+body:not(.site-site-index) .group-table {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .td-panel--stats .chart-card {
+    border-color: var(--line);
+    border-top: 2px solid var(--gold);
+    border-radius: 2px;
+    background-color: rgba(9, 19, 16, .82);
+}
+
+/* 上下届 */
+body:not(.site-site-index) .td-history-link {
+    border-color: var(--line);
+    background-color: rgba(9, 19, 16, .72);
+    box-shadow: inset 0 2px 0 var(--gold);
+}
+
+body:not(.site-site-index) .td-history-link:hover,
+body:not(.site-site-index) .td-history-link:focus {
+    border-color: var(--gold);
+    background-color: rgba(13, 27, 22, .92);
+}
+
+body:not(.site-site-index) .td-history-year {
+    color: var(--ink);
+}
+
+/* 留言簿 */
+body:not(.site-site-index) .ledger,
+body:not(.site-site-index) .ledger-compose,
+body:not(.site-site-index) .ledger-entry {
+    border-color: var(--line);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .ledger-title,
+body:not(.site-site-index) .ledger-title-row {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .ledger-rail {
+    border-color: var(--line);
+}
+
+/* 错误 / 登录 */
+body:not(.site-site-index) .site-error .page-header {
+    border-bottom-color: var(--line);
+}
+
+body:not(.site-site-index) .site-login,
+body:not(.site-site-index) .form-page {
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--gold);
+    border-radius: 2px;
+    background-color: rgba(9, 19, 16, .86);
+}
+
+/* 焦点 */
+body:not(.site-site-index) a:focus-visible,
+body:not(.site-site-index) button:focus-visible,
+body:not(.site-site-index) summary:focus-visible,
+body:not(.site-site-index) [tabindex]:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+body:not(.site-site-index) ::selection {
+    background-color: rgba(99, 201, 164, .28);
+    color: var(--ink);
+}
+
+/* 页脚：本层令牌把 --ink 翻成浅色，R5 的 footer 背景会跟着变浅；这里显式压回夜场 */
+body:not(.site-site-index) .site-footer {
+    border-top: 2px solid var(--gold);
+    background-color: #04090B;
+    background-image: none;
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .site-footer-name,
+body:not(.site-site-index) .site-footer-title {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .site-footer-intro,
+body:not(.site-site-index) .site-footer a {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .site-footer a:hover,
+body:not(.site-site-index) .site-footer a:focus {
+    color: var(--gold);
+}
+
+body:not(.site-site-index) .site-footer-bottom {
+    border-top-color: rgba(244, 242, 236, .14);
+}
+
+/* 深色身份头：白底按钮的文字被 R5 的 --ink 翻成浅色，压回深色 */
+body:not(.site-site-index) .td-head .btn-primary,
+body:not(.site-site-index) .pd-head .btn-primary {
+    border-color: var(--flood);
+    background-color: var(--flood);
+    color: #04120D;
+}
+
+body:not(.site-site-index) .td-head .btn-primary:hover,
+body:not(.site-site-index) .td-head .btn-primary:focus,
+body:not(.site-site-index) .pd-head .btn-primary:hover,
+body:not(.site-site-index) .pd-head .btn-primary:focus {
+    border-color: var(--gold-light);
+    background-color: var(--gold-light);
+    color: #04120D;
+}
+
+body:not(.site-site-index) .td-head h1,
+body:not(.site-site-index) .pd-head h1 {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .td-meta,
+body:not(.site-site-index) .pd-meta {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .td-head a,
+body:not(.site-site-index) .pd-head a {
+    color: var(--green-light);
+}

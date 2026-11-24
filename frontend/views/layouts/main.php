@@ -72,6 +72,8 @@ CSS
 $this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 // 浅色数据页美术层：档案纸、铜线、登记册表格；在 design-v2 之后加载，只做颜色/边框覆盖。
 $this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// R6 夜场统一层：所有前台页回到根页的极光/深绿黑语言；只覆盖颜色与表面。
+$this->registerCssFile('@web/css/art-r6.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 $this->registerJsFile('@web/js/atmosphere.js', ['position' => \yii\web\View::POS_END]);
 
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';

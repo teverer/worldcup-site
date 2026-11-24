@@ -4,26 +4,26 @@
 (function () {
     'use strict';
 
+    // R6 夜场：图表与页面同为深底。只换色值，不动渲染逻辑；
+    // 轴/图例/数据标签/中心文字必须是暖白系，系列色亮度拉高。
     var INK = {
-        primary: '#0B1418',
-        secondary: '#34433F',
-        muted: '#5C6963',
-        grid: '#E0DBCC',
-        axis: '#8A9690',
-        surface: '#F8F6F0'
+        primary: '#F4F2EC',
+        secondary: '#CFD8D2',
+        muted: '#A6B7B0',
+        grid: 'rgba(244, 242, 236, .14)',
+        axis: '#8FA29B',
+        surface: '#0A1512'
     };
 
-    // 冷纸底球队色:金只给第一名;其余按「深—浅」交替排开。
-    // 顺序用 OKLab 相邻色差校验过:最差相邻对 ΔE 16.7(正常视觉),
-    // CVD 15.0,均高于可读下限;品牌本身偏低饱和,亮度/彩度不做大幅提亮。
+    // 夜场球队色:金只给第一名;其余按「深—浅」交替排开，保证深底可分辨。
     var TEAM_COLORS = [
-        '#0B3B2A', '#8FB3A3', '#2E7D5B', '#57B894',
-        '#2E4250', '#6F8794', '#A9B8AE'
+        '#2E7D5B', '#9CC7B6', '#57B894', '#7FDDB8',
+        '#3E6B85', '#8FAAB8', '#C8D6CF'
     ];
-    var PRIMARY_SERIES = '#0E5138';
-    var HOVER_SERIES = '#093B29';
-    var ACCENT_SERIES = '#B8892A';
-    var OTHER_COLOR = '#B9B3A4';
+    var PRIMARY_SERIES = '#57B894';
+    var HOVER_SERIES = '#7FDDB8';
+    var ACCENT_SERIES = '#E0B457';
+    var OTHER_COLOR = '#8C9A93';
 
     var chartInstances = {};
     var resizeTimer = null;
