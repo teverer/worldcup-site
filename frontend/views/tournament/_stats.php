@@ -22,7 +22,7 @@ use yii\helpers\Url;
         <?= $this->render('//partials/_name_lang', ['returnUrl' => Url::current() . '#charts']) ?>
     </header>
 
-    <p class="td-section-note">什么时候进、谁进、哪些队进了多少。主图可切换小组积分榜（旧版）；完整积分表在「小组赛」。</p>
+    <p class="td-section-note">三张图：什么时候进、谁进、哪些队进了多少。小组积分的完整表格在「小组赛」。</p>
 
     <?= $this->render('@frontend/views/chart/_charts', ['tournamentId' => $model->id]) ?>
 </section>
