@@ -87,6 +87,8 @@ class Team extends ActiveRecord {
                 'away_team_id' => 'g.away_team_id',
                 'home_score' => 'g.home_score',
                 'away_score' => 'g.away_score',
+                'home_penalty_score' => 'g.home_penalty_score',
+                'away_penalty_score' => 'g.away_penalty_score',
             ])
             ->from(['g' => '{{%game}}'])
             ->innerJoin(['t' => '{{%tournament}}'], 't.id = g.tournament_id')
@@ -110,12 +112,29 @@ class Team extends ActiveRecord {
                     'lost' => 0,
                     'goals_for' => 0,
                     'goals_against' => 0,
+                    'final_for' => null,
+                    'final_against' => null,
+                    'final_pen_for' => null,
+                    'final_pen_against' => null,
+                    'champion' => false,
                 ];
             }
 
             $isHome = (int) $row['home_team_id'] === (int) $this->id;
             $goalsFor = (int) ($isHome ? $row['home_score'] : $row['away_score']);
             $goalsAgainst = (int) ($isHome ? $row['away_score'] : $row['home_score']);
+
+            // 决赛结果单独留一份,用来标记冠军(点球大战看罚球分)。
+            if ($row['stage'] === '决赛') {
+                $records[$tournamentId]['final_for'] = $goalsFor;
+                $records[$tournamentId]['final_against'] = $goalsAgainst;
+                $records[$tournamentId]['final_pen_for'] = $isHome
+                    ? (int) $row['home_penalty_score']
+                    : (int) $row['away_penalty_score'];
+                $records[$tournamentId]['final_pen_against'] = $isHome
+                    ? (int) $row['away_penalty_score']
+                    : (int) $row['home_penalty_score'];
+            }
 
             $records[$tournamentId]['played']++;
             $records[$tournamentId]['goals_for'] += $goalsFor;
@@ -135,6 +154,18 @@ class Team extends ActiveRecord {
             }
         }
 
+        // 决赛胜者标记为冠军:平局看点球大战罚球分。
+        foreach ($records as &$record) {
+            if ($record['final_for'] === null) {
+                continue;
+            }
+            $record['champion'] = $record['final_for'] > $record['final_against']
+                || ($record['final_for'] === $record['final_against']
+                    && $record['final_pen_for'] !== null
+                    && $record['final_pen_for'] > $record['final_pen_against']);
+        }
+        unset($record);
+
         // 参赛但尚未录入已结束比赛的届次,仍列出来并标「待补」。
         foreach ($this->tournaments() as $tournament) {
             $tournamentId = (int) $tournament['id'];
@@ -150,6 +181,7 @@ class Team extends ActiveRecord {
                     'lost' => 0,
                     'goals_for' => 0,
                     'goals_against' => 0,
+                    'champion' => false,
                 ];
             }
         }

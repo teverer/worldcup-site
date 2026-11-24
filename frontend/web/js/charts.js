@@ -79,6 +79,26 @@
         document.head.appendChild(script);
     }
 
+    // 元素接近视口时再执行;用于球员图/球队轨迹图,避免首屏下载 ECharts。
+    function whenNearViewport(container, callback) {
+        if (typeof window.IntersectionObserver !== 'function') {
+            callback();
+            return;
+        }
+        if (container.__nearObserver) {
+            return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) {
+                observer.disconnect();
+                container.__nearObserver = null;
+                callback();
+            }
+        }, { rootMargin: '240px' });
+        container.__nearObserver = observer;
+        observer.observe(container);
+    }
+
     function escapeHtml(value) {
         return String(value === null || value === undefined ? '' : value)
             .replace(/&/g, '&amp;')
@@ -738,24 +758,10 @@
 
         // 球员图在首屏下方:接近视口再加载 ECharts,别让球员页一打开就下载 1MB。
         if (!hasEcharts() && !window.__echartsLoadFailed) {
-            if (typeof window.IntersectionObserver === 'function') {
-                if (!container.__careerObserver) {
-                    var observer = new IntersectionObserver(function (entries) {
-                        if (entries[0].isIntersecting) {
-                            observer.disconnect();
-                            container.__careerObserver = null;
-                            loadEcharts(container.getAttribute('data-echarts-src'), function () {
-                                initPlayerCareer();
-                            });
-                        }
-                    }, { rootMargin: '240px' });
-                    container.__careerObserver = observer;
-                    observer.observe(container);
-                }
-                return;
-            }
-            loadEcharts(container.getAttribute('data-echarts-src'), function () {
-                initPlayerCareer();
+            whenNearViewport(container, function () {
+                loadEcharts(container.getAttribute('data-echarts-src'), function () {
+                    initPlayerCareer();
+                });
             });
             return;
         }
@@ -897,6 +903,125 @@
         container.__careerDone = true;
     }
 
+    // 球队详情页:历届最终阶段折线,冠军金点。数据由 _history_chart.php 内联输出。
+    function initTeamHistory() {
+        var container = byId('team-history-chart');
+        if (!container || container.__teamDone) {
+            return;
+        }
+
+        if (!hasEcharts() && !window.__echartsLoadFailed) {
+            whenNearViewport(container, function () {
+                loadEcharts(container.getAttribute('data-echarts-src'), function () {
+                    initTeamHistory();
+                });
+            });
+            return;
+        }
+
+        var dataEl = byId('team-history-data');
+        var data = null;
+        try {
+            data = dataEl ? JSON.parse(dataEl.textContent || '') : null;
+        } catch (e) {
+            data = null;
+        }
+        var points = (data && data.points) || [];
+        if (!points.length) {
+            container.__teamDone = true;
+            showEmpty(container, '暂无战绩数据');
+            return;
+        }
+        if (!hasEcharts() || window.__echartsLoadFailed) {
+            container.__teamDone = true;
+            showEmpty(container, '图表组件加载失败，请检查网络后刷新页面。');
+            return;
+        }
+
+        var chart = initChart(container);
+        if (!chart) {
+            return;
+        }
+
+        var years = points.map(function (point) {
+            return String(point.year);
+        });
+        // 窄屏 11 个年份会叠在一起,隔一个显示;桌面仍显示全部。
+        var compactAxis = container.clientWidth < 520;
+        var chartPoints = points.map(function (point) {
+            return {
+                value: Math.max(0, Math.min(6, point.rank - 1)),
+                symbolSize: point.champion ? 14 : 9,
+                itemStyle: {
+                    color: point.champion ? ACCENT_SERIES : PRIMARY_SERIES,
+                    borderColor: INK.surface,
+                    borderWidth: 2
+                },
+                label: {
+                    show: !!point.champion,
+                    formatter: '冠军',
+                    position: 'top',
+                    color: '#82590B',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                }
+            };
+        });
+
+        chart.setOption({
+            animationDuration: ANIMATION_DURATION,
+            grid: { left: 6, right: 18, top: 30, bottom: 6, containLabel: true },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'line', lineStyle: { color: INK.axis, type: 'dashed' } },
+                backgroundColor: INK.surface,
+                borderColor: INK.grid,
+                textStyle: { color: INK.primary, fontSize: 13 },
+                formatter: function (params) {
+                    var point = points[params[0].dataIndex];
+                    if (!point) {
+                        return '';
+                    }
+                    return '<strong>' + point.year + '</strong>'
+                        + '<br>' + escapeHtml(point.stage) + (point.champion ? ' · 冠军' : '')
+                        + '<br>' + point.played + ' 场 · ' + point.won + '-' + point.drawn + '-' + point.lost
+                        + '<br>进 ' + point.goalsFor + ' / 失 ' + point.goalsAgainst;
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: years,
+                axisTick: { show: false },
+                axisLine: { lineStyle: { color: INK.axis } },
+                axisLabel: {
+                    color: INK.secondary,
+                    fontSize: compactAxis ? 11 : 12,
+                    margin: 10,
+                    interval: compactAxis ? 1 : 0
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: ['小组赛', '32 强', '16 强', '8 强', '半决赛', '三四名', '决赛'],
+                axisTick: { show: false },
+                axisLine: { show: false },
+                axisLabel: { color: INK.secondary, fontSize: 13, margin: 10 },
+                splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
+            },
+            series: [{
+                name: '最终阶段',
+                type: 'line',
+                data: chartPoints,
+                symbol: 'circle',
+                lineStyle: { color: PRIMARY_SERIES, width: 2 },
+                labelLayout: { hideOverlap: true },
+                emphasis: { focus: 'series' }
+            }]
+        });
+        chart.resize();
+        container.__teamDone = true;
+    }
+
     function resizeAll() {
         Object.keys(chartInstances).forEach(function (id) {
             var chart = chartInstances[id];
@@ -1023,10 +1148,12 @@
             initChartDataToggles();
             init();
             initPlayerCareer();
+            initTeamHistory();
         });
     } else {
         initChartDataToggles();
         init();
         initPlayerCareer();
+        initTeamHistory();
     }
 }());

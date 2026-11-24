@@ -1,0 +1,28 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:球队与球员 —— 球队详情「世界杯轨迹」图的容器尺寸
+   卡片与画布基础样式复用 charts.css。 */
+
+.td-history-chart {
+    margin: 0 0 var(--space-3);
+}
+
+.chart-canvas--team {
+    height: 280px;
+}
+
+@media (max-width: 860px) {
+    .chart-canvas--team {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .td-history-chart {
+        padding: 12px 10px 6px;
+    }
+
+    .chart-canvas--team {
+        height: 230px;
+    }
+}
