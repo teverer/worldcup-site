@@ -18,6 +18,10 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 
+if ($model->home_team_id === null || $model->away_team_id === null) {
+    return;
+}
+
 $events = [];
 foreach ($regularGoals as $goal) {
     if ($goal->minute === null) {
