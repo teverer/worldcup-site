@@ -361,3 +361,187 @@ body.site-site-index {
         transition: none;
     }
 }
+
+/* ==========================================================================
+   最新留言：首页底部的社区脉搏，不是第二个 feed
+   ========================================================================== */
+.wall-comments {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line-dark);
+}
+
+.wall-comments-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+}
+
+.wall-comments-title {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-cn-display);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.wall-comments-note {
+    color: var(--steel);
+    font-size: 12px;
+}
+
+.wall-comments-more {
+    margin-left: auto;
+    border-bottom: 1px solid transparent;
+    color: var(--green-light);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.wall-comments-more:hover,
+.wall-comments-more:focus {
+    border-bottom-color: currentColor;
+    color: var(--flood);
+}
+
+.wall-comments-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: 18px;
+}
+
+.wall-comment {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+    padding: 0 24px;
+    border-left: 1px solid var(--line-dark);
+    color: inherit;
+    text-decoration: none;
+}
+
+.wall-comment:first-child {
+    padding-left: 0;
+    border-left: 0;
+}
+
+.wall-comment:last-child {
+    padding-right: 0;
+}
+
+.wall-comment:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 6px;
+}
+
+.wall-comment:hover .wall-comment-name,
+.wall-comment:focus-visible .wall-comment-name {
+    color: var(--green-light);
+}
+
+.wall-comment-source {
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: .1em;
+}
+
+.wall-comment-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    min-width: 0;
+}
+
+.wall-comment-seal {
+    box-shadow: inset 0 0 0 1px rgba(244, 242, 236, .18);
+}
+
+.wall-comment-name {
+    min-width: 0;
+    color: var(--flood);
+    font-size: 14px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    transition: color .16s ease;
+}
+
+.wall-comment-time {
+    margin-left: 2px;
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.wall-comment-text {
+    display: -webkit-box;
+    max-width: 68ch;
+    overflow: hidden;
+    color: rgba(244, 242, 236, .72);
+    font-size: 14px;
+    line-height: 1.7;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.wall-comments-empty {
+    margin: 18px 0 0;
+    color: var(--steel);
+    font-size: 14px;
+}
+
+.wall-comments-empty a {
+    color: var(--green-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(87, 184, 148, .35);
+}
+
+.wall-comments-empty a:hover,
+.wall-comments-empty a:focus {
+    color: var(--flood);
+    border-bottom-color: currentColor;
+}
+
+@media (max-width: 991px) {
+    .wall-comments-list {
+        grid-template-columns: 1fr;
+    }
+
+    .wall-comment {
+        padding: 14px 0;
+        border-top: 1px solid var(--line-dark);
+        border-left: 0;
+    }
+
+    .wall-comment:first-child {
+        padding-top: 0;
+        border-top: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .wall-comments {
+        margin-top: 36px;
+    }
+
+    .wall-comments-note {
+        flex-basis: 100%;
+        order: 3;
+    }
+
+    .wall-comments-more {
+        margin-left: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wall-comment-name {
+        transition: none;
+    }
+}

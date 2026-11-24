@@ -11,10 +11,10 @@
    ========================================================================== */
 @font-face {
     font-family: "Smiley Sans";
-    src: url("../fonts/SmileySans-Oblique.woff2") format("woff2");
+    src: url("../fonts/SmileySans-Subset.woff2") format("woff2");
     font-style: normal;
     font-weight: 400;
-    font-display: swap;
+    font-display: optional;
 }
 
 @font-face {
@@ -1000,6 +1000,18 @@ label,
     margin-bottom: 14px;
 }
 
+/* 成对的字段并排:阶段/状态、主队/客队、主客比分、点球比分。
+   它们本来就是一组对照关系,分两列读比上下滚动快。 */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+}
+
+.form-grid .form-group {
+    min-width: 0;
+}
+
 .has-error .form-control {
     border-color: var(--red);
 }
@@ -1322,6 +1334,34 @@ body.backend-site-login .wb-footer {
 @media (max-width: 600px) {
     .dash-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* 窄屏 CRUD:行高压回两行以内;场地列不再换行,靠表格自身横滚。
+       比赛列表的「编号」对手机读者没有用,先让出宽度给届次/对阵。 */
+    body .table > thead > tr > th,
+    body .table > tbody > tr > td {
+        padding: 8px 10px;
+    }
+
+    body.backend-game-index .grid-view .table > thead > tr > th:first-child,
+    body.backend-game-index .grid-view .table > tbody > tr > td:first-child {
+        display: none;
+    }
+
+    body.backend-game-index .grid-view .table > thead > tr > th:nth-child(8),
+    body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(8) {
+        max-width: none;
+        white-space: nowrap;
+    }
+
+    body .grid-view .table > tbody > tr > td:last-child .btn {
+        min-height: 28px;
+        padding: 4px 8px;
+        font-size: 12px;
     }
 
     .dash-title,

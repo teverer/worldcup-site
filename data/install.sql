@@ -203,7 +203,7 @@ CREATE TABLE `comment` (
   `id`          int          NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id`     int          NOT NULL COMMENT '用户 → user.id(留言需登录)',
   `content`     text         NOT NULL COMMENT '留言内容',
-  `target_type` varchar(20)  NOT NULL COMMENT '挂载实体 team/player/game/news/tournament',
+  `target_type` varchar(20)  NOT NULL COMMENT '挂载实体 team/player/game/news/tournament/site',
   `target_id`   int          NOT NULL COMMENT '挂载实体 id',
   `parent_id`   int          DEFAULT NULL COMMENT '父留言 id,NULL 表示顶层留言',
   `status`      tinyint      NOT NULL DEFAULT 0 COMMENT '状态 0正常 1已删除',
@@ -215,7 +215,7 @@ CREATE TABLE `comment` (
   CONSTRAINT `fk_comment_user`   FOREIGN KEY (`user_id`)   REFERENCES `user` (`id`),
   CONSTRAINT `fk_comment_parent` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_comment_target_type`
-    CHECK (`target_type` IN ('team', 'player', 'game', 'news', 'tournament')),
+    CHECK (`target_type` IN ('team', 'player', 'game', 'news', 'tournament', 'site')),
   CONSTRAINT `chk_comment_status` CHECK (`status` IN (0, 1))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='留言(通过 target_type + target_id 挂载到任意实体)';
 

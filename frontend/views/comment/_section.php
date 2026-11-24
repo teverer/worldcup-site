@@ -20,6 +20,10 @@
  * @var string $placeholder
  * @var string[] $starters
  * @var int $participantCount
+ * @var string $heading
+ * @var string $headingTag
+ * @var string $intro
+ * @var string $emptyTitle
  */
 
 use yii\helpers\Html;
@@ -31,7 +35,7 @@ $loginReturnUrl = Yii::$app->request->url . '#comments';
 <section class="ledger" id="comments" aria-labelledby="comments-title">
     <header class="ledger-head">
         <div class="ledger-title-row">
-            <h2 class="ledger-title" id="comments-title">留言簿</h2>
+            <?= Html::tag($headingTag, Html::encode($heading), ['class' => 'ledger-title', 'id' => 'comments-title']) ?>
         </div>
         <?php if ($total > 0): ?>
             <span class="ledger-count">
@@ -39,6 +43,9 @@ $loginReturnUrl = Yii::$app->request->url . '#comments';
             </span>
         <?php endif ?>
     </header>
+    <?php if ($intro !== ''): ?>
+        <p class="ledger-intro"><?= Html::encode($intro) ?></p>
+    <?php endif ?>
     <p class="ledger-prompt"><?= Html::encode($prompt) ?></p>
 
     <div class="ledger-compose">
@@ -64,7 +71,7 @@ $loginReturnUrl = Yii::$app->request->url . '#comments';
 
     <?php if (!$roots): ?>
         <div class="ledger-empty">
-            <p class="ledger-empty-title">这一页还没有人留言。</p>
+            <p class="ledger-empty-title"><?= Html::encode($emptyTitle) ?></p>
             <?php if ($isGuest): ?>
                 <p class="ledger-empty-sub">登录后，成为第一个留下记忆的人。</p>
             <?php else: ?>

@@ -320,7 +320,8 @@
    ========================================================================== */
 .td-panel--knockout .bracket-empty {
     padding: 40px 24px;
-    border: 1px dashed rgba(243, 246, 242, .2);
+    border: 0;
+    border-left: 2px solid rgba(243, 246, 242, .2);
     background-color: transparent;
     color: var(--steel);
 }
@@ -332,6 +333,11 @@
 /* ==========================================================================
    7. 窄屏:树不再横向滚动,按 1 / 2 / 4 / 8 逐轮纵向摆开
    ========================================================================== */
+/* 桌面靠卡片尺寸和连线表达轮次;窄屏连线与尺寸差消失,用文字轮次补回身份。 */
+.tree-round-label {
+    display: none;
+}
+
 @media (max-width: 1099px) {
     .tree,
     .tree-extra-grid {
@@ -353,6 +359,21 @@
 
     .tree-connectors {
         display: none;
+    }
+
+    /* 连线消失后，轮次身份必须由文字补回；768–1099 也同样需要，
+       不能只在手机断点显示，否则平板宽度会出现无名的一串对阵。 */
+    .tree-round-label {
+        display: block;
+        margin: 20px 0 6px;
+        color: var(--steel);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: .08em;
+    }
+
+    .tree-round-label:first-child {
+        margin-top: 0;
     }
 
     .tree-row + .tree-row {
@@ -381,25 +402,7 @@
     }
 }
 
-/* 桌面靠卡片尺寸和连线表达轮次;窄屏连线与尺寸差消失,用文字轮次补回身份。 */
-.tree-round-label {
-    display: none;
-}
-
 @media (max-width: 767px) {
-    .tree-round-label {
-        display: block;
-        margin: 20px 0 6px;
-        color: var(--steel);
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: .08em;
-    }
-
-    .tree-round-label:first-child {
-        margin-top: 0;
-    }
-
     .tree-match--final {
         max-width: none;
     }

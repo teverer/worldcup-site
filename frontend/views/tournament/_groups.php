@@ -18,7 +18,7 @@ use yii\helpers\Url;
 <section class="td-panel td-panel--groups" id="groups" tabindex="-1"
          aria-labelledby="td-groups-title">
     <header class="td-section-head">
-        <h2 class="section-title" id="td-groups-title">小组赛 <small>积分榜</small></h2>
+        <h2 class="section-title" id="td-groups-title">小组积分榜</h2>
         <p class="td-section-note">仅统计已结束的小组赛；每组前两名出线，24 / 48 队制另取最佳小组第三。</p>
     </header>
 

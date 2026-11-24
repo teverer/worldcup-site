@@ -3,7 +3,7 @@
  * Team: 国足世界杯夺冠队
  * Coding by 李行阳 2411353, 20261115
  * Coding by 李行阳 2411353, 20261123
- * 模块:届次与比赛 —— 比赛详情：比分板、基本信息、进球时间线与留言区。
+ * 模块:届次与比赛 —— 比赛详情：比分板、基本信息、进球时间线。
  *
  * 2026-11-23 重排：比分板本身作为页面 h1，去掉「标题 + 比分板」重复；
  * 时间线之后给出下一步（晋级图 / 同届比赛 / 返回列表），不留死路。
@@ -14,9 +14,7 @@
  * @var common\models\Player[] $players
  * @var array $statusLabels
  */
-use common\components\CommentTarget;
 use common\models\Game;
-use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -238,8 +236,3 @@ if ($statusValue === Game::STATUS_PENDING) {
         <?= Html::a('返回比赛列表', ['index'], ['class' => 'game-next-back']) ?>
     </nav>
 </article>
-
-<?= CommentSection::widget([
-    'targetType' => CommentTarget::GAME,
-    'targetId' => $model->id,
-]) ?>

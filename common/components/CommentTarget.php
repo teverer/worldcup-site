@@ -16,6 +16,12 @@ class CommentTarget
     const GAME = 'game';
     const NEWS = 'news';
     const TOURNAMENT = 'tournament';
+    const SITE = 'site';
+
+    /**
+     * 全站留言簿的固定目标 id。
+     */
+    const SITE_ID = 1;
 
     /**
      * 留言类型与对应数据库表的唯一映射。
@@ -38,7 +44,7 @@ class CommentTarget
      */
     public static function types()
     {
-        return array_keys(self::tables());
+        return array_merge(array_keys(self::tables()), [self::SITE]);
     }
 
     /**
@@ -52,6 +58,7 @@ class CommentTarget
             self::GAME => '比赛',
             self::NEWS => '资讯',
             self::TOURNAMENT => '届次',
+            self::SITE => '全站',
         ];
     }
 
@@ -61,7 +68,7 @@ class CommentTarget
      */
     public static function isSupportedType($type)
     {
-        return is_string($type) && isset(self::tables()[$type]);
+        return is_string($type) && in_array($type, self::types(), true);
     }
 
     /**
@@ -97,6 +104,10 @@ class CommentTarget
             return false;
         }
 
+        if ($type === self::SITE) {
+            return $targetId === self::SITE_ID;
+        }
+
         return (new Query())
             ->from('{{%' . self::tables()[$type] . '}}')
             ->where(['id' => $targetId])
@@ -128,8 +139,15 @@ class CommentTarget
             self::GAME => '/game/view',
             self::NEWS => '/news/view',
             self::TOURNAMENT => '/tournament/view',
+            self::SITE => '/site/discussion',
         ];
 
-        return isset($routes[$type]) ? [$routes[$type], 'id' => $id] : null;
+        if (!isset($routes[$type])) {
+            return null;
+        }
+        if ($type === self::SITE) {
+            return [$routes[$type]];
+        }
+        return [$routes[$type], 'id' => $id];
     }
 }

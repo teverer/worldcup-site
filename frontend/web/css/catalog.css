@@ -524,6 +524,26 @@
     margin-top: var(--space-4);
 }
 
+/* 三列表/五列表不需要铺满 1200px；把正文控制在可读行宽内。
+   整段（标题 + 附表 / 筛选）一起收窄，右侧的姓名开关才能和表尾对齐。
+   选择器带上容器，压过 Bootstrap 后加载的 .table { max-width:100% }。 */
+.team-detail .td-section {
+    max-width: 880px;
+}
+
+.td-section .td-records,
+.td-section .td-table {
+    max-width: 880px;
+}
+
+.pd-section:has(.pd-table) {
+    max-width: 960px;
+}
+
+.pd-section .pd-table {
+    max-width: 960px;
+}
+
 .td-section-head {
     display: flex;
     align-items: flex-end;
@@ -661,18 +681,26 @@
     flex: 0 0 auto;
 }
 
+/* 三个生涯数字是一条读数带，不是三张同款卡片。 */
 .pd-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-2);
+    max-width: 760px;
+    gap: 0;
     margin: var(--space-3) 0 0;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
 }
 
 .pd-stat {
-    padding: 14px 16px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-surface);
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.pd-stat + .pd-stat {
+    border-left: 1px solid var(--color-border);
 }
 
 .pd-stat dt {

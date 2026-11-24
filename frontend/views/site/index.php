@@ -6,8 +6,10 @@
  *
  * @var yii\web\View $this
  * @var array $editions 按年份倒序的届次数据
+ * @var array $latestComments 首页“最新留言”摘要
  */
 
+use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -98,6 +100,34 @@ $dataUrl = $latestId !== null
         <?= Html::a('按比赛', ['/game/index']) ?>
         <?= Html::a('看数据', $dataUrl) ?>
     </nav>
+
+    <section class="wall-comments" aria-labelledby="wall-comments-title">
+        <header class="wall-comments-head">
+            <h2 class="wall-comments-title" id="wall-comments-title">最新留言</h2>
+            <span class="wall-comments-note">来自各届、资讯与全站</span>
+            <?= Html::a('去世界杯留言簿', ['/site/discussion'], ['class' => 'wall-comments-more']) ?>
+        </header>
+        <?php if (!empty($latestComments)): ?>
+            <div class="wall-comments-list">
+                <?php foreach ($latestComments as $item): ?>
+                    <a class="wall-comment" href="<?= Html::encode($item['url']) ?>">
+                        <span class="wall-comment-source"><?= Html::encode($item['source']) ?></span>
+                        <span class="wall-comment-meta">
+                            <span class="seal wall-comment-seal"
+                                  style="background:<?= Html::encode(CommentSection::sealColor($item['userId'])) ?>"
+                                  aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($item['author'])) ?></span>
+                            <span class="wall-comment-name"><?= Html::encode($item['author']) ?></span>
+                            <time class="wall-comment-time"
+                                  datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
+                        </span>
+                        <span class="wall-comment-text"><?= Html::encode($item['excerpt']) ?></span>
+                    </a>
+                <?php endforeach ?>
+            </div>
+        <?php else: ?>
+            <p class="wall-comments-empty">还没有人留言。<?= Html::a('来写第一句', ['/site/discussion']) ?></p>
+        <?php endif ?>
+    </section>
 
     <p class="wall-about"><?= Html::a('关于与文档', ['/team-info/index']) ?></p>
 </div>

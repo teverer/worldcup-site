@@ -67,7 +67,7 @@ $renderWorks = static function (array $items) {
                     <a class="btn btn-primary" href="#docs">下载课程文档</a>
                     <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到首页</a>
                 <?php else: ?>
-                    <a class="btn btn-primary" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到首页</a>
+                    <a class="about-back-link" href="<?= Html::encode(Url::to(['/site/index'])) ?>">← 回到首页</a>
                 <?php endif ?>
             </div>
         </div>
@@ -121,7 +121,7 @@ $renderWorks = static function (array $items) {
 
         <?php if (!$members): ?>
             <div class="about-empty">
-                <p>成员资料尚未录入，管理员可在后台补充。</p>
+                <p>成员资料正在整理。</p>
             </div>
         <?php else: ?>
             <ul class="about-members">
@@ -164,7 +164,7 @@ $renderWorks = static function (array $items) {
 
         <?php if (!$hasWorks): ?>
             <div class="about-empty">
-                <p><strong>文档尚未上传。</strong>管理员可在后台「作业管理」上传，上传后会出现在这里。</p>
+                <p><strong>六份课程文档还在整理中。</strong>最终 PDF 会出现在这里。</p>
             </div>
         <?php else: ?>
             <div class="about-doc-group">

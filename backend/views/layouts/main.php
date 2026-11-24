@@ -81,6 +81,8 @@ $isAdmin = !Yii::$app->user->isGuest
 
 // 后台视觉 v2:在模块 CSS 之后加载,只做覆盖。
 $this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 后台美术层：纸面表格、铜线标记；在 design-v2 之后加载，只做颜色/边框覆盖。
+$this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 $this->registerJsFile('@web/js/workbench.js', ['position' => \yii\web\View::POS_END]);
 
 $groupNo = 2;
@@ -94,6 +96,8 @@ $groupNo = 2;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?> | <?= Html::encode(Yii::$app->name) ?> 后台</title>
+    <?php // 显示字体预加载,避免后台切页时字体跳变 ?>
+    <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SmileySans-Subset.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <?php $this->head() ?>
 </head>
 <body class="backend-body backend-<?= Html::encode($controllerId) ?> backend-<?= Html::encode($controllerId) ?>-<?= Html::encode($actionId) ?><?= $isDashboard ? ' backend-is-dashboard' : '' ?>">

@@ -684,39 +684,40 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 /* ==========================================================================
    6. 上一届 / 下一届
    ========================================================================== */
+/* 翻页是一条文档式的页脚导航，不是两张空卡片：
+   一条横线、两个方向、年份做锚点，视线从左到右或从右到左各走一次。 */
 .td-history {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-2);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: var(--space-4);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 }
 
 .td-history-link {
     display: flex;
-    flex: 1 1 0;
-    max-width: calc(50% - var(--space-1));
-    flex-direction: column;
-    gap: 2px;
+    align-items: baseline;
+    gap: 10px;
     min-width: 0;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    background-color: var(--paper-2);
+    padding: 16px 20px;
     color: var(--ink);
     text-decoration: none;
-    transition: border-color 160ms ease, background-color 160ms ease;
+    transition: background-color 160ms ease;
+}
+
+.td-history-link + .td-history-link {
+    border-left: 1px solid var(--line);
 }
 
 .td-history-link:hover,
 .td-history-link:focus {
-    border-color: var(--green-action);
-    background-color: #FFFFFF;
+    background-color: rgba(14, 81, 56, .045);
     color: var(--ink);
     text-decoration: none;
 }
 
 .td-history-link--next {
-    margin-left: auto;
+    justify-content: flex-end;
     text-align: right;
 }
 
@@ -733,21 +734,34 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 .td-history-dir {
     color: var(--muted);
     font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.td-history-link--prev .td-history-dir::before {
+    margin-right: 6px;
+    content: "←";
+}
+
+.td-history-link--next .td-history-dir::after {
+    margin-left: 6px;
+    content: "→";
 }
 
 .td-history-year {
     color: var(--green-action);
     font-family: var(--font-display);
-    font-size: var(--fs-xl);
+    font-size: 24px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    line-height: 1;
 }
 
 .td-history-name {
-    color: var(--ink);
+    overflow: hidden;
+    color: var(--ink-2);
     font-size: var(--fs-sm);
-    text-wrap: balance;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -862,7 +876,12 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     }
 
     .td-history {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+
+    .td-history-link + .td-history-link {
+        border-top: 1px solid var(--line);
+        border-left: 0;
     }
 
     .td-history-link {

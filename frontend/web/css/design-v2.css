@@ -13,13 +13,18 @@
    0. 字体
    ========================================================================== */
 /* 得意黑 Smiley Sans · SIL OFL 1.1 · 仅用于标题 / 队名 / 展签,
-   不用于正文;数字继续用 Saira Condensed。 */
+   不用于正文;数字继续用 Saira Condensed。
+   字体为按站内实际用字生成的字集(1234 字形,约 135KB,覆盖页面渲染文字与
+   数据库中的队名 / 球员名 / 届次 / 资讯);完整原字保留在
+   SmileySans-Oblique.woff2,新增生僻字时用 tools/build_font_subset.php 重新生成。
+   font-display: optional + 布局里的 preload:字体没在首屏前就绪时不换字,
+   避免切页时看到一次字体跳变。 */
 @font-face {
     font-family: "Smiley Sans";
-    src: url("../fonts/SmileySans-Oblique.woff2") format("woff2");
+    src: url("../fonts/SmileySans-Subset.woff2") format("woff2");
     font-style: normal;
     font-weight: 400;
-    font-display: swap;
+    font-display: optional;
 }
 
 /* ==========================================================================
@@ -1316,28 +1321,12 @@ body .tree-extra:focus-visible {
 /* ==========================================================================
    12. 动效
    ========================================================================== */
+/* 入场只做一次:首页的标题和记分牌墙一起上浮。详情页的头部与
+   每一块牌都不再逐行淡入——切页时内容应立即可读,动效不参与等待。 */
 @media (prefers-reduced-motion: no-preference) {
-    .wall-board {
-        animation: v2-rise .8s cubic-bezier(.2, .7, .2, 1) both;
-    }
-
-    .wall-board:nth-child(1) { animation-delay: .04s; }
-    .wall-board:nth-child(2) { animation-delay: .08s; }
-    .wall-board:nth-child(3) { animation-delay: .12s; }
-    .wall-board:nth-child(4) { animation-delay: .16s; }
-    .wall-board:nth-child(5) { animation-delay: .20s; }
-    .wall-board:nth-child(6) { animation-delay: .24s; }
-    .wall-board:nth-child(7) { animation-delay: .28s; }
-    .wall-board:nth-child(8) { animation-delay: .32s; }
-    .wall-board:nth-child(9) { animation-delay: .36s; }
-    .wall-board:nth-child(10) { animation-delay: .40s; }
-    .wall-board:nth-child(11) { animation-delay: .44s; }
-
-    .td-hero-main,
-    .game-scoreboard,
-    .td-head,
-    .pd-head {
-        animation: v2-rise .7s cubic-bezier(.2, .7, .2, 1) both;
+    .wall-head,
+    .wall {
+        animation: v2-rise .55s cubic-bezier(.2, .7, .2, 1) both;
     }
 }
 
@@ -1351,44 +1340,17 @@ body .tree-extra:focus-visible {
     to { opacity: 1; }
 }
 
-/* Chrome 的跨页过渡:像灯慢慢亮起;不支持的浏览器直接切换 */
-@view-transition {
-    navigation: auto;
-}
-
-::view-transition-old(root) {
-    animation: v2-fade-out .16s ease both;
-}
-
-::view-transition-new(root) {
-    animation: v2-fade-in .22s ease both;
-}
-
-@keyframes v2-fade-out {
-    to { opacity: 0; }
-}
-
-@keyframes v2-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+/* 跨页不做淡入:用户反馈切页时有“等半秒才出来”的感觉。
+   页面内容由浏览器立即绘制,氛围层自己缓慢呼吸即可。 */
 
 @media (prefers-reduced-motion: reduce) {
     .atmo-glow,
-    .wall-board,
-    .td-hero-main,
-    .game-scoreboard,
-    .td-head,
-    .pd-head,
+    .wall-head,
+    .wall,
     body.site-tournament-view .td-hero::before,
     .atmo-era {
         animation: none !important;
         transition: none !important;
-    }
-
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-        animation: none !important;
     }
 }
 
@@ -1466,8 +1428,8 @@ body .tree-extra:focus-visible {
 
 .ledger-prompt {
     margin: 12px 0 0;
-    color: var(--muted);
-    font-size: 15px;
+    color: var(--ink-2);
+    font-size: 15.5px;
     line-height: 1.7;
 }
 
@@ -1679,7 +1641,7 @@ body .tree-extra:focus-visible {
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     color: var(--muted);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.4;
 }
 
@@ -1804,7 +1766,7 @@ body .tree-extra:focus-visible {
 .ledger-reply .seal {
     width: 20px;
     height: 20px;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .ledger-reply .ledger-name {
@@ -1819,7 +1781,7 @@ body .tree-extra:focus-visible {
 .ledger-reply-time {
     color: var(--muted);
     font-family: var(--font-display);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .02em;
     text-decoration: none;
 }
@@ -2019,11 +1981,11 @@ body .tree-extra:focus-visible {
 
     .ledger-rail {
         padding-right: 9px;
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .ledger-rail .day {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .ledger-body {
@@ -2043,7 +2005,7 @@ body .tree-extra:focus-visible {
     }
 
     .composer-hint {
-        font-size: 11px;
+        font-size: 12px;
     }
 }
 
@@ -2067,4 +2029,33 @@ body.site-tournament-view .ledger,
 body.site-tournament-view .ledger-entry,
 body.site-tournament-view .ledger-reply {
     scroll-margin-top: 72px;
+}
+
+/* 全站留言簿：一个独立的阅读页，和面包屑、其他页面共用同一条左轴，
+   不把 840px 的阅读栏居中到导航之外。 */
+.site-discussion {
+    max-width: 840px;
+    margin: 0;
+}
+
+.site-discussion .ledger {
+    margin-top: var(--space-3);
+}
+
+.site-discussion .ledger-title {
+    font-size: var(--fs-3xl);
+    line-height: 1.1;
+}
+
+.ledger-intro {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .site-discussion .ledger-title {
+        font-size: 30px;
+    }
 }

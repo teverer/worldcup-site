@@ -303,16 +303,36 @@
     font-size: var(--fs-sm);
 }
 
+/* 空态是一条安静的说明，不是“内容没加载出来”的虚线框。 */
 .about-empty {
-    padding: var(--space-4);
-    border: 1px dashed var(--color-border);
-    border-radius: 4px;
-    background: var(--color-surface);
-    color: var(--color-muted-strong);
+    padding: 2px 0 2px 18px;
+    border: 0;
+    border-left: 2px solid var(--color-border);
+    background: transparent;
+    color: var(--color-muted);
+    font-size: var(--fs-base);
 }
 
 .about-empty p {
     margin: 0;
+}
+
+.about-empty strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.about-back-link {
+    color: var(--color-primary);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+}
+
+.about-back-link:hover,
+.about-back-link:focus {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .about-docs-note {

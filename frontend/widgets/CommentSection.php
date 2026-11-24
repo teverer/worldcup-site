@@ -24,6 +24,34 @@ class CommentSection extends Widget
     public $targetId;
 
     /**
+     * 留言簿标题；全站页可以用“全站留言”。
+     *
+     * @var string
+     */
+    public $heading = '留言簿';
+
+    /**
+     * 标题的 HTML 标签；独立留言簿页把标题作为页面 h1。
+     *
+     * @var string
+     */
+    public $headingTag = 'h2';
+
+    /**
+     * 标题下的一句说明；为空时不输出。
+     *
+     * @var string
+     */
+    public $intro = '';
+
+    /**
+     * 空态标题；默认按「这一页」措辞，全站留言簿页可改成面向整本簿的说法。
+     *
+     * @var string
+     */
+    public $emptyTitle = '这一页还没有人留言。';
+
+    /**
      * 每个目标页的固定提问：不是“添加评论”，而是把这一页的记忆问出来。
      *
      * @return string[]
@@ -36,6 +64,7 @@ class CommentSection extends Widget
             CommentTarget::TEAM => '你和这支球队，从哪一届开始？',
             CommentTarget::PLAYER => '关于他，你记得哪一个球？',
             CommentTarget::NEWS => '读完这一篇，你想起了什么？',
+            CommentTarget::SITE => '你和世界杯的故事，从哪一届开始？',
         ];
     }
 
@@ -63,6 +92,7 @@ class CommentSection extends Widget
             CommentTarget::TEAM => '写下你和这支球队的记忆……',
             CommentTarget::PLAYER => '写下你记得的那个球……',
             CommentTarget::NEWS => '写下读完这一篇的想法……',
+            CommentTarget::SITE => '写下你和世界杯的一件小事……',
         ];
         return isset($placeholders[$type]) ? $placeholders[$type] : '写下你想留下的那句话……';
     }
@@ -100,6 +130,11 @@ class CommentSection extends Widget
                 '读完这篇，你想起了什么？',
                 '你同意作者的观点吗？',
                 '你还有什么想补充的？',
+            ],
+            CommentTarget::SITE => [
+                '你第一次看世界杯是哪一届？',
+                '你和谁一起看过球？',
+                '哪一届是你的起点？',
             ],
         ];
         return isset($starters[$type]) ? $starters[$type] : ['写下你想留下的那句话……'];
@@ -238,6 +273,10 @@ class CommentSection extends Widget
             'placeholder' => self::composerPlaceholderFor($this->targetType),
             'starters' => self::startersFor($this->targetType),
             'participantCount' => count($participantIds),
+            'heading' => $this->heading,
+            'headingTag' => in_array($this->headingTag, ['h1', 'h2'], true) ? $this->headingTag : 'h2',
+            'intro' => $this->intro,
+            'emptyTitle' => $this->emptyTitle,
         ]);
     }
 }

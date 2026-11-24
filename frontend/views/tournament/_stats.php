@@ -16,7 +16,7 @@ use yii\helpers\Html;
 <section class="td-panel td-panel--stats" id="charts" tabindex="-1"
          aria-labelledby="td-charts-title">
     <header class="td-section-head">
-        <h2 class="section-title" id="td-charts-title">统计 <small>积分榜 · 射手榜 · 进球分布</small></h2>
+        <h2 class="section-title" id="td-charts-title">统计图表</h2>
         <?= $this->render('//partials/_name_lang') ?>
     </header>
 

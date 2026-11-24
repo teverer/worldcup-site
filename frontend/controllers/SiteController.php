@@ -7,6 +7,7 @@
 namespace frontend\controllers;
 
 use frontend\models\EditionWall;
+use frontend\models\LatestComments;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -87,7 +88,18 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'editions' => $wall['editions'],
+            'latestComments' => LatestComments::latest(3),
         ]);
+    }
+
+    /**
+     * 全站留言簿：世界杯整体的一本簿。
+     *
+     * @return string
+     */
+    public function actionDiscussion()
+    {
+        return $this->render('discussion');
     }
 
     /**

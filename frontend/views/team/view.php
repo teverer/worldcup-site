@@ -4,7 +4,7 @@
  * Coding by Codex (AI assistance), 20261021
  * Coding by 石子川 2411966, 20261108
  * Coding by 李行阳 2411353, 20261123
- * 模块:球队与球员、留言与资讯 —— 球队详情:身份头、参赛届次、名单与留言。
+ * 模块:球队与球员 —— 球队详情:身份头、参赛届次、名单。
  *
  * @var yii\web\View $this
  * @var common\models\Team $model
@@ -16,8 +16,6 @@
  * @var yii\data\ActiveDataProvider $dataProvider
  */
 
-use common\components\CommentTarget;
-use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -173,8 +171,3 @@ $rosterTotal = (int) $dataProvider->totalCount;
         <?php endif ?>
     </section>
 </article>
-
-<?= CommentSection::widget([
-    'targetType' => CommentTarget::TEAM,
-    'targetId' => $model->id,
-]) ?>

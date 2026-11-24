@@ -4,7 +4,7 @@
  * Coding by Codex (AI assistance), 20261021
  * Coding by 石子川 2411966, 20261108
  * Coding by 李行阳 2411353, 20261123
- * 模块:球队与球员、留言与资讯 —— 球员详情:身份头、生涯统计、参赛经历与留言。
+ * 模块:球队与球员 —— 球员详情:身份头、生涯统计、参赛经历。
  *
  * @var yii\web\View $this
  * @var common\models\Player $model
@@ -12,9 +12,7 @@
  * @var array $statistics
  */
 
-use common\components\CommentTarget;
 use common\models\Player;
-use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 
 $this->title = $model->displayName();
@@ -125,6 +123,8 @@ $nameToggleUrl = [
     </dl>
     <p class="pd-note">统计以已录入且已结束的比赛为准，不含乌龙球与点球大战。</p>
 
+    <?= $this->render('_career_chart', ['statistics' => $statistics]) ?>
+
     <?php if ($model->intro): ?>
         <section class="pd-section" aria-labelledby="pd-intro-title">
             <h2 id="pd-intro-title">球员介绍</h2>
@@ -182,8 +182,3 @@ $nameToggleUrl = [
         <?php endif ?>
     </section>
 </article>
-
-<?= CommentSection::widget([
-    'targetType' => CommentTarget::PLAYER,
-    'targetId' => $model->id,
-]) ?>

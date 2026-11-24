@@ -70,6 +70,8 @@ CSS
 
 // 夜场视觉 v2:在 theme.css 与模块 CSS 之后加载,只做覆盖,便于整包回退。
 $this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 浅色数据页美术层：档案纸、铜线、登记册表格；在 design-v2 之后加载，只做颜色/边框覆盖。
+$this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 $this->registerJsFile('@web/js/atmosphere.js', ['position' => \yii\web\View::POS_END]);
 
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
@@ -97,6 +99,9 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($pageTitle) ?> | <?= Html::encode(Yii::$app->name) ?></title>
+    <?php // 显示字体在 CSS 之前预加载,避免切页时先看到回退字再跳变 ?>
+    <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SmileySans-Subset.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= Html::encode(Url::to('@web/fonts/SairaCondensed-700.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <?php $this->head() ?>
 </head>
 <body class="site-body site-<?= Html::encode($controllerId) ?> site-<?= Html::encode($controllerId) ?>-<?= Html::encode($actionId) ?>">
@@ -189,6 +194,7 @@ $pageTitle = $this->title !== null && $this->title !== '' ? $this->title : Yii::
                 <div class="site-footer-col">
                     <p class="site-footer-title">本站</p>
                     <ul>
+                        <li><?= Html::a('世界杯留言簿', ['/site/discussion']) ?></li>
                         <li><?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?></li>
                         <li><?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
                             'target' => '_blank',
