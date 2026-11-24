@@ -132,15 +132,27 @@ $dataUrl = $latestId !== null
                 <?php endif ?>
             </section>
 
-            <aside class="wall-elsewhere" aria-labelledby="wall-elsewhere-title">
-                <h3 id="wall-elsewhere-title">换一种找法</h3>
-                <ul class="wall-ways">
-                    <li><?= Html::a('按球队', ['/team/index']) ?></li>
-                    <li><?= Html::a('按球员', ['/player/index']) ?></li>
-                    <li><?= Html::a('按比赛', ['/game/index']) ?></li>
-                    <li><?= Html::a('看数据', $dataUrl) ?></li>
-                </ul>
-                <?= Html::a('关于本站与文档', ['/team-info/index'], ['class' => 'wall-about-link']) ?>
+            <aside class="wall-elsewhere">
+                <section aria-labelledby="wall-elsewhere-title">
+                    <h3 id="wall-elsewhere-title">换一种找法</h3>
+                    <ul class="wall-ways">
+                        <li><?= Html::a('按球队', ['/team/index']) ?></li>
+                        <li><?= Html::a('按球员', ['/player/index']) ?></li>
+                        <li><?= Html::a('按比赛', ['/game/index']) ?></li>
+                        <li><?= Html::a('看数据', $dataUrl) ?></li>
+                    </ul>
+                </section>
+                <section class="wall-about-group" aria-labelledby="wall-about-title">
+                    <h3 id="wall-about-title">关于本站</h3>
+                    <div class="wall-about-links">
+                        <?= Html::a('关于与文档', ['/team-info/index']) ?>
+                        <?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?>
+                        <?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
+                            'target' => '_blank',
+                            'rel' => 'noopener noreferrer',
+                        ]) ?>
+                    </div>
+                </section>
             </aside>
         </div>
     </section>

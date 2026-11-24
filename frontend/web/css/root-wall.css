@@ -345,18 +345,37 @@ body.site-site-index {
     color: var(--gold-light);
 }
 
-.wall-about-link {
-    display: inline-block;
-    margin-top: 18px;
+.wall-about-group {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-dark);
+}
+
+.wall-about-group h3 {
+    margin: 0 0 10px;
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .12em;
+}
+
+.wall-about-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.wall-about-links a {
     padding-bottom: 2px;
     border-bottom: 1px solid rgba(243, 246, 242, .2);
     color: var(--steel);
     font-size: 14px;
     text-decoration: none;
+    transition: border-color 160ms ease, color 160ms ease;
 }
 
-.wall-about-link:hover,
-.wall-about-link:focus {
+.wall-about-links a:hover,
+.wall-about-links a:focus {
     border-color: var(--flood);
     color: var(--flood);
 }
@@ -625,7 +644,7 @@ body.site-site-index {
 @media (prefers-reduced-motion: reduce) {
     .wall-ways a,
     .wall-empty-cta,
-    .wall-about-link {
+    .wall-about-links a {
         transition: none;
     }
 
