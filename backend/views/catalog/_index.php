@@ -9,12 +9,13 @@
  * @var array $teams
  * @var bool $isTeam
  */
+use common\components\AdminActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 $this->title = $isTeam ? '球队管理' : '球员管理';
 $this->params['breadcrumbs'][] = $this->title;
 $columns = array_merge(['id', 'name'], $isTeam ? ['code', 'continent'] : ['nationality', 'position', 'birth_date']);
-$columns[] = ['class' => 'yii\grid\ActionColumn', 'header' => '操作'];
+$columns[] = ['class' => AdminActionColumn::class];
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <p><?= Html::a($isTeam ? '新增球队' : '新增球员', ['create'], ['class' => 'btn btn-success']) ?></p>

@@ -264,17 +264,35 @@
     font-size: var(--fs-sm);
 }
 
+/* 一行是一场对阵：主队在比分的左边，客队在右边，中间是比分；
+   两侧的空白由队名真正填满，不再把日期推到屏幕另一端。 */
 .game-item-teams {
-    display: flex;
-    align-items: baseline;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
     gap: var(--space-2);
     min-width: 0;
 }
 
 .game-item-team {
-    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
     color: var(--color-muted-strong);
     font-size: 19px;
+}
+
+.game-item-team:first-child {
+    justify-self: end;
+}
+
+.game-item-team:last-child {
+    justify-self: start;
+}
+
+.game-item-team-name {
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
@@ -285,7 +303,6 @@
 }
 
 .game-item-score {
-    flex: 0 0 auto;
     min-width: 3.2em;
     color: var(--color-text);
     font-family: var(--font-display);
@@ -296,8 +313,10 @@
 }
 
 .game-item-note {
+    justify-self: center;
     color: var(--color-muted);
     font-size: 13.5px;
+    text-align: center;
 }
 
 .game-item-date {
@@ -331,11 +350,11 @@
 .game-scoreboard {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     flex-wrap: wrap;
-    gap: clamp(28px, 3.4vw, 48px);
+    gap: clamp(20px, 3vw, 40px);
     margin: 0 0 var(--space-4);
-    padding: clamp(36px, 4vw, 56px) var(--space-3);
+    padding: clamp(36px, 4vw, 56px) clamp(8px, 2.4vw, 32px);
     border: 0;
     border-radius: 4px;
     background: var(--night-2);
@@ -356,10 +375,27 @@
 }
 
 .game-scoreboard .game-team {
-    min-width: 180px;
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
     font-size: clamp(20px, 1.8vw, 26px);
     font-weight: 600;
-    text-align: center;
+    text-align: left;
+}
+
+.game-scoreboard .game-team:first-child {
+    justify-content: flex-start;
+}
+
+.game-scoreboard .game-team:last-child {
+    justify-content: flex-end;
+}
+
+.game-scoreboard .game-team .team-flag--lg {
+    width: 32px;
+    height: 24px;
 }
 
 .game-score-main {
@@ -385,9 +421,9 @@ body .game-scoreboard .game-score-value {
 }
 
 .game-facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-6);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-5);
     margin: 0 0 var(--space-5);
 }
 
@@ -395,6 +431,7 @@ body .game-scoreboard .game-score-value {
     display: flex;
     align-items: baseline;
     gap: var(--space-1);
+    min-width: 0;
 }
 
 .game-facts dt {
@@ -549,6 +586,10 @@ body .game-scoreboard .game-score-value {
         overflow: visible;
         font-size: var(--fs-base);
         line-height: 1.3;
+    }
+
+    .game-item-team-name {
+        overflow: visible;
         white-space: normal;
         text-overflow: clip;
     }
@@ -611,8 +652,23 @@ body .game-scoreboard .game-score-value {
     }
 
     .game-scoreboard .game-team {
+        flex-basis: 100%;
+        justify-content: center !important;
         min-width: 0;
         font-size: var(--fs-lg);
+    }
+
+    .game-scoreboard .game-team .team-flag--lg {
+        width: 26px;
+        height: 20px;
+    }
+
+    .game-score-main {
+        flex-basis: 100%;
+    }
+
+    .game-facts {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     body .game-scoreboard .game-score-value {

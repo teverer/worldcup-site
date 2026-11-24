@@ -30,6 +30,11 @@ body.site-tournament-view .breadcrumb {
     display: none;
 }
 
+/* 届次页的留言簿与晋级图同宽：页尾不再突然缩成 840 靠左。 */
+body.site-tournament-view .ledger {
+    max-width: 100%;
+}
+
 body.site-tournament-view .site-header .navbar {
     border-bottom: 1px solid var(--line-dark);
     background-color: var(--night);
@@ -59,8 +64,8 @@ body.site-tournament-view .navbar-inverse .navbar-nav > li > a:focus {
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a,
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:hover,
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
-    background-color: rgba(127, 200, 169, .14);
-    box-shadow: inset 0 -3px 0 var(--green-light);
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--green-light);
     color: var(--flood);
 }
 

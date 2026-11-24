@@ -11,6 +11,7 @@
  * @var bool $hasFilter
  */
 
+use common\components\TeamFlag;
 use common\models\Team;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -37,11 +38,8 @@ foreach ($groups as $teams) {
             <input class="form-control pl-input" type="search" id="team-q" name="q"
                    value="<?= Html::encode((string) $searchModel->q) ?>"
                    placeholder="输入球队名或代码，如 巴西、BRA" maxlength="100">
-            <button class="btn btn-primary" type="submit">查找球队</button>
-        </div>
-        <div class="pl-search-filters">
             <label class="sr-only" for="team-continent">所属大洲</label>
-            <select class="form-control" id="team-continent" name="continent">
+            <select class="form-control pl-continent" id="team-continent" name="continent">
                 <option value="">全部大洲</option>
                 <?php foreach (Team::CONTINENTS as $continent): ?>
                     <option value="<?= Html::encode($continent) ?>"<?= $searchModel->continent === $continent ? ' selected' : '' ?>>
@@ -49,6 +47,7 @@ foreach ($groups as $teams) {
                     </option>
                 <?php endforeach ?>
             </select>
+            <button class="btn btn-primary" type="submit">查找球队</button>
             <?php if ($hasFilter): ?>
                 <?= Html::a('清除条件', ['/team/index'], ['class' => 'pl-clear']) ?>
             <?php endif ?>
@@ -63,9 +62,7 @@ foreach ($groups as $teams) {
         <nav class="td-editions ti-jump" aria-label="按大洲跳转">
             <span class="ti-jump-label">直接到大洲</span>
             <?php $jumpIndex = 0; foreach ($groups as $continent => $teams): $jumpIndex++; ?>
-                <a class="td-edition" href="#ti-group-<?= $jumpIndex ?>">
-                    <?= Html::encode($continent) ?> <span><?= count($teams) ?></span>
-                </a>
+                <a class="td-edition" href="#ti-group-<?= $jumpIndex ?>"><?= Html::encode($continent) ?></a>
             <?php endforeach ?>
         </nav>
     <?php endif ?>
@@ -87,7 +84,10 @@ foreach ($groups as $teams) {
                     <?php foreach ($teams as $team): ?>
                         <li>
                             <a class="ti-team" href="<?= Html::encode(Url::to(['/team/view', 'id' => $team->id])) ?>">
-                                <span class="ti-team-name"><?= Html::encode($team->name) ?></span>
+                                <span class="ti-team-id">
+                                    <?= TeamFlag::html($team->code, $team->name) ?>
+                                    <span class="ti-team-name"><?= Html::encode($team->name) ?></span>
+                                </span>
                                 <span class="ti-team-code"><?= Html::encode($team->code ?: '—') ?></span>
                             </a>
                         </li>

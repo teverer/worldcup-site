@@ -43,11 +43,16 @@ body.site-site-index {
     color: var(--flood);
 }
 
+/* 当前页只加底线；与索引页 / 届次页共用同一套导航状态。 */
+.site-site-index .navbar-inverse .navbar-nav > li > a {
+    font-size: 15px;
+}
+
 .site-site-index .navbar-inverse .navbar-nav > .active > a,
 .site-site-index .navbar-inverse .navbar-nav > .active > a:hover,
 .site-site-index .navbar-inverse .navbar-nav > .active > a:focus {
-    background-color: rgba(127, 200, 169, .14);
-    box-shadow: inset 0 -3px 0 var(--green-light);
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--green-light);
     color: var(--flood);
 }
 
@@ -262,121 +267,324 @@ body.site-site-index {
     font-size: var(--fs-xl);
 }
 
-/* 收场：一条独立的深色带，和记分牌墙分开，不是墙尾的几行小字。
-   左侧是留言簿，右侧是换一种找法；两列之间有明确的分隔线。 */
+/* 收场：不是墙尾的“更多入口”，而是一间更小的房间。
+   记分牌墙是满幅的；收场收窄居中，用一段从上到下的夜雾过渡，
+   而不是一块硬塞进来的色板。上下都不出现硬边。 */
 .wall-closing {
     position: relative;
-    margin-top: clamp(48px, 6vw, 80px);
-    padding: clamp(36px, 4vw, 56px) clamp(24px, 3vw, 44px);
+    margin-top: clamp(64px, 8vw, 112px);
+    padding: clamp(56px, 6vw, 88px) 0 clamp(40px, 5vw, 64px);
+    isolation: isolate;
+}
+
+.wall-closing::before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        180deg,
+        rgba(10, 27, 34, 0) 0%,
+        rgba(10, 27, 34, .55) 12%,
+        var(--night-2) 34%,
+        var(--night-2) 86%,
+        rgba(10, 27, 34, 0) 100%
+    );
+    content: "";
+}
+
+.wall-coda-inner {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.wall-coda-inner-head {
+    padding-top: clamp(20px, 3vw, 36px);
     border-top: 1px solid rgba(224, 180, 87, .38);
-    background-color: var(--night-2);
-    box-shadow: 0 0 0 100vmax var(--night-2);
-    clip-path: inset(0 -100vmax);
 }
 
-.wall-closing-head {
-    max-width: 760px;
-}
-
-.wall-closing-head h2 {
+.wall-coda-inner-head h2 {
     margin: 0;
     color: var(--flood);
     font-family: var(--font-cn-display);
-    font-size: clamp(28px, 2.8vw, 40px);
+    font-size: clamp(32px, 3.4vw, 52px);
     font-weight: 400;
     letter-spacing: .01em;
-    line-height: 1.15;
+    line-height: 1.12;
 }
 
-.wall-closing-head p {
-    margin: 12px 0 0;
+.wall-coda-inner-head p {
+    max-width: 42em;
+    margin: 14px 0 0;
     color: var(--steel);
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.7;
 }
 
-.wall-closing-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(280px, .9fr);
-    gap: clamp(32px, 4vw, 64px);
-    margin-top: clamp(28px, 3vw, 44px);
+.wall-book {
+    margin-top: clamp(32px, 4vw, 52px);
 }
 
-.wall-comments {
-    min-width: 0;
-}
-
-.wall-elsewhere {
-    padding-left: clamp(24px, 3vw, 44px);
-    border-left: 1px solid var(--line-dark);
-}
-
-.wall-elsewhere h3 {
-    margin: 0 0 8px;
-    color: var(--steel);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .12em;
-}
-
-.wall-ways {
-    display: grid;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.wall-ways li {
+.wall-book-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--line-dark);
 }
 
-.wall-ways a {
-    display: block;
-    padding: 14px 0;
+.wall-book-title {
+    margin: 0;
     color: var(--flood);
-    font-size: 17px;
-    text-decoration: none;
-    transition: color 160ms ease, padding-left 160ms ease;
+    font-family: var(--font-cn-display);
+    font-size: clamp(24px, 2.2vw, 30px);
+    font-weight: 400;
+    line-height: 1.2;
 }
 
-.wall-ways a:hover,
-.wall-ways a:focus {
-    padding-left: 4px;
-    color: var(--gold-light);
-}
-
-.wall-about-group {
-    margin-top: 24px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line-dark);
-}
-
-.wall-about-group h3 {
-    margin: 0 0 10px;
-    color: var(--steel);
+.wall-book-note {
+    color: var(--steel-2);
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .12em;
 }
 
-.wall-about-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-}
-
-.wall-about-links a {
+.wall-book-all {
+    margin-left: auto;
     padding-bottom: 2px;
-    border-bottom: 1px solid rgba(243, 246, 242, .2);
-    color: var(--steel);
+    border-bottom: 1px solid rgba(244, 242, 236, .24);
+    color: var(--green-light);
     font-size: 14px;
     text-decoration: none;
     transition: border-color 160ms ease, color 160ms ease;
 }
 
-.wall-about-links a:hover,
-.wall-about-links a:focus {
+.wall-book-all:hover,
+.wall-book-all:focus {
+    border-color: currentColor;
+    color: var(--flood);
+}
+
+/* 就地写：不必先跳到留言簿。输入行只在首页存在，视觉沿用登记簿的线。 */
+.wall-book-compose {
+    padding: 20px 0 22px;
+    border-bottom: 1px solid var(--line-dark);
+}
+
+.wall-book-form {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0;
+}
+
+.wall-book-form .seal {
+    margin-top: 6px;
+    box-shadow: inset 0 0 0 1px rgba(244, 242, 236, .18);
+}
+
+.wall-book-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.wall-book .composer-input {
+    min-height: 38px;
+    padding: 2px 0 10px;
+    border-bottom-color: rgba(244, 242, 236, .22);
+    color: var(--flood);
+    font-size: 16px;
+}
+
+.wall-book .composer-input::placeholder {
+    color: var(--steel-2);
+}
+
+.wall-book .composer-input:focus {
+    border-bottom-color: var(--green-light);
+    box-shadow: 0 1px 0 0 var(--green-light);
+}
+
+.wall-book .composer-foot {
+    justify-content: flex-end;
+    gap: 18px;
+}
+
+.wall-book .composer-hint {
+    color: var(--steel-2);
+}
+
+.wall-book .btn-record {
+    border-color: var(--green-light);
+    background: var(--green-light);
+    color: #04120D;
+}
+
+.wall-book .btn-record:hover,
+.wall-book .btn-record:focus {
     border-color: var(--flood);
+    background: var(--flood);
+    color: var(--night);
+}
+
+.wall-book-guest {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 0;
+    color: var(--steel);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.wall-book-guest > a {
+    padding-bottom: 1px;
+    border-bottom: 1px solid currentColor;
+    color: var(--green-light);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.wall-book-guest > a:hover,
+.wall-book-guest > a:focus {
+    color: var(--flood);
+}
+
+.wall-book-guest-sub {
+    color: var(--steel-2);
+    font-size: 13px;
+}
+
+.wall-book-guest-sub a {
+    color: var(--steel);
+}
+
+.wall-book-guest-sub a:hover,
+.wall-book-guest-sub a:focus {
+    color: var(--flood);
+}
+
+/* 一条留言一行，像评论区/登记簿，不做两列卡片。 */
+.wall-book-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wall-book-list > li + li {
+    border-top: 1px solid var(--line-dark);
+}
+
+.wall-book-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 8px 18px 0;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 160ms ease;
+}
+
+.wall-book-row:hover,
+.wall-book-row:focus-visible {
+    background-color: rgba(244, 242, 236, .035);
+}
+
+.wall-book-row:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 2px;
+}
+
+.wall-book-seal {
+    margin-top: 2px;
+    box-shadow: inset 0 0 0 1px rgba(244, 242, 236, .18);
+}
+
+.wall-book-body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.wall-book-meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-width: 0;
+}
+
+.wall-book-name {
+    color: var(--flood);
+    font-size: 15px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    transition: color 160ms ease;
+}
+
+.wall-book-row:hover .wall-book-name,
+.wall-book-row:focus-visible .wall-book-name {
+    color: var(--green-light);
+}
+
+.wall-book-source {
+    color: var(--steel-2);
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: .1em;
+}
+
+.wall-book-time {
+    margin-left: auto;
+    color: var(--steel-2);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.wall-book-text {
+    display: -webkit-box;
+    max-width: 66ch;
+    overflow: hidden;
+    color: rgba(244, 242, 236, .78);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.wall-book-empty {
+    padding: 26px 0 6px;
+}
+
+.wall-book-empty-title {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-cn-display);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.wall-book-empty-sub {
+    margin: 8px 0 0;
+    color: var(--steel);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.wall-book-empty-sub a {
+    color: var(--green-light);
+}
+
+.wall-book-empty-sub a:hover,
+.wall-book-empty-sub a:focus {
     color: var(--flood);
 }
 
@@ -425,235 +633,50 @@ body.site-site-index {
         grid-area: enter;
     }
 
-    .wall-ways {
-        gap: 10px 20px;
+    .wall-book-time {
+        margin-left: 0;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .wall-board,
-    .wall-ways a {
+    .wall-book-all,
+    .wall-book-row,
+    .wall-book-name {
         transition: none;
     }
 }
 
-/* ==========================================================================
-   最新留言：首页底部的社区脉搏，不是第二个 feed
-   ========================================================================== */
-.wall-comments-head {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 6px 16px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--line-dark);
-}
-
-.wall-comments-title {
-    margin: 0;
-    color: var(--flood);
-    font-family: var(--font-cn-display);
-    font-size: clamp(22px, 2vw, 28px);
-    font-weight: 400;
-    line-height: 1.2;
-}
-
-.wall-comments-note {
-    color: var(--steel);
-    font-size: 13px;
-}
-
-.wall-comments-more {
-    margin-left: auto;
-    border-bottom: 1px solid transparent;
-    color: var(--green-light);
-    font-size: 13px;
-    text-decoration: none;
-}
-
-.wall-comments-more:hover,
-.wall-comments-more:focus {
-    border-bottom-color: currentColor;
-    color: var(--flood);
-}
-
-.wall-comments-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    margin-top: 20px;
-}
-
-.wall-comment {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 7px;
-    padding: 0 24px;
-    border-left: 1px solid var(--line-dark);
-    color: inherit;
-    text-decoration: none;
-}
-
-.wall-comment:first-child {
-    padding-left: 0;
-    border-left: 0;
-}
-
-.wall-comment:last-child {
-    padding-right: 0;
-}
-
-.wall-comment:focus-visible {
-    outline: 2px solid var(--green-light);
-    outline-offset: 6px;
-}
-
-.wall-comment:hover .wall-comment-name,
-.wall-comment:focus-visible .wall-comment-name {
-    color: var(--green-light);
-}
-
-.wall-comment-source {
-    color: var(--steel);
-    font-family: var(--font-display);
-    font-size: 12px;
-    letter-spacing: .1em;
-}
-
-.wall-comment-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-    min-width: 0;
-}
-
-.wall-comment-seal {
-    box-shadow: inset 0 0 0 1px rgba(244, 242, 236, .18);
-}
-
-.wall-comment-name {
-    min-width: 0;
-    color: var(--flood);
-    font-size: 14px;
-    font-weight: 500;
-    overflow-wrap: anywhere;
-    transition: color .16s ease;
-}
-
-.wall-comment-time {
-    margin-left: 2px;
-    color: var(--steel);
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
-.wall-comment-text {
-    display: -webkit-box;
-    max-width: 68ch;
-    overflow: hidden;
-    color: rgba(244, 242, 236, .72);
-    font-size: 14px;
-    line-height: 1.7;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-
-.wall-comments-empty {
-    padding: 28px 0 4px;
-}
-
-.wall-empty-title {
-    margin: 0;
-    color: var(--flood);
-    font-family: var(--font-cn-display);
-    font-size: 22px;
-    font-weight: 400;
-    line-height: 1.3;
-}
-
-.wall-empty-sub {
-    margin: 8px 0 0;
-    color: var(--steel);
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.wall-empty-cta {
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
-    margin-top: 18px;
-    padding: 0 18px;
-    border: 1px solid rgba(224, 180, 87, .5);
-    color: var(--gold-light);
-    font-size: 14px;
-    text-decoration: none;
-    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
-}
-
-.wall-empty-cta:hover,
-.wall-empty-cta:focus {
-    border-color: var(--gold);
-    background-color: rgba(224, 180, 87, .1);
-    color: var(--flood);
-}
-
-@media (max-width: 991px) {
-    .wall-closing-grid {
-        grid-template-columns: 1fr;
-        gap: 32px;
-    }
-
-    .wall-elsewhere {
-        padding-top: 24px;
-        padding-left: 0;
-        border-top: 1px solid var(--line-dark);
-        border-left: 0;
-    }
-
-    .wall-comments-list {
-        grid-template-columns: 1fr;
-    }
-
-    .wall-comment {
-        padding: 14px 0;
-        border-top: 1px solid var(--line-dark);
-        border-left: 0;
-    }
-
-    .wall-comment:first-child {
-        padding-top: 0;
-        border-top: 0;
-    }
-}
-
+/* 收场在窄屏：房间继续收窄，留言仍是单列一行一条。 */
 @media (max-width: 767px) {
-    .wall-comments-note {
+    .wall-closing {
+        margin-top: 56px;
+        padding-top: 40px;
+    }
+
+    .wall-coda-inner-head {
+        padding-top: 24px;
+    }
+
+    .wall-coda-inner-head h2 {
+        font-size: 30px;
+    }
+
+    .wall-coda-inner-head p {
+        font-size: 15px;
+    }
+
+    .wall-book-all {
         flex-basis: 100%;
-        order: 3;
+        margin-left: 0;
     }
 
-    .wall-comments-more {
-        margin-left: auto;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .wall-ways a,
-    .wall-empty-cta,
-    .wall-about-links a {
-        transition: none;
+    .wall-book-row {
+        gap: 12px;
+        padding: 16px 0;
     }
 
-    .wall-ways a:hover,
-    .wall-ways a:focus {
-        padding-left: 0;
-    }
-
-    .wall-comment-name {
-        transition: none;
+    .wall-book-text {
+        font-size: 15px;
     }
 }

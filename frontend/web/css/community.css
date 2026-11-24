@@ -161,6 +161,17 @@
     margin-top: var(--space-3);
 }
 
+/* 文章页：面包屑、正文、留言簿共用 980 阅读列，不再出现 84 / 230 / 1070 三个左缘。 */
+body.site-news-view .breadcrumb {
+    max-width: 980px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.news-detail .ledger {
+    max-width: 100%;
+}
+
 .news-detail {
     max-width: 980px;
     margin: 0 auto;

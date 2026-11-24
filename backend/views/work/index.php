@@ -10,8 +10,8 @@
  * @var string $type
  */
 
+use common\components\AdminActionColumn;
 use common\models\Work;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'type',
             'description',
             'create_time:datetime',
-            ['class' => ActionColumn::class, 'header' => '操作'],
+            ['class' => AdminActionColumn::class],
         ],
     ]) ?>
 </div>

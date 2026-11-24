@@ -9,7 +9,7 @@
  * @var string $q
  */
 
-use yii\grid\ActionColumn;
+use common\components\AdminActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'role',
             'duty',
             'create_time:datetime',
-            ['class' => ActionColumn::class, 'header' => '操作'],
+            ['class' => AdminActionColumn::class],
         ],
     ]) ?>
 </div>

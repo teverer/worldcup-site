@@ -88,7 +88,7 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'editions' => $wall['editions'],
-            'latestComments' => LatestComments::latest(3),
+            'latestComments' => LatestComments::latest(4),
         ]);
     }
 

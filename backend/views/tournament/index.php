@@ -52,7 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => '共 {totalCount} 届赛事,当前显示 {begin}–{end} 条',
         'emptyText' => '暂无符合条件的届次。',
         'columns' => [
-            'id',
             'year',
             [
                 'attribute' => 'name',
@@ -63,10 +62,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'host_country',
             'team_count',
-            'format',
-            'win_points',
-            'start_date:date',
-            'end_date:date',
+            [
+                'attribute' => 'format',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $format = (string) $model->format;
+                    return Html::tag('span', Html::encode(\yii\helpers\StringHelper::truncate($format, 18)), [
+                        'title' => $format,
+                        'class' => 'dash-ellipsis',
+                    ]);
+                },
+            ],
+            [
+                'label' => '赛期',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $start = $model->start_date !== null ? substr((string) $model->start_date, 0, 10) : '';
+                    $end = $model->end_date !== null ? substr((string) $model->end_date, 0, 10) : '';
+                    return Html::encode($start) . ' – ' . Html::encode($end);
+                },
+            ],
             [
                 'class' => ActionColumn::class,
                 'header' => '操作',

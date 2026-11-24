@@ -9,17 +9,20 @@
  * @var array $latestComments 首页“最新留言”摘要
  */
 
+use common\components\CommentTarget;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = '世界杯档案 · 1986—2026';
 $this->registerCssFile('@web/css/root-wall.css');
+$this->registerJsFile('@web/js/ledger.js', ['position' => \yii\web\View::POS_END]);
 
-$latestId = $editions !== [] ? (int) $editions[0]['id'] : null;
-$dataUrl = $latestId !== null
-    ? Url::to(['/tournament/view', 'id' => $latestId]) . '#charts'
-    : Url::to(['/game/index']);
+$identity = Yii::$app->user->identity;
+$bookUrl = Url::to(['/site/discussion']);
+// 从首页去登录/注册，回来仍落在这一段的输入框旁，不用再找一次。
+$hereUrl = Url::to(['/site/index']) . '#comments';
+$loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
 ?>
 <div class="root-wall">
     <header class="wall-head">
@@ -93,67 +96,87 @@ $dataUrl = $latestId !== null
         <?php endif ?>
     </section>
 
-    <section class="wall-closing" aria-labelledby="wall-closing-title">
-        <header class="wall-closing-head">
-            <h2 id="wall-closing-title">继续看，或者留一句</h2>
-            <p>十一届看完了。换一种找法，或者写下你记住的那一夜。</p>
-        </header>
+    <?php // 收场不是墙尾的“更多入口”：墙看完了，这里只做一件事——把记忆留下。 ?>
+    <section class="wall-closing" id="comments" aria-labelledby="wall-closing-title">
+        <div class="wall-coda-inner">
+            <header class="wall-coda-inner-head">
+                <h2 id="wall-closing-title">继续看，或者留一句</h2>
+                <p>十一届看完了。挑一届接着看，或者把记住的那一夜写进留言簿。</p>
+            </header>
 
-        <div class="wall-closing-grid">
-            <section class="wall-comments" aria-labelledby="wall-comments-title">
-                <header class="wall-comments-head">
-                    <h3 class="wall-comments-title" id="wall-comments-title">最新留言</h3>
-                    <span class="wall-comments-note">来自各届、资讯与全站</span>
-                    <?= Html::a('去世界杯留言簿', ['/site/discussion'], ['class' => 'wall-comments-more']) ?>
+            <section class="wall-book" data-ledger-scope aria-labelledby="wall-book-title">
+                <header class="wall-book-head">
+                    <h3 class="wall-book-title" id="wall-book-title">留言簿</h3>
+                    <span class="wall-book-note">来自各届、资讯与全站</span>
+                    <?= Html::a('翻整本留言簿', $bookUrl, ['class' => 'wall-book-all']) ?>
                 </header>
+
+                <div class="wall-book-compose">
+                    <?php if ($identity === null): ?>
+                        <p class="wall-book-guest">
+                            你和世界杯的故事，从哪一届开始？
+                            <?= Html::a('登录后写一句', $loginUrl) ?>
+                            <span class="wall-book-guest-sub">还没有账号？<?= Html::a('注册', Url::to(['/site/signup', 'returnUrl' => $hereUrl])) ?></span>
+                        </p>
+                    <?php else: ?>
+                        <?= Html::beginForm(['/comment/create'], 'post', ['class' => 'wall-book-form']) ?>
+                            <?= Html::hiddenInput('CommentForm[targetType]', CommentTarget::SITE) ?>
+                            <?= Html::hiddenInput('CommentForm[targetId]', (string) CommentTarget::SITE_ID) ?>
+                            <span class="seal seal--lg"
+                                  style="background:<?= Html::encode(CommentSection::sealColor((int) $identity->id)) ?>"
+                                  aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($identity->nickname ?: $identity->username)) ?></span>
+                            <div class="wall-book-field">
+                                <label class="sr-only" for="wall-book-content">留言内容</label>
+                                <?= Html::textarea('CommentForm[content]', '', [
+                                    'id' => 'wall-book-content',
+                                    'class' => 'composer-input',
+                                    'rows' => 1,
+                                    'maxlength' => 5000,
+                                    'required' => true,
+                                    'placeholder' => '写下你和世界杯的一件小事……',
+                                    'data-ledger-input' => '1',
+                                ]) ?>
+                                <div class="composer-foot">
+                                    <span class="composer-hint">Ctrl + Enter 记下</span>
+                                    <?= Html::submitButton('记下', ['class' => 'btn-record']) ?>
+                                </div>
+                            </div>
+                        <?= Html::endForm() ?>
+                    <?php endif ?>
+                </div>
+
                 <?php if (!empty($latestComments)): ?>
-                    <div class="wall-comments-list">
+                    <ol class="wall-book-list">
                         <?php foreach ($latestComments as $item): ?>
-                            <a class="wall-comment" href="<?= Html::encode($item['url']) ?>">
-                                <span class="wall-comment-source"><?= Html::encode($item['source']) ?></span>
-                                <span class="wall-comment-meta">
-                                    <span class="seal wall-comment-seal"
+                            <li>
+                                <a class="wall-book-row" href="<?= Html::encode($item['url']) ?>">
+                                    <span class="seal wall-book-seal"
                                           style="background:<?= Html::encode(CommentSection::sealColor($item['userId'])) ?>"
                                           aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($item['author'])) ?></span>
-                                    <span class="wall-comment-name"><?= Html::encode($item['author']) ?></span>
-                                    <time class="wall-comment-time"
-                                          datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
-                                </span>
-                                <span class="wall-comment-text"><?= Html::encode($item['excerpt']) ?></span>
-                            </a>
+                                    <span class="wall-book-body">
+                                        <span class="wall-book-meta">
+                                            <span class="wall-book-name"><?= Html::encode($item['author']) ?></span>
+                                            <span class="wall-book-source"><?= Html::encode($item['source']) ?></span>
+                                            <time class="wall-book-time"
+                                                  datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
+                                        </span>
+                                        <span class="wall-book-text"><?= Html::encode($item['excerpt']) ?></span>
+                                    </span>
+                                </a>
+                            </li>
                         <?php endforeach ?>
-                    </div>
+                    </ol>
                 <?php else: ?>
-                    <div class="wall-comments-empty">
-                        <p class="wall-empty-title">还没有人留言。</p>
-                        <p class="wall-empty-sub">十一届看下来，总有一场你想说两句。</p>
-                        <?= Html::a('写第一句', ['/site/discussion'], ['class' => 'wall-empty-cta']) ?>
+                    <div class="wall-book-empty">
+                        <p class="wall-book-empty-title">留言簿还是空的。</p>
+                        <?php if ($identity === null): ?>
+                            <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。<?= Html::a('登录后写第一句', $loginUrl) ?></p>
+                        <?php else: ?>
+                            <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。上面就是第一行。</p>
+                        <?php endif ?>
                     </div>
                 <?php endif ?>
             </section>
-
-            <aside class="wall-elsewhere">
-                <section aria-labelledby="wall-elsewhere-title">
-                    <h3 id="wall-elsewhere-title">换一种找法</h3>
-                    <ul class="wall-ways">
-                        <li><?= Html::a('按球队', ['/team/index']) ?></li>
-                        <li><?= Html::a('按球员', ['/player/index']) ?></li>
-                        <li><?= Html::a('按比赛', ['/game/index']) ?></li>
-                        <li><?= Html::a('看数据', $dataUrl) ?></li>
-                    </ul>
-                </section>
-                <section class="wall-about-group" aria-labelledby="wall-about-title">
-                    <h3 id="wall-about-title">关于本站</h3>
-                    <div class="wall-about-links">
-                        <?= Html::a('关于与文档', ['/team-info/index']) ?>
-                        <?= Html::a('统计口径', ['/team-info/index', '#' => 'scope']) ?>
-                        <?= Html::a('源码仓库', 'https://github.com/teverer/worldcup-site', [
-                            'target' => '_blank',
-                            'rel' => 'noopener noreferrer',
-                        ]) ?>
-                    </div>
-                </section>
-            </aside>
         </div>
     </section>
 </div>

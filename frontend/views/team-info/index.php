@@ -62,14 +62,13 @@ $renderWorks = static function (array $items) {
             <p class="about-context">课程设计 · 数据库与 Web</p>
             <h1>关于本站</h1>
             <p class="about-lead"><?= Html::encode($team->slogan ?: '用数据看懂世界杯') ?></p>
-            <div class="about-actions">
-                <?php if ($hasWorks): ?>
+            <?php if ($hasWorks): ?>
+                <div class="about-actions">
                     <a class="btn btn-primary" href="#docs">下载课程文档</a>
                     <a class="btn btn-default" href="<?= Html::encode(Url::to(['/site/index'])) ?>">回到首页</a>
-                <?php else: ?>
-                    <a class="about-back-link" href="<?= Html::encode(Url::to(['/site/index'])) ?>">← 回到首页</a>
-                <?php endif ?>
-            </div>
+                </div>
+            <?php endif ?>
+            <?php // 空文档状态不再放「回到首页」：面包屑已经承担了返回，首屏只留一个主张。 ?>
         </div>
         <?php if ($team->logo): ?>
             <?= Html::img('@web/' . $team->logo, [

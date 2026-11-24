@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php ActiveForm::end(); ?>
 
     <p class="form-page-footer">
-        忘记密码？<?= Html::a('找回密码', ['/site/request-password-reset']) ?>
+        <?= Html::a('忘记密码？', ['/site/request-password-reset']) ?>
     </p>
     <p class="form-page-footer">
         还没有账号？<?= Html::a('立即注册', ['/site/signup']) ?>

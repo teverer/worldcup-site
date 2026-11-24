@@ -21,6 +21,7 @@
  * @var array $stageOptions
  * @var array $groupOptions
  */
+use common\components\TeamFlag;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -182,9 +183,15 @@ if ($teamKeyword !== null) {
                                 <?= Html::encode($game->stage) ?>
                             </span>
                             <span class="game-item-teams">
-                                <span class="game-item-team<?= $winner === 'home' ? ' is-winner' : '' ?>"><?= Html::encode($homeName) ?></span>
+                                <span class="game-item-team<?= $winner === 'home' ? ' is-winner' : '' ?>">
+                                    <?= TeamFlag::html($game->homeTeam !== null ? $game->homeTeam->code : '', $homeName) ?>
+                                    <span class="game-item-team-name"><?= Html::encode($homeName) ?></span>
+                                </span>
                                 <span class="game-item-score"><?= Html::encode($scoreText) ?></span>
-                                <span class="game-item-team<?= $winner === 'away' ? ' is-winner' : '' ?>"><?= Html::encode($awayName) ?></span>
+                                <span class="game-item-team<?= $winner === 'away' ? ' is-winner' : '' ?>">
+                                    <?= TeamFlag::html($game->awayTeam !== null ? $game->awayTeam->code : '', $awayName) ?>
+                                    <span class="game-item-team-name"><?= Html::encode($awayName) ?></span>
+                                </span>
                             </span>
                             <?php if ($penaltyText !== null): ?>
                                 <span class="game-item-note"><?= Html::encode($penaltyText) ?></span>

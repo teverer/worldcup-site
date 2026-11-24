@@ -31,20 +31,17 @@ if ($statusCode === 404) {
 }
 ?>
 <div class="site-error">
-    <header class="page-header">
-        <h1><?= Html::encode($statusCode . ' · ' . $this->title) ?></h1>
-        <p><?= Html::encode($reason) ?></p>
-    </header>
+    <?php // 错误页只做一件事：用最大的数字说明“走到头了”，再把出口放在同一条左轴上。 ?>
+    <p class="site-error-code" aria-hidden="true"><?= Html::encode((string) $statusCode) ?></p>
+    <h1 class="site-error-title"><?= Html::encode($this->title) ?></h1>
+    <p class="site-error-reason"><?= Html::encode($reason) ?></p>
 
-    <div class="empty-state">
-        <p>你仍然可以继续浏览站内数据。</p>
-        <p>
-            <?php if ($statusCode === 403): ?>
-                <?= Html::a('去登录', ['/site/login'], ['class' => 'btn btn-primary']) ?>
-            <?php else: ?>
-                <?= Html::a('回到首页', Yii::$app->homeUrl, ['class' => 'btn btn-primary']) ?>
-            <?php endif ?>
-            <?= Html::a('浏览比赛', ['/game/index'], ['class' => 'btn btn-default']) ?>
-        </p>
+    <div class="site-error-actions">
+        <?php if ($statusCode === 403): ?>
+            <?= Html::a('去登录', ['/site/login'], ['class' => 'btn btn-primary']) ?>
+        <?php else: ?>
+            <?= Html::a('回到首页', Yii::$app->homeUrl, ['class' => 'btn btn-primary']) ?>
+        <?php endif ?>
+        <?= Html::a('浏览比赛', ['/game/index'], ['class' => 'btn btn-default']) ?>
     </div>
 </div>

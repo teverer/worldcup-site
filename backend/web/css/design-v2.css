@@ -327,6 +327,32 @@ textarea:focus-visible,
     border-top: 1px solid var(--rail-line);
 }
 
+/* 1366×768 笔记本：四组导航默认全开时会顶到账号块；压缩一档，保证全部可见。 */
+@media (max-height: 800px) and (min-width: 992px) {
+    .wb-nav {
+        padding-top: 10px;
+    }
+
+    .wb-group {
+        margin-top: 10px;
+    }
+
+    .wb-item {
+        min-height: 32px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .wb-group .wb-item {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .wb-rail-foot {
+        padding: 10px 18px 12px;
+    }
+}
+
 .wb-user {
     display: flex;
     align-items: center;
@@ -869,11 +895,29 @@ body .grid-view .table > tbody > tr:hover > td:last-child {
     background: #F6F1E5;
 }
 
-/* 比赛列表的场地名最长;允许它换行,避免整张表被一列撑宽 */
-body.backend-game-index .grid-view .table > thead > tr > th:nth-child(8),
-body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(8) {
-    max-width: 190px;
-    white-space: normal;
+/* 长文本列：单行省略 + title 看全文，行高不再被场地名撑成 5 行 */
+.dash-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+body.backend-game-index .grid-view .table > thead > tr > th:nth-child(7),
+body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(7) {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* 操作列固定宽度：文字按钮不挤在一起，图标版也不在右侧留一大片空白 */
+body .grid-view .table > thead > tr > th:last-child,
+body .grid-view .table > tbody > tr > td:last-child {
+    width: 150px;
+    min-width: 150px;
+    white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -889,8 +933,10 @@ body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(8) {
 }
 
 .btn-xs {
+    min-height: 26px;
     padding: 3px 8px;
     font-size: 11.5px;
+    line-height: 1.2;
 }
 
 .btn-sm {

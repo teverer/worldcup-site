@@ -14,6 +14,7 @@
  * @var common\models\Player[] $players
  * @var array $statusLabels
  */
+use common\components\TeamFlag;
 use common\models\Game;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -124,6 +125,7 @@ if ($statusValue === Game::STATUS_PENDING) {
 
         <h1 class="game-scoreboard" aria-label="<?= Html::encode($homeName . ' 对 ' . $awayName . '，' . $scoreLabel) ?>">
             <span class="game-team">
+                <?= TeamFlag::html($model->homeTeam !== null ? $model->homeTeam->code : '', $homeName, 'team-flag--lg') ?>
                 <?php if ($model->homeTeam !== null): ?>
                     <?= Html::a(Html::encode($homeName), ['/team/view', 'id' => $model->home_team_id]) ?>
                 <?php else: ?>
@@ -142,6 +144,7 @@ if ($statusValue === Game::STATUS_PENDING) {
                 <?php else: ?>
                     <?= Html::encode($awayName) ?>
                 <?php endif ?>
+                <?= TeamFlag::html($model->awayTeam !== null ? $model->awayTeam->code : '', $awayName, 'team-flag--lg') ?>
             </span>
         </h1>
 

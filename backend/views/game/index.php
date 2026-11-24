@@ -80,12 +80,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => '共 {totalCount} 场比赛,当前显示 {begin}–{end} 条',
         'emptyText' => '暂无符合条件的比赛。',
         'columns' => [
-            'id',
             [
                 'attribute' => 'tournament_year',
                 'label' => '届次',
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->tournament === null ? '' : $model->tournament->name;
+                    $name = $model->tournament === null ? '' : (string) $model->tournament->name;
+                    return Html::tag('span', Html::encode(\yii\helpers\StringHelper::truncate($name, 12)), [
+                        'title' => $name,
+                        'class' => 'dash-ellipsis',
+                    ]);
                 },
             ],
             [
@@ -122,7 +126,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::tag('span', Html::encode($model->statusText), ['class' => 'label ' . $class]);
                 },
             ],
-            'venue',
+            [
+                'attribute' => 'venue',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $venue = (string) $model->venue;
+                    return Html::tag('span', Html::encode($venue), [
+                        'title' => $venue,
+                        'class' => 'dash-ellipsis',
+                    ]);
+                },
+            ],
             [
                 'class' => ActionColumn::class,
                 'header' => '操作',

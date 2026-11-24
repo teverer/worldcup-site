@@ -121,5 +121,9 @@
     window.addEventListener('hashchange', openTarget);
     openTarget();
 
-    Array.prototype.forEach.call(document.querySelectorAll('.ledger'), initLedger);
+    // 留言簿组件；首页收场区用 [data-ledger-scope] 复用同一套输入行为。
+    Array.prototype.forEach.call(
+        document.querySelectorAll('.ledger, [data-ledger-scope]'),
+        initLedger
+    );
 })();

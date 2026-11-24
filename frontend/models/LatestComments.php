@@ -80,8 +80,8 @@ class LatestComments
             $url .= '#comment-' . (int) $comment->id;
 
             $content = trim((string) preg_replace('/\s+/u', ' ', (string) $comment->content));
-            $excerpt = mb_substr($content, 0, 72, 'UTF-8');
-            if (mb_strlen($content, 'UTF-8') > 72) {
+            $excerpt = mb_substr($content, 0, 96, 'UTF-8');
+            if (mb_strlen($content, 'UTF-8') > 96) {
                 $excerpt .= '…';
             }
 

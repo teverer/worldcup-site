@@ -125,7 +125,7 @@
 }
 
 .pl-head p {
-    max-width: 62ch;
+    max-width: 46em;
     margin: 0;
     color: var(--color-muted-strong);
 }
@@ -140,12 +140,22 @@
 
 .pl-search-main {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: var(--space-1);
 }
 
+.pl-search-main .pl-continent {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 150px;
+    max-width: 220px;
+}
+
 .pl-input {
-    flex: 1 1 auto;
-    min-width: 0;
+    flex: 1 1 24rem;
+    width: auto;
+    min-width: 12rem;
 }
 
 .pl-search-main .btn {
@@ -367,9 +377,10 @@
         margin-top: var(--space-1);
     }
 
-    .pl-search-filters .form-control {
+    .pl-search-main .pl-continent {
         width: 100%;
         max-width: none;
+        margin-top: var(--space-1);
     }
 
     .pl-scorer {
@@ -402,10 +413,18 @@
 .ti-group-head {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-2);
+    justify-content: flex-start;
+    gap: 10px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--color-border);
+}
+
+/* 计数跟着大洲标题走，不再被推到 1240px 外的另一端。 */
+.ti-group-head > span {
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
 }
 
 .ti-group-head h2 {
@@ -453,6 +472,18 @@
 .ti-team:focus-visible {
     outline: 3px solid rgba(20, 107, 69, .35);
     outline-offset: 1px;
+}
+
+.ti-team-id {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ti-team-id .team-flag {
+    width: 22px;
+    height: 16px;
 }
 
 .ti-team-name {

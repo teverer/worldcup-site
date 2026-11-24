@@ -9,8 +9,8 @@
  * @var yii\data\ActiveDataProvider $dataProvider
  */
 
+use common\components\AdminActionColumn;
 use common\models\News;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -68,10 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'publish_time:datetime',
             'create_time:datetime',
-            [
-                'class' => ActionColumn::class,
-                'header' => '操作',
-            ],
+            ['class' => AdminActionColumn::class],
         ],
     ]) ?>
 </div>
