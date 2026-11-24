@@ -669,3 +669,15 @@ body:not(.site-site-index) .ledger {
         opacity: .7;
     }
 }
+
+/* 全站留言簿是独立阅读页：不要缩在 840 的左栏里，和届次 / 资讯的留言区同宽。 */
+body.site-site-discussion .site-discussion {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+body.site-site-discussion .site-discussion .ledger {
+    max-width: 100%;
+    margin-top: 28px;
+}
