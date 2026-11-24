@@ -111,9 +111,6 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
         <?php endif ?>
     </section>
 
-    <?php // 墙是按届陈列；这张图看四十年的一条线，回答“进球是多了还是少了”。 ?>
-    <?= $this->render('_era_trend', ['editions' => $editions]) ?>
-
     <?php // 收场不是墙尾的“更多入口”：墙看完了，这里只做一件事——把记忆留下。 ?>
     <section class="wall-closing" id="comments" aria-labelledby="wall-closing-title">
         <div class="wall-coda-inner">
