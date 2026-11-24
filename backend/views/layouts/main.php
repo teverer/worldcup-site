@@ -83,6 +83,8 @@ $isAdmin = !Yii::$app->user->isGuest
 $this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 // 后台美术层：纸面表格、铜线标记；在 design-v2 之后加载，只做颜色/边框覆盖。
 $this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 工作间结构层：页头工具条、筛选面板、当前筛选、空态（r7）。
+$this->registerCssFile('@web/css/r7-admin.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 $this->registerJsFile('@web/js/workbench.js', ['position' => \yii\web\View::POS_END]);
 
 $groupNo = 2;

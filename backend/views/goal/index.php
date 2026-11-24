@@ -17,47 +17,90 @@ use yii\helpers\Html;
 
 $this->title = '进球管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$tournamentOptions = Tournament::options();
+
+$activeFilters = [];
+foreach ([
+    ['label' => '届次', 'value' => $searchModel->tournamentId, 'options' => $tournamentOptions],
+    ['label' => '球队', 'value' => $searchModel->teamId, 'options' => $teams],
+] as $filter) {
+    $key = (string) $filter['value'];
+    if ($key !== '' && isset($filter['options'][$key])) {
+        $activeFilters[] = $filter['label'] . '：' . $filter['options'][$key];
+    }
+}
+$gameId = trim((string) $searchModel->gameId);
+if ($gameId !== '') {
+    $activeFilters[] = '比赛编号：' . $gameId;
+}
+$keyword = trim((string) $searchModel->q);
+if ($keyword !== '') {
+    $activeFilters[] = '关键词：' . $keyword;
+}
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p><?= Html::a('录入进球', ['create'], ['class' => 'btn btn-success']) ?></p>
+<div class="admin-page-head">
+    <div>
+        <h1><?= Html::encode($this->title) ?></h1>
+        <p class="admin-page-sub">按球员、球队、届次或比赛编号定位一条进球；乌龙球与点球单独标注。</p>
+    </div>
+    <?= Html::a('录入进球', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
+</div>
 
 <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline', 'style' => 'margin:20px 0']) ?>
-    <div class="form-group">
-        <?= Html::label('关键词', 'goal-q', ['class' => 'sr-only']) ?>
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'name' => 'q',
-            'id' => 'goal-q',
-            'class' => 'form-control',
-            'placeholder' => '球员 / 球队',
-            'maxlength' => 100,
-        ]) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::activeTextInput($searchModel, 'q', [
+                'name' => 'q',
+                'id' => 'goal-q',
+                'class' => 'form-control',
+                'placeholder' => '球员或球队，如 梅西、阿根廷',
+                'maxlength' => 100,
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--tournament">
+            <span class="admin-filter-label">届次</span>
+            <?= Html::activeDropDownList($searchModel, 'tournamentId', $tournamentOptions, [
+                'name' => 'tournamentId',
+                'class' => 'form-control',
+                'prompt' => '全部届次',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">球队</span>
+            <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
+                'name' => 'teamId',
+                'class' => 'form-control',
+                'prompt' => '全部球队',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--year">
+            <span class="admin-filter-label">比赛编号</span>
+            <?= Html::activeTextInput($searchModel, 'gameId', [
+                'name' => 'gameId',
+                'class' => 'form-control',
+                'placeholder' => '如 1032',
+                'inputmode' => 'numeric',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'tournamentId', Tournament::options(), [
-            'name' => 'tournamentId',
-            'class' => 'form-control',
-            'prompt' => '全部届次',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
-            'name' => 'teamId',
-            'class' => 'form-control',
-            'prompt' => '全部球队',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeTextInput($searchModel, 'gameId', [
-            'name' => 'gameId',
-            'class' => 'form-control',
-            'placeholder' => '比赛编号',
-            'style' => 'width:110px',
-        ]) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
+
+<?php if ($activeFilters): ?>
+    <div class="admin-filter-active" aria-label="当前筛选">
+        <span class="admin-filter-active-label">当前筛选</span>
+        <?php foreach ($activeFilters as $filterText): ?>
+            <span class="admin-chip"><?= Html::encode($filterText) ?></span>
+        <?php endforeach ?>
+        <?= Html::a('清除全部', ['index'], ['class' => 'admin-chip-clear']) ?>
+    </div>
+<?php endif ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
