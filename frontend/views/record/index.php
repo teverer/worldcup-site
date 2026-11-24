@@ -8,6 +8,7 @@
  * @var array $totals
  * @var array $moments
  * @var array $finals
+ * @var array $nations
  * @var array $scorers
  */
 
@@ -104,6 +105,45 @@ $this->title = '纪录';
                     </li>
                 <?php endforeach ?>
             </ol>
+        </div>
+    </section>
+
+    <section class="record-section record-section--nations" aria-labelledby="record-nations-title">
+        <div class="record-wrap">
+            <header class="record-section-head">
+                <h2 id="record-nations-title">谁常在决赛</h2>
+                <p>把十一场决赛按国家累计。西德计入德国；只统计进过决赛的球队。</p>
+            </header>
+            <table class="nation-table">
+                <caption class="sr-only">按国家统计的世界杯决赛次数</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">国家</th>
+                        <th scope="col">冠军</th>
+                        <th scope="col">亚军</th>
+                        <th scope="col">决赛</th>
+                        <th scope="col" class="nation-span-col">跨度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($nations as $nation): ?>
+                        <tr>
+                            <th scope="row">
+                                <a class="nation-name" href="<?= Html::encode(Url::to(['/team/view', 'id' => $nation['id']])) ?>">
+                                    <?= TeamFlag::html($nation['code'], $nation['name'], 'nation-flag') ?>
+                                    <strong><?= Html::encode($nation['name']) ?></strong>
+                                </a>
+                            </th>
+                            <td class="nation-title"><?= (int) $nation['titles'] ?></td>
+                            <td class="nation-count"><?= (int) $nation['runner_up'] ?></td>
+                            <td class="nation-count"><?= (int) $nation['finals'] ?></td>
+                            <td class="nation-span nation-span-col">
+                                <?= (int) $nation['first'] ?><?= $nation['first'] !== $nation['last'] ? '–' . (int) $nation['last'] : '' ?>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
         </div>
     </section>
 

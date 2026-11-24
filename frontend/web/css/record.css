@@ -471,7 +471,121 @@ body.site-record-index.site-body .atmo-dots {
 }
 
 /* --------------------------------------------------------------------------
-   5. 历届总射手
+   5. 谁常在决赛：决赛的聚合表
+   -------------------------------------------------------------------------- */
+.nation-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nation-table thead th {
+    padding: 0 16px 10px;
+    color: var(--steel);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-align: right;
+    border-bottom: 1px solid rgba(244, 242, 236, .10);
+}
+
+.nation-table thead th:first-child {
+    padding-left: 0;
+    text-align: left;
+}
+
+.nation-table tbody th,
+.nation-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+}
+
+.nation-table tbody th {
+    padding-left: 0;
+    font-weight: 400;
+    text-align: left;
+}
+
+.nation-table tbody td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.nation-table tbody tr:hover {
+    background: rgba(224, 180, 87, .05);
+}
+
+.nation-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--flood);
+    text-decoration: none;
+}
+
+.nation-name strong {
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: .03em;
+}
+
+.nation-name:hover,
+.nation-name:focus {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.nation-name:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+}
+
+.nation-flag,
+.nation-flag img,
+.nation-flag.team-flag--code {
+    width: 30px;
+    height: 22px;
+}
+
+.nation-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .22);
+    object-fit: cover;
+}
+
+.nation-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+}
+
+.nation-title {
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.nation-count {
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.nation-span {
+    color: var(--steel);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   6. 历届总射手
    -------------------------------------------------------------------------- */
 .scorer-row {
     border-top: 1px solid rgba(244, 242, 236, .08);
@@ -728,6 +842,41 @@ body.site-record-index.site-body .atmo-dots {
 
     .final-runner .final-flag {
         display: none;
+    }
+
+    .nation-span-col {
+        display: none;
+    }
+
+    .nation-table thead th,
+    .nation-table tbody th,
+    .nation-table tbody td {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .nation-table thead th:first-child,
+    .nation-table tbody th {
+        padding-left: 0;
+    }
+
+    .nation-name strong {
+        font-size: 18px;
+    }
+
+    .nation-flag,
+    .nation-flag img,
+    .nation-flag.team-flag--code {
+        width: 24px;
+        height: 18px;
+    }
+
+    .nation-title {
+        font-size: 30px;
+    }
+
+    .nation-count {
+        font-size: 22px;
     }
 
     .scorer-row > a {

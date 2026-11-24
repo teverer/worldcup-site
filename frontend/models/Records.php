@@ -43,6 +43,7 @@ class Records
             ],
             'moments' => self::moments($finals, $scorers),
             'finals' => $finals,
+            'nations' => self::finalNations($finals),
             'scorers' => $scorers,
         ];
     }
@@ -64,8 +65,10 @@ class Records
                 'away_score' => 'g.away_score',
                 'home_penalty' => 'g.home_penalty_score',
                 'away_penalty' => 'g.away_penalty_score',
+                'home_id' => 'ht.id',
                 'home_name' => 'ht.name',
                 'home_code' => 'ht.code',
+                'away_id' => 'at.id',
                 'away_name' => 'at.name',
                 'away_code' => 'at.code',
             ])
@@ -94,8 +97,10 @@ class Records
                 'tournament_id' => (int) $row['tournament_id'],
                 'year' => (int) $row['year'],
                 'host' => (string) $row['host'],
+                'champion_id' => $decided ? ($homeWon ? (int) $row['home_id'] : (int) $row['away_id']) : null,
                 'champion_name' => $decided ? ($homeWon ? $row['home_name'] : $row['away_name']) : null,
                 'champion_code' => $decided ? ($homeWon ? $row['home_code'] : $row['away_code']) : null,
+                'runner_id' => $decided ? ($homeWon ? (int) $row['away_id'] : (int) $row['home_id']) : null,
                 'runner_name' => $decided ? ($homeWon ? $row['away_name'] : $row['home_name']) : null,
                 'runner_code' => $decided ? ($homeWon ? $row['away_code'] : $row['home_code']) : null,
                 // 比分按「冠军–亚军」排列，与左侧捧杯球队同序，避免读者把
@@ -111,6 +116,82 @@ class Records
         }
 
         return $result;
+    }
+
+    /**
+     * 决赛常客：按国家合并西德 / 德国后，统计冠军、亚军与决赛次数。
+     *
+     * 这是对上面十一场决赛的聚合，不引入新数据；合并只发生在「同一国家
+     * 的两个历史队名」上，不合并其他球队。
+     *
+     * @param array $finals
+     * @return array
+     */
+    private static function finalNations(array $finals)
+    {
+        $nations = [];
+
+        $add = static function ($id, $name, $code, $year, $isChampion) use (&$nations) {
+            $code = (string) $code;
+            $key = in_array($code, ['FRG', 'GER'], true) ? 'GER' : ($code !== '' ? $code : (string) $id);
+            $isGermany = $key === 'GER';
+
+            if (!isset($nations[$key])) {
+                $nations[$key] = [
+                    'id' => (int) $id,
+                    'name' => $isGermany ? '德国' : (string) $name,
+                    'code' => $isGermany ? 'GER' : $code,
+                    'titles' => 0,
+                    'runner_up' => 0,
+                    'finals' => 0,
+                    'first' => (int) $year,
+                    'last' => (int) $year,
+                ];
+            }
+
+            $nation = &$nations[$key];
+            $nation['finals']++;
+            if ($isChampion) {
+                $nation['titles']++;
+            } else {
+                $nation['runner_up']++;
+            }
+            $nation['first'] = min($nation['first'], (int) $year);
+            if ((int) $year >= $nation['last']) {
+                $nation['last'] = (int) $year;
+                $nation['id'] = (int) $id;
+                if (!$isGermany) {
+                    $nation['name'] = (string) $name;
+                }
+            }
+            unset($nation);
+        };
+
+        foreach ($finals as $final) {
+            if ($final['champion_code'] !== null) {
+                $add($final['champion_id'], $final['champion_name'], $final['champion_code'], $final['year'], true);
+            }
+            if ($final['runner_code'] !== null) {
+                $add($final['runner_id'], $final['runner_name'], $final['runner_code'], $final['year'], false);
+            }
+        }
+
+        $nations = array_values($nations);
+        usort($nations, static function ($a, $b) {
+            if ($a['titles'] !== $b['titles']) {
+                return $b['titles'] <=> $a['titles'];
+            }
+            if ($a['runner_up'] !== $b['runner_up']) {
+                return $b['runner_up'] <=> $a['runner_up'];
+            }
+            if ($a['finals'] !== $b['finals']) {
+                return $b['finals'] <=> $a['finals'];
+            }
+
+            return $a['first'] <=> $b['first'];
+        });
+
+        return $nations;
     }
 
     /**
