@@ -26,6 +26,10 @@
 
     var chartInstances = {};
     var resizeTimer = null;
+    // 站内硬规则:尊重 prefers-reduced-motion;开启时取消 ECharts 入场动画。
+    var prefersReducedMotion = !!(window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var ANIMATION_DURATION = prefersReducedMotion ? 0 : 500;
 
     function byId(id) {
         return document.getElementById(id);
@@ -276,7 +280,7 @@
             });
 
             chart.setOption({
-                animationDuration: 500,
+                animationDuration: ANIMATION_DURATION,
                 // 横向条形:队名在左、积分在右,四支球队比竖向柱更紧凑、也更容易读排名。
                 grid: { left: 8, right: 44, top: 16, bottom: 16, containLabel: true },
                 tooltip: {
@@ -420,7 +424,7 @@
         }
 
         chart.setOption({
-            animationDuration: 500,
+            animationDuration: ANIMATION_DURATION,
             grid: { left: 12, right: 44, top: 12, bottom: 8, containLabel: true },
             tooltip: {
                 trigger: 'axis',
@@ -574,7 +578,7 @@
 
         chart.setOption({
             baseOption: {
-                animationDuration: 500,
+                animationDuration: ANIMATION_DURATION,
                 title: {
                     text: String(total),
                     subtext: '全届进球',
@@ -774,7 +778,7 @@
         }
 
         chart.setOption({
-            animationDuration: 500,
+            animationDuration: ANIMATION_DURATION,
             grid: { left: 6, right: 14, top: 34, bottom: 6, containLabel: true },
             tooltip: {
                 trigger: 'axis',
