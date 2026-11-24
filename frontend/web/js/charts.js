@@ -111,6 +111,28 @@
         return (number > 0 ? '+' : '') + number;
     }
 
+    // 国旗放在轴标签最前面:24×15 的小图,没有可靠旗源时直接不占位。
+    function addFlagRich(rich, rows, prefix) {
+        rows.forEach(function (row, index) {
+            if (!row || !row.teamFlag) {
+                return;
+            }
+            rich[prefix + index] = {
+                backgroundColor: { image: row.teamFlag },
+                width: 24,
+                height: 15,
+                borderRadius: 2,
+                borderColor: 'rgba(244, 242, 236, .22)',
+                borderWidth: 1
+            };
+        });
+        return rich;
+    }
+
+    function flagTag(row, index, prefix) {
+        return row && row.teamFlag ? '{' + prefix + index + '|}  ' : '';
+    }
+
     // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
     // 同时处理空格、连字符与撇号后的首字母，兼容 Heung-min、O'Neill 等写法。
     // 与 PHP 端 wc_player_name_v2 cookie 保持一致:默认原名,只有主动切到中文名才用中文。
@@ -328,6 +350,7 @@
         function drawGroup(groupData) {
             chartRows = groupData.rows || [];
             var compact = chart.getWidth() < 560;
+            var flagRich = addFlagRich({}, chartRows, 'sf');
             var categories = [];
             var values = [];
             var groupLeaders = [];
@@ -385,11 +408,12 @@
                         fontFamily: CN_FONT,
                         margin: compact ? 10 : 12,
                         formatter: function (value, index) {
-                            return index === 0
-                                ? '{first|1}  ' + value
-                                : '{rank|' + (index + 1) + '}  ' + value;
+                            return flagTag(chartRows[index], index, 'sf')
+                                + (index === 0
+                                    ? '{first|1}  ' + value
+                                    : '{rank|' + (index + 1) + '}  ' + value);
                         },
-                        rich: {
+                        rich: Object.assign({
                             first: {
                                 color: ACCENT_SERIES,
                                 fontSize: compact ? 15 : 18,
@@ -402,7 +426,7 @@
                                 fontFamily: NUM_FONT,
                                 fontWeight: 'bold'
                             }
-                        }
+                        }, flagRich)
                     }
                 },
                 series: [{
@@ -483,6 +507,7 @@
 
         var container = byId('chart-scorers');
         var compact = container.clientWidth < 560;
+        var flagRich = compact ? {} : addFlagRich({}, chartRows, 'pf');
         // 窄屏只留姓名,球队放在 tooltip;桌面保留「姓名 · 球队」。
         var names = chartRows.map(function (row) {
             var name = displayPlayerName(row);
@@ -493,7 +518,7 @@
         }, 0);
         var yLabelWidth = compact
             ? 108
-            : Math.min(300, Math.max(190, Math.ceil(maxNameWidth) + 12));
+            : Math.min(330, Math.max(210, Math.ceil(maxNameWidth) + 42));
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
         });
@@ -549,7 +574,13 @@
                     margin: compact ? 10 : 12,
                     width: yLabelWidth,
                     overflow: 'truncate',
-                    ellipsis: '…'
+                    ellipsis: '…',
+                    formatter: function (value, index) {
+                        return compact
+                            ? value
+                            : flagTag(chartRows[index], index, 'pf') + value;
+                    },
+                    rich: flagRich
                 }
             },
             series: [{
@@ -598,6 +629,7 @@
             return {
                 rank: index + 1,
                 teamName: row.teamName,
+                teamFlag: row.teamFlag || '',
                 goals: row.goals,
                 percent: sharePercent(row.goals, total)
             };
@@ -639,6 +671,7 @@
         var teamNames = topRows.map(function (row) {
             return row.teamName;
         });
+        var flagRich = addFlagRich({}, topRows, 'tf');
 
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
@@ -703,11 +736,12 @@
                     fontFamily: CN_FONT,
                     margin: compact ? 10 : 14,
                     formatter: function (value, index) {
-                        return index === 0
-                            ? '{first|1}  ' + value
-                            : '{rank|' + (index + 1) + '}  ' + value;
+                        return flagTag(topRows[index], index, 'tf')
+                            + (index === 0
+                                ? '{first|1}  ' + value
+                                : '{rank|' + (index + 1) + '}  ' + value);
                     },
-                    rich: {
+                    rich: Object.assign({
                         first: {
                             color: ACCENT_SERIES,
                             fontSize: compact ? 15 : 18,
@@ -720,7 +754,7 @@
                             fontFamily: NUM_FONT,
                             fontWeight: 'bold'
                         }
-                    }
+                    }, flagRich)
                 }
             },
             series: [{

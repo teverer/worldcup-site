@@ -8,6 +8,7 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\components\TeamFlag;
 use yii\db\Query;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -113,6 +114,7 @@ class ChartController extends Controller
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
                 'teamCode' => ($row['team_code'] === null) ? '' : (string) $row['team_code'],
+                'teamFlag' => TeamFlag::url($row['team_code']),
                 'played' => (int) $row['played'],
                 'won' => $won,
                 'drawn' => $drawn,
@@ -161,6 +163,7 @@ class ChartController extends Controller
                 'player_nationality' => 'p.nationality',
                 'team_id' => 'g.team_id',
                 'team_name' => 't.name',
+                'team_code' => 't.code',
                 'goals' => 'COUNT(g.id)',
             ])
             ->from(['g' => '{{%goal}}'])
@@ -172,7 +175,7 @@ class ChartController extends Controller
                 'g.is_shootout' => 0,
                 'g.is_own_goal' => 0,
             ])
-            ->groupBy(['g.player_id', 'p.name', 'p.name_zh', 'p.nationality', 'g.team_id', 't.name'])
+            ->groupBy(['g.player_id', 'p.name', 'p.name_zh', 'p.nationality', 'g.team_id', 't.name', 't.code'])
             ->orderBy(['goals' => SORT_DESC, 'p.name' => SORT_ASC])
             ->limit(10)
             ->all();
@@ -187,6 +190,8 @@ class ChartController extends Controller
                 'alwaysZh' => in_array($row['player_nationality'], ['中国', '中国台北', '中国香港', '中国澳门'], true),
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
+                'teamCode' => (string) ($row['team_code'] ?? ''),
+                'teamFlag' => TeamFlag::url($row['team_code'] ?? ''),
                 'goals' => (int) $row['goals'],
             ];
         }
@@ -212,6 +217,7 @@ class ChartController extends Controller
             ->select([
                 'team_id' => 'g.team_id',
                 'team_name' => 't.name',
+                'team_code' => 't.code',
                 'goals' => 'COUNT(g.id)',
             ])
             ->from(['g' => '{{%goal}}'])
@@ -233,6 +239,8 @@ class ChartController extends Controller
             $teams[] = [
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
+                'teamCode' => (string) ($row['team_code'] ?? ''),
+                'teamFlag' => TeamFlag::url($row['team_code'] ?? ''),
                 'goals' => $goals,
             ];
         }

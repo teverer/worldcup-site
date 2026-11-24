@@ -63,6 +63,19 @@ class TeamFlag
     }
 
     /**
+     * 国旗的站内 URL；没有可靠旗源时返回 null（图表里就不放旗）。
+     *
+     * @param mixed $code FIFA 代码
+     * @return string|null
+     */
+    public static function url($code)
+    {
+        $iso = self::iso($code);
+
+        return $iso === null ? null : Yii::getAlias('@web') . self::BASE_PATH . $iso . '.svg';
+    }
+
+    /**
      * 输出一枚国旗；没有可靠旗源时输出队码小徽标（不是空白）。
      *
      * @param mixed $code FIFA 代码
