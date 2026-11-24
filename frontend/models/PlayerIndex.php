@@ -17,7 +17,7 @@ class PlayerIndex
     /**
      * 每届进球最多的球员,新届在前;并列时记下并列人数。
      *
-     * @return array<int,array{year:int,player_id:int,name:string,name_zh:?string,nationality:?string,team_name:?string,goals:int,tied:int}>
+     * @return array<int,array{year:int,player_id:int,name:string,name_zh:?string,nationality:?string,team_name:?string,team_code:?string,goals:int,tied:int}>
      */
     public static function topScorersByTournament()
     {
@@ -29,6 +29,7 @@ class PlayerIndex
                 'name_zh' => 'p.name_zh',
                 'nationality' => 'p.nationality',
                 'team_name' => 'tm.name',
+                'team_code' => 'tm.code',
                 'goals' => 'COUNT(*)',
             ])
             ->from(['g' => '{{%goal}}'])
@@ -38,7 +39,7 @@ class PlayerIndex
             ->leftJoin(['s' => '{{%squad}}'], 's.player_id = p.id AND s.tournament_id = t.id')
             ->leftJoin(['tm' => '{{%team}}'], 'tm.id = s.team_id')
             ->where(['m.status' => 2, 'g.is_own_goal' => 0, 'g.is_shootout' => 0])
-            ->groupBy(['t.id', 't.year', 'p.id', 'p.name', 'p.name_zh', 'p.nationality', 'tm.name'])
+            ->groupBy(['t.id', 't.year', 'p.id', 'p.name', 'p.name_zh', 'p.nationality', 'tm.name', 'tm.code'])
             ->orderBy(['t.year' => SORT_DESC, 'goals' => SORT_DESC, 'p.name' => SORT_ASC])
             ->all();
 

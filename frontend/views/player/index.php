@@ -13,6 +13,7 @@
  * @var int $totalPlayers
  */
 
+use common\components\TeamFlag;
 use common\models\Player;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -90,6 +91,7 @@ $isAll = Yii::$app->request->get('all') === '1';
                             <span class="pl-scorer-text">
                                 <strong><?= Html::encode(Player::formatName($leader['name'], $leader['name_zh'], $leader['nationality'])) ?></strong>
                                 <span>
+                                    <?= TeamFlag::html(isset($leader['team_code']) ? $leader['team_code'] : null, (string) $leader['team_name'], 'pl-scorer-flag') ?>
                                     <?= Html::encode($leader['team_name'] ?: ($leader['nationality'] ?: '球队待补')) ?>
                                     <?php if ($leader['tied'] > 1): ?>
                                         · 并列 <?= (int) $leader['tied'] ?> 人
