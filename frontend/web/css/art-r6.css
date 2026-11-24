@@ -725,9 +725,13 @@ body:not(.site-site-index) .pd-head a {
         line-height: 1.75;
     }
 
-    body:not(.site-site-index) .news-row-title,
-    body:not(.site-site-index) .news-detail-header h1 {
+    body:not(.site-site-index) .news-row-title {
         font-size: 26px;
+    }
+
+    body:not(.site-site-index) .news-detail-header h1 {
+        font-size: 48px;
+        line-height: 1.15;
     }
 
     body:not(.site-site-index) .table {
@@ -878,4 +882,22 @@ body:not(.site-site-index) .game-filters {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     box-shadow: none;
+}
+
+/* 独立页标题：留言簿、登录、错误页与索引页同一量级 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .site-discussion .ledger-title {
+        font-size: 56px;
+        line-height: 1.1;
+    }
+
+    body:not(.site-site-index) .site-login h1 {
+        font-size: 40px;
+        line-height: 1.15;
+    }
+
+    body:not(.site-site-index) .site-error h1 {
+        font-size: 48px;
+        line-height: 1.1;
+    }
 }
