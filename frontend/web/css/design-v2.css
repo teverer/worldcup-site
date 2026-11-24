@@ -425,6 +425,12 @@ body.site-site-index .site-footer {
     }
 }
 
+@media (min-width: 1800px) {
+    .container {
+        max-width: 1440px;
+    }
+}
+
 .card,
 .news-card,
 .tournament-card,
