@@ -1148,7 +1148,7 @@
             legend: {
                 show: hasAssists,
                 top: 0,
-                right: 0,
+                left: 0,
                 icon: 'roundRect',
                 itemWidth: 13,
                 itemHeight: 10,
@@ -1374,7 +1374,7 @@
             legend: {
                 data: [homeName, awayName],
                 top: 0,
-                right: 0,
+                left: 0,
                 icon: 'roundRect',
                 itemWidth: 14,
                 itemHeight: 9,
