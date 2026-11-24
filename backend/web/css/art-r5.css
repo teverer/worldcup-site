@@ -306,3 +306,12 @@
     outline: 2px solid var(--accent-ink);
     outline-offset: 3px;
 }
+
+/* 对比度：后台页脚与面包屑分隔符 */
+.wb-footer {
+    color: var(--muted);
+}
+
+.wb-crumbs > li + li::before {
+    color: var(--muted);
+}

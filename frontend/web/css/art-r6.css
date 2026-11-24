@@ -56,11 +56,19 @@ body:not(.site-site-index) .atmo {
         radial-gradient(120% 80% at 50% 112%, rgba(11, 43, 37, .55), transparent 62%),
         linear-gradient(180deg, #03060A 0%, #050D13 56%, #06151B 100%);
     pointer-events: none;
-    opacity: .84;
+    opacity: 1;
 }
 
 body:not(.site-site-index) .atmo-glow {
-    opacity: .68;
+    opacity: .62;
+}
+
+body:not(.site-site-index) .atmo-glow.g2 {
+    opacity: .22;
+}
+
+body:not(.site-site-index) .atmo-glow.g3 {
+    opacity: .28;
 }
 
 body:not(.site-site-index) .atmo-dots {
@@ -84,7 +92,7 @@ body:not(.site-site-index) .site-header .navbar {
 }
 
 body:not(.site-site-index) .site-main {
-    background: linear-gradient(180deg, rgba(4, 8, 10, .12), rgba(4, 8, 10, .42));
+    background: transparent;
 }
 
 /* 文字 */
@@ -151,11 +159,9 @@ body:not(.site-site-index) .game-filters {
     border: 1px solid var(--line);
     border-top: 2px solid rgba(127, 221, 184, .55);
     border-radius: 2px;
-    background-color: rgba(8, 18, 15, .78);
+    background-color: rgba(9, 18, 15, .96);
     background-image: none;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .24);
 }
 
 body:not(.site-site-index) .form-control,
@@ -216,7 +222,7 @@ body:not(.site-site-index) .btn-default {
 
 body:not(.site-site-index) .btn-default:hover,
 body:not(.site-site-index) .btn-default:focus {
-    border-color: var(--gold);
+    border-color: var(--green-light);
     background-color: rgba(224, 180, 87, .08);
     color: var(--ink);
 }
@@ -266,7 +272,7 @@ body:not(.site-site-index) .ti-team:hover,
 body:not(.site-site-index) .ti-team:focus {
     border-bottom-color: rgba(244, 242, 236, .28);
     background-color: rgba(99, 201, 164, .07);
-    box-shadow: inset 2px 0 0 var(--gold);
+    box-shadow: inset 2px 0 0 var(--green-light);
     color: var(--ink);
 }
 
@@ -286,7 +292,7 @@ body:not(.site-site-index) .ti-jump {
 
 body:not(.site-site-index) .ti-jump:hover,
 body:not(.site-site-index) .ti-jump:focus {
-    color: var(--gold);
+    color: var(--green-light);
 }
 
 /* 页签 */
@@ -304,7 +310,7 @@ body:not(.site-site-index) .td-edition:hover,
 body:not(.site-site-index) .td-edition:focus,
 body:not(.site-site-index) .game-chip:hover,
 body:not(.site-site-index) .game-chip:focus {
-    border-bottom-color: var(--gold);
+    border-bottom-color: var(--green-light);
     color: var(--ink);
 }
 
@@ -313,7 +319,7 @@ body:not(.site-site-index) .game-chip.is-active {
     border-color: transparent;
     border-bottom-color: transparent;
     background-color: transparent;
-    box-shadow: inset 0 -2px 0 var(--gold);
+    box-shadow: inset 0 -2px 0 var(--green-light);
     color: var(--ink);
 }
 
@@ -358,11 +364,9 @@ body:not(.site-site-index) .site-login,
 body:not(.site-site-index) .form-page {
     border-color: var(--line);
     border-radius: 2px;
-    background-color: rgba(8, 18, 15, .74);
+    background-color: rgba(9, 18, 15, .94);
     background-image: none;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 24px 60px rgba(0, 0, 0, .24);
 }
 
 body:not(.site-site-index) .chart-card {
@@ -401,7 +405,7 @@ body:not(.site-site-index) .pl-scorer:focus,
 body:not(.site-site-index) .news-row-link:hover,
 body:not(.site-site-index) .news-row-link:focus {
     background-color: rgba(99, 201, 164, .07);
-    box-shadow: inset 3px 0 0 var(--gold);
+    box-shadow: inset 3px 0 0 var(--green-light);
 }
 
 body:not(.site-site-index) .pl-scorer-goals,
@@ -448,7 +452,7 @@ body:not(.site-site-index) .about-facts dd {
 }
 
 body:not(.site-site-index) .about-notes {
-    border-left: 2px solid var(--gold);
+    border-left: 2px solid var(--green-light);
 }
 
 body:not(.site-site-index) .about-source {
@@ -511,9 +515,10 @@ body:not(.site-site-index) .pagination > li > a:focus {
 
 body:not(.site-site-index) .pagination > .active > a,
 body:not(.site-site-index) .pagination > .active > span {
-    border-color: var(--gold);
+    border-color: transparent;
     background-color: transparent;
-    color: var(--gold);
+    box-shadow: inset 0 -2px 0 var(--green-light);
+    color: var(--ink);
 }
 
 /* 深色身份头：在夜场里再加一层边界 */
@@ -563,7 +568,7 @@ body:not(.site-site-index) .td-history-link {
 
 body:not(.site-site-index) .td-history-link:hover,
 body:not(.site-site-index) .td-history-link:focus {
-    border-color: var(--gold);
+    border-color: var(--green-light);
     background-color: rgba(13, 27, 22, .92);
 }
 
@@ -597,7 +602,7 @@ body:not(.site-site-index) .site-error .page-header {
 body:not(.site-site-index) .site-login,
 body:not(.site-site-index) .form-page {
     border: 1px solid var(--line);
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid rgba(127, 221, 184, .55);
     border-radius: 2px;
     background-color: rgba(9, 19, 16, .86);
 }
@@ -607,7 +612,7 @@ body:not(.site-site-index) a:focus-visible,
 body:not(.site-site-index) button:focus-visible,
 body:not(.site-site-index) summary:focus-visible,
 body:not(.site-site-index) [tabindex]:focus-visible {
-    outline: 2px solid var(--gold);
+    outline: 2px solid var(--green-light);
     outline-offset: 3px;
 }
 
@@ -823,7 +828,7 @@ body:not(.site-site-index) .game-scoreboard .game-team a {
 
 body:not(.site-site-index) .game-scoreboard .game-team a:hover,
 body:not(.site-site-index) .game-scoreboard .game-team a:focus {
-    color: var(--gold);
+    color: var(--green-light);
 }
 
 /* 首页页脚：与数据页完全同一套值；收场带的边界/底色由 -4 的结构层负责。 */
@@ -900,4 +905,98 @@ body:not(.site-site-index) .game-filters {
         font-size: 48px;
         line-height: 1.1;
     }
+}
+
+/* ==========================================================================
+   R6.4 对比度修补（子代理审计）
+   ========================================================================== */
+/* 留言“记下/回复”按钮：浅绿底必须配深字 */
+body:not(.site-site-index) .btn-record {
+    border-color: var(--green-light);
+    background-color: var(--green-light);
+    color: #04120D;
+}
+
+body:not(.site-site-index) .btn-record:hover,
+body:not(.site-site-index) .btn-record:focus {
+    border-color: var(--gold-light);
+    background-color: var(--gold-light);
+    color: #04120D;
+}
+
+/* 表单错误标签用亮红，而不是旧的深红令牌 */
+body:not(.site-site-index) .has-error .control-label {
+    color: var(--danger);
+}
+
+/* 比赛筛选“展开/收起” */
+body:not(.site-site-index) .game-filter-summary::after {
+    color: var(--green-light);
+}
+
+/* 禁用/只读态要有区别 */
+body:not(.site-site-index) .form-control[disabled],
+body:not(.site-site-index) .form-control[readonly],
+body:not(.site-site-index) fieldset[disabled] .form-control {
+    border-color: rgba(244, 242, 236, .10);
+    background-color: rgba(4, 9, 8, .45);
+    color: var(--muted);
+    opacity: .8;
+}
+
+body:not(.site-site-index) .pagination > .disabled > a,
+body:not(.site-site-index) .pagination > .disabled > span,
+body:not(.site-site-index) .pagination > .disabled > a:hover,
+body:not(.site-site-index) .pagination > .disabled > span:hover {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--muted);
+    opacity: .55;
+}
+
+/* 原生 select 的弹层选项 */
+body:not(.site-site-index) select.form-control option {
+    background-color: var(--paper-2);
+    color: var(--ink);
+}
+
+/* 旧令牌里仍被当文字色的深色值 */
+body:not(.site-site-index) {
+    --color-danger: var(--danger);
+    --color-accent-dark: var(--gold);
+}
+
+/* 旧版届次索引（仍可直达）：把白底 hero 还原成夜场 */
+body:not(.site-site-index) .chronicle-hero {
+    background-color: var(--night);
+    background-image:
+        radial-gradient(90% 140% at 10% -10%, rgba(31, 143, 106, .22), transparent 60%),
+        radial-gradient(70% 120% at 92% 0%, rgba(217, 166, 60, .14), transparent 62%),
+        var(--night);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .chronicle-title {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .chronicle-lead,
+body:not(.site-site-index) .chronicle-stat-label {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .chronicle-kicker,
+body:not(.site-site-index) .chronicle-title-gold,
+body:not(.site-site-index) .chronicle-stat-value {
+    color: var(--gold);
+}
+
+body:not(.site-site-index) .honor-meta-goals,
+body:not(.site-site-index) .edition-action {
+    color: var(--green-light);
+}
+
+/* 进球时间线的点 */
+body:not(.site-site-index) .goal-item .goal-dot {
+    background-color: var(--green-light);
 }
