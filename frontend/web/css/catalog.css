@@ -536,6 +536,13 @@
     min-width: 0;
 }
 
+/* 主栏本身已经是可读行宽，表格跟着主栏走，不再留一条 880 的空白。 */
+.team-detail .td-body-main .td-section,
+.team-detail .td-body-main .td-records,
+.team-detail .td-body-main .td-table {
+    max-width: none;
+}
+
 .team-detail .td-body-main > .td-section:first-child {
     margin-top: 0;
 }
