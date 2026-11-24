@@ -58,14 +58,40 @@ foreach ($records as $record) {
                 <?= Html::encode($model->continent ?: '大洲待补') ?>
                 <?php if ($model->code): ?> · <?= Html::encode($model->code) ?><?php endif ?>
                 <?php if ($tournaments): ?>
-                    · 参赛 <?= count($tournaments) ?> 届，最近 <?= Html::encode((string) $tournaments[0]['year']) ?>
+                    · 最近 <?= Html::encode((string) $tournaments[0]['year']) ?>
                 <?php endif ?>
             </p>
+
+            <?php // 队史总计从右栏收回身份头:一眼看到,不再让右侧空出一整列。 ?>
+            <dl class="td-head-facts" aria-label="队史总计">
+                <div>
+                    <dt>参赛</dt>
+                    <dd><?= count($tournaments) ?><span>届</span></dd>
+                </div>
+                <div>
+                    <dt>场次</dt>
+                    <dd><?= $totalPlayed ?></dd>
+                </div>
+                <div>
+                    <dt>胜-平-负</dt>
+                    <dd><?= $totalWon ?>-<?= $totalDrawn ?>-<?= $totalLost ?></dd>
+                </div>
+                <div>
+                    <dt>进 / 失</dt>
+                    <dd><?= $totalGoalsFor ?> / <?= $totalGoalsAgainst ?></dd>
+                </div>
+            </dl>
         </div>
         <div class="td-actions">
             <?= Html::a('看这队比赛', ['/game/index', 'team' => $model->name], ['class' => 'btn btn-primary']) ?>
         </div>
     </header>
+
+    <?php if ($model->intro): ?>
+        <p class="td-intro"><?= nl2br(Html::encode($model->intro)) ?></p>
+    <?php endif ?>
+
+    <?= $this->render('_history_chart', ['records' => $records]) ?>
 
     <div class="td-body">
         <div class="td-body-main">
@@ -73,11 +99,9 @@ foreach ($records as $record) {
         <div class="td-section-head">
             <div>
                 <h2 id="td-records-title">历届战绩</h2>
-                <p>只计已结束比赛；点年份进入那一届的晋级图与统计。</p>
+                <p>只计已结束比赛；进球按受益球队计入，乌龙球算给对方；点年份进入那一届的晋级图与统计。</p>
             </div>
         </div>
-
-        <?= $this->render('_history_chart', ['records' => $records]) ?>
 
         <?php if (!$records): ?>
             <div class="empty-state td-empty">
@@ -188,53 +212,5 @@ foreach ($records as $record) {
     </section>
         </div>
 
-        <aside class="td-aside" aria-labelledby="td-aside-title">
-            <h2 id="td-aside-title">队史总计</h2>
-            <dl class="td-aside-facts">
-                <div>
-                    <dt>参赛</dt>
-                    <dd><?= count($tournaments) ?> <small>届</small></dd>
-                </div>
-                <div>
-                    <dt>场次</dt>
-                    <dd><?= $totalPlayed ?></dd>
-                </div>
-                <div>
-                    <dt>胜-平-负</dt>
-                    <dd><?= $totalWon ?>-<?= $totalDrawn ?>-<?= $totalLost ?></dd>
-                </div>
-                <div>
-                    <dt>进 / 失</dt>
-                    <dd><?= $totalGoalsFor ?> / <?= $totalGoalsAgainst ?></dd>
-                </div>
-            </dl>
-
-            <?php if ($tournaments): ?>
-                <div class="td-aside-note">
-                    <h3>参赛届次</h3>
-                    <div class="td-aside-years">
-                        <?php foreach ($tournaments as $tournament): ?>
-                            <?= Html::a(Html::encode((string) $tournament['year']), [
-                                '/tournament/view', 'id' => $tournament['id'],
-                            ]) ?>
-                        <?php endforeach ?>
-                    </div>
-                </div>
-            <?php endif ?>
-
-            <?php if ($model->intro): ?>
-                <div class="td-aside-note">
-                    <h3>关于球队</h3>
-                    <p><?= nl2br(Html::encode($model->intro)) ?></p>
-                </div>
-            <?php endif ?>
-
-            <div class="td-aside-note">
-                <h3>数据口径</h3>
-                <p>只统计已结束的比赛；进球按受益球队计入，乌龙球算给对方。</p>
-            </div>
-
-            <?= Html::a('看这队比赛', ['/game/index', 'team' => $model->name], ['class' => 'td-aside-link']) ?>
-        </aside>
     </div>
 </article>

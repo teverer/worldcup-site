@@ -66,8 +66,6 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
                         <span class="board-meta">
                             <span class="board-host">
                                 东道主 <?= Html::encode($edition['host']) ?>
-                                <span aria-hidden="true">·</span>
-                                第 <?= Html::encode((string) $edition['ordinal']) ?> 届
                             </span>
                             <span class="board-volume">
                                 <?= Html::encode((string) $edition['games']) ?> 场 /
@@ -104,8 +102,6 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
                     <?php else: ?>
                         <span class="board-final board-final--pending">决赛数据待补</span>
                     <?php endif ?>
-
-                    <span class="board-enter">进入</span>
                 </a>
             <?php endforeach ?>
         <?php endif ?>

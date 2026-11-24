@@ -618,10 +618,10 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
     margin-top: var(--space-5);
 }
 
-/* 球队详情：正文 872 + 右侧队史摘要 300，把宽屏右侧的空位用起来。 */
+/* 球队详情：队史总计已收回身份头，正文单栏。 */
 .team-detail .td-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(32px, 4vw, 56px);
     align-items: start;
 }
@@ -1079,25 +1079,65 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
 }
 
 /* ==========================================================================
-   球队详情：历届战绩 + 队史总计两栏，参赛球员跨两栏。
-   名单只有三列，锁在左栏会把右侧 500px 空出来；把主栏拆成网格项，
-   让名单在桌面占满整行，右栏只服务上面那段战绩。
+   球队详情(2026-11-24,减法)：队史总计收回身份头，右栏取消。
+   身份头里用一行四个数字替代原来的右侧摘要卡；窄屏换行。
    ========================================================================== */
+.td-head-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin: 14px 0 0;
+}
+
+.td-head-facts > div {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+}
+
+.td-head-facts dt {
+    color: var(--steel);
+    font-size: 12px;
+    letter-spacing: .03em;
+    line-height: 1.4;
+}
+
+.td-head-facts dd {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.td-head-facts dd span {
+    margin-left: 3px;
+    color: var(--steel);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+body.site-team-view .td-intro {
+    color: var(--ink-2);
+}
+
+@media (max-width: 767px) {
+    .td-head-facts {
+        gap: 8px 18px;
+        margin-top: 10px;
+    }
+
+    .td-head-facts dd {
+        font-size: 21px;
+    }
+}
+
+/* 名单只有三列:在宽屏上锁到可读行宽,不被拉到 1200px 散开。 */
 @media (min-width: 1101px) {
-    .team-detail .td-body-main {
-        display: contents;
-    }
-
-    .team-detail .td-body-main > .td-section[aria-labelledby="td-records-title"] {
-        order: 1;
-    }
-
-    .team-detail .td-aside {
-        order: 2;
-    }
-
-    .team-detail .td-body-main > .td-section[aria-labelledby="td-roster-title"] {
-        order: 3;
-        grid-column: 1 / -1;
+    .team-detail .td-section[aria-labelledby="td-roster-title"] {
+        max-width: 860px;
     }
 }

@@ -143,7 +143,7 @@ body.site-site-index .site-main {
 .wall-board {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(120px, 172px) minmax(0, 1fr) minmax(340px, 420px) 64px;
+    grid-template-columns: minmax(120px, 172px) minmax(0, 1fr) minmax(340px, 420px);
     align-items: center;
     gap: clamp(18px, 2.6vw, 34px);
     padding: clamp(26px, 3vw, 36px) 24px;
@@ -355,19 +355,6 @@ body.site-site-index .site-main {
     letter-spacing: .04em;
     line-height: 1.5;
     white-space: nowrap;
-}
-
-.board-enter {
-    color: var(--green-light);
-    font-size: 15px;
-    font-weight: 600;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.wall-board:hover .board-enter,
-.wall-board:focus .board-enter {
-    color: var(--flood);
 }
 
 .wall-empty {
@@ -707,7 +694,7 @@ body.site-site-index .site-main {
 
 @media (max-width: 1100px) {
     .wall-board {
-        grid-template-columns: 112px minmax(0, 1fr) minmax(300px, 344px) 52px;
+        grid-template-columns: 112px minmax(0, 1fr) minmax(300px, 344px);
         gap: 16px 22px;
         padding: 26px 20px;
     }
@@ -724,9 +711,9 @@ body.site-site-index .site-main {
 @media (max-width: 991px) {
     .wall-board {
         grid-template-areas:
-            "year main enter"
-            "final final final";
-        grid-template-columns: 100px minmax(0, 1fr) 52px;
+            "year main"
+            "final final";
+        grid-template-columns: 100px minmax(0, 1fr);
         row-gap: 16px;
         padding: 24px 20px;
     }
@@ -737,10 +724,6 @@ body.site-site-index .site-main {
 
     .board-main {
         grid-area: main;
-    }
-
-    .board-enter {
-        grid-area: enter;
     }
 
     .board-final {
@@ -760,10 +743,10 @@ body.site-site-index .site-main {
 
     .wall-board {
         grid-template-areas:
-            "year enter"
-            "main main"
-            "final final";
-        grid-template-columns: minmax(0, 1fr) auto;
+            "year"
+            "main"
+            "final";
+        grid-template-columns: minmax(0, 1fr);
         gap: 10px 16px;
         padding: 18px 0;
     }
@@ -809,10 +792,6 @@ body.site-site-index .site-main {
     .board-score,
     .wall-board.is-lit .board-score {
         font-size: 32px;
-    }
-
-    .board-enter {
-        grid-area: enter;
     }
 
     .wall-book-time {
