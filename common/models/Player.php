@@ -24,11 +24,38 @@ class Player extends ActiveRecord {
             ['name', 'required'],
             [['name', 'name_zh', 'nationality'], 'string', 'max' => 50],
             ['position', 'string', 'max' => 20],
-            ['birth_date', 'date', 'format' => 'php:Y-m-d', 'max' => date('Y-m-d'), 'tooBig' => '出生日期不能晚于今天。'],
+            // PHP 8.2 + Yii 2.0.32 的 DateValidator 在 DateTime::getLastErrors() 返回 false 时会炸；
+            // 出生日期只有“格式 + 不得晚于今天”两条规则，这里用轻量自定义校验替代。
+            ['birth_date', 'validateBirthDate'],
             ['photo', 'string', 'max' => 255],
             ['photo', AssetPathValidator::class],
             ['intro', 'string', 'max' => 15000],
         ];
+    }
+
+    /**
+     * 出生日期：空值允许；否则必须是 Y-m-d，且不能晚于今天。
+     *
+     * @param string $attribute
+     * @return void
+     */
+    public function validateBirthDate($attribute)
+    {
+        $value = $this->$attribute;
+        if ($value === null || $value === '') {
+            return;
+        }
+
+        $text = (string) $value;
+        $date = \DateTime::createFromFormat('!Y-m-d', $text);
+        if ($date === false || $date->format('Y-m-d') !== $text) {
+            $this->addError($attribute, '出生日期格式应为 YYYY-MM-DD。');
+            return;
+        }
+
+        if ($date->format('Y-m-d') > date('Y-m-d')) {
+            $this->addError($attribute, '出生日期不能晚于今天。');
+        }
     }
 
     public function attributeLabels() {

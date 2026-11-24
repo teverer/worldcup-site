@@ -26,7 +26,7 @@ $tournamentId = $model->tournament_id;
 $statusValue = (int) $model->status;
 $statusText = isset($statusLabels[$statusValue]) ? $statusLabels[$statusValue] : '未知';
 $matchTime = $model->match_time !== null && $model->match_time !== ''
-    ? $model->match_time : null;
+    ? substr((string) $model->match_time, 0, 16) : null;
 $venue = $model->venue !== null && $model->venue !== '' ? $model->venue : null;
 $hasScore = $model->home_score !== null && $model->away_score !== null;
 $mainScore = $hasScore ? $model->home_score . '–' . $model->away_score : 'VS';

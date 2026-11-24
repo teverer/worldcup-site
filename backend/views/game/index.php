@@ -95,7 +95,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'match_time',
                 'label' => '比赛时间',
-                'format' => ['datetime', 'php:Y-m-d H:i'],
+                // 比赛时间是“墙上时间”，按库里存的字面值显示；交给 Formatter 会被时区平移。
+                'value' => function ($model) {
+                    return $model->match_time !== null
+                        ? substr((string) $model->match_time, 0, 16)
+                        : null;
+                },
             ],
             'stage',
             [

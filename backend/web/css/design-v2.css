@@ -1042,6 +1042,21 @@ label,
     font-size: 11.5px;
 }
 
+/* art-r5 把普通提示也设成了红色；这里用更高特异性压回 muted，只让真正的错误红。 */
+.backend-main .form-group .help-block {
+    color: var(--muted);
+}
+
+.backend-main .form-group.has-error .help-block {
+    color: var(--red);
+}
+
+/* 必填字段可见标记：Yii 把 .required 加在 form-group 上，不是 label。 */
+.backend-main .form-group.required > label.control-label::after {
+    color: var(--red);
+    content: " *";
+}
+
 .form-group {
     margin-bottom: 14px;
 }

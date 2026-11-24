@@ -48,7 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         [
             'attribute' => 'match_time',
-            'format' => ['datetime', 'php:Y-m-d H:i'],
+            'value' => function ($model) {
+                return $model->match_time !== null
+                    ? substr((string) $model->match_time, 0, 16)
+                    : null;
+            },
         ],
         'venue',
         [

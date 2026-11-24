@@ -680,3 +680,318 @@ body.site-site-index {
         font-size: 15px;
     }
 }
+
+/* ==========================================================================
+   四十年，场均进球：一条线看十一次世界杯
+   ========================================================================== */
+.era-trend {
+    margin-top: clamp(64px, 8vw, 104px);
+    padding-top: clamp(28px, 4vw, 44px);
+    border-top: 1px solid var(--line-dark);
+}
+
+.era-trend-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px 48px;
+}
+
+.era-trend-head-main {
+    max-width: 720px;
+    min-width: 0;
+}
+
+.era-trend-head h2 {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-cn-display);
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 400;
+    letter-spacing: .01em;
+    line-height: 1.15;
+}
+
+.era-trend-head p {
+    max-width: 46em;
+    margin: 10px 0 0;
+    color: var(--steel);
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.era-trend-insight {
+    flex: 0 1 auto;
+    max-width: 30em;
+    min-width: 0;
+    margin: 0;
+    color: var(--steel-2);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.era-chart-scroll {
+    max-width: 100%;
+    margin-top: clamp(20px, 3vw, 32px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.era-chart {
+    display: block;
+    width: 100%;
+    min-width: 760px;
+    height: auto;
+}
+
+.era-grid {
+    stroke: rgba(244, 242, 236, .10);
+    stroke-width: 1;
+}
+
+.era-baseline {
+    stroke: rgba(244, 242, 236, .24);
+    stroke-width: 1;
+}
+
+.era-axis-label {
+    fill: var(--steel-2);
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-anchor: end;
+    font-variant-numeric: tabular-nums;
+}
+
+.era-axis-title {
+    fill: var(--steel-2);
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-anchor: start;
+}
+
+.era-line {
+    fill: none;
+    stroke: var(--flood);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.era-area {
+    opacity: .6;
+}
+
+.era-year {
+    fill: var(--steel);
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-anchor: middle;
+    font-variant-numeric: tabular-nums;
+}
+
+.era-flag-frame {
+    fill: none;
+    stroke: rgba(244, 242, 236, .2);
+    stroke-width: 1;
+}
+
+.era-flag {
+    pointer-events: none;
+}
+
+.era-flag-code {
+    fill: var(--steel);
+    font-family: var(--font-display);
+    font-size: 10px;
+    text-anchor: middle;
+}
+
+.era-dot {
+    fill: var(--flood);
+    stroke: var(--night);
+    stroke-width: 2;
+    transition: r .16s ease, fill .16s ease;
+}
+
+.era-guide {
+    stroke: rgba(224, 180, 87, .38);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    opacity: 0;
+    transition: opacity .16s ease;
+}
+
+.era-point {
+    cursor: pointer;
+}
+
+.era-point:hover .era-dot,
+.era-point:focus-visible .era-dot {
+    r: 6.4px;
+    fill: var(--gold-light);
+}
+
+.era-point:hover .era-guide,
+.era-point:focus-visible .era-guide {
+    opacity: 1;
+}
+
+.era-point:focus-visible .era-flag-frame {
+    stroke: var(--gold-light);
+}
+
+.era-point:focus {
+    outline: none;
+}
+
+.era-scroll-hint {
+    display: none;
+    margin: 6px 0 0;
+    color: var(--steel-2);
+    font-size: 12px;
+}
+
+.era-trend-note {
+    margin: 10px 0 0;
+    color: var(--steel-2);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.era-data {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-dark);
+}
+
+.era-data summary {
+    color: var(--green-light);
+    font-size: 14px;
+    cursor: pointer;
+    outline-offset: 3px;
+}
+
+.era-data summary:hover,
+.era-data summary:focus {
+    color: var(--gold-light);
+}
+
+.era-table-wrap {
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+.era-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--steel);
+    font-size: 14px;
+}
+
+.era-table th,
+.era-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line-dark);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.era-table thead th {
+    color: var(--steel-2);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.era-table tbody th {
+    color: var(--flood);
+    font-weight: 500;
+}
+
+.era-table .num {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.era-table a {
+    color: var(--green-light);
+}
+
+.era-table a:hover,
+.era-table a:focus {
+    color: var(--gold-light);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .era-line {
+        animation: era-draw 1.2s ease-out .15s both;
+    }
+
+    .era-area {
+        animation: era-fade-area .9s ease-out .45s both;
+    }
+
+    .era-point {
+        animation: era-fade .45s ease-out both;
+    }
+
+    .era-point:nth-of-type(1) { animation-delay: .25s; }
+    .era-point:nth-of-type(2) { animation-delay: .32s; }
+    .era-point:nth-of-type(3) { animation-delay: .39s; }
+    .era-point:nth-of-type(4) { animation-delay: .46s; }
+    .era-point:nth-of-type(5) { animation-delay: .53s; }
+    .era-point:nth-of-type(6) { animation-delay: .60s; }
+    .era-point:nth-of-type(7) { animation-delay: .67s; }
+    .era-point:nth-of-type(8) { animation-delay: .74s; }
+    .era-point:nth-of-type(9) { animation-delay: .81s; }
+    .era-point:nth-of-type(10) { animation-delay: .88s; }
+    .era-point:nth-of-type(11) { animation-delay: .95s; }
+}
+
+@keyframes era-draw {
+    from {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+    }
+    to {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes era-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes era-fade-area {
+    from { opacity: 0; }
+    to { opacity: .6; }
+}
+
+@media (max-width: 767px) {
+    .era-trend {
+        margin-top: 56px;
+        padding-top: 28px;
+    }
+
+    .era-trend-insight {
+        flex-basis: 100%;
+        max-width: 100%;
+        text-align: left;
+    }
+
+    .era-chart {
+        min-width: 720px;
+    }
+
+    .era-scroll-hint {
+        display: block;
+    }
+}
