@@ -104,6 +104,7 @@
 }
 
 .about-section-head p {
+    max-width: 62ch;
     margin: 0;
     color: var(--color-muted-strong);
 }
@@ -144,6 +145,7 @@
 
 .about-notes {
     display: grid;
+    max-width: 62ch;
     gap: var(--space-2);
     margin: 0;
     padding: 0;
@@ -161,6 +163,7 @@
 }
 
 .about-source {
+    max-width: 62ch;
     margin: var(--space-3) 0 0;
     color: var(--color-muted);
     font-size: var(--fs-sm);
@@ -168,7 +171,7 @@
 
 /* 团队：一行一人，资料缺失时自动收起，不留空卡片。 */
 .about-intro {
-    max-width: 72ch;
+    max-width: 60ch;
     margin: 0 0 var(--space-3);
     line-height: 1.9;
 }
@@ -337,6 +340,7 @@
 }
 
 .about-docs-note {
+    max-width: 62ch;
     margin: var(--space-3) 0 0;
     color: var(--color-muted);
     font-size: var(--fs-sm);
