@@ -203,7 +203,6 @@ if ($teamKeyword !== null) {
                             <?php endif ?>
                         </span>
                         <span class="game-item-date"><?= Html::encode($date) ?></span>
-                        <span class="game-item-go" aria-hidden="true">›</span>
                     </a>
                 </li>
             <?php endforeach ?>
