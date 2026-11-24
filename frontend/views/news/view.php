@@ -42,11 +42,7 @@ $date = $model->publish_time ?: $model->create_time;
         <?= $safeContent !== '' ? $safeContent : '<div class="empty-state"><h3>暂无正文</h3><p>该资讯的正文尚未发布。</p></div>' ?>
     </div>
 
-    <footer class="news-detail-footer">
-        <?= Html::a('返回资讯列表', ['index'], ['class' => 'btn btn-default']) ?>
-        <?= Html::a('回首页', Yii::$app->homeUrl, ['class' => 'news-detail-home']) ?>
-    </footer>
-
+    <?php // 面包屑和导航已经能回列表；文章读完直接进入本页留言。 ?>
     <?= CommentSection::widget([
         'targetType' => CommentTarget::NEWS,
         'targetId' => $model->id,
