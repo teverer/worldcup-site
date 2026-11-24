@@ -7,6 +7,7 @@
  * @var yii\web\View $this
  * @var array $totals
  * @var array $moments
+ * @var array $clock
  * @var array $finals
  * @var array $nations
  * @var array $scorers
@@ -69,6 +70,59 @@ $this->title = '纪录';
                     </li>
                 <?php endforeach ?>
             </ol>
+        </div>
+    </section>
+
+    <section class="record-section record-section--clock" aria-labelledby="record-clock-title">
+        <div class="record-wrap">
+            <header class="record-section-head">
+                <h2 id="record-clock-title">十一届的进球时钟</h2>
+                <p>每一行是一届；格内为该届进球落在该时段的比例（%），颜色越亮占比越高。点年份进入那一届。</p>
+            </header>
+
+            <?php if ($clock['max_late'] !== null && $clock['min_late'] !== null): ?>
+                <p class="clock-lede">
+                    <?= (int) $clock['max_late']['year'] ?> 年，
+                    <?= Html::encode(number_format($clock['max_late']['late_percent'], 1)) ?>% 的进球在下半场；
+                    <?= (int) $clock['min_late']['year'] ?> 年只有
+                    <?= Html::encode(number_format($clock['min_late']['late_percent'], 1)) ?>%。
+                    四十年里，进球时钟并没有一路向后。
+                </p>
+            <?php endif ?>
+
+            <div class="heat-scroll">
+                <table class="goal-clock">
+                    <caption class="sr-only">十一届世界杯按 15 分钟时段统计的进球占比，不含点球大战。</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">届次</th>
+                            <?php foreach ($clock['buckets'] as $label): ?>
+                                <th scope="col"><?= Html::encode($label) ?></th>
+                            <?php endforeach ?>
+                            <th scope="col" class="clock-total-head">进球</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($clock['editions'] as $edition): ?>
+                            <tr>
+                                <th scope="row">
+                                    <a href="<?= Html::encode(Url::to(['/tournament/view', 'id' => $edition['tournament_id']])) ?>">
+                                        <?= (int) $edition['year'] ?>
+                                    </a>
+                                </th>
+                                <?php foreach ($edition['cells'] as $cell): ?>
+                                    <td class="heat-cell<?= $cell['percent'] >= 15 ? ' is-hot' : '' ?>"
+                                        style="--heat-alpha: <?= Html::encode((string) $cell['alpha']) ?>">
+                                        <?= Html::encode(number_format($cell['percent'], 1)) ?>
+                                    </td>
+                                <?php endforeach ?>
+                                <td class="clock-total"><?= (int) $edition['total'] ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+            <p class="heat-hint">左右滑动看完整时段</p>
         </div>
     </section>
 

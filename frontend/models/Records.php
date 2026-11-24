@@ -42,6 +42,7 @@ class Records
                 'editions' => (int) (new Query())->from('{{%tournament}}')->count(),
             ],
             'moments' => self::moments($finals, $scorers),
+            'clock' => self::goalClock(),
             'finals' => $finals,
             'nations' => self::finalNations($finals),
             'scorers' => $scorers,
@@ -116,6 +117,99 @@ class Records
         }
 
         return $result;
+    }
+
+    /**
+     * 「十一届的进球时钟」：每届进球落在 7 个时段的比例。
+     *
+     * 这是一个跨届热力图的数据层：每行按该届自身总进球算比例，
+     * 不跨届相加，因此可以比较不同比赛数量的届次。点球大战不计。
+     *
+     * @return array
+     */
+    private static function goalClock()
+    {
+        $buckets = [
+            ['label' => '1–15', 'lo' => 0, 'hi' => 15],
+            ['label' => '16–30', 'lo' => 16, 'hi' => 30],
+            ['label' => '31–45+', 'lo' => 31, 'hi' => 45],
+            ['label' => '46–60', 'lo' => 46, 'hi' => 60],
+            ['label' => '61–75', 'lo' => 61, 'hi' => 75],
+            ['label' => '76–90+', 'lo' => 76, 'hi' => 90],
+            ['label' => '91–120', 'lo' => 91, 'hi' => 200],
+        ];
+
+        $select = ['tournament_id' => 't.id', 'year' => 't.year', 'total' => new Expression('COUNT(*)')];
+        foreach ($buckets as $index => $bucket) {
+            $select['b' . $index] = new Expression(
+                'SUM(CASE WHEN g.minute BETWEEN ' . (int) $bucket['lo'] . ' AND ' . (int) $bucket['hi']
+                . ' THEN 1 ELSE 0 END)'
+            );
+        }
+
+        $rows = (new Query())
+            ->select($select)
+            ->from(['g' => '{{%goal}}'])
+            ->innerJoin(['ga' => '{{%game}}'], 'ga.id = g.game_id')
+            ->innerJoin(['t' => '{{%tournament}}'], 't.id = ga.tournament_id')
+            ->where(['ga.status' => Game::STATUS_FINISHED, 'g.is_shootout' => 0])
+            ->andWhere(['not', ['g.minute' => null]])
+            ->groupBy('t.id')
+            ->orderBy(['t.year' => SORT_DESC])
+            ->all();
+
+        $editions = [];
+        $maxLate = null;
+        $minLate = null;
+        foreach ($rows as $row) {
+            $total = (int) $row['total'];
+            if ($total < 1) {
+                continue;
+            }
+
+            $cells = [];
+            $late = 0;
+            foreach ($buckets as $index => $bucket) {
+                $count = (int) $row['b' . $index];
+                $percent = round($count / $total * 100, 1);
+                if ((int) $bucket['lo'] >= 46) {
+                    $late += $count;
+                }
+                $cells[] = [
+                    'label' => $bucket['label'],
+                    'count' => $count,
+                    'percent' => $percent,
+                    // 连续色阶：比例越高，金色越亮；数值同时写在格子里。
+                    'alpha' => round(min(.62, .04 + $percent * .026), 3),
+                ];
+            }
+
+            $latePercent = round($late / $total * 100, 1);
+            $edition = [
+                'tournament_id' => (int) $row['tournament_id'],
+                'year' => (int) $row['year'],
+                'total' => $total,
+                'cells' => $cells,
+                'late_percent' => $latePercent,
+            ];
+            $editions[] = $edition;
+
+            if ($maxLate === null || $latePercent > $maxLate['late_percent']) {
+                $maxLate = $edition;
+            }
+            if ($minLate === null || $latePercent < $minLate['late_percent']) {
+                $minLate = $edition;
+            }
+        }
+
+        return [
+            'buckets' => array_map(static function ($bucket) {
+                return $bucket['label'];
+            }, $buckets),
+            'editions' => $editions,
+            'max_late' => $maxLate,
+            'min_late' => $minLate,
+        ];
     }
 
     /**
