@@ -265,6 +265,11 @@
         cursor: pointer;
     }
 
+    /* 打开数据表时卡片会滚到吸顶 tab 下方,给滚动对齐留出 tab 的高度。 */
+    .chart-card {
+        scroll-margin-top: 76px;
+    }
+
     .chart-data-close:hover,
     .chart-data-close:focus {
         color: var(--green-action);

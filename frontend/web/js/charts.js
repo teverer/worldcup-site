@@ -1633,6 +1633,15 @@
                 }
                 var button = card.querySelector('.chart-data-close');
                 if (details.open) {
+                    // 同一时间只开一张数据表:固定定位的关闭按钮不会叠在一起。
+                    Array.prototype.forEach.call(
+                        document.querySelectorAll('.chart-data[open]'),
+                        function (other) {
+                            if (other !== details) {
+                                other.open = false;
+                            }
+                        }
+                    );
                     if (!button) {
                         button = document.createElement('button');
                         button.type = 'button';
@@ -1642,6 +1651,14 @@
                             details.open = false;
                         });
                         card.appendChild(button);
+                        // 覆盖层从卡片顶部开始;把卡片顶对齐到吸顶 tab 下方,
+                        // 关闭按钮和表头才不会落在视口外。
+                        if (typeof card.scrollIntoView === 'function') {
+                            card.scrollIntoView({
+                                block: 'start',
+                                behavior: prefersReducedMotion ? 'auto' : 'smooth'
+                            });
+                        }
                     }
                 } else if (button) {
                     button.remove();
