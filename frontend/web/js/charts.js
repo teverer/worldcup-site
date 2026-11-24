@@ -1022,6 +1022,180 @@
         container.__teamDone = true;
     }
 
+    // 比赛详情页:比分走势阶梯线 + 进球点。点球大战由下方时间线单独呈现。
+    function initGameScore() {
+        var container = byId('game-score-chart');
+        if (!container || container.__gameDone) {
+            return;
+        }
+
+        if (!hasEcharts() && !window.__echartsLoadFailed) {
+            whenNearViewport(container, function () {
+                loadEcharts(container.getAttribute('data-echarts-src'), function () {
+                    initGameScore();
+                });
+            });
+            return;
+        }
+
+        var dataEl = byId('game-score-data');
+        var data = null;
+        try {
+            data = dataEl ? JSON.parse(dataEl.textContent || '') : null;
+        } catch (e) {
+            data = null;
+        }
+        var marks = (data && data.marks) || [];
+        if (!marks.length) {
+            container.__gameDone = true;
+            showEmpty(container, '暂无比分走势');
+            return;
+        }
+        if (!hasEcharts() || window.__echartsLoadFailed) {
+            container.__gameDone = true;
+            showEmpty(container, '图表组件加载失败，请检查网络后刷新页面。');
+            return;
+        }
+
+        var chart = initChart(container);
+        if (!chart) {
+            return;
+        }
+
+        var homeColor = PRIMARY_SERIES;
+        var awayColor = '#4A6B7A';
+        var homeName = data.homeName;
+        var awayName = data.awayName;
+        var maxMinute = Number(data.maxMinute) || 90;
+        var toPoints = function (rows) {
+            return (rows || []).map(function (row) {
+                return [Number(row[0]), Number(row[1])];
+            });
+        };
+        var markData = marks.map(function (mark) {
+            return {
+                value: [Number(mark.minute), Number(mark.score)],
+                event: mark,
+                itemStyle: {
+                    color: mark.team === 'home' ? homeColor : awayColor,
+                    borderColor: INK.surface,
+                    borderWidth: 2
+                }
+            };
+        });
+
+        chart.setOption({
+            animationDuration: ANIMATION_DURATION,
+            grid: { left: 6, right: 18, top: 30, bottom: 6, containLabel: true },
+            legend: {
+                data: [homeName, awayName],
+                top: 0,
+                right: 0,
+                icon: 'roundRect',
+                itemWidth: 12,
+                itemHeight: 8,
+                textStyle: { color: INK.secondary, fontSize: 13 }
+            },
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: INK.surface,
+                borderColor: INK.grid,
+                textStyle: { color: INK.primary, fontSize: 13 },
+                formatter: function (params) {
+                    var mark = params.data && params.data.event;
+                    if (!mark) {
+                        return '';
+                    }
+                    var tags = [];
+                    if (mark.penalty) {
+                        tags.push('点球');
+                    }
+                    if (mark.ownGoal) {
+                        tags.push('乌龙球');
+                    }
+                    return '<strong>第 ' + mark.minute + ' 分钟</strong><br>'
+                        + escapeHtml(mark.player)
+                        + (tags.length ? '（' + tags.join(' · ') + '）' : '')
+                        + '<br>' + escapeHtml(homeName) + ' ' + mark.homeScore
+                        + '–' + mark.awayScore + ' ' + escapeHtml(awayName);
+                }
+            },
+            xAxis: {
+                type: 'value',
+                min: 0,
+                max: maxMinute,
+                interval: maxMinute > 90 ? 30 : 15,
+                axisTick: { show: false },
+                axisLine: { lineStyle: { color: INK.axis } },
+                axisLabel: {
+                    color: INK.secondary,
+                    fontSize: 12,
+                    margin: 10,
+                    formatter: function (value) {
+                        return value + '′';
+                    }
+                },
+                splitLine: { show: false }
+            },
+            yAxis: {
+                type: 'value',
+                min: 0,
+                minInterval: 1,
+                name: '进球',
+                nameTextStyle: { color: INK.muted, fontSize: 12 },
+                axisTick: { show: false },
+                axisLine: { show: false },
+                axisLabel: { color: INK.secondary, fontSize: 12 },
+                splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
+            },
+            series: [
+                {
+                    name: homeName,
+                    type: 'line',
+                    step: 'end',
+                    data: toPoints(data.homeSeries),
+                    symbol: 'none',
+                    lineStyle: { color: homeColor, width: 2 },
+                    silent: true,
+                    tooltip: { show: false },
+                    markArea: {
+                        silent: true,
+                        itemStyle: { color: 'rgba(46, 125, 91, .06)' },
+                        label: {
+                            show: true,
+                            position: 'insideTop',
+                            formatter: '加时',
+                            color: INK.muted,
+                            fontSize: 12
+                        },
+                        data: maxMinute > 90 ? [[{ xAxis: 90 }, { xAxis: maxMinute }]] : []
+                    }
+                },
+                {
+                    name: awayName,
+                    type: 'line',
+                    step: 'end',
+                    data: toPoints(data.awaySeries),
+                    symbol: 'none',
+                    lineStyle: { color: awayColor, width: 2 },
+                    silent: true,
+                    tooltip: { show: false }
+                },
+                {
+                    name: '进球',
+                    type: 'scatter',
+                    data: markData,
+                    symbolSize: 13,
+                    z: 10,
+                    emphasis: { scale: 1.35 },
+                    tooltip: { show: true }
+                }
+            ]
+        });
+        chart.resize();
+        container.__gameDone = true;
+    }
+
     function resizeAll() {
         Object.keys(chartInstances).forEach(function (id) {
             var chart = chartInstances[id];
@@ -1149,11 +1323,13 @@
             init();
             initPlayerCareer();
             initTeamHistory();
+            initGameScore();
         });
     } else {
         initChartDataToggles();
         init();
         initPlayerCareer();
         initTeamHistory();
+        initGameScore();
     }
 }());

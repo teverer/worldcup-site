@@ -1,0 +1,19 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:届次与比赛 —— 比赛详情「比分走势」图的容器尺寸 */
+
+.chart-canvas--game {
+    height: 240px;
+}
+
+@media (max-width: 860px) {
+    .chart-canvas--game {
+        height: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-canvas--game {
+        height: 200px;
+    }
+}
