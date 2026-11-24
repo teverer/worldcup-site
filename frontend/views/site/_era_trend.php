@@ -65,6 +65,7 @@ $pointY = static function ($value) use ($min, $max, $padT, $plotH) {
 $linePoints = [];
 $flags = '';
 $yearLabels = '';
+$championLabels = '';
 foreach ($series as $index => $item) {
     $x = $pointX($index);
     $y = $pointY($item['avg']);
@@ -97,8 +98,8 @@ foreach ($series as $index => $item) {
         . '<title>' . Html::encode($title) . '</title>'
         . '<line class="era-guide" x1="' . round($x, 2) . '" y1="' . $padT . '" x2="' . round($x, 2) . '" y2="' . $baselineY . '"/>'
         . ($flagUrl !== null
-            ? '<rect class="era-flag-frame" x="' . round($x - 12, 2) . '" y="' . round($y - 46, 2) . '" width="24" height="18" rx="1"/>'
-                . '<image class="era-flag" x="' . round($x - 11, 2) . '" y="' . round($y - 45, 2) . '" width="22" height="16" href="' . Html::encode($flagUrl) . '"/>'
+            ? '<rect class="era-flag-frame" x="' . round($x - 13, 2) . '" y="' . round($y - 49, 2) . '" width="26" height="20" rx="1"/>'
+                . '<image class="era-flag" x="' . round($x - 12, 2) . '" y="' . round($y - 48, 2) . '" width="24" height="18" href="' . Html::encode($flagUrl) . '"/>'
             : '<text class="era-flag-code" x="' . round($x, 2) . '" y="' . round($y - 32, 2) . '">'
                 . Html::encode(isset($final['champion_code']) ? $final['champion_code'] : '—') . '</text>')
         . '<circle class="era-dot" cx="' . round($x, 2) . '" cy="' . round($y, 2) . '" r="4.6"/>'
@@ -110,6 +111,8 @@ foreach ($series as $index => $item) {
 
     $yearLabels .= '<text class="era-year" x="' . round($x, 2) . '" y="' . ($baselineY + 26) . '">'
         . Html::encode((string) $item['year']) . '</text>';
+    $championLabels .= '<text class="era-champion-name" x="' . round($x, 2) . '" y="' . ($baselineY + 47) . '">'
+        . Html::encode($champion) . '</text>';
 }
 
 $line = implode(' ', $linePoints);
@@ -169,6 +172,7 @@ $summary = $trendWord . '：' . ($delta >= 0 ? '+' : '') . number_format($delta,
             <polyline class="era-line" pathLength="1" points="<?= Html::encode($line) ?>"/>
             <?= $flags ?>
             <?= $yearLabels ?>
+            <?= $championLabels ?>
 
             <text class="era-axis-title" x="<?= $padL - 14 ?>" y="<?= $padT - 34 ?>">场均进球</text>
         </svg>

@@ -934,17 +934,17 @@ body.site-site-index {
 }
 
 .era-axis-label {
-    fill: var(--steel-2);
+    fill: var(--steel);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     text-anchor: end;
     font-variant-numeric: tabular-nums;
 }
 
 .era-axis-title {
-    fill: var(--steel-2);
+    fill: var(--steel);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .06em;
     text-anchor: start;
 }
@@ -964,19 +964,27 @@ body.site-site-index {
 }
 
 .era-mean-label {
-    fill: var(--steel-2);
+    fill: var(--steel);
     font-family: var(--font-display);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .04em;
     text-anchor: end;
 }
 
 .era-year {
-    fill: var(--steel);
+    fill: var(--flood);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13.5px;
     text-anchor: middle;
     font-variant-numeric: tabular-nums;
+}
+
+.era-champion-name {
+    fill: var(--steel-2);
+    font-family: var(--font-cn-display);
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    text-anchor: middle;
 }
 
 .era-flag-frame {
