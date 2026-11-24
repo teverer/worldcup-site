@@ -160,6 +160,23 @@
     background-color: rgba(201, 138, 46, .055);
 }
 
+/* 后台表格的字号下限:表头 11.5px 偏小,正文 13.5px 读长串队名也吃力。
+   数字统一等宽,扫描比分 / 分钟 / 进球数时不会左右跳。 */
+@media (min-width: 601px) {
+    body .table > thead > tr > th {
+        font-size: 12.5px;
+        letter-spacing: .02em;
+    }
+
+    body .table > tbody > tr > td {
+        font-size: 14px;
+    }
+}
+
+body .table > tbody > tr > td {
+    font-variant-numeric: tabular-nums;
+}
+
 /* 手机上的比赛表:先把「对阵 + 比分」留在第一屏。
    时间 / 阶段 / 状态 / 场地都可在详情里看到,不值得让它们把对阵挤到横滚区。 */
 @media (max-width: 600px) {
