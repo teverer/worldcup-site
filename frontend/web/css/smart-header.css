@@ -1,0 +1,75 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— 全站滚动导航：下滑收起、上滑滑回。
+   页头高度写进 --site-header-h，二级粘性条（届次 tab / 历史坐标）跟着它走。 */
+
+:root {
+    /* JS 会按实际页头高度覆盖；这里是首帧兜底。 */
+    --site-header-h: 65px;
+}
+
+/* 锚点跳转给页头留位置；页头收起时变量变 0，不会多留白。 */
+html {
+    scroll-padding-top: var(--site-header-h, 0px);
+}
+
+/* art-r6 / design-v2 给 .site-header 设了 position:relative + z-index:1；
+   这里用同特异性的 body 前缀并且后加载，压回 sticky。 */
+body .site-header,
+body.site-body .site-header,
+body.site-site-index .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    transform: translateY(0);
+    transition: transform .22s ease;
+    will-change: transform;
+}
+
+body .site-header.is-header-hidden,
+body.site-body .site-header.is-header-hidden,
+body.site-site-index .site-header.is-header-hidden {
+    transform: translateY(-100%);
+}
+
+/* 贴顶后给一条很轻的投影，和页面内容分开；不改变页头颜色。 */
+.site-header.is-stuck .navbar {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .24);
+}
+
+/* 粘在内容上方时不能再透出下面的卡片或晋级图；用近乎实心的夜场底。 */
+body.site-body .site-header.is-stuck .navbar,
+body.site-site-index .site-header.is-stuck .navbar {
+    background-color: rgba(4, 8, 10, .96);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    backdrop-filter: blur(14px) saturate(120%);
+}
+
+/* 二级粘性条：页头在时贴在页头下方，页头收起时回到 0。 */
+.td-tabs {
+    top: var(--site-header-h, 0px) !important;
+    transition: top .22s ease;
+}
+
+.stats-history-nav {
+    top: calc(var(--site-header-h, 0px) + var(--td-tab-h, 56px)) !important;
+    transition: top .22s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header {
+        transition: none;
+    }
+
+    /* 减少动效时不自动收起页头，避免突然消失。 */
+    body .site-header.is-header-hidden,
+    body.site-body .site-header.is-header-hidden,
+    body.site-site-index .site-header.is-header-hidden {
+        transform: none;
+    }
+
+    .td-tabs,
+    .stats-history-nav {
+        transition: none;
+    }
+}

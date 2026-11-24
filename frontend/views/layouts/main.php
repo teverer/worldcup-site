@@ -76,6 +76,9 @@ $this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\Boot
 $this->registerCssFile('@web/css/art-r6.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 // 留言簿 v2：输入卡与留言区分离、留言区内滚、两级楼层。最后加载，覆盖旧登记簿。
 $this->registerCssFile('@web/css/comments-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 滚动导航：下滑收起、上滑滑回；二级粘性条跟随页头高度。
+$this->registerCssFile('@web/css/smart-header.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+$this->registerJsFile('@web/js/smart-header.js', ['position' => \yii\web\View::POS_END]);
 $this->registerJsFile('@web/js/atmosphere.js', ['position' => \yii\web\View::POS_END]);
 
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';
