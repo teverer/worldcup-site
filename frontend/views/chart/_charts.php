@@ -33,12 +33,8 @@ if ($tournamentId < 1) {
 }
 
 $this->registerCssFile('@web/css/charts.css');
-// 本地引入 ECharts(Apache-2.0),避免部署环境无外网或 CDN 不可用时图表空白。
-$this->registerJsFile('@web/js/vendor/echarts.min.js', [
-    'position' => View::POS_END,
-    'id' => 'echarts-local',
-    'onerror' => 'window.__echartsLoadFailed = true;',
-]);
+// ECharts 不在首屏加载:charts.js 在统计面板第一次可见时才注入本地脚本。
+// 本地 /js/vendor/echarts.min.js(Apache-2.0),避免部署环境无外网或 CDN 不可用。
 $this->registerJsFile('@web/js/charts.js', [
     'position' => View::POS_END,
     'id' => 'charts-js',
@@ -47,6 +43,7 @@ $this->registerJsFile('@web/js/charts.js', [
 <section id="charts-panel" class="charts-panel"
          data-tournament-id="<?= (int) $tournamentId ?>"
          data-group="<?= Html::encode($group) ?>"
+         data-echarts-src="<?= Html::encode(Url::to('@web/js/vendor/echarts.min.js')) ?>"
          data-standings-url="<?= Html::encode(Url::to(['/chart/standings'])) ?>"
          data-scorers-url="<?= Html::encode(Url::to(['/chart/scorers'])) ?>"
          data-team-goals-url="<?= Html::encode(Url::to(['/chart/team-goals'])) ?>">

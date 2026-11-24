@@ -11,6 +11,8 @@
  * @var array $participations 由 Player::participations() 提供,补上没有进球/助攻的届次
  */
 
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 // 兼容旧调用:只传 statistics 时仍能按有进球的届次画图。
@@ -49,10 +51,6 @@ if (!$points || $totalGoals + $totalAssists < 1) {
 
 $this->registerCssFile('@web/css/charts.css');
 $this->registerCssFile('@web/css/player-chart.css');
-$this->registerJsFile('@web/js/vendor/echarts.min.js', [
-    'position' => View::POS_END,
-    'id' => 'echarts-local',
-]);
 $this->registerJsFile('@web/js/charts.js', [
     'position' => View::POS_END,
     'id' => 'charts-js',
@@ -77,6 +75,7 @@ $singleTournament = count($points) === 1;
     <div class="chart-card pd-career-card">
         <div id="player-career-chart" class="chart-canvas chart-canvas--player<?= $singleTournament ? ' is-single' : '' ?>"
              data-chart="player-career" role="img"
+             data-echarts-src="<?= Html::encode(Url::to('@web/js/vendor/echarts.min.js')) ?>"
              aria-label="球员各届世界杯进球<?= $totalAssists > 0 ? '与助攻' : '' ?>柱状图">
             <p class="chart-loading">图表加载中…</p>
         </div>

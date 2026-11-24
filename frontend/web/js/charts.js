@@ -41,6 +41,44 @@
             && typeof window.echarts.init === 'function';
     }
 
+    // ECharts 约 1MB,不再首屏加载:统计面板第一次可见时才注入,
+    // 球员页则等图表接近视口;失败时由调用方显示空态。
+    var echartsLoader = { loading: false, callbacks: [] };
+
+    function loadEcharts(src, done) {
+        if (hasEcharts() || window.__echartsLoadFailed) {
+            done();
+            return;
+        }
+        echartsLoader.callbacks.push(done);
+        if (echartsLoader.loading) {
+            return;
+        }
+        echartsLoader.loading = true;
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = src || '/js/vendor/echarts.min.js';
+        script.onload = function () {
+            echartsLoader.loading = false;
+            if (!hasEcharts()) {
+                window.__echartsLoadFailed = true;
+            }
+            var callbacks = echartsLoader.callbacks.splice(0);
+            callbacks.forEach(function (callback) {
+                callback();
+            });
+        };
+        script.onerror = function () {
+            echartsLoader.loading = false;
+            window.__echartsLoadFailed = true;
+            var callbacks = echartsLoader.callbacks.splice(0);
+            callbacks.forEach(function (callback) {
+                callback();
+            });
+        };
+        document.head.appendChild(script);
+    }
+
     function escapeHtml(value) {
         return String(value === null || value === undefined ? '' : value)
             .replace(/&/g, '&amp;')
@@ -694,7 +732,31 @@
     // 不额外请求接口;没有进球或助攻时该节根本不会渲染。
     function initPlayerCareer() {
         var container = byId('player-career-chart');
-        if (!container) {
+        if (!container || container.__careerDone) {
+            return;
+        }
+
+        // 球员图在首屏下方:接近视口再加载 ECharts,别让球员页一打开就下载 1MB。
+        if (!hasEcharts() && !window.__echartsLoadFailed) {
+            if (typeof window.IntersectionObserver === 'function') {
+                if (!container.__careerObserver) {
+                    var observer = new IntersectionObserver(function (entries) {
+                        if (entries[0].isIntersecting) {
+                            observer.disconnect();
+                            container.__careerObserver = null;
+                            loadEcharts(container.getAttribute('data-echarts-src'), function () {
+                                initPlayerCareer();
+                            });
+                        }
+                    }, { rootMargin: '240px' });
+                    container.__careerObserver = observer;
+                    observer.observe(container);
+                }
+                return;
+            }
+            loadEcharts(container.getAttribute('data-echarts-src'), function () {
+                initPlayerCareer();
+            });
             return;
         }
 
@@ -707,6 +769,7 @@
         }
 
         if (!data || !data.years || !data.years.length) {
+            container.__careerDone = true;
             showEmpty(container, '暂无生涯数据');
             return;
         }
@@ -722,6 +785,7 @@
         });
 
         if (!hasEcharts() || window.__echartsLoadFailed) {
+            container.__careerDone = true;
             showEmpty(container, '图表组件加载失败，请检查网络后刷新页面。');
             return;
         }
@@ -830,6 +894,7 @@
             series: series
         });
         chart.resize();
+        container.__careerDone = true;
     }
 
     function resizeAll() {
@@ -857,6 +922,15 @@
         if (!root || chartsInitialized || !isVisible(root)) {
             return;
         }
+
+        // 首次进入统计面板时才加载 ECharts,加载完再走一遍。
+        if (!hasEcharts() && !window.__echartsLoadFailed) {
+            loadEcharts(root.getAttribute('data-echarts-src'), function () {
+                init();
+            });
+            return;
+        }
+
         chartsInitialized = true;
 
         var containers = root.querySelectorAll('[data-chart]');
