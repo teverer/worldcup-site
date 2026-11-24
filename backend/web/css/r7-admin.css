@@ -177,6 +177,25 @@ body .table > tbody > tr > td {
     font-variant-numeric: tabular-nums;
 }
 
+/* 宽屏长列表:表头钉在顶部工具条下方。
+   只有 ≥1400 才放开 table-responsive 的横向滚动;否则页面会出现横向溢出。 */
+@media (min-width: 1400px) {
+    .backend-main .table-responsive {
+        overflow: visible;
+    }
+
+    .backend-main .grid-view .table > thead > tr > th {
+        position: sticky;
+        top: 56px;
+        z-index: 3;
+    }
+
+    /* 操作列本来就钉右,这里只补上顶部的 sticky 行为。 */
+    .backend-main .grid-view .table > thead > tr > th:last-child {
+        right: 0;
+    }
+}
+
 /* 手机上的比赛表:先把「对阵 + 比分」留在第一屏。
    时间 / 阶段 / 状态 / 场地都可在详情里看到,不值得让它们把对阵挤到横滚区。 */
 @media (max-width: 600px) {
