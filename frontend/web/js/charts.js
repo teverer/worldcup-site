@@ -350,7 +350,7 @@
         function drawGroup(groupData) {
             chartRows = groupData.rows || [];
             var compact = chart.getWidth() < 560;
-            var flagRich = addFlagRich({}, chartRows, 'sf');
+            var flagRich = compact ? {} : addFlagRich({}, chartRows, 'sf');
             var categories = [];
             var values = [];
             var groupLeaders = [];
@@ -408,7 +408,7 @@
                         fontFamily: CN_FONT,
                         margin: compact ? 10 : 12,
                         formatter: function (value, index) {
-                            return flagTag(chartRows[index], index, 'sf')
+                            return (compact ? '' : flagTag(chartRows[index], index, 'sf'))
                                 + (index === 0
                                     ? '{first|1}  ' + value
                                     : '{rank|' + (index + 1) + '}  ' + value);
@@ -671,7 +671,7 @@
         var teamNames = topRows.map(function (row) {
             return row.teamName;
         });
-        var flagRich = addFlagRich({}, topRows, 'tf');
+        var flagRich = compact ? {} : addFlagRich({}, topRows, 'tf');
 
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
@@ -736,7 +736,7 @@
                     fontFamily: CN_FONT,
                     margin: compact ? 10 : 14,
                     formatter: function (value, index) {
-                        return flagTag(topRows[index], index, 'tf')
+                        return (compact ? '' : flagTag(topRows[index], index, 'tf'))
                             + (index === 0
                                 ? '{first|1}  ' + value
                                 : '{rank|' + (index + 1) + '}  ' + value);
