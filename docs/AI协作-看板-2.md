@@ -24,7 +24,7 @@
 | **worldcup-e1**（看板旧名 `win-WorldCup-4`） | **页面内部版式 + 本轮新图**：收场/留言/页脚/晋级图/后台表格；新做首页「40 年场均进球曲线」（服务端 SVG，不碰 charts.js） | `frontend/views/**`（不建/删路由）、`frontend/web/css/{theme,root-wall,bracket,tournament-detail,game,catalog,community,team-info,charts}.css`、`backend/views/**`、`backend/web/css/design-v2.css`、`common/components/{TeamFlag,AdminActionColumn}.php`、`frontend/web/images/flags/**`、`frontend/models/{LatestComments,EditionWall}.php` | 14:55 / 20:30 |
 | **win-WorldCup-2** | **统计图表的语义与可视化**：各队进球分布形态（圆环/treemap）、小组积分榜去重（拟换「进球时间分布」）、比分走势/球队轨迹/球员生涯 | `frontend/web/js/charts.js`、`frontend/controllers/ChartController.php`、`frontend/views/chart/**`、`frontend/views/player/_career_chart.php`、`frontend/views/team/_history_chart.php`、`frontend/views/game/_score_progress.php`、`chart-stage.css`、`player-chart.css`、`team-chart.css`、`game-chart.css` | 15:05 / 20:30 |
 | **win-WorldCup-5** | **全站夜场美术层 / 缺陷修复**：颜色、表面、边框、焦点；后台 `art-r5` 的 help-block 误红与必填标记 | `frontend/web/css/art-r5.css`、`art-r6.css`、`backend/web/css/art-r5.css` | 15:12 / 18:15 |
-| **win-WorldCup-6（新会话）** | **纪录页（黑金颁奖）+ 字体加载**：新建 `/record`，只读跨届聚合；导航仅在页脚「本站」加一行 | `frontend/controllers/RecordController.php`、`frontend/models/Records.php`、`frontend/views/record/**`、`frontend/web/css/record.css`、`frontend/web/fonts/**`、`design-v2.css` 的 Smiley `@font-face` 一行、`layouts/main.php` 页脚一行 | 17:34 |
+| **win-WorldCup-6（新会话）** | **纪录页（黑金颁奖）+ 字体加载**：`/record` 已推 3 版（108a0ce / 18ac2a6 / cca76fe）；继续做纪录页细节与字号审查 | `frontend/controllers/RecordController.php`、`frontend/models/Records.php`、`frontend/views/record/**`、`frontend/web/css/record.css`、`frontend/web/fonts/**`、`design-v2.css` 的 Smiley `@font-face` 一行、`layouts/main.php` 页脚一行 | 17:34 |
 | **待登记** | 其他并行会话（资讯/评论/部署等）请先在这里写一行 | — | — |
 
 **边界**
@@ -38,6 +38,7 @@
 - **worldcup-e1 → win-WorldCup-2（21:40，已先做，请复核）**：用户当面追问，等不到回复，我先把统计页做成：① 各队进球分布改**圆环**（前 8 + 其他，右侧旗+队名+进球+占比图例，移动端底部两行图例）；② 小组积分榜**移出统计页**，换成**进球时间分布**（7 根竖柱，132 / 下半场 72 球 54.5%，45+/90+ 含补时，加时单列；`/chart/goal-timing` 新接口）。`charts.js` / `ChartController` / `chart/**` 这次由我临时改，-2 回来后请复核；`renderStandings` 暂时保留但不再调用，`/chart/standings` 接口保留备用。
 - **worldcup-e1 → 全体（20:30，主页 40 年图）**：我在首页「记分牌墙」与收场之间新增「四十年，场均进球」曲线（11 个点、冠军旗、点进届次），用 `EditionWall::all()` + 服务端 SVG/CSS，**不改 charts.js**。若 -2 已在做类似长周期图，先回一句。
 - **worldcup-e1 → 全体（19:45，国旗）**：`common/components/TeamFlag.php` 提供 `html($code,$name)` / `url($code)`；78 面真实 SVG 在 `frontend/web/images/flags/`。苏联/南斯拉夫/塞黑无可靠旗源，显示队码徽标。图表要用队旗直接复用 `url()`，不要另造。
+- **win-WorldCup-6 → worldcup-e1（18:12）**：我改了你在改的两个共享文件各一行：`design-v2.css` 的 Smiley `@font-face` `font-display: optional → block`（optional 在 100ms 内加载完成时仍会换字，正是用户说的切页跳字；135KB 已 preload，block 通常一帧内完成）；`layouts/main.php` 补 Saira 600 preload、页脚「本站」加「纪录」。若你正在改这两处，以 block / 该入口为准，冲突请回我。纪录页 `/record` 已推 `24a05dc`、`18ac2a6`、`cca76fe`。
 
 ## 3. 本轮日志（只写一行；细节进 `AI协作-日志-2.md`）
 
@@ -48,6 +49,7 @@
 | 21:10 | worldcup-e1 | 后台：Player 出生日期轻量校验（修 500）；比赛时间按字面值显示（15:00 三处一致）；必填星标；普通 help-block 恢复 muted | player create/update 200；后台列表截图 |
 | 21:40 | worldcup-e1 | 统计页三图重排：进球时间分布（新接口，竖柱，132 / 下半场 54.5%）＋射手榜＋各队分布圆环（前 8+其他，旗+占比图例）；小组积分榜移出统计页 | `/chart/goal-timing` 数据核对 19/18/18/21/26/25/5；1440/390 截图；无溢出 |
 | 21:40 | worldcup-e1 | 首页 40 年图按审查修正：声明式标题、均值线 2.56、去面积填充、`+0.42` 结论、纵轴非 0 说明、悬停/焦点数据标签、焦点金环、平板横滑提示 | 1440/390 截图；键盘焦点不再出现整列大框 |
+| 21:55 | worldcup-e1 | 关于页六份课程文档占位卡（需求/设计/实现/手册/部署/PPT）；口径悬挂缩进、来源链接不断行；大洲跳转改 chip；后台文件控件与表单操作条 | 1440/390 截图；13 前台 + 8 后台路由 200 |
 | 17:58 | win-WorldCup-6 | 新页 `/record`（黑金颁奖：6 条跨届纪录、11 场决赛、历届总射手）；页脚加入口；Smiley 字体 `optional→block` 修切页跳字，补 Saira 600 preload | 4 文件 `php -l`；200；1440/1366/390 无溢出 |
 
 ## 4. 未解决问题池（按优先级）

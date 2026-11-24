@@ -11,9 +11,10 @@ $this->title = '后台管理登录';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
+    <p class="wb-login-brand">世界杯数据门户 · 工作间</p>
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>请输入用户名和密码</p>
+    <p>请输入用户名和密码。国足世界杯夺冠队 · 课程设计</p>
 
     <div class="row">
         <div class="col-lg-5">

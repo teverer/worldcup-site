@@ -22,5 +22,7 @@ use yii\helpers\Url;
         <?= $this->render('//partials/_name_lang', ['returnUrl' => Url::current() . '#charts']) ?>
     </header>
 
+    <p class="td-section-note">三张图分别看：什么时候进球、谁进球、各队占多少。小组积分榜在「小组赛」标签的表格里，这里不重复。</p>
+
     <?= $this->render('@frontend/views/chart/_charts', ['tournamentId' => $model->id]) ?>
 </section>
