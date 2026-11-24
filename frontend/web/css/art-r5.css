@@ -40,6 +40,13 @@ body:not(.site-site-index) {
     background-attachment: fixed;
 }
 
+/* 移动端不做 fixed 背景，避免滚动时反复重绘 */
+@media (max-width: 767px) {
+    body:not(.site-site-index) {
+        background-attachment: scroll;
+    }
+}
+
 /* 左侧“装订线”：容器外的装饰线，桌面才出现，不占布局宽度 */
 @media (min-width: 1300px) {
     body:not(.site-site-index) .site-main > .container {
@@ -588,6 +595,15 @@ body:not(.site-site-index) summary:focus-visible,
 body:not(.site-site-index) [tabindex]:focus-visible {
     outline: 2px solid var(--gold-ink);
     outline-offset: 3px;
+}
+
+/* 深色表面上的焦点改用浅铜，铜墨在深底上读不出来 */
+body:not(.site-site-index) .site-header a:focus-visible,
+body:not(.site-site-index) .site-header button:focus-visible,
+body:not(.site-site-index) .site-footer a:focus-visible,
+body:not(.site-site-index) .site-footer button:focus-visible,
+body:not(.site-site-index) .skip-link:focus-visible {
+    outline-color: var(--gold-light);
 }
 
 body:not(.site-site-index) a {
