@@ -1177,3 +1177,21 @@ body .site-brand::before {
     letter-spacing: .04em;
     content: "WC";
 }
+
+/* 届次英雄数据：四格不再同权，用“进球”做唯一锚点，其余降为辅助 */
+@media (min-width: 1200px) {
+    body.site-tournament-view .td-hero-facts > div:nth-child(3) dd {
+        font-size: clamp(3rem, 3.6vw, 4.2rem);
+        line-height: .95;
+    }
+
+    body.site-tournament-view .td-hero-facts > div:not(:nth-child(3)) dd {
+        font-size: clamp(1.55rem, 1.7vw, 2rem);
+        line-height: 1.05;
+        opacity: .78;
+    }
+
+    body.site-tournament-view .td-hero-facts > div:nth-child(3) dt {
+        color: var(--gold-light);
+    }
+}
