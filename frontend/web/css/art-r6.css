@@ -777,3 +777,32 @@ body:not(.site-site-index) .pd-head a {
         font-size: 15px;
     }
 }
+
+/* 比赛索引：比分是主角，按记分牌的量级再抬一档 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .game-item-score {
+        font-size: 40px;
+        line-height: 1.1;
+    }
+
+    body:not(.site-site-index) .game-item-team {
+        font-size: 20px;
+    }
+
+    body:not(.site-site-index) .game-item-year {
+        font-size: 32px;
+    }
+
+    body:not(.site-site-index) .game-item-stage,
+    body:not(.site-site-index) .game-item-note {
+        font-size: 15px;
+    }
+}
+
+/* 关于页的四格数字：与根页年份同一量级，作为这一页的“主角数字” */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .about-facts dd {
+        font-size: 44px;
+        line-height: 1.05;
+    }
+}
