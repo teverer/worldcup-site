@@ -917,6 +917,20 @@ body.site-site-index .era-chart .era-point:focus-visible {
     border-top: 1px solid var(--line-dark);
 }
 
+.era-more {
+    margin: 16px 0 0;
+    font-size: 14px;
+}
+
+.era-more a {
+    color: var(--green-light);
+}
+
+.era-more a:hover,
+.era-more a:focus {
+    color: var(--gold-light);
+}
+
 .era-data summary {
     color: var(--green-light);
     font-size: 14px;

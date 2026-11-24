@@ -217,6 +217,8 @@ $summary = $trendWord . '：' . ($delta >= 0 ? '+' : '') . number_format($delta,
         </div>
     </details>
 
+    <p class="era-more"><?= Html::a('继续看：十一届纪录、决赛与总射手', ['/record/index']) ?></p>
+
     <script>
     (function () {
         var scroller = document.querySelector('.era-chart-scroll');
