@@ -232,6 +232,7 @@ $bracketView = Yii::getAlias('@frontend/views/tournament/_bracket.php');
     <?= CommentSection::widget([
         'targetType' => CommentTarget::TOURNAMENT,
         'targetId' => $model->id,
+        'emptyTitle' => '目前还没有人留言',
     ]) ?>
 </div>
 <?php

@@ -107,9 +107,9 @@ class CommentSection extends Widget
     {
         $starters = [
             CommentTarget::TOURNAMENT => [
-                '你当时在哪看的？',
-                '这一届，你记住了哪一夜？',
-                '比分之外，你还记得什么？',
+                '那时我感到……',
+                '那时我在……',
+                '你最想喷……',
             ],
             CommentTarget::GAME => [
                 '你当时在哪看的？',
