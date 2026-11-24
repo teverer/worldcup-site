@@ -33,3 +33,36 @@
 - **文件**：`frontend/web/fonts/*`、`backend/web/fonts/*`、`tools/build_font_subset.php`、两个 `layouts/main.php`、`frontend/web/css/{design-v2,root-wall,tournament-detail,bracket,catalog,team-info}.css`、`backend/web/css/design-v2.css`、`frontend/views/tournament/*`、`frontend/views/team-info/index.php`、`backend/views/game/_form.php`、`frontend/views/site/discussion.php`、`frontend/views/comment/_section.php`、`frontend/widgets/CommentSection.php`。
 - **协作说明**：提交里同时带上了 2026-11-24 留言簿收敛（两本簿 + 全站页）与 win-WorldCup-2 的球员图 include、win-WorldCup-5 的 `art-r5.css` 注册，因为共享工作树里它们与我的改动在同一批文件上；`art-r5.css` 本身已在 `ef052a5` 之前单独提交。
 - **仍未做**：比赛详情事实行标签可再退一级；后台 CRUD 操作列的图标/文字混用待统一；移动端进球分布图例翻页藏队（已转给 win-WorldCup-2）。
+
+### 16:50 · win-WorldCup-4 · 桌面“大气版”（用户第二批反馈）
+- **用户反馈**：移动端暂不重点（老师用笔记本检查，暂不公网部署）；首页“最新留言 / 关于与文档”太淡、和上面融在一起；多处不大气——届次行纵向太窄、晋级图只占 2/3、两侧空。
+- **首页**：届次行纵向 padding 28→40、行高约 200px；年份/队名/冠军/比分/场次全部上调。新增独立“收场”深色带（`--night-2` + 金色顶线 + 100vmax 出血），标题「继续看，或者留一句」；内部两列：最新留言（空态有标题、副句、描边 CTA）/ 换一种找法（4 条大号导航 + 关于本站与文档）。不再有孤零零的说明链接。
+- **晋级图**：决赛 430→800、半决赛 340→560、1/4 232→300，1/8/半决赛/决赛高度 60/68/80/112 → 72/88/110/160；字号与比分同步放大。1366/1280 实测上层三角形填满舞台，不再只占中间 2/3。
+- **其他大气点**：比赛比分板 padding/比分 64→88、队名 22→26；届次 hero facts 数字 2.6→3rem、padding 加大；球队/球员深色头 padding 42、h1 44px；索引页标题 36→44、导语 16.5、行高与卡片内边距加大；新闻列表行 padding 18→28、标题 22；球队详情新增右侧 300px「队史总计 / 参赛届次 / 数据口径」栏（主栏 872 收窄到可读行宽，右侧不再空）；球员读数带全宽、生涯图与生涯表同宽 960。
+- **移动端**：降级为“不溢出兜底”，390 未投入新设计；后续若要公网部署再单独做一版。
+- **验证**：`php -l`；首页 / 届次 / 比赛 / 球队 / 球员 / 资讯 / 关于 / 留言簿 200；1280 / 1366 / 1440 无页面级横向溢出；截图 `runtime/qa/pd1/g-*.png`。
+- **协作**：已在 peer 广播“移动端降级 + 桌面大气”方向；-5 只补收场带颜色/纹理，-2 留意图表容器变宽后的轴标签。
+
+### 17:05 · win-WorldCup-2 · 姓名切换跳 tab 修复 + 零样本处理
+- **Bug**：统计 tab 里点「中文名/原名」会回到淘汰赛。原因：`Url::current()` 不含 hash，redirect 回跳丢掉了 `#charts`。修法：`_name_lang.php` 支持调用方传 `returnUrl`；`_stats.php` 传 `Url::current() . '#charts'`。CDP 实测点完后 URL 仍是 `...#charts`，统计面板 visible。
+- **零进球球员**：不做假数据。球员图改为以「参赛届次」为轴，补上 0 球 0 助攻的届次（Messi 2010 现已出现）；完全 0 参与的球员不画图，显示「0 球 · 0 助攻 —— 样本不足，不绘制生涯图」并链接到生涯表。
+- **顶级站参考**：FootyCabin 球员页在样本不足时直接不画 profile chart，并显示 "Insufficient sample"；CricketStudio 对低于阈值的统计不展示或标 sub-floor；FBPlot 建议按任务设阈值并使用谨慎措辞。我们采用「原始计数仍进表 + 派生图在零样本时不画 + 明确说明」。
+- **配色校验**：用 dataviz 的 OKLab 校验脚本重排球队色，最差相邻对正常视觉 ΔE 16.7、CVD 15.0，均过线；品牌低饱和导致亮度/彩度两项不达标，保留品牌色并在图表里用直接标签 + 数据表兜底。
+- 验证：`php -l`、`node --check`、CDP 点击测试、390/1440 截图。
+
+### 17:35 · win-WorldCup-2 · 图表按需加载 + 配色校验
+- **性能**：ECharts 约 1MB，原来统计页/球员页首屏就下载。现在 `charts.js` 在统计面板第一次可见时才注入 `echarts.min.js`；球员图用 `IntersectionObserver`（rootMargin 240px）接近视口再加载。实测：届次页默认态 0 次 ECharts 请求，点「统计」后 1 次、3 张图；球员页滚到图表附近才 1 次。
+- **校验**：用 dataviz 技能的 OKLab 脚本重排球色，最差相邻对正常视觉 ΔE 16.7、CVD 15.0；品牌低饱和导致亮度/彩度两项不达标，保留品牌色，用直接标签 + 数据表兜底。
+- **原型**：试过 100% 堆叠条（ribbon）替代饼图，前 7 段标签在 640px 卡内过挤、不如圆环可读，未采用；保留「圆环 + 右侧排名图例」。
+- 验证：`php -l`、`node --check`、CDP 网络请求计数、390/1440 截图；球员图在 390 下 6 届仍可读。
+
+### 18:05 · win-WorldCup-2 · 球队「世界杯轨迹」图
+- 新图：球队详情「历届战绩」里加一条最终阶段折线（小组赛→32强→…→决赛），冠军用金点并直标「冠军」；按参赛届次排列，不足两届不画。数据来自现有 `Team::tournamentRecords()`；补了 `final_*` 与 `champion` 字段（点球大战按罚球分判定）。
+- 已验证：阿根廷（1986/2022/2026 冠军金点、2026 决赛非冠军）、西班牙（2010/2026 冠军）、390 窄屏年份隔一个显示、无页面级溢出。ECharts 仍按需加载。
+- 文件：`common/models/Team.php`、`frontend/views/team/_history_chart.php`（新）、`frontend/web/css/team-chart.css`（新）、`frontend/web/js/charts.js`；`frontend/views/team/view.php` 一行 include（该文件有其他会话未提交改动，未提交）。
+
+### 18:40 · win-WorldCup-2 · 比赛「比分走势」图
+- 比赛详情新增阶梯线：两队各一条累计比分线，进球点可悬停看球员、点球/乌龙、当时比分；90–120 画「加时」底纹；点球大战不入图，仍由下方时间线单独呈现。
+- 不足 2 个常规进球不渲染（0–0、1–0 比赛已验证无图），把「样本不足」留给时间线，不画空图。
+- 复用图表懒加载；390/1440 截图通过，无横向溢出。
+- 文件：`frontend/views/game/_score_progress.php`（新）、`frontend/web/css/game-chart.css`（新）、`frontend/web/js/charts.js`；`frontend/views/game/view.php` 一行 include（该文件有其他会话未提交改动）。

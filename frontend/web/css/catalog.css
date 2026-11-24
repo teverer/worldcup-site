@@ -242,7 +242,7 @@
     grid-template-columns: 4.5rem minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-2);
-    padding: 12px 6px;
+    padding: 18px 8px;
     border-bottom: 1px solid var(--color-border);
     color: inherit;
     text-decoration: none;
@@ -264,7 +264,7 @@
 .pl-scorer-year {
     color: var(--color-muted-strong);
     font-family: var(--font-display);
-    font-size: var(--fs-xl);
+    font-size: 24px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     letter-spacing: .01em;
@@ -280,7 +280,7 @@
 .pl-scorer-text strong {
     overflow: hidden;
     color: var(--color-text);
-    font-size: var(--fs-base);
+    font-size: 17px;
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -289,14 +289,14 @@
 .pl-scorer-text span {
     overflow: hidden;
     color: var(--color-muted-strong);
-    font-size: 13.5px;
+    font-size: 14px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .pl-scorer-goals {
     color: var(--color-primary);
-    font-size: var(--fs-xl);
+    font-size: 24px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     text-align: right;
@@ -421,9 +421,9 @@
 
 .ti-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 8px;
-    margin: var(--space-2) 0 0;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: var(--space-3) 0 0;
     padding: 0;
     list-style: none;
 }
@@ -433,7 +433,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-1);
-    padding: 10px 12px;
+    padding: 14px 16px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     background-color: var(--color-surface);
@@ -458,7 +458,7 @@
 .ti-team-name {
     overflow: hidden;
     color: var(--color-text);
-    font-size: var(--fs-sm);
+    font-size: 15px;
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -468,7 +468,7 @@
     flex: 0 0 auto;
     color: var(--color-muted-strong);
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: .04em;
 }
 
@@ -521,7 +521,142 @@
 }
 
 .td-section {
-    margin-top: var(--space-4);
+    margin-top: var(--space-5);
+}
+
+/* 球队详情：正文 872 + 右侧队史摘要 300，把宽屏右侧的空位用起来。 */
+.team-detail .td-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: clamp(32px, 4vw, 56px);
+    align-items: start;
+}
+
+.team-detail .td-body-main {
+    min-width: 0;
+}
+
+.team-detail .td-body-main > .td-section:first-child {
+    margin-top: 0;
+}
+
+.td-aside {
+    position: sticky;
+    top: 24px;
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.td-aside h2 {
+    margin: 0 0 18px;
+    color: var(--color-text);
+    font-size: 18px;
+    letter-spacing: -.01em;
+}
+
+.td-aside-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+    margin: 0;
+}
+
+.td-aside-facts dt {
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+.td-aside-facts dd {
+    margin: 3px 0 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.td-aside-facts dd small {
+    color: var(--color-muted);
+    font-family: var(--font-cn-body);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.td-aside-note {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-border);
+}
+
+.td-aside-note h3 {
+    margin: 0 0 8px;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+}
+
+.td-aside-note p {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.td-aside-years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.td-aside-years a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.td-aside-years a:hover,
+.td-aside-years a:focus {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.td-aside-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    margin-top: 22px;
+    padding: 0 14px;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.td-aside-link:hover,
+.td-aside-link:focus {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    text-decoration: none;
+}
+
+@media (max-width: 1100px) {
+    .team-detail .td-body {
+        grid-template-columns: 1fr;
+    }
+
+    .td-aside {
+        position: static;
+    }
 }
 
 /* 三列表/五列表不需要铺满 1200px；把正文控制在可读行宽内。
@@ -536,7 +671,8 @@
     max-width: 880px;
 }
 
-.pd-section:has(.pd-table) {
+.pd-section:has(.pd-table),
+.pd-section.pd-career {
     max-width: 960px;
 }
 
@@ -549,19 +685,19 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-2);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
 }
 
 .td-section-head h2 {
-    margin: 0 0 2px;
-    font-size: var(--fs-xl);
+    margin: 0 0 4px;
+    font-size: 24px;
     letter-spacing: -.01em;
 }
 
 .td-section-head p {
     margin: 0;
     color: var(--color-muted-strong);
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .td-editions {
@@ -685,15 +821,14 @@
 .pd-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-width: 760px;
     gap: 0;
-    margin: var(--space-3) 0 0;
+    margin: var(--space-4) 0 0;
     border: 1px solid var(--color-border);
     background-color: var(--color-surface);
 }
 
 .pd-stat {
-    padding: 14px 20px;
+    padding: 18px 24px;
     border: 0;
     border-radius: 0;
     background-color: transparent;
@@ -710,9 +845,9 @@
 }
 
 .pd-stat dd {
-    margin: 2px 0 0;
+    margin: 4px 0 0;
     color: var(--color-primary);
-    font-size: var(--fs-2xl);
+    font-size: clamp(2rem, 2.2vw, 2.5rem);
     font-weight: 700;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
@@ -725,12 +860,12 @@
 }
 
 .pd-section {
-    margin-top: var(--space-4);
+    margin-top: var(--space-5);
 }
 
 .pd-section h2 {
     margin: 0 0 var(--space-1);
-    font-size: var(--fs-xl);
+    font-size: 24px;
     letter-spacing: -.01em;
 }
 

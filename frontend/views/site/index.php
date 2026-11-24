@@ -93,41 +93,55 @@ $dataUrl = $latestId !== null
         <?php endif ?>
     </section>
 
-    <nav class="wall-ways" aria-label="换一种找法">
-        <span class="wall-ways-label">换一种找法</span>
-        <?= Html::a('按球队', ['/team/index']) ?>
-        <?= Html::a('按球员', ['/player/index']) ?>
-        <?= Html::a('按比赛', ['/game/index']) ?>
-        <?= Html::a('看数据', $dataUrl) ?>
-    </nav>
-
-    <section class="wall-comments" aria-labelledby="wall-comments-title">
-        <header class="wall-comments-head">
-            <h2 class="wall-comments-title" id="wall-comments-title">最新留言</h2>
-            <span class="wall-comments-note">来自各届、资讯与全站</span>
-            <?= Html::a('去世界杯留言簿', ['/site/discussion'], ['class' => 'wall-comments-more']) ?>
+    <section class="wall-closing" aria-labelledby="wall-closing-title">
+        <header class="wall-closing-head">
+            <h2 id="wall-closing-title">继续看，或者留一句</h2>
+            <p>十一届看完了。换一种找法，或者写下你记住的那一夜。</p>
         </header>
-        <?php if (!empty($latestComments)): ?>
-            <div class="wall-comments-list">
-                <?php foreach ($latestComments as $item): ?>
-                    <a class="wall-comment" href="<?= Html::encode($item['url']) ?>">
-                        <span class="wall-comment-source"><?= Html::encode($item['source']) ?></span>
-                        <span class="wall-comment-meta">
-                            <span class="seal wall-comment-seal"
-                                  style="background:<?= Html::encode(CommentSection::sealColor($item['userId'])) ?>"
-                                  aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($item['author'])) ?></span>
-                            <span class="wall-comment-name"><?= Html::encode($item['author']) ?></span>
-                            <time class="wall-comment-time"
-                                  datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
-                        </span>
-                        <span class="wall-comment-text"><?= Html::encode($item['excerpt']) ?></span>
-                    </a>
-                <?php endforeach ?>
-            </div>
-        <?php else: ?>
-            <p class="wall-comments-empty">还没有人留言。<?= Html::a('来写第一句', ['/site/discussion']) ?></p>
-        <?php endif ?>
-    </section>
 
-    <p class="wall-about"><?= Html::a('关于与文档', ['/team-info/index']) ?></p>
+        <div class="wall-closing-grid">
+            <section class="wall-comments" aria-labelledby="wall-comments-title">
+                <header class="wall-comments-head">
+                    <h3 class="wall-comments-title" id="wall-comments-title">最新留言</h3>
+                    <span class="wall-comments-note">来自各届、资讯与全站</span>
+                    <?= Html::a('去世界杯留言簿', ['/site/discussion'], ['class' => 'wall-comments-more']) ?>
+                </header>
+                <?php if (!empty($latestComments)): ?>
+                    <div class="wall-comments-list">
+                        <?php foreach ($latestComments as $item): ?>
+                            <a class="wall-comment" href="<?= Html::encode($item['url']) ?>">
+                                <span class="wall-comment-source"><?= Html::encode($item['source']) ?></span>
+                                <span class="wall-comment-meta">
+                                    <span class="seal wall-comment-seal"
+                                          style="background:<?= Html::encode(CommentSection::sealColor($item['userId'])) ?>"
+                                          aria-hidden="true"><?= Html::encode(CommentSection::sealInitial($item['author'])) ?></span>
+                                    <span class="wall-comment-name"><?= Html::encode($item['author']) ?></span>
+                                    <time class="wall-comment-time"
+                                          datetime="<?= Html::encode($item['datetime']) ?>"><?= Html::encode($item['date']) ?></time>
+                                </span>
+                                <span class="wall-comment-text"><?= Html::encode($item['excerpt']) ?></span>
+                            </a>
+                        <?php endforeach ?>
+                    </div>
+                <?php else: ?>
+                    <div class="wall-comments-empty">
+                        <p class="wall-empty-title">还没有人留言。</p>
+                        <p class="wall-empty-sub">十一届看下来，总有一场你想说两句。</p>
+                        <?= Html::a('写第一句', ['/site/discussion'], ['class' => 'wall-empty-cta']) ?>
+                    </div>
+                <?php endif ?>
+            </section>
+
+            <aside class="wall-elsewhere" aria-labelledby="wall-elsewhere-title">
+                <h3 id="wall-elsewhere-title">换一种找法</h3>
+                <ul class="wall-ways">
+                    <li><?= Html::a('按球队', ['/team/index']) ?></li>
+                    <li><?= Html::a('按球员', ['/player/index']) ?></li>
+                    <li><?= Html::a('按比赛', ['/game/index']) ?></li>
+                    <li><?= Html::a('看数据', $dataUrl) ?></li>
+                </ul>
+                <?= Html::a('关于本站与文档', ['/team-info/index'], ['class' => 'wall-about-link']) ?>
+            </aside>
+        </div>
+    </section>
 </div>

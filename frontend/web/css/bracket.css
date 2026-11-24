@@ -129,49 +129,59 @@
     color: var(--gold-light);
 }
 
-/* 逐层放大:决赛 > 半决赛 > 1/4 > 1/8 */
+/* 逐层放大:决赛 > 半决赛 > 1/4 > 1/8。
+   上一轮的 max-width 把上层卡片压得太窄,舞台两侧显得空;
+   现在让卡片填满各自网格槽的大部分,决赛成为一块真正的记分牌。 */
 .tree-match--r16 {
-    min-height: 60px;
+    min-height: 72px;
 }
 
-.tree-match--qf {
-    max-width: 232px;
-    min-height: 68px;
+.tree-match--r16 .tree-team-name {
+    font-size: 15px;
 }
 
-.tree-match--qf .tree-team {
-    padding: 5px 12px;
-}
-
-.tree-match--qf .tree-team-name {
-    font-size: 14px;
-}
-
-.tree-match--qf .tree-team-score {
+.tree-match--r16 .tree-team-score {
     font-size: 1.35rem;
 }
 
-.tree-match--sf {
-    max-width: 340px;
-    min-height: 80px;
+.tree-match--qf {
+    max-width: 300px;
+    min-height: 88px;
 }
 
-.tree-match--sf .tree-team {
+.tree-match--qf .tree-team {
     padding: 6px 14px;
 }
 
+.tree-match--qf .tree-team-name {
+    font-size: 15px;
+}
+
+.tree-match--qf .tree-team-score {
+    font-size: 1.5rem;
+}
+
+.tree-match--sf {
+    max-width: 560px;
+    min-height: 110px;
+}
+
+.tree-match--sf .tree-team {
+    padding: 8px 18px;
+}
+
 .tree-match--sf .tree-team-name {
-    font-size: 14.5px;
+    font-size: 16px;
 }
 
 .tree-match--sf .tree-team-score {
-    font-size: 1.55rem;
+    font-size: 1.75rem;
 }
 
 /* 决赛是整棵树的主角:最大、居顶、冠军金色、带一点灯光 */
 .tree-match--final {
-    max-width: 430px;
-    min-height: 112px;
+    max-width: 800px;
+    min-height: 160px;
     border-color: rgba(232, 199, 102, .34);
     background:
         radial-gradient(120% 160% at 50% 0%, rgba(232, 199, 102, .10), transparent 62%),
@@ -180,15 +190,15 @@
 }
 
 .tree-match--final .tree-team {
-    padding: 8px 18px;
+    padding: 10px 24px;
 }
 
 .tree-match--final .tree-team-name {
-    font-size: 17px;
+    font-size: 20px;
 }
 
 .tree-match--final .tree-team-score {
-    font-size: 2.1rem;
+    font-size: 2.6rem;
     font-weight: 700;
 }
 

@@ -1051,13 +1051,39 @@ body.site-game-view {
     font-style: normal;
 }
 
+/* 索引页的页面标题：比区块标题高一级，给页面一个明确的开场。 */
+.pl-head,
+.game-heading,
+.news-head {
+    padding-bottom: 18px;
+}
+
+.pl-head h1,
+.game-heading h1,
+.news-head h1,
+.catalog-heading h1 {
+    font-size: clamp(2.25rem, 3vw, 2.75rem);
+    line-height: 1.1;
+}
+
+.pl-head p,
+.game-heading p,
+.news-head p {
+    font-size: 16.5px;
+    line-height: 1.7;
+}
+
+.game-heading {
+    margin-bottom: var(--space-4);
+}
+
 /* ==========================================================================
    9. 球队 / 球员
    ========================================================================== */
 body.site-team-view .td-head,
 body.site-player-view .pd-head {
-    margin: 0 0 var(--space-3);
-    padding: 28px 30px;
+    margin: 0 0 var(--space-4);
+    padding: clamp(32px, 3vw, 42px) clamp(28px, 3vw, 44px);
     border: 1px solid var(--line-dark);
     border-radius: var(--radius-sm);
     background:
@@ -1072,7 +1098,14 @@ body.site-team-view .td-head h1,
 body.site-player-view .pd-head h1 {
     color: var(--flood);
     font-family: var(--font-cn-display);
+    font-size: clamp(2.2rem, 3vw, 2.8rem);
     font-weight: 400;
+    line-height: 1.1;
+}
+
+body.site-team-view .td-meta,
+body.site-player-view .pd-meta {
+    font-size: 15px;
 }
 
 body.site-team-view .td-meta,

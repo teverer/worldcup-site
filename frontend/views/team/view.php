@@ -33,6 +33,22 @@ foreach ($tournaments as $tournament) {
     }
 }
 $rosterTotal = (int) $dataProvider->totalCount;
+
+// 队史总计：从历届战绩直接汇总，不额外查库。
+$totalPlayed = 0;
+$totalWon = 0;
+$totalDrawn = 0;
+$totalLost = 0;
+$totalGoalsFor = 0;
+$totalGoalsAgainst = 0;
+foreach ($records as $record) {
+    $totalPlayed += (int) $record['played'];
+    $totalWon += (int) $record['won'];
+    $totalDrawn += (int) $record['drawn'];
+    $totalLost += (int) $record['lost'];
+    $totalGoalsFor += (int) $record['goals_for'];
+    $totalGoalsAgainst += (int) $record['goals_against'];
+}
 ?>
 <article class="catalog-page team-detail">
     <header class="td-head">
@@ -51,10 +67,8 @@ $rosterTotal = (int) $dataProvider->totalCount;
         </div>
     </header>
 
-    <?php if ($model->intro): ?>
-        <p class="td-intro"><?= nl2br(Html::encode($model->intro)) ?></p>
-    <?php endif ?>
-
+    <div class="td-body">
+        <div class="td-body-main">
     <section class="td-section" aria-labelledby="td-records-title">
         <div class="td-section-head">
             <div>
@@ -62,6 +76,8 @@ $rosterTotal = (int) $dataProvider->totalCount;
                 <p>只计已结束比赛；点年份进入那一届的晋级图与统计。</p>
             </div>
         </div>
+
+        <?= $this->render('_history_chart', ['records' => $records]) ?>
 
         <?php if (!$records): ?>
             <div class="empty-state td-empty">
@@ -170,4 +186,55 @@ $rosterTotal = (int) $dataProvider->totalCount;
             ]) ?>
         <?php endif ?>
     </section>
+        </div>
+
+        <aside class="td-aside" aria-labelledby="td-aside-title">
+            <h2 id="td-aside-title">队史总计</h2>
+            <dl class="td-aside-facts">
+                <div>
+                    <dt>参赛</dt>
+                    <dd><?= count($tournaments) ?> <small>届</small></dd>
+                </div>
+                <div>
+                    <dt>场次</dt>
+                    <dd><?= $totalPlayed ?></dd>
+                </div>
+                <div>
+                    <dt>胜-平-负</dt>
+                    <dd><?= $totalWon ?>-<?= $totalDrawn ?>-<?= $totalLost ?></dd>
+                </div>
+                <div>
+                    <dt>进 / 失</dt>
+                    <dd><?= $totalGoalsFor ?> / <?= $totalGoalsAgainst ?></dd>
+                </div>
+            </dl>
+
+            <?php if ($tournaments): ?>
+                <div class="td-aside-note">
+                    <h3>参赛届次</h3>
+                    <div class="td-aside-years">
+                        <?php foreach ($tournaments as $tournament): ?>
+                            <?= Html::a(Html::encode((string) $tournament['year']), [
+                                '/tournament/view', 'id' => $tournament['id'],
+                            ]) ?>
+                        <?php endforeach ?>
+                    </div>
+                </div>
+            <?php endif ?>
+
+            <?php if ($model->intro): ?>
+                <div class="td-aside-note">
+                    <h3>关于球队</h3>
+                    <p><?= nl2br(Html::encode($model->intro)) ?></p>
+                </div>
+            <?php endif ?>
+
+            <div class="td-aside-note">
+                <h3>数据口径</h3>
+                <p>只统计已结束的比赛；进球按受益球队计入，乌龙球算给对方。</p>
+            </div>
+
+            <?= Html::a('看这队比赛', ['/game/index', 'team' => $model->name], ['class' => 'td-aside-link']) ?>
+        </aside>
+    </div>
 </article>
