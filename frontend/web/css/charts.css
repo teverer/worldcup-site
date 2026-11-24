@@ -214,6 +214,18 @@
     margin-top: 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    scrollbar-color: rgba(244, 242, 236, .3) transparent;
+    scrollbar-width: thin;
+}
+
+.chart-table-wrap::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.chart-table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(244, 242, 236, .28);
 }
 
 /* 数据表展开:桌面端在同一张卡内覆盖图表,表格内部滚动。

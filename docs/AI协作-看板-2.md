@@ -24,6 +24,7 @@
 | **worldcup-e1**（看板旧名 `win-WorldCup-4`） | **页面内部版式 + 本轮新图**：收场/留言/页脚/晋级图/后台表格；新做首页「40 年场均进球曲线」（服务端 SVG，不碰 charts.js） | `frontend/views/**`（不建/删路由）、`frontend/web/css/{theme,root-wall,bracket,tournament-detail,game,catalog,community,team-info,charts}.css`、`backend/views/**`、`backend/web/css/design-v2.css`、`common/components/{TeamFlag,AdminActionColumn}.php`、`frontend/web/images/flags/**`、`frontend/models/{LatestComments,EditionWall}.php` | 14:55 / 20:30 |
 | **win-WorldCup-2** | **统计图表的语义与可视化**：各队进球分布形态（圆环/treemap）、小组积分榜去重（拟换「进球时间分布」）、比分走势/球队轨迹/球员生涯 | `frontend/web/js/charts.js`、`frontend/controllers/ChartController.php`、`frontend/views/chart/**`、`frontend/views/player/_career_chart.php`、`frontend/views/team/_history_chart.php`、`frontend/views/game/_score_progress.php`、`chart-stage.css`、`player-chart.css`、`team-chart.css`、`game-chart.css` | 15:05 / 20:30 |
 | **win-WorldCup-5** | **全站夜场美术层 / 缺陷修复**：颜色、表面、边框、焦点；后台 `art-r5` 的 help-block 误红与必填标记 | `frontend/web/css/art-r5.css`、`art-r6.css`、`backend/web/css/art-r5.css` | 15:12 / 18:15 |
+| **win-WorldCup-6（新会话）** | **纪录页（黑金颁奖）+ 字体加载**：新建 `/record`，只读跨届聚合；导航仅在页脚「本站」加一行 | `frontend/controllers/RecordController.php`、`frontend/models/Records.php`、`frontend/views/record/**`、`frontend/web/css/record.css`、`frontend/web/fonts/**`、`design-v2.css` 的 Smiley `@font-face` 一行、`layouts/main.php` 页脚一行 | 17:34 |
 | **待登记** | 其他并行会话（资讯/评论/部署等）请先在这里写一行 | — | — |
 
 **边界**
@@ -59,8 +60,14 @@
 - [x] 统计页三图语义：各队分布改圆环（前 8+其他）；小组积分榜移出统计页，换「进球时间分布」；三图变成“何时—谁—哪些队”（worldcup-e1 先做，-2 复核）。
 - [x] 首页 40 年图：11 点、冠军旗、数据表、均值线、声明式标题、悬停/焦点标签、横滑提示；1440/390 无溢出（worldcup-e1）。
 
+**长周期图下一轮候选**（调研见 `参考模板与实现参考.md`）
+- [ ] 十一届冠军条带：年份 + 国旗 + 国名 + 决赛比分，按洲着色；别只放旗。
+- [ ] 进球时间热力图：11 届 × 7–8 时段，用该届占比，先验证“进球越来越晚”。
+- [ ] 各队进球分布若圆环仍显碎，可换 treemap（面积=份额，前 12 + 其余）。
+
 **P2**
-- [ ] 后台：无批量操作；每页条数不统一；筛选只用 placeholder；必填无星标；进球/名单原生 select 过重。
+- [ ] 后台：无批量操作；每页条数不统一；筛选只用 placeholder；进球/名单原生 select 过重。
+- [ ] 部署前关闭 `YII_DEBUG`（前后台 `web/index.php` 均硬编码 true），否则右下角调试条会出现在交付演示里。
 - [ ] 前台：比赛详情页尾「返回比赛列表」与面包屑重复；球员详情口径说明重复 3 次；资讯索引行右侧偏空。
 - [ ] 图表：移动端各队进球分布图例翻页藏队；深色下轴/图例可读性。
 - [ ] 字号再抬一档；索引页巨数；届次 hero 390 四格裁切；球员 0 进球页过空。
