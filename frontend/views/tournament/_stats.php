@@ -16,7 +16,7 @@ use yii\helpers\Url;
 ?>
 <section class="td-panel td-panel--stats" id="charts" tabindex="-1"
          aria-labelledby="td-charts-title">
-    <header class="td-section-head">
+    <header class="td-section-head" id="td-stats-head">
         <h2 class="section-title" id="td-charts-title">统计图表</h2>
         <?php /* 带 #charts 回跳:切换姓名后仍停留在“统计”,不要掉回淘汰赛。 */ ?>
         <?= $this->render('//partials/_name_lang', ['returnUrl' => Url::current() . '#charts']) ?>

@@ -35,6 +35,9 @@ foreach ($records as $record) {
 }
 
 if (count($points) < 2) {
+    if (count($points) === 1) {
+        echo Html::tag('p', '参赛不足两届，暂不绘制世界杯轨迹；完整记录见下表。', ['class' => 'td-chart-note']);
+    }
     return;
 }
 

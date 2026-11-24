@@ -91,10 +91,10 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">前 7 队单列，其余合并为「其他」；条长与占比都固定以全届总进球为分母，不随图例变化。</p>
+                <p class="chart-caption">前 12 队单列，其余队在标题里合计；条长为进球，占比固定以全届总进球为分母。</p>
             </div>
-            <div id="chart-team-goals" class="chart-canvas chart-canvas--share"
-                 data-chart="team-goals" role="img" aria-label="各队进球占比构成条">
+            <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
+                 data-chart="team-goals" role="img" aria-label="各队进球排名条形图">
                 <p class="chart-loading">图表加载中…</p>
             </div>
             <details class="chart-data">

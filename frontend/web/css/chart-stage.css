@@ -28,11 +28,10 @@
     letter-spacing: .02em;
 }
 
-/* 统计页的小标题与姓名开关也放大一档,和全宽图卡同一尺度。 */
-.td-panel--stats .td-section-head h2,
-.td-panel--stats .section-title {
-    font-size: 34px;
-    line-height: 1.2;
+/* 统计页的小标题要压过 R6 的 30px 通用 h2,和数据卡拉开一级。 */
+#td-stats-head .section-title {
+    font-size: 42px;
+    line-height: 1.15;
 }
 
 .td-panel--stats .pl-name-lang,
@@ -43,24 +42,38 @@
 .chart-caption {
     max-width: 92ch;
     margin-bottom: 18px;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.7;
 }
 
+#charts-panel .chart-card .chart-caption,
+.td-history-chart .chart-card-head .chart-caption {
+    font-size: 16px;
+}
+
+.player-detail .pd-career .pd-section-head p,
+body.site-game .game-progress .game-section-head p {
+    font-size: 16px;
+}
+
+#charts-panel .chart-footnote {
+    font-size: 15px;
+}
+
 .chart-canvas {
-    height: 520px;
+    height: 460px;
 }
 
 .chart-canvas--standings {
-    height: 520px;
+    height: 460px;
 }
 
 .chart-canvas--scorers {
-    height: 620px;
+    height: 580px;
 }
 
-.chart-canvas--share {
-    height: 460px;
+.chart-canvas--teams {
+    height: 560px;
 }
 
 .chart-group-switch-btn {
@@ -74,11 +87,11 @@
 }
 
 .chart-data summary {
-    font-size: 15px;
+    font-size: 16px;
 }
 
 #charts-panel .chart-table {
-    font-size: 14.5px;
+    font-size: 15.5px;
 }
 
 #charts-panel .chart-table th,
@@ -88,7 +101,7 @@
 
 .chart-footnote {
     margin-top: 22px;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.75;
 }
 
@@ -106,19 +119,19 @@
 
 .td-history-chart .chart-card-head h3 {
     font-family: var(--font-cn-display);
-    font-size: 28px;
+    font-size: 32px;
     margin-bottom: 8px;
 }
 
 .pd-career .pd-section-head h2,
 .game-progress .game-section-head h2 {
-    font-size: 30px;
-    line-height: 1.25;
+    font-size: 32px;
+    line-height: 1.2;
 }
 
 .pd-career .pd-section-head p,
 .game-progress .game-section-head p {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.7;
 }
 
@@ -131,9 +144,8 @@
         font-size: 24px;
     }
 
-    .td-panel--stats .td-section-head h2,
-    .td-panel--stats .section-title {
-        font-size: 26px;
+    #td-stats-head .section-title {
+        font-size: 28px;
     }
 
     .td-panel--stats .pl-name-lang,
@@ -155,8 +167,8 @@
         height: 560px;
     }
 
-    .chart-canvas--share {
-        height: 400px;
+    .chart-canvas--teams {
+        height: 520px;
     }
 
     .td-history-chart .chart-card-head h3,
@@ -184,8 +196,8 @@
         height: 480px;
     }
 
-    .chart-canvas--share {
-        height: 360px;
+    .chart-canvas--teams {
+        height: 500px;
     }
 
     .td-history-chart .chart-card-head h3,
@@ -193,4 +205,14 @@
     .game-progress .game-section-head h2 {
         font-size: 21px;
     }
+}
+
+
+/* 样本不足时的说明:不画图,但告诉读者去哪里看完整记录。 */
+.td-chart-note,
+.game-chart-note {
+    margin: 0 0 14px;
+    color: var(--steel);
+    font-size: 15px;
+    line-height: 1.7;
 }

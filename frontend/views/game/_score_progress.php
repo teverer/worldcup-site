@@ -40,6 +40,9 @@ foreach ($regularGoals as $goal) {
 }
 
 if (count($events) < 2) {
+    if (count($events) === 1) {
+        echo Html::tag('p', '常规进球少于 2 个，暂不绘制比分走势；完整过程见下方时间线。', ['class' => 'game-chart-note']);
+    }
     return;
 }
 

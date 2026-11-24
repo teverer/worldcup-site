@@ -14,15 +14,10 @@
         surface: '#0A1512'
     };
 
-    // 夜场分类色:金只给第一名;绿/蓝/青/铜/紫排开,
-    // OKLab 校验:最差相邻对正常视觉 ΔE 17.4、CVD 8.6,均过线。
-    var TEAM_COLORS = [
-        '#1F8F6A', '#4B8FD6', '#2FAE83', '#B97A3A', '#8A6FB5', '#2EAFB8', '#7FA893'
-    ];
+    // 夜场图表:主序列青绿、第二序列蓝、成就金。
     var PRIMARY_SERIES = '#2FAE83';
     var HOVER_SERIES = '#57D9AE';
-    var ACCENT_SERIES = '#D9A63C';
-    var OTHER_COLOR = '#55635C';
+    var ACCENT_SERIES = '#E0B457';
 
     // 数字用 Saira Condensed(站内已预加载),中文名回退系统黑体。
     var NUM_FONT = '"Saira Condensed", "Arial Narrow", "Microsoft YaHei", sans-serif';
@@ -114,16 +109,6 @@
     function formatSigned(value) {
         var number = Number(value) || 0;
         return (number > 0 ? '+' : '') + number;
-    }
-
-    // 深底标签的对比色:亮段用深墨,暗段用暖白。
-    function textOn(hex) {
-        var channels = [1, 3, 5].map(function (index) {
-            var value = parseInt(hex.slice(index, index + 2), 16) / 255;
-            return value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
-        });
-        var lum = 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
-        return lum > 0.30 ? '#0A1512' : '#F4F2EC';
     }
 
     // 球员名统一为「首字母大写、其余小写」：Kylian MBAPPE -> Kylian Mbappe。
@@ -379,10 +364,10 @@
                 },
                 xAxis: {
                     type: 'value',
-                    name: compact ? '' : '积分',
+                    name: '',
                     nameTextStyle: { color: INK.muted, fontSize: 14, fontFamily: NUM_FONT, padding: [0, 0, 4, 0] },
                     minInterval: 1,
-                    axisLabel: { color: INK.secondary, fontSize: compact ? 13 : 15, fontFamily: NUM_FONT },
+                    axisLabel: { color: INK.secondary, fontSize: compact ? 13 : 16, fontFamily: NUM_FONT },
                     axisLine: { show: false },
                     axisTick: { show: false },
                     splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -396,11 +381,27 @@
                     axisLine: { lineStyle: { color: INK.axis } },
                     axisLabel: {
                         color: INK.secondary,
-                        fontSize: compact ? 15 : 16,
+                        fontSize: compact ? 15 : 17,
                         fontFamily: CN_FONT,
                         margin: compact ? 10 : 12,
                         formatter: function (value, index) {
-                            return (index + 1) + '  ' + value;
+                            return index === 0
+                                ? '{first|1}  ' + value
+                                : '{rank|' + (index + 1) + '}  ' + value;
+                        },
+                        rich: {
+                            first: {
+                                color: ACCENT_SERIES,
+                                fontSize: compact ? 15 : 18,
+                                fontFamily: NUM_FONT,
+                                fontWeight: 'bold'
+                            },
+                            rank: {
+                                color: INK.muted,
+                                fontSize: compact ? 14 : 17,
+                                fontFamily: NUM_FONT,
+                                fontWeight: 'bold'
+                            }
                         }
                     }
                 },
@@ -411,7 +412,7 @@
                     barMaxWidth: compact ? 38 : 46,
                     itemStyle: {
                         color: function (params) {
-                            return groupLeaders[params.dataIndex] ? ACCENT_SERIES : PRIMARY_SERIES;
+                            return groupLeaders[params.dataIndex] ? HOVER_SERIES : PRIMARY_SERIES;
                         },
                         borderRadius: [0, 4, 4, 0]
                     },
@@ -419,7 +420,7 @@
                         show: true,
                         position: 'right',
                         color: INK.primary,
-                        fontSize: compact ? 17 : 18,
+                        fontSize: compact ? 17 : 19,
                         fontFamily: NUM_FONT,
                         fontWeight: 'bold'
                     },
@@ -480,25 +481,29 @@
             return;
         }
 
+        var container = byId('chart-scorers');
+        var compact = container.clientWidth < 560;
+        // 窄屏只留姓名,球队放在 tooltip;桌面保留「姓名 · 球队」。
         var names = chartRows.map(function (row) {
-            return displayPlayerName(row) + ' · ' + row.teamName;
+            var name = displayPlayerName(row);
+            return compact ? name : name + ' · ' + row.teamName;
         });
-        // y 轴保留完整「姓名 · 球队」,按最长标签动态留宽,避免截断。
         var maxNameWidth = names.reduce(function (maxWidth, name) {
-            return Math.max(maxWidth, estimateTextWidth(name, 16));
+            return Math.max(maxWidth, estimateTextWidth(name, compact ? 14 : 17));
         }, 0);
-        var yLabelWidth = Math.min(300, Math.max(190, Math.ceil(maxNameWidth) + 12));
+        var yLabelWidth = compact
+            ? 108
+            : Math.min(300, Math.max(190, Math.ceil(maxNameWidth) + 12));
         var goals = chartRows.map(function (row) {
             return Number(row.goals) || 0;
         });
         // 只有射手榜第一名使用金色,其余使用深绿。
         var leaderIndex = chartRows.length - 1;
 
-        var chart = initChart(byId('chart-scorers'));
+        var chart = initChart(container);
         if (!chart) {
             return;
         }
-        var compact = chart.getWidth() < 560;
 
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
@@ -525,10 +530,9 @@
             },
             xAxis: {
                 type: 'value',
-                name: '进球',
-                nameTextStyle: { color: INK.muted, fontSize: compact ? 13 : 14, fontFamily: NUM_FONT },
+                name: '',
                 minInterval: 1,
-                axisLabel: { color: INK.secondary, fontSize: compact ? 13 : 15, fontFamily: NUM_FONT },
+                axisLabel: { color: INK.secondary, fontSize: compact ? 13 : 16, fontFamily: NUM_FONT },
                 axisLine: { show: false },
                 axisTick: { show: false },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -540,11 +544,12 @@
                 axisLine: { lineStyle: { color: INK.axis } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: compact ? 14 : 16,
+                    fontSize: compact ? 14 : 17,
                     fontFamily: CN_FONT,
                     margin: compact ? 10 : 12,
                     width: yLabelWidth,
-                    overflow: 'none'
+                    overflow: 'truncate',
+                    ellipsis: '…'
                 }
             },
             series: [{
@@ -562,7 +567,7 @@
                     show: true,
                     position: 'right',
                     color: INK.primary,
-                    fontSize: compact ? 16 : 18,
+                    fontSize: compact ? 16 : 19,
                     fontFamily: NUM_FONT,
                     fontWeight: 'bold'
                 },
@@ -610,48 +615,12 @@
             return;
         }
 
-        var segments = tableRows.map(function (row) {
-            return {
-                name: row.teamName,
-                value: row.goals,
-                share: total > 0 ? row.goals / total * 100 : 0,
-                percent: row.percent,
-                rank: row.rank
-            };
-        });
-
-        // 超过 8 支球队时保留前 7 名 + 「其他 N 队」;
-        // 其他队保留真实进球与占比,所以条长和百分比始终以全届总量为分母。
-        if (segments.length > 8) {
-            var top = segments.slice(0, 7);
-            var tail = segments.slice(7);
-            var otherGoals = tail.reduce(function (sum, item) {
-                return sum + item.value;
-            }, 0);
-            top.push({
-                name: '其他',
-                count: tail.length,
-                value: otherGoals,
-                share: total > 0 ? otherGoals / total * 100 : 0,
-                percent: sharePercent(otherGoals, total),
-                rank: null,
-                itemStyle: { color: OTHER_COLOR }
-            });
-            segments = top;
-        }
-
-        var legendItems = {};
-        segments.forEach(function (item, index) {
-            legendItems[item.name] = item;
-            if (!item.itemStyle) {
-                // 进球最多的球队用金色,其余按绿/蓝/青/铜/紫排开。
-                item.itemStyle = {
-                    color: index === 0
-                        ? ACCENT_SERIES
-                        : TEAM_COLORS[(index - 1) % TEAM_COLORS.length]
-                };
-            }
-        });
+        var topRows = tableRows.slice(0, 12);
+        var restRows = tableRows.slice(12);
+        var restGoals = restRows.reduce(function (sum, row) {
+            return sum + (Number(row.goals) || 0);
+        }, 0);
+        var restPercent = sharePercent(restGoals, total);
 
         var container = byId('chart-team-goals');
         var chart = initChart(container);
@@ -659,42 +628,25 @@
             return;
         }
         var compact = container.clientWidth < 560;
-
-        var series = segments.map(function (item) {
-            var isOther = !!item.count;
-            var showLabel = isOther || (!compact && item.percent >= 5.5);
-            return {
-                name: item.name,
-                type: 'bar',
-                stack: 'share',
-                data: [item.share],
-                barWidth: compact ? 96 : 150,
-                itemStyle: {
-                    color: item.itemStyle.color,
-                    borderColor: INK.surface,
-                    borderWidth: 2
-                },
-                label: {
-                    show: showLabel,
-                    position: 'inside',
-                    formatter: isOther
-                        ? '其他 ' + item.count + ' 队\n' + item.percent + '%'
-                        : item.name + '\n' + item.percent + '%',
-                    color: textOn(item.itemStyle.color),
-                    fontSize: compact ? 14 : 16,
-                    fontFamily: CN_FONT,
-                    fontWeight: '600',
-                    lineHeight: compact ? 18 : 21
-                },
-                emphasis: { focus: 'series' }
-            };
+        // 前 12 队用同一条绿色明度梯,第一名金色;其余队合计写进标题,不做成一根压过所有人的灰条。
+        var RAMP = [
+            '#57D9AE', '#52D2A8', '#4DCBA2', '#48C49C', '#43BD96', '#3EB690',
+            '#39AF8A', '#34A884', '#2FAE83', '#2BA47D', '#279A77'
+        ];
+        var values = topRows.map(function (row) {
+            return Number(row.goals) || 0;
+        });
+        var teamNames = topRows.map(function (row) {
+            return row.teamName;
         });
 
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
             title: {
                 text: String(total),
-                subtext: '全届进球',
+                subtext: restRows.length
+                    ? '全届进球 · 其余 ' + restRows.length + ' 队合计 ' + restGoals + ' 球（' + restPercent + '%）'
+                    : '全届进球',
                 left: 0,
                 top: 0,
                 textStyle: {
@@ -703,59 +655,103 @@
                     fontFamily: NUM_FONT,
                     fontWeight: 'bold'
                 },
-                subtextStyle: { color: INK.muted, fontSize: 14, fontFamily: CN_FONT }
+                subtextStyle: {
+                    color: INK.muted,
+                    fontSize: compact ? 12 : 14,
+                    fontFamily: CN_FONT
+                }
+            },
+            grid: {
+                left: 10,
+                right: compact ? 108 : 160,
+                top: compact ? 82 : 100,
+                bottom: 16,
+                containLabel: true
             },
             tooltip: {
-                trigger: 'item',
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
                 textStyle: { color: INK.primary, fontSize: 14, fontFamily: CN_FONT },
                 formatter: function (params) {
-                    var item = params.data || {};
-                    var rankLine = item.rank ? '<br>第 ' + item.rank + ' 名' : '';
-                    var displayName = item.count
-                        ? '其他 ' + item.count + ' 队'
-                        : params.name;
-                    return '<strong>' + escapeHtml(displayName) + '</strong>'
-                        + '<br>' + item.value + ' 球 · 占全届 ' + item.percent + '%'
-                        + rankLine;
-                }
-            },
-            legend: {
-                // 图例只用于高亮,不允许隐藏切片:隐藏会让人误读占比。
-                selectedMode: false,
-                bottom: 0,
-                left: 'center',
-                width: '100%',
-                icon: 'circle',
-                itemWidth: 11,
-                itemHeight: 11,
-                itemGap: compact ? 10 : 18,
-                textStyle: {
-                    color: INK.secondary,
-                    fontSize: compact ? 13 : 15,
-                    fontFamily: CN_FONT
-                },
-                formatter: function (name) {
-                    var item = legendItems[name];
-                    if (!item) {
-                        return name;
+                    var row = topRows[params[0].dataIndex];
+                    if (!row) {
+                        return '';
                     }
-                    return item.count
-                        ? '其他 ' + item.count + ' 队  ' + item.percent + '%'
-                        : name + '  ' + item.percent + '%';
+                    return '<strong>' + escapeHtml(row.teamName) + '</strong>'
+                        + '<br>第 ' + row.rank + ' 名'
+                        + '<br>' + row.goals + ' 球 · 占全届 ' + row.percent + '%';
                 }
             },
-            grid: {
-                left: 0,
-                right: 0,
-                top: compact ? 78 : 92,
-                bottom: compact ? 110 : 96,
-                containLabel: false
+            xAxis: {
+                type: 'value',
+                max: function (value) {
+                    return Math.ceil(value.max * 1.06);
+                },
+                show: false
             },
-            xAxis: { type: 'value', max: 100, show: false },
-            yAxis: { type: 'category', data: [''], show: false },
-            series: series
+            yAxis: {
+                type: 'category',
+                inverse: true,
+                data: teamNames,
+                axisTick: { show: false },
+                axisLine: { show: false },
+                axisLabel: {
+                    color: INK.secondary,
+                    fontSize: compact ? 14 : 16,
+                    fontFamily: CN_FONT,
+                    margin: compact ? 10 : 14,
+                    formatter: function (value, index) {
+                        return index === 0
+                            ? '{first|1}  ' + value
+                            : '{rank|' + (index + 1) + '}  ' + value;
+                    },
+                    rich: {
+                        first: {
+                            color: ACCENT_SERIES,
+                            fontSize: compact ? 15 : 18,
+                            fontFamily: NUM_FONT,
+                            fontWeight: 'bold'
+                        },
+                        rank: {
+                            color: INK.muted,
+                            fontSize: compact ? 14 : 17,
+                            fontFamily: NUM_FONT,
+                            fontWeight: 'bold'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: '进球',
+                type: 'bar',
+                data: values.map(function (value, index) {
+                    return {
+                        value: value,
+                        itemStyle: {
+                            color: index === 0
+                                ? ACCENT_SERIES
+                                : RAMP[Math.min(index - 1, RAMP.length - 1)],
+                            borderRadius: [0, 3, 3, 0]
+                        }
+                    };
+                }),
+                barMaxWidth: compact ? 20 : 28,
+                label: {
+                    show: true,
+                    position: 'right',
+                    color: INK.primary,
+                    fontSize: compact ? 13 : 16,
+                    fontFamily: NUM_FONT,
+                    fontWeight: 'bold',
+                    formatter: function (params) {
+                        var row = topRows[params.dataIndex];
+                        return row ? row.goals + ' 球 · ' + row.percent + '%' : '';
+                    }
+                },
+                emphasis: { itemStyle: { color: HOVER_SERIES } }
+            }]
         });
         chart.resize();
     }
@@ -827,7 +823,7 @@
                 show: true,
                 position: 'top',
                 color: INK.primary,
-                fontSize: 18,
+                fontSize: 19,
                 fontFamily: NUM_FONT,
                 fontWeight: 'bold',
                 formatter: function (params) {
@@ -895,7 +891,7 @@
                 data: years,
                 axisTick: { show: false },
                 axisLine: { lineStyle: { color: INK.axis } },
-                axisLabel: { color: INK.secondary, fontSize: 16, fontFamily: NUM_FONT, margin: 14 }
+                axisLabel: { color: INK.secondary, fontSize: 17, fontFamily: NUM_FONT, margin: 14 }
             },
             yAxis: {
                 type: 'value',
@@ -904,8 +900,6 @@
                 max: function (value) {
                     return Math.ceil(value.max * 1.15);
                 },
-                name: '球',
-                nameTextStyle: { color: INK.muted, fontSize: 14, fontFamily: NUM_FONT, padding: [0, 0, 4, 0] },
                 axisLabel: { color: INK.secondary, fontSize: 14, fontFamily: NUM_FONT },
                 axisLine: { show: false },
                 axisTick: { show: false },
@@ -971,7 +965,7 @@
                     borderColor: INK.surface,
                     borderWidth: 2,
                     shadowBlur: point.champion ? 18 : 0,
-                    shadowColor: 'rgba(217, 166, 60, .45)'
+                    shadowColor: 'rgba(224, 180, 87, .45)'
                 },
                 label: {
                     show: !!point.champion,
@@ -1012,7 +1006,7 @@
                 axisLine: { lineStyle: { color: INK.axis } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: compactAxis ? 12 : 15,
+                    fontSize: compactAxis ? 12 : 16,
                     fontFamily: NUM_FONT,
                     margin: 12,
                     interval: compactAxis ? 1 : 0
@@ -1023,7 +1017,7 @@
                 data: ['小组赛', '32 强', '16 强', '8 强', '半决赛', '三四名', '决赛'],
                 axisTick: { show: false },
                 axisLine: { show: false },
-                axisLabel: { color: INK.secondary, fontSize: 15, fontFamily: CN_FONT, margin: 12 },
+                axisLabel: { color: INK.secondary, fontSize: 16, fontFamily: CN_FONT, margin: 12 },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
             },
             series: [{
@@ -1115,7 +1109,7 @@
                 icon: 'roundRect',
                 itemWidth: 14,
                 itemHeight: 9,
-                textStyle: { color: INK.secondary, fontSize: 15, fontFamily: CN_FONT },
+                textStyle: { color: INK.secondary, fontSize: 16, fontFamily: CN_FONT },
                 formatter: function (name) {
                     return name + '  ' + (name === homeName ? finalHome : finalAway);
                 }
@@ -1153,7 +1147,7 @@
                 axisLine: { lineStyle: { color: INK.axis } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: 15,
+                    fontSize: 16,
                     fontFamily: NUM_FONT,
                     margin: 12,
                     formatter: function (value) {
@@ -1166,11 +1160,9 @@
                 type: 'value',
                 min: 0,
                 minInterval: 1,
-                name: '进球',
-                nameTextStyle: { color: INK.muted, fontSize: 14, fontFamily: NUM_FONT },
                 axisTick: { show: false },
                 axisLine: { show: false },
-                axisLabel: { color: INK.secondary, fontSize: 14, fontFamily: NUM_FONT },
+                axisLabel: { color: INK.secondary, fontSize: 15, fontFamily: NUM_FONT },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
             },
             series: [
@@ -1208,7 +1200,7 @@
                             if (maxMinute > 90) {
                                 areas.push([{
                                     xAxis: 90,
-                                    itemStyle: { color: 'rgba(217, 166, 60, .07)' },
+                                    itemStyle: { color: 'rgba(224, 180, 87, .07)' },
                                     label: { formatter: '加时', color: ACCENT_SERIES }
                                 }, { xAxis: maxMinute }]);
                             }
