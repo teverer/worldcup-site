@@ -98,7 +98,7 @@ class CommentController extends Controller
                     'comment-' . (int) $comment->id
                 );
             }
-            Yii::$app->session->setFlash('error', '同感提交失败，请稍后重试。');
+            Yii::$app->session->setFlash('error', '点赞失败，请稍后重试。');
         } catch (IntegrityException $exception) {
             // 唯一索引兜底：重复同感不报错，停在原记录上。
             return $this->redirectToTarget(

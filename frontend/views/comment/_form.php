@@ -22,7 +22,6 @@ $identity = Yii::$app->user->identity;
 $author = $identity ? ($identity->nickname ?: $identity->username) : '';
 $initial = CommentSection::sealInitial($author);
 $sealColor = CommentSection::sealColor($identity ? (int) $identity->id : 0);
-$hintId = $formId . '-hint';
 $isReply = isset($isReply) ? (bool) $isReply : false;
 ?>
 <?= Html::beginForm(['/comment/create'], 'post', ['class' => 'ledger-form', 'id' => $formId]) ?>
@@ -43,13 +42,9 @@ $isReply = isset($isReply) ? (bool) $isReply : false;
                 'maxlength' => 5000,
                 'required' => true,
                 'placeholder' => $placeholder,
-                'aria-describedby' => $hintId,
                 'data-ledger-input' => '1',
             ]) ?>
             <div class="composer-foot">
-                <span class="composer-hint" id="<?= Html::encode($hintId) ?>" aria-live="polite">
-                    Ctrl + Enter <?= $isReply ? '回复' : '记下' ?>
-                </span>
                 <?= Html::submitButton($submitLabel, ['class' => 'btn-record']) ?>
             </div>
         </div>

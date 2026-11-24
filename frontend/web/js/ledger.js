@@ -23,7 +23,13 @@
         var hint = input.parentElement ? input.parentElement.querySelector('.composer-hint') : null;
         var baseHint = hint ? hint.textContent.replace(/\s+/g, ' ').trim() : '';
         var grow = function () {
-            // 折叠区里的回复框在页面加载时不可见，量不到真实高度；等它展开后再长高。
+            // 回复框是紧凑输入卡，交给 CSS min-height / 原生 resize 控制；
+            // 只有主输入框随内容长高，避免窄宽测量把回复框撑到 260px。
+            if (input.closest('.ledger-reply-box')) {
+                input.style.height = '';
+                return;
+            }
+            // 折叠区里的输入框在页面加载时不可见，量不到真实高度；等它展开后再长高。
             if (!input.getClientRects().length) {
                 return;
             }
@@ -61,9 +67,36 @@
     }
 
     function initLedger(ledger) {
-        var mainInput = ledger.querySelector('.ledger-compose [data-ledger-input]');
+        var mainInput = ledger.querySelector('.ledger-compose-card [data-ledger-input], .ledger-compose [data-ledger-input]');
 
         Array.prototype.forEach.call(ledger.querySelectorAll('[data-ledger-input]'), setupInput);
+
+        // 留言区有内滚时，底部给一条渐隐提示；滑到底自动消失。
+        Array.prototype.forEach.call(ledger.querySelectorAll('.ledger-list-scroll'), function (scroller) {
+            var panel = scroller.closest('.ledger-discussion');
+            if (!panel) {
+                return;
+            }
+            var update = function () {
+                var overflowing = scroller.scrollHeight > scroller.clientHeight + 4;
+                var atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 4;
+                panel.classList.toggle('is-scrollable', overflowing && !atBottom);
+            };
+            scroller.addEventListener('scroll', update, { passive: true });
+
+            var hint = panel.querySelector('.ledger-scroll-hint');
+            if (hint) {
+                hint.addEventListener('click', function () {
+                    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    scroller.scrollBy({
+                        top: Math.max(180, Math.round(scroller.clientHeight * 0.85)),
+                        behavior: reduce ? 'auto' : 'smooth'
+                    });
+                });
+            }
+
+            update();
+        });
 
         Array.prototype.forEach.call(ledger.querySelectorAll('[data-ledger-starter]'), function (button) {
             button.addEventListener('click', function () {

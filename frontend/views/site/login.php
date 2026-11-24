@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-page site-login">
     <h1><?= Html::encode($this->title) ?></h1>
-    <p>登录后可以发表留言、回复和表达同感。</p>
+    <p>登录后可以发表留言、回复和点赞。</p>
 
     <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 

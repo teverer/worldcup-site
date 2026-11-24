@@ -1,0 +1,671 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:留言与资讯 —— 留言簿 v2
+
+   目标：像成熟产品的评论区，而不是一页账本。
+   - 输入卡与已发布留言分成两块，各自有边界；
+   - 留言区自带滚动，页面长度不再被评论无限拉长；
+   - 楼层只保留两级：主留言 + 拍平回复；超过两条用“查看全部 / 收起”；
+   - 动作是点赞 / 回复 / 删除，图标 + 文字，键盘焦点可见。
+   本文件在 art-r6 之后加载，只覆盖留言组件。 */
+
+.ledger {
+    --ledger-surface: rgba(255, 255, 255, .58);
+    --ledger-panel: rgba(255, 255, 255, .34);
+    --ledger-input: rgba(255, 255, 255, .78);
+    --ledger-border: var(--line, #D8D2C3);
+    --ledger-text: var(--ink, #0B1418);
+    --ledger-muted: var(--muted, #54615B);
+    --ledger-accent: var(--green-action, #13553C);
+    --ledger-hover: rgba(11, 26, 24, .05);
+    --ledger-scroll-thumb: rgba(19, 85, 60, .45);
+    --ledger-scroll-track: rgba(11, 26, 24, .06);
+    --ledger-hint-bg: #FBFAF5;
+
+    width: 100%;
+    max-width: 1080px;
+    margin: 48px auto 0;
+    color: var(--ledger-text);
+    scroll-margin-top: 96px;
+}
+
+/* 夜场页面：留言组件是一块比背景更深的板，边界用灯线。 */
+body:not(.site-site-index) .ledger {
+    --ledger-surface: rgba(4, 7, 11, .55);
+    --ledger-panel: rgba(4, 7, 11, .34);
+    --ledger-input: rgba(244, 242, 236, .05);
+    --ledger-border: rgba(244, 242, 236, .15);
+    --ledger-text: var(--flood, #F4F2EC);
+    --ledger-muted: var(--steel, #91A5AA);
+    --ledger-accent: var(--green-light, #7FC8A9);
+    --ledger-hover: rgba(244, 242, 236, .06);
+    --ledger-scroll-thumb: rgba(127, 200, 169, .55);
+    --ledger-scroll-track: rgba(244, 242, 236, .06);
+    --ledger-hint-bg: #08131A;
+}
+
+.ledger-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 0 0 14px;
+    border-bottom: 0;
+}
+
+.ledger .ledger-title {
+    margin: 0;
+    color: var(--ledger-text);
+    font-family: var(--font-cn-display);
+    font-size: clamp(30px, 3vw, 38px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: .01em;
+}
+
+.ledger .ledger-count {
+    color: var(--ledger-muted);
+    font-family: var(--font-cn-body);
+    font-size: 13px;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.ledger .ledger-count b {
+    margin: 0 2px;
+    color: var(--ledger-text);
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.ledger .ledger-intro {
+    margin: 12px 0 0;
+    color: var(--ledger-muted);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+/* ——— 输入卡：和留言列表分开 ——— */
+.ledger-compose-card {
+    margin-top: 18px;
+    padding: 20px 22px 18px;
+    background: var(--ledger-surface);
+    border: 1px solid var(--ledger-border);
+    border-radius: 4px;
+}
+
+.ledger .ledger-prompt {
+    margin: 0 0 12px;
+    color: var(--ledger-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+.ledger .composer-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.ledger .composer-input,
+.ledger .composer-field textarea {
+    width: 100%;
+    min-height: 78px;
+    padding: 11px 13px;
+    background: var(--ledger-input);
+    border: 1px solid var(--ledger-border);
+    border-radius: 3px;
+    color: var(--ledger-text);
+    font-family: var(--font-cn-body);
+    font-size: 16px;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+.ledger .composer-input::placeholder {
+    color: var(--ledger-muted);
+    opacity: 1;
+}
+
+.ledger .composer-input:focus {
+    border-color: var(--ledger-accent);
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(127, 200, 169, .16);
+}
+
+.ledger .composer-foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.ledger .btn-record {
+    padding: 9px 20px;
+    border: 1px solid var(--ledger-accent);
+    border-radius: 3px;
+    background: var(--ledger-accent);
+    color: #05120D;
+    font-family: var(--font-cn-body);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+}
+
+.ledger .btn-record:hover,
+.ledger .btn-record:focus {
+    border-color: var(--ledger-text);
+    background: var(--ledger-text);
+    color: #05120D;
+}
+
+.ledger .btn-record:focus-visible {
+    outline: 2px solid var(--ledger-accent);
+    outline-offset: 2px;
+}
+
+.ledger .guest-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 0;
+    padding: 2px 0 0;
+    border: 0;
+    color: var(--ledger-muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.ledger .guest-line a {
+    color: var(--ledger-accent);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+}
+
+.ledger .guest-line .muted {
+    color: var(--ledger-muted);
+    font-size: 13px;
+}
+
+/* 回复表单：展开后是一块浅输入卡，不是贴着文字的裸框。 */
+.ledger-reply-box .ledger-form,
+.ledger-reply-box .composer-row {
+    width: 100%;
+}
+
+.ledger-reply-box .composer-input {
+    min-height: 64px;
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.ledger-reply-box[open] {
+    display: block;
+    width: 100%;
+}
+
+.ledger-reply-box .ledger-form,
+.ledger-reply-box .composer-row,
+.ledger-reply-box .composer-field {
+    display: block;
+    width: 100%;
+}
+
+.ledger-reply-box .composer-row {
+    margin-top: 4px;
+}
+
+.ledger-reply-box .composer-row > .seal {
+    margin-bottom: 6px;
+}
+
+/* ——— 留言区：有边界、内部滚动 ——— */
+.ledger-discussion {
+    position: relative;
+    margin-top: 20px;
+    overflow: hidden;
+    background: var(--ledger-panel);
+    border: 1px solid var(--ledger-border);
+    border-radius: 4px;
+}
+
+.ledger-scroll-hint {
+    display: none;
+    width: 100%;
+    padding: 8px 22px 9px;
+    border: 0;
+    border-top: 1px solid var(--ledger-border);
+    background: transparent;
+    color: var(--ledger-accent);
+    font-family: var(--font-cn-body);
+    font-size: 13px;
+    line-height: 1.6;
+    letter-spacing: .03em;
+    text-align: center;
+    cursor: pointer;
+}
+
+.ledger-scroll-hint:hover,
+.ledger-scroll-hint:focus-visible {
+    background: var(--ledger-hover);
+    color: var(--ledger-text);
+}
+
+.ledger-scroll-hint:focus-visible {
+    outline: 2px solid var(--ledger-accent);
+    outline-offset: -2px;
+}
+
+.ledger-discussion.is-scrollable .ledger-scroll-hint {
+    display: block;
+}
+
+.ledger-list-scroll {
+    max-height: min(62vh, 620px);
+    padding: 2px 22px 6px;
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+}
+
+.ledger-list-scroll::-webkit-scrollbar {
+    width: 12px;
+}
+
+.ledger-list-scroll::-webkit-scrollbar-track {
+    margin: 6px 2px;
+    background: var(--ledger-scroll-track);
+    border-radius: 999px;
+}
+
+.ledger-list-scroll::-webkit-scrollbar-thumb {
+    min-height: 44px;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--ledger-scroll-thumb);
+    background-clip: padding-box;
+}
+
+.ledger-list-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--ledger-accent);
+    background-clip: padding-box;
+}
+
+.ledger-list-scroll:focus-visible {
+    outline: 2px solid var(--ledger-accent);
+    outline-offset: -2px;
+}
+
+.ledger .ledger-empty {
+    padding: 28px 22px 30px;
+    border: 0;
+}
+
+.ledger .ledger-empty-title {
+    margin: 0;
+    color: var(--ledger-text);
+    font-family: var(--font-cn-display);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.ledger .ledger-empty-sub {
+    margin: 8px 0 0;
+    color: var(--ledger-muted);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.ledger .ledger-empty-sub a {
+    color: var(--ledger-accent);
+}
+
+/* ——— 一条留言 ——— */
+.ledger .ledger-entry {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px 0;
+    border-top: 1px solid var(--ledger-border);
+    border-bottom: 0;
+}
+
+.ledger .ledger-entry:first-child {
+    border-top: 0;
+}
+
+.ledger .ledger-avatar {
+    width: 36px;
+    height: 36px;
+    margin-top: 2px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.ledger .ledger-body {
+    min-width: 0;
+    padding-left: 0;
+}
+
+.ledger .ledger-meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-height: 0;
+}
+
+.ledger .ledger-name {
+    color: var(--ledger-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.ledger .ledger-you {
+    padding: 1px 5px;
+    border: 1px solid var(--ledger-border);
+    border-radius: 2px;
+    color: var(--ledger-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.ledger .ledger-time {
+    margin-left: auto;
+    color: var(--ledger-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.ledger .ledger-text {
+    max-width: 72ch;
+    margin: 7px 0 0;
+    color: var(--ledger-text);
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.ledger .ledger-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    margin-top: 8px;
+}
+
+.ledger .ledger-inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.ledger .ledger-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--ledger-muted);
+    font-family: var(--font-cn-body);
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.ledger .ledger-action:hover,
+.ledger .ledger-action:focus-visible {
+    background: var(--ledger-hover);
+    color: var(--ledger-text);
+    outline: 0;
+}
+
+.ledger .ledger-action:focus-visible {
+    outline: 2px solid var(--ledger-accent);
+    outline-offset: 1px;
+}
+
+.ledger .ledger-icon {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ledger .ledger-action--static {
+    cursor: default;
+}
+
+.ledger .ledger-action.is-on {
+    color: var(--ledger-accent);
+}
+
+.ledger .ledger-action.is-on::before {
+    display: none;
+}
+
+.ledger .ledger-action.is-on .ledger-icon {
+    fill: currentColor;
+    fill-opacity: .16;
+}
+
+.ledger .ledger-action .num {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ledger .ledger-action--quiet {
+    opacity: 0;
+}
+
+.ledger .ledger-entry:hover .ledger-action--quiet,
+.ledger .ledger-entry:focus-within .ledger-action--quiet,
+.ledger .ledger-reply:hover .ledger-action--quiet,
+.ledger .ledger-reply:focus-within .ledger-action--quiet {
+    opacity: .75;
+}
+
+.ledger .ledger-action--danger:hover,
+.ledger .ledger-action--danger:focus-visible {
+    color: var(--danger, #B3261E);
+}
+
+/* ——— 回复：只缩进一级，更深的拍平 ——— */
+.ledger .ledger-replies {
+    display: grid;
+    gap: 14px;
+    margin-top: 12px;
+    padding: 2px 0 2px 14px;
+    border-left: 2px solid var(--ledger-border);
+}
+
+.ledger .ledger-reply {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.ledger .ledger-reply .ledger-avatar {
+    width: 26px;
+    height: 26px;
+    margin-top: 1px;
+    font-size: 12px;
+}
+
+.ledger .ledger-reply .ledger-name {
+    font-size: 14px;
+}
+
+.ledger .ledger-reply .ledger-text {
+    margin-top: 4px;
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.ledger .ledger-reply .ledger-actions {
+    margin-top: 4px;
+}
+
+.ledger .ledger-reply .ledger-time {
+    font-size: 12px;
+}
+
+.ledger .ledger-at {
+    color: var(--ledger-accent);
+    font-weight: 600;
+}
+
+/* 展开 / 收起 */
+.ledger .ledger-more {
+    margin-top: 2px;
+}
+
+.ledger .ledger-more summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px 6px 6px;
+    border-radius: 3px;
+    color: var(--ledger-accent);
+    font-size: 13px;
+    line-height: 1.6;
+    cursor: pointer;
+    list-style: none;
+}
+
+.ledger .ledger-more summary::-webkit-details-marker {
+    display: none;
+}
+
+.ledger .ledger-more summary::before {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid currentColor;
+    content: "";
+    transition: transform .15s ease;
+}
+
+.ledger .ledger-more summary:hover,
+.ledger .ledger-more summary:focus-visible {
+    background: var(--ledger-hover);
+}
+
+.ledger .ledger-more summary:focus-visible {
+    outline: 2px solid var(--ledger-accent);
+    outline-offset: 1px;
+}
+
+.ledger .ledger-more[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.ledger .ledger-more-close {
+    display: none;
+}
+
+.ledger .ledger-more[open] .ledger-more-open {
+    display: none;
+}
+
+.ledger .ledger-more[open] .ledger-more-close {
+    display: inline;
+}
+
+.ledger .ledger-more > .ledger-reply {
+    margin-top: 12px;
+}
+
+/* 回复输入框的 回复/收起 标签由设计层控制显示；这里只保证可点区域够大。 */
+.ledger .ledger-reply-box summary {
+    list-style: none;
+}
+
+.ledger .ledger-reply-box summary::-webkit-details-marker {
+    display: none;
+}
+
+.ledger .ledger-starters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.ledger .ledger-starter {
+    padding: 6px 12px;
+    border: 1px solid var(--ledger-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ledger-text);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.ledger .ledger-starter:hover,
+.ledger .ledger-starter:focus-visible {
+    border-color: var(--ledger-accent);
+    color: var(--ledger-accent);
+}
+
+@media (max-width: 860px) {
+    .ledger {
+        margin-top: 30px;
+    }
+
+    .ledger-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .ledger-compose-card {
+        padding: 16px 16px 14px;
+    }
+
+    .ledger-list-scroll {
+        max-height: 70vh;
+        padding: 0 14px 4px;
+    }
+
+    .ledger .ledger-entry {
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 10px;
+        padding: 16px 0;
+    }
+
+    .ledger .ledger-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .ledger .ledger-text {
+        font-size: 15px;
+    }
+
+    .ledger .ledger-replies {
+        padding-left: 10px;
+    }
+
+    .ledger .ledger-action--quiet {
+        opacity: .7;
+    }
+}

@@ -74,6 +74,8 @@ $this->registerCssFile('@web/css/design-v2.css', ['depends' => [\yii\bootstrap\B
 $this->registerCssFile('@web/css/art-r5.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 // R6 夜场统一层：所有前台页回到根页的极光/深绿黑语言；只覆盖颜色与表面。
 $this->registerCssFile('@web/css/art-r6.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 留言簿 v2：输入卡与留言区分离、留言区内滚、两级楼层。最后加载，覆盖旧登记簿。
+$this->registerCssFile('@web/css/comments-v2.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
 $this->registerJsFile('@web/js/atmosphere.js', ['position' => \yii\web\View::POS_END]);
 
 $controllerId = Yii::$app->controller !== null ? Yii::$app->controller->id : '';

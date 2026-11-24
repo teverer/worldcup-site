@@ -59,7 +59,7 @@ class CommentSection extends Widget
     public static function prompts()
     {
         return [
-            CommentTarget::TOURNAMENT => '这一届，你记住了哪一夜？',
+            CommentTarget::TOURNAMENT => '欢迎留言分享',
             CommentTarget::GAME => '这一场，你记得哪一刻？',
             CommentTarget::TEAM => '你和这支球队，从哪一届开始？',
             CommentTarget::PLAYER => '关于他，你记得哪一个球？',
@@ -87,7 +87,7 @@ class CommentSection extends Widget
     public static function composerPlaceholderFor($type)
     {
         $placeholders = [
-            CommentTarget::TOURNAMENT => '写下你记得的那一夜……',
+            CommentTarget::TOURNAMENT => 'Ctrl + Enter 记下',
             CommentTarget::GAME => '写下你记得的那一刻……',
             CommentTarget::TEAM => '写下你和这支球队的记忆……',
             CommentTarget::PLAYER => '写下你记得的那个球……',
