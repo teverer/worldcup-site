@@ -174,14 +174,11 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
                             </li>
                         <?php endforeach ?>
                     </ol>
-                <?php else: ?>
+                <?php elseif ($identity !== null): ?>
+                    <?php // 游客已经没有可读的留言时,上面那张登录卡就是空态;不再叠第二个邀请。 ?>
                     <div class="wall-book-empty">
                         <p class="wall-book-empty-title">留言簿还是空的。</p>
-                        <?php if ($identity === null): ?>
-                            <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。<?= Html::a('登录后写第一句', $loginUrl) ?></p>
-                        <?php else: ?>
-                            <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。上面就是第一行。</p>
-                        <?php endif ?>
+                        <p class="wall-book-empty-sub">十一届看下来，总有一场你想说两句。上面就是第一行。</p>
                     </div>
                 <?php endif ?>
             </section>

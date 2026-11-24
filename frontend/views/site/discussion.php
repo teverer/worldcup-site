@@ -19,7 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'targetId' => CommentTarget::SITE_ID,
         'heading' => '世界杯留言簿',
         'headingTag' => 'h1',
-        'intro' => '跨越十一届的世界杯记忆，都可以留在这里。',
         'emptyTitle' => '留言簿还是空的。',
     ]) ?>
 </div>

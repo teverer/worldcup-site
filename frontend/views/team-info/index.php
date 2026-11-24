@@ -162,28 +162,14 @@ $renderWorks = static function (array $items) {
         </div>
 
         <?php if (!$hasWorks): ?>
-            <?php
-            $docPlaceholders = [
-                ['title' => '需求文档', 'desc' => '功能范围、角色与验收标准'],
-                ['title' => '设计文档', 'desc' => '数据库、模块与页面结构'],
-                ['title' => '实现文档', 'desc' => 'MVC 分层、关键流程与代码说明'],
-                ['title' => '用户手册', 'desc' => '前台与后台的操作路径'],
-                ['title' => '部署文档', 'desc' => '环境、建库、初始化与启动'],
-                ['title' => '项目展示 PPT', 'desc' => '分工、工作量与演示脚本'],
-            ];
-            ?>
-            <div class="about-doc-placeholder">
-                <p class="about-doc-placeholder-lead">六份课程文档还在整理中，最终 PDF 会出现在这里。</p>
-                <ul class="about-doc-grid">
-                    <?php foreach ($docPlaceholders as $doc): ?>
-                        <li class="about-doc-card">
-                            <strong><?= Html::encode($doc['title']) ?></strong>
-                            <span class="about-doc-status">整理中</span>
-                            <p><?= Html::encode($doc['desc']) ?></p>
-                        </li>
-                    <?php endforeach ?>
-                </ul>
-            </div>
+            <p class="about-docs-note">
+                六份课程文档仍在整理：需求、设计、实现、用户手册、部署、展示 PPT。
+                底稿在
+                <?= Html::a('GitHub 仓库 docs/ 目录', 'https://github.com/teverer/worldcup-site/tree/dev/docs', [
+                    'target' => '_blank',
+                    'rel' => 'noopener noreferrer',
+                ]) ?>，最终 PDF 会在这里提供下载。
+            </p>
         <?php else: ?>
             <div class="about-doc-group">
                 <h3>团队作业</h3>
@@ -194,13 +180,5 @@ $renderWorks = static function (array $items) {
                 <?= $renderWorks($personalWorks) ?>
             </div>
         <?php endif ?>
-
-        <p class="about-docs-note">
-            课程文档的 Markdown 底稿在
-            <?= Html::a('GitHub 仓库 docs/ 目录', 'https://github.com/teverer/worldcup-site/tree/dev/docs', [
-                'target' => '_blank',
-                'rel' => 'noopener noreferrer',
-            ]) ?>，最终 PDF 会在这里提供下载。
-        </p>
     </section>
 </div>

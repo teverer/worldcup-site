@@ -23,28 +23,13 @@ $this->registerCssFile('@web/css/community.css');
         <p>赛事回顾、数据观察与团队动态。</p>
     </header>
 
-    <?= Html::beginForm(['/news/index'], 'get', ['class' => 'news-search', 'role' => 'search']) ?>
-        <label class="sr-only" for="news-q">搜索标题或作者</label>
-        <?= Html::textInput('q', $searchModel->q, [
-            'id' => 'news-q',
-            'class' => 'form-control',
-            'maxlength' => 100,
-            'placeholder' => '搜索标题或作者',
-        ]) ?>
-        <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
-        <?php if (trim((string) $searchModel->q) !== ''): ?>
-            <?= Html::a('清除', ['/news/index'], ['class' => 'news-clear']) ?>
-        <?php endif ?>
-    <?= Html::endForm() ?>
-
+    <?php // 2 篇资讯不值得一条搜索框；文章多起来再恢复。 ?>
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'itemView' => '_card',
-        'layout' => '<p class="news-summary">{summary}</p>{items}<div class="community-pager">{pager}</div>',
-        'summary' => '共 {totalCount} 篇资讯',
-        'emptyText' => '<div class="news-empty"><h2>没有找到资讯</h2>'
-            . '<p>换一个标题或作者试试，或者回首页从届次进入。</p>'
-            . '<p><a href="' . Html::encode(Yii::$app->homeUrl) . '">回首页</a></p></div>',
+        'layout' => '{items}<div class="community-pager">{pager}</div>',
+        'emptyText' => '<div class="news-empty"><h2>还没有资讯</h2>'
+            . '<p><a href="' . Html::encode(Yii::$app->homeUrl) . '">回首页从届次进入</a></p></div>',
         'emptyTextOptions' => ['class' => 'news-empty-wrap'],
         'options' => ['class' => 'news-rows'],
         'itemOptions' => ['tag' => false],

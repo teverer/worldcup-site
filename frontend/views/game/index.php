@@ -130,7 +130,7 @@ if ($teamKeyword !== null) {
         <?php if ($showingAll): ?>
             <?= Html::a('回到十一场决赛', ['index'], ['class' => 'game-list-alt']) ?>
         <?php else: ?>
-            <?= Html::a('查看全部 ' . (int) $totalGames . ' 场', ['index', 'scope' => 'all'], [
+            <?= Html::a('看全部比赛', ['index', 'scope' => 'all'], [
                 'class' => 'game-list-alt',
             ]) ?>
         <?php endif ?>
@@ -153,6 +153,8 @@ if ($teamKeyword !== null) {
                 $editionName = preg_replace('/^\d{4}年/u', '', $tournamentName);
                 $date = $game->match_time !== null && $game->match_time !== ''
                     ? substr((string) $game->match_time, 0, 10) : '';
+                // 卡片左上角已经有年份;这里只留月日,完整日期放进 title。
+                $dateShort = $date !== '' ? substr($date, 5) : '';
 
                 $hasScore = $game->home_score !== null && $game->away_score !== null;
                 $scoreText = $hasScore
@@ -202,7 +204,7 @@ if ($teamKeyword !== null) {
                                 <span class="game-item-note"><?= Html::encode($penaltyText) ?></span>
                             <?php endif ?>
                         </span>
-                        <span class="game-item-date"><?= Html::encode($date) ?></span>
+                        <span class="game-item-date"<?= $date !== '' ? ' title="' . Html::encode($date) . '"' : '' ?>><?= Html::encode($dateShort) ?></span>
                     </a>
                 </li>
             <?php endforeach ?>
