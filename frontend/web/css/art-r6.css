@@ -616,27 +616,27 @@ body:not(.site-site-index) ::selection {
     color: var(--ink);
 }
 
-/* 页脚：本层令牌把 --ink 翻成浅色，R5 的 footer 背景会跟着变浅；这里显式压回夜场 */
+/* 页脚：所有前台页同一本册子的封底。颜色用字面量，避免根页/数据页令牌不同。 */
 body:not(.site-site-index) .site-footer {
-    border-top: 2px solid var(--gold);
-    background-color: #04090B;
+    border-top: 1px solid rgba(224, 180, 87, .55);
+    background-color: var(--night);
     background-image: none;
-    color: var(--muted);
+    color: rgba(244, 242, 236, .58);
 }
 
 body:not(.site-site-index) .site-footer-name,
 body:not(.site-site-index) .site-footer-title {
-    color: var(--ink);
+    color: var(--flood);
 }
 
 body:not(.site-site-index) .site-footer-intro,
 body:not(.site-site-index) .site-footer a {
-    color: var(--muted);
+    color: rgba(244, 242, 236, .64);
 }
 
 body:not(.site-site-index) .site-footer a:hover,
 body:not(.site-site-index) .site-footer a:focus {
-    color: var(--gold);
+    color: var(--gold-light);
 }
 
 body:not(.site-site-index) .site-footer-bottom {
@@ -822,58 +822,31 @@ body:not(.site-site-index) .game-scoreboard .game-team a:focus {
     color: var(--gold);
 }
 
-/* ==========================================================================
-   首页收场：前台页脚全站一致；收场带做成“最后一页档案”
-   ========================================================================== */
+/* 首页页脚：与数据页完全同一套值；收场带的边界/底色由 -4 的结构层负责。 */
 body.site-site-index .site-footer {
-    border-top: 2px solid var(--gold);
-    background-color: #04090B;
+    border-top: 1px solid rgba(224, 180, 87, .55);
+    background-color: var(--night);
     background-image: none;
-    color: var(--muted);
+    color: rgba(244, 242, 236, .58);
 }
 
 body.site-site-index .site-footer-name,
 body.site-site-index .site-footer-title {
-    color: var(--ink);
+    color: var(--flood);
 }
 
 body.site-site-index .site-footer-intro,
 body.site-site-index .site-footer a {
-    color: var(--muted);
+    color: rgba(244, 242, 236, .64);
 }
 
 body.site-site-index .site-footer a:hover,
 body.site-site-index .site-footer a:focus {
-    color: var(--gold);
+    color: var(--gold-light);
 }
 
 body.site-site-index .site-footer-bottom {
     border-top-color: rgba(244, 242, 236, .14);
-}
-
-body.site-site-index .wall-coda {
-    border: 1px solid rgba(244, 242, 236, .10);
-    border-top: 2px solid var(--gold);
-    border-radius: 2px;
-    background:
-        linear-gradient(180deg, rgba(10, 27, 34, .72), rgba(4, 9, 10, .86));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
-}
-
-/* 收场带上方加一层暖光过渡，避免从记分牌墙“硬切”进另一块深色 */
-body.site-site-index .wall-closing {
-    position: relative;
-}
-
-body.site-site-index .wall-closing::before {
-    position: absolute;
-    top: -140px;
-    right: 8%;
-    left: 8%;
-    height: 200px;
-    background: radial-gradient(58% 100% at 50% 100%, rgba(224, 180, 87, .10), transparent 72%);
-    content: "";
-    pointer-events: none;
 }
 
 /* 球队目录：桌面少一列、每格更大，减少“目录表”的拥挤感 */
