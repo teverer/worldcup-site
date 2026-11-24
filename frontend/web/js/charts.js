@@ -13,8 +13,12 @@
         surface: '#F8F6F0'
     };
 
-    // 冷纸底五色:金只给第一名,其余用深绿到灰的五色;红不进入图表。
-    var TEAM_COLORS = ['#0E5138', '#2E7D5B', '#57B894', '#8C9B95', '#2E4250'];
+    // 冷纸底球队色:金只给第一名;其余按深绿→青→灰蓝排开,
+    // 相邻切片保持明度差,避免同一张饼里有两种几乎一样的绿。
+    var TEAM_COLORS = [
+        '#0E5138', '#2E7D5B', '#57B894', '#7FA893',
+        '#9BB0A4', '#2E4250', '#5C7180', '#8FA3AD'
+    ];
     var PRIMARY_SERIES = '#0E5138';
     var HOVER_SERIES = '#093B29';
     var ACCENT_SERIES = '#B8892A';
@@ -273,7 +277,8 @@
 
             chart.setOption({
                 animationDuration: 500,
-                grid: { left: 16, right: 20, top: 36, bottom: 18, containLabel: true },
+                // 横向条形:队名在左、积分在右,四支球队比竖向柱更紧凑、也更容易读排名。
+                grid: { left: 8, right: 44, top: 16, bottom: 16, containLabel: true },
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
@@ -295,20 +300,6 @@
                     }
                 },
                 xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisTick: { show: false },
-                    axisLine: { lineStyle: { color: INK.axis } },
-                    axisLabel: {
-                        interval: 0,
-                        color: INK.secondary,
-                        fontSize: 13,
-                        margin: 10,
-                        // 单组最多 4 支球队,横轴标签不旋转即可完整显示。
-                        rotate: categories.length > 6 ? 30 : 0
-                    }
-                },
-                yAxis: {
                     type: 'value',
                     name: '积分',
                     nameTextStyle: { color: INK.muted, fontSize: 13, padding: [0, 0, 4, 0] },
@@ -318,20 +309,36 @@
                     axisTick: { show: false },
                     splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
                 },
+                yAxis: {
+                    type: 'category',
+                    // 排名第一放在最上方。
+                    inverse: true,
+                    data: categories,
+                    axisTick: { show: false },
+                    axisLine: { lineStyle: { color: INK.axis } },
+                    axisLabel: {
+                        color: INK.secondary,
+                        fontSize: 14,
+                        margin: 10,
+                        formatter: function (value, index) {
+                            return (index + 1) + '  ' + value;
+                        }
+                    }
+                },
                 series: [{
                     name: '积分',
                     type: 'bar',
                     data: values,
-                    barMaxWidth: 48,
+                    barMaxWidth: 30,
                     itemStyle: {
                         color: function (params) {
                             return groupLeaders[params.dataIndex] ? ACCENT_SERIES : PRIMARY_SERIES;
                         },
-                        borderRadius: [4, 4, 0, 0]
+                        borderRadius: [0, 3, 3, 0]
                     },
                     label: {
                         show: true,
-                        position: 'top',
+                        position: 'right',
                         color: INK.primary,
                         fontSize: 13,
                         fontWeight: 'bold'
@@ -481,6 +488,14 @@
         chart.resize();
     }
 
+    // 占比统一以全届总进球为分母:图例隐藏 / 聚合都不会改写它。
+    function sharePercent(value, total) {
+        if (!total) {
+            return 0;
+        }
+        return Math.round((Number(value) || 0) / total * 1000) / 10;
+    }
+
     function renderTeamGoals(data) {
         var teams = (data && data.teams) || [];
         var total = Number(data && data.totalGoals);
@@ -495,7 +510,7 @@
                 rank: index + 1,
                 teamName: row.teamName,
                 goals: row.goals,
-                percent: total > 0 ? Math.round((Number(row.goals) || 0) / total * 1000) / 10 : 0
+                percent: sharePercent(row.goals, total)
             };
         });
 
@@ -511,25 +526,40 @@
             return;
         }
 
-        var pieData = teams.map(function (row) {
-            return { name: row.teamName, value: Number(row.goals) || 0 };
+        var pieData = tableRows.map(function (row) {
+            return {
+                name: row.teamName,
+                value: row.goals,
+                percent: row.percent,
+                rank: row.rank
+            };
         });
 
-        // 超过 8 支球队时,饼图保留前 7 名 + 其他,避免颜色循环;
-        // 完整明细仍保留在上方数据表中。
+        // 超过 8 支球队时,饼图保留前 7 名 + 「其他 N 队」;
+        // 其他队保留真实进球与占比,因此切片角度和百分比始终以全届总量为分母。
         if (pieData.length > 8) {
             var top = pieData.slice(0, 7);
-            var otherTotal = pieData.slice(7).reduce(function (sum, item) {
+            var tail = pieData.slice(7);
+            var otherGoals = tail.reduce(function (sum, item) {
                 return sum + item.value;
             }, 0);
-            top.push({ name: '其他球队', value: otherTotal, itemStyle: { color: OTHER_COLOR } });
+            top.push({
+                name: '其他',
+                count: tail.length,
+                value: otherGoals,
+                percent: sharePercent(otherGoals, total),
+                rank: null,
+                itemStyle: { color: OTHER_COLOR }
+            });
             pieData = top;
         }
 
+        var legendItems = {};
         pieData.forEach(function (item, index) {
+            legendItems[item.name] = item;
             if (!item.itemStyle) {
+                // 进球最多的球队用金色,其余按深绿到灰蓝的色阶排开。
                 item.itemStyle = {
-                    // 进球最多的球队用金色,其余按深绿到灰的五色循环。
                     color: index === 0
                         ? ACCENT_SERIES
                         : TEAM_COLORS[(index - 1) % TEAM_COLORS.length]
@@ -543,71 +573,256 @@
         }
 
         chart.setOption({
-            animationDuration: 500,
-            title: {
-                text: String(total),
-                subtext: '总进球',
-                left: 'center',
-                top: '32%',
-                textAlign: 'center',
-                textStyle: { color: INK.primary, fontSize: 26, fontWeight: 'bold' },
-                subtextStyle: { color: INK.muted, fontSize: 13 }
+            baseOption: {
+                animationDuration: 500,
+                title: {
+                    text: String(total),
+                    subtext: '全届进球',
+                    left: '34%',
+                    top: '35%',
+                    textAlign: 'center',
+                    textStyle: { color: INK.primary, fontSize: 28, fontWeight: 'bold' },
+                    subtextStyle: { color: INK.muted, fontSize: 13 }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: INK.surface,
+                    borderColor: INK.grid,
+                    textStyle: { color: INK.primary, fontSize: 13 },
+                    formatter: function (params) {
+                        var item = params.data || {};
+                        var rankLine = item.rank ? '<br>第 ' + item.rank + ' 名' : '';
+                        var displayName = item.count
+                            ? '其他 ' + item.count + ' 队'
+                            : params.name;
+                        return '<strong>' + escapeHtml(displayName) + '</strong>'
+                            + '<br>' + params.value + ' 球 · 占全届 ' + item.percent + '%'
+                            + rankLine;
+                    }
+                },
+                legend: {
+                    // 图例只用于高亮,不允许隐藏切片:隐藏会让 ECharts 重算剩余占比。
+                    selectedMode: false,
+                    orient: 'vertical',
+                    type: 'plain',
+                    right: '1%',
+                    top: 'middle',
+                    icon: 'circle',
+                    itemWidth: 9,
+                    itemHeight: 9,
+                    itemGap: 9,
+                    textStyle: { color: INK.secondary, fontSize: 13 },
+                    formatter: function (name) {
+                        var item = legendItems[name];
+                        if (!item) {
+                            return name;
+                        }
+                        return item.count
+                            ? '其他 ' + item.count + ' 队  ' + item.percent + '%'
+                            : name + '  ' + item.percent + '%';
+                    }
+                },
+                series: [{
+                    name: '各队进球',
+                    type: 'pie',
+                    // 切片本身也不进入选中态,避免点击圆环后视觉上「少一块」。
+                    selectedMode: false,
+                    radius: ['40%', '62%'],
+                    center: ['34%', '46%'],
+                    avoidLabelOverlap: true,
+                    itemStyle: {
+                        borderColor: INK.surface,
+                        borderWidth: 2,
+                        borderRadius: 2
+                    },
+                    label: {
+                        show: true,
+                        formatter: function (params) {
+                            var item = params.data || {};
+                            return item.percent >= 4
+                                ? params.name + '\n' + item.percent + '%'
+                                : '';
+                        },
+                        color: INK.secondary,
+                        fontSize: 13,
+                        lineHeight: 17
+                    },
+                    labelLine: {
+                        length: 8,
+                        length2: 6,
+                        lineStyle: { color: INK.axis }
+                    },
+                    labelLayout: { hideOverlap: true },
+                    emphasis: {
+                        scale: true,
+                        scaleSize: 4,
+                        label: { fontWeight: 'bold' }
+                    },
+                    data: pieData
+                }]
             },
+            // 窄容器里图例回到下方横向滚动,避免圆环被压得太小。
+            media: [{
+                query: { maxWidth: 520 },
+                option: {
+                    title: { left: '50%', top: '31%' },
+                    legend: {
+                        orient: 'horizontal',
+                        type: 'scroll',
+                        left: 'center',
+                        right: 'auto',
+                        top: 'auto',
+                        bottom: 0,
+                        itemGap: 12
+                    },
+                    series: [{
+                        radius: ['40%', '60%'],
+                        center: ['50%', '40%']
+                    }]
+                }
+            }]
+        });
+        chart.resize();
+    }
+
+    // 球员详情页:各届进球 / 助攻并排柱。数据由 _career_chart.php 内联输出,
+    // 不额外请求接口;没有进球或助攻时该节根本不会渲染。
+    function initPlayerCareer() {
+        var container = byId('player-career-chart');
+        if (!container) {
+            return;
+        }
+
+        var dataEl = byId('player-career-data');
+        var data = null;
+        try {
+            data = dataEl ? JSON.parse(dataEl.textContent || '') : null;
+        } catch (e) {
+            data = null;
+        }
+
+        if (!data || !data.years || !data.years.length) {
+            showEmpty(container, '暂无生涯数据');
+            return;
+        }
+
+        var goals = (data.goals || []).map(function (value) {
+            return Number(value) || 0;
+        });
+        var assists = (data.assists || []).map(function (value) {
+            return Number(value) || 0;
+        });
+        var hasAssists = assists.some(function (value) {
+            return value > 0;
+        });
+
+        if (!hasEcharts() || window.__echartsLoadFailed) {
+            showEmpty(container, '图表组件加载失败，请检查网络后刷新页面。');
+            return;
+        }
+
+        var chart = initChart(container);
+        if (!chart) {
+            return;
+        }
+
+        var years = data.years.map(String);
+        var series = [{
+            name: '进球',
+            type: 'bar',
+            data: goals,
+            barMaxWidth: 64,
+            itemStyle: {
+                color: PRIMARY_SERIES,
+                borderRadius: [3, 3, 0, 0]
+            },
+            label: {
+                show: true,
+                position: 'top',
+                color: INK.primary,
+                fontSize: 13,
+                fontWeight: 'bold',
+                formatter: function (params) {
+                    return params.value > 0 ? params.value : '';
+                }
+            },
+            emphasis: { itemStyle: { color: HOVER_SERIES } }
+        }];
+
+        if (hasAssists) {
+            series.push({
+                name: '助攻',
+                type: 'bar',
+                data: assists,
+                barMaxWidth: 64,
+                barGap: '12%',
+                itemStyle: {
+                    color: '#7FA893',
+                    borderRadius: [3, 3, 0, 0]
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    color: INK.secondary,
+                    fontSize: 13,
+                    formatter: function (params) {
+                        return params.value > 0 ? params.value : '';
+                    }
+                },
+                emphasis: { itemStyle: { color: '#5F8773' } }
+            });
+        }
+
+        chart.setOption({
+            animationDuration: 500,
+            grid: { left: 6, right: 14, top: 34, bottom: 6, containLabel: true },
             tooltip: {
-                trigger: 'item',
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
                 textStyle: { color: INK.primary, fontSize: 13 },
                 formatter: function (params) {
-                    return '<strong>' + escapeHtml(params.name) + '</strong>'
-                        + '<br>进球：' + params.value
-                        + '（' + params.percent + '%）';
+                    var lines = ['<strong>' + escapeHtml(params[0].axisValue) + ' 年</strong>'];
+                    params.forEach(function (item) {
+                        if (item.value > 0 || item.seriesName === '进球') {
+                            lines.push(item.seriesName + '：' + item.value);
+                        }
+                    });
+                    return lines.join('<br>');
                 }
             },
             legend: {
-                type: 'scroll',
-                bottom: 0,
-                left: 'center',
-                icon: 'circle',
-                itemWidth: 10,
-                itemHeight: 10,
+                show: hasAssists,
+                top: 0,
+                right: 0,
+                icon: 'roundRect',
+                itemWidth: 12,
+                itemHeight: 9,
                 textStyle: { color: INK.secondary, fontSize: 13 }
             },
-            series: [{
-                name: '各队进球',
-                type: 'pie',
-                radius: ['40%', '62%'],
-                center: ['50%', '42%'],
-                avoidLabelOverlap: true,
-                itemStyle: {
-                    borderColor: INK.surface,
-                    borderWidth: 2,
-                    borderRadius: 2
+            xAxis: {
+                type: 'category',
+                data: years,
+                axisTick: { show: false },
+                axisLine: { lineStyle: { color: INK.axis } },
+                axisLabel: { color: INK.secondary, fontSize: 14, margin: 12 }
+            },
+            yAxis: {
+                type: 'value',
+                minInterval: 1,
+                // 给最高柱留出标签空间,避免顶到图例上沿。
+                max: function (value) {
+                    return Math.ceil(value.max * 1.15);
                 },
-                label: {
-                    show: true,
-                    formatter: function (params) {
-                        return params.percent >= 4
-                            ? params.name + '\n' + params.value + ' 球'
-                            : '';
-                    },
-                    color: INK.secondary,
-                    fontSize: 13,
-                    lineHeight: 16
-                },
-                labelLine: {
-                    length: 8,
-                    length2: 6,
-                    lineStyle: { color: INK.axis }
-                },
-                labelLayout: { hideOverlap: true },
-                emphasis: {
-                    scale: true,
-                    scaleSize: 4,
-                    label: { fontWeight: 'bold' }
-                },
-                data: pieData
-            }]
+                name: '球',
+                nameTextStyle: { color: INK.muted, fontSize: 13, padding: [0, 0, 4, 0] },
+                axisLabel: { color: INK.secondary, fontSize: 13 },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
+            },
+            series: series
         });
         chart.resize();
     }
@@ -728,9 +943,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             initChartDataToggles();
             init();
+            initPlayerCareer();
         });
     } else {
         initChartDataToggles();
         init();
+        initPlayerCareer();
     }
 }());

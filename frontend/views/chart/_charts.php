@@ -55,7 +55,7 @@ $this->registerJsFile('@web/js/charts.js', [
             <div class="chart-card-head chart-card-head--standings">
                 <div class="chart-card-head-text">
                     <h3>小组积分榜</h3>
-                    <p class="chart-caption">可切换小组；柱高为积分，悬停查看胜 / 平 / 负与进失球。</p>
+                    <p class="chart-caption">可切换小组；条长为积分，悬停查看胜 / 平 / 负与进失球。</p>
                 </div>
                 <div class="chart-group-switch-wrap">
                     <span class="chart-group-switch-label" id="standings-group-label">小组</span>
@@ -93,7 +93,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>各队进球分布</h3>
-                <p class="chart-caption">按进球归属球队统计。</p>
+                <p class="chart-caption">前 7 队单列，其余合并为「其他」；占比以全届总进球为分母，不随图例变化。</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--pie"
                  data-chart="team-goals" role="img" aria-label="各队进球分布饼图">
