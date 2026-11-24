@@ -1030,6 +1030,23 @@ select.form-control {
     height: 34px;
 }
 
+/* 原生文件控件的“选择文件”按钮也按工作间的按钮语言来 */
+input[type="file"].form-control {
+    height: auto;
+    padding: 5px 8px;
+}
+
+input[type="file"].form-control::file-selector-button {
+    margin-right: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--panel-2);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    cursor: pointer;
+}
+
 label,
 .control-label {
     margin-bottom: 4px;
@@ -1094,9 +1111,14 @@ label,
 }
 
 .backend-main > form:not(.form-inline) .form-group:last-child {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
     margin-bottom: 0;
-    padding-top: 6px;
+    padding-top: 10px;
+    padding-bottom: 6px;
     border-top: 1px solid var(--line-soft);
+    background: var(--panel);
 }
 
 .help-block-error {
