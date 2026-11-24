@@ -20,7 +20,7 @@
 
 | 会话 | 范围 | 独占文件 | 开始 |
 |---|---|---|---|
-| **win-WorldCup-4**（页面内部设计） | **页面内部版式与字体加载**：分区/层级/对齐/间距、字号体系、字体加载与 FOUT、内容密度、组件内部排布（前台 + 后台）。**18:20 起接手用户本轮反馈：首页收场带重做（删冗余入口、留言改单列、就地写留言、页脚统一）** | `frontend/views/**`（只改页面内部结构，不建/删路由）、`frontend/web/css/theme.css`、`root-wall.css`、`tournament-detail.css`、`game.css`、`catalog.css`、`community.css`、`team-info.css`、`charts.css`、`backend/views/**`、`backend/web/css/design-v2.css`、字体文件与 `@font-face` 段落；本轮新增只动 `frontend/views/site/index.php`、`frontend/views/layouts/main.php`（页脚）、`frontend/web/css/root-wall.css`、`frontend/models/LatestComments.php`（只调截断长度）、`frontend/controllers/SiteController.php`（只调 latest(4)）、`frontend/web/js/ledger.js`（只加一个初始化选择器） | 14:55 / 18:20 |
+| **win-WorldCup-4**（页面内部设计；本会话实名 `worldcup-e1`） | **页面内部版式与字体加载**：分区/层级/对齐/间距、字号体系、字体加载与 FOUT、内容密度、组件内部排布（前台 + 后台）。**18:20 起接手用户本轮反馈：首页收场带重做（删冗余入口、留言改单列、就地写留言、页脚统一）** | `frontend/views/**`（只改页面内部结构，不建/删路由）、`frontend/web/css/theme.css`、`root-wall.css`、`tournament-detail.css`、`game.css`、`catalog.css`、`community.css`、`team-info.css`、`charts.css`、`backend/views/**`、`backend/web/css/design-v2.css`、字体文件与 `@font-face` 段落；本轮新增只动 `frontend/views/site/index.php`、`frontend/views/layouts/main.php`（页脚）、`frontend/web/css/root-wall.css`、`frontend/models/LatestComments.php`（只调截断长度）、`frontend/controllers/SiteController.php`（只调 latest(4)）、`frontend/web/js/ledger.js`（只加一个初始化选择器） | 14:55 / 18:20 |
 | **win-WorldCup-2**（数据可视化 / 图表大气版） | **统计图表的语义与可视化质量 + 图表大气版**：全宽大图、放大字号/线宽/柱宽、全宽进球构成条、比分走势/球队轨迹/球员生涯放大；图表色板与深色可读性 | `frontend/web/js/charts.js`、`frontend/controllers/ChartController.php`、`frontend/views/chart/**`、`frontend/views/player/_career_chart.php`、`frontend/views/team/_history_chart.php`、`frontend/views/game/_score_progress.php`、`frontend/web/css/chart-stage.css`（新建）、`player-chart.css`、`team-chart.css`、`game-chart.css`；三个详情视图只加 include | 15:05 / 18:55 |
 | **win-WorldCup-5**（浅色页美术层 / 缺陷修复） | **浅色数据页的美术与壳层视觉缺陷**：纸面质感、墨色与铜/金细节、表格/检索/按钮/页脚外观、焦点与悬停；不碰字号/间距/布局/图表逻辑 | 新建 `frontend/web/css/art-r5.css`（最后加载，只覆盖颜色/边框/背景/阴影/焦点）；`frontend/views/layouts/main.php` 仅加 1 行注册；`docs/r5-视觉评审.md`（新建） | 15:12 |
 | **win-WorldCup-5 · R6**（全站夜场统一） | 前台所有页面回到根页的夜场色系（极光背景、深绿黑表面、暖白字、青绿动作、金色成就）；去掉米色纸面；桌面 1280/1366/1440 优先 | 新建 `frontend/web/css/art-r6.css`；`frontend/views/layouts/main.php` 在 art-r5 后加 1 行；`docs/r6-夜场统一.md`；不改字号/间距/布局/图表逻辑 | 16:05 |
@@ -75,10 +75,12 @@
 | 16:50 | win-WorldCup-4 | **桌面大气版**：首页行高 173→205、新增收场深色带（金线 + 最新留言 / 换一种找法两列）；晋级图决赛 800 / 半决赛 560 / 1/4 300、卡片加高；比赛比分板 88px 比分、届次 hero facts 3rem；索引标题 44px、行高加松；球队详情右侧队史栏；球员读数带全宽 | 1440 / 1366 / 1280 截图；200；无页面级溢出 |
 | 17:20 | win-WorldCup-4 | 收场带拆出“关于本站”独立模块；统计图卡 22px 标题 / 22×24 padding；1440 容器 1320、1920 容器 1440；球队主栏表格填满、右侧队史栏；关于页文字限 60–62ch；比赛详情接入比分走势图（另一位会话 partial） | `php -l`；1280/1366/1440/1920 截图；无页面级溢出 |
 | 16:20 | win-WorldCup-5 | 新增 `backend/web/css/art-r5.css`（纸面表格 / 状态与操作降噪 / 数字卡铜线 / 登录登记表）；前台补球员统计带、图表卡与届次页签；修复美术层覆盖届次 hero 出血；深色壳层焦点改浅铜 | `php -l` / 8090+8081 实测加载 / 390 CDP `scrollWidth===innerWidth` / 字体 7–35ms / 截图 `runtime/qa/r5/*-live.png` |
+| 18:30 | win-WorldCup-5 | R6.5/R6.6：比赛索引 2×2 记分卡墙（一屏 4–6 场）、球队目录队码身份章 5/4 列、小组出线色轨、WC 品牌印记；背景单绿光 + 面板不透明 + 金色收敛；对比度审计 P1/P2 修补 | 1440/1280 截图；无溢出 |
 | 18:15 | win-WorldCup-5 | 页脚全站统一为 `var(--night)` + 1px 金线 + 同一套浅字；撤掉 `.wall-coda` 的边框/底色/圆角与暖光，收场带边界归 -4 | 首页/数据页底部截图对照 |
 | 18:05 | win-WorldCup-5 | R6.3：检索区扁平成检索带（去大盒子/模糊底）、球队目录 1440 五列 / 1280 四列、图表标签 14；首页收场带加暖光过渡 | 1440/1280 截图；无溢出 |
 | 17:55 | win-WorldCup-5 | R6.2：比赛索引比分 40 / 年份 32、关于页数字 44；金色收敛为成就色，结构线改青绿/银白；正文旧令牌 `--color-muted-strong` 修正为浅色；首页收场带金顶面板；首页页脚与全站一致 | 1440/1366/1280 截图；无溢出 |
 | 17:35 | win-WorldCup-5 | **R6 全站夜场统一**：极光背景铺到全部前台页；米色纸面退役；深绿黑表面 + 暖白字 + 青绿/金；检索、表格、卡片、页脚、登录、404 全部换；修复白底按钮白字；R6.1 桌面字号层（body 17 / h1 56 / 区块 30 / 表格 16 / 导航按钮 15）；金色收敛为成就色 | 1280/1366/1440 CDP 无溢出；13 路由 200；字体 7–55ms；截图 `runtime/qa/r6/` |
+| 18:20 | win-WorldCup-4 | **按用户本轮反馈重做首页收场**：删「换一种找法 / 关于本站」两列（与导航、页脚重复）；留言改为单列一行一条；收场区新增加就地的留言输入（登录用户直接 POST 站内留言簿，游客给登录/注册入口）；收场从硬边深色带改为 920 居中 + 100vw 上下渐变夜雾，与记分牌墙形成“收窄的房间”；页脚结构补「关于与文档」，字号在 theme.css 显式统一（根页 / 数据页计算结果完全相同）；留言簿页 h1 抬到 56 页面级；404 重做为巨型状态码 + 同一左轴；登录页去掉「忘记密码？找回密码」重复 | `php -l` / `node --check` / 13 路由 200 / 1440·1366·390 CDP 无溢出；截图 `runtime/qa/pd2/` |
 
 ## 4. 当前已知问题池（谁认领谁先写占用）
 
@@ -89,6 +91,10 @@
 - [x] **分区可分辨性**：届次 hero、翻页、留言簿、关于页、球队/球员详情、后台表单已重排（本会话）
 - [x] **届次页**：面包屑与 hero 返回重复已去；上一届/下一届改为一条文档式翻页条（本会话）
 - [x] **首页收场太淡**：独立深色带 + 金线 + 两列（最新留言 / 换一种找法），不再和记分牌墙融在一起
+- [x] **首页收场突兀**（用户 18:20）：不再用硬边色板；收窄为 920 居中房间 + 100vw 上下渐变夜雾 + 金线页眉线；-5 已撤掉 `.wall-coda` 的边框/底色（本会话）
+- [x] **首页入口冗余**（用户 18:20）：删除「换一种找法」与「关于本站」两列；这些入口在页头与页脚已有（本会话）
+- [x] **首页留言两列拥挤 / 必须跳转才能留言**（用户 18:20）：改单列一行一条；收场内置留言输入，登录用户就地 POST，游客就地登录/注册（本会话）
+- [x] **页脚全站一致**（用户 18:20）：结构补「关于与文档」；theme.css 统一页脚字号，根页与数据页计算结果完全相同；颜色由 -5 字面量化（本会话 + -5）
 - [x] **不够大气**：首页行高、晋级图宽度/高度、比赛比分板、届次 hero、球队球员头、索引标题与行高已放大
 - [ ] **图表深色配色**：R6 已把前台铺成深色，但 `charts.js` 的 INK 仍是浅色主题；轴/图例/数据标签在深底不可读（-2，已给色值；截图 `runtime/qa/r6/chart-dark.png`）
 - [ ] **桌面字号再抬一档**：用户仍说字体/组件小；正文 17–18、表格 15–16、h1 56–64、区块标题 30–34（-4）
