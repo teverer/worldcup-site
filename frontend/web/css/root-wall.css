@@ -9,6 +9,13 @@ body.site-site-index {
     font-size: 17px;
 }
 
+/* 收场带用 100vw 做通栏出血；有纵向滚动条时 100vw 比内容宽，会在页尾
+   多出 8px 横向滚动。在整页宽的 .site-main 上裁切，既能切掉 8px，
+   又保留出血到视口边缘；clip 不创建滚动容器，页面滚动仍是 document。 */
+body.site-site-index .site-main {
+    overflow-x: clip;
+}
+
 .site-site-index .site-main {
     padding-top: 0;
     padding-bottom: 0;
