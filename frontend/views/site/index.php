@@ -112,13 +112,11 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
         <div class="wall-coda-inner">
             <header class="wall-coda-inner-head">
                 <h2 id="wall-closing-title">继续看，或者留一句</h2>
-                <p>十一届看完了。挑一届接着看，或者把记住的那一夜写进留言簿。</p>
             </header>
 
             <section class="wall-book" data-ledger-scope aria-labelledby="wall-book-title">
                 <header class="wall-book-head">
                     <h3 class="wall-book-title" id="wall-book-title">留言簿</h3>
-                    <span class="wall-book-note">来自各届、资讯与全站</span>
                     <?= Html::a('翻整本留言簿', $bookUrl, ['class' => 'wall-book-all']) ?>
                 </header>
 
@@ -148,7 +146,6 @@ $loginUrl = Url::to(['/site/login', 'returnUrl' => $hereUrl]);
                                     'data-ledger-input' => '1',
                                 ]) ?>
                                 <div class="composer-foot">
-                                    <span class="composer-hint">Ctrl + Enter 记下</span>
                                     <?= Html::submitButton('记下', ['class' => 'btn-record']) ?>
                                 </div>
                             </div>
