@@ -183,12 +183,12 @@ if ($teamKeyword !== null) {
                                 <?= Html::encode($game->stage) ?>
                             </span>
                             <span class="game-item-teams">
-                                <span class="game-item-team<?= $winner === 'home' ? ' is-winner' : '' ?>">
+                                <span class="game-item-team<?= $winner === 'home' ? ' is-winner' : '' ?>" title="<?= Html::encode($homeName) ?>">
                                     <?= TeamFlag::html($game->homeTeam !== null ? $game->homeTeam->code : '', $homeName) ?>
                                     <span class="game-item-team-name"><?= Html::encode($homeName) ?></span>
                                 </span>
                                 <span class="game-item-score"><?= Html::encode($scoreText) ?></span>
-                                <span class="game-item-team<?= $winner === 'away' ? ' is-winner' : '' ?>">
+                                <span class="game-item-team<?= $winner === 'away' ? ' is-winner' : '' ?>" title="<?= Html::encode($awayName) ?>">
                                     <?= TeamFlag::html($game->awayTeam !== null ? $game->awayTeam->code : '', $awayName) ?>
                                     <span class="game-item-team-name"><?= Html::encode($awayName) ?></span>
                                 </span>

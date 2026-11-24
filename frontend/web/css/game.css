@@ -583,15 +583,26 @@ body .game-scoreboard .game-score-value {
     }
 
     .game-item-team {
+        gap: 6px;
         overflow: visible;
-        font-size: var(--fs-base);
+        font-size: 15px;
         line-height: 1.3;
     }
 
+    .game-item-team .team-flag {
+        width: 20px;
+        height: 15px;
+    }
+
     .game-item-team-name {
-        overflow: visible;
-        white-space: normal;
-        text-overflow: clip;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .game-item-score {
+        min-width: 2.4em;
+        font-size: var(--fs-xl);
     }
 
     .game-item-team:first-child {
