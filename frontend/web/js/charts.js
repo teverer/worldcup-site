@@ -347,7 +347,7 @@
                     axisPointer: { type: 'shadow' },
                     backgroundColor: INK.surface,
                     borderColor: INK.grid,
-                    textStyle: { color: INK.primary, fontSize: 13 },
+                    textStyle: { color: INK.primary, fontSize: 14 },
                     formatter: function (params) {
                         var row = chartRows[params[0].dataIndex];
                         if (!row) {
@@ -365,9 +365,9 @@
                 xAxis: {
                     type: 'value',
                     name: '积分',
-                    nameTextStyle: { color: INK.muted, fontSize: 13, padding: [0, 0, 4, 0] },
+                    nameTextStyle: { color: INK.muted, fontSize: 14, padding: [0, 0, 4, 0] },
                     minInterval: 1,
-                    axisLabel: { color: INK.secondary, fontSize: 13 },
+                    axisLabel: { color: INK.secondary, fontSize: 14 },
                     axisLine: { show: false },
                     axisTick: { show: false },
                     splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -403,7 +403,7 @@
                         show: true,
                         position: 'right',
                         color: INK.primary,
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: 'bold'
                     },
                     emphasis: { itemStyle: { color: HOVER_SERIES } }
@@ -490,7 +490,7 @@
                 axisPointer: { type: 'shadow' },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 13 },
+                textStyle: { color: INK.primary, fontSize: 14 },
                 formatter: function (params) {
                     var row = chartRows[params[0].dataIndex];
                     if (!row) {
@@ -508,9 +508,9 @@
             xAxis: {
                 type: 'value',
                 name: '进球',
-                nameTextStyle: { color: INK.muted, fontSize: 13 },
+                nameTextStyle: { color: INK.muted, fontSize: 14 },
                 minInterval: 1,
-                axisLabel: { color: INK.secondary, fontSize: 13 },
+                axisLabel: { color: INK.secondary, fontSize: 14 },
                 axisLine: { show: false },
                 axisTick: { show: false },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -522,7 +522,7 @@
                 axisLine: { lineStyle: { color: INK.axis } },
                 axisLabel: {
                     color: INK.secondary,
-                    fontSize: 13,
+                    fontSize: 14,
                     width: yLabelWidth,
                     overflow: 'none'
                 }
@@ -542,7 +542,7 @@
                     show: true,
                     position: 'right',
                     color: INK.primary,
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: 'bold'
                 },
                 emphasis: { itemStyle: { color: HOVER_SERIES } }
@@ -645,13 +645,13 @@
                     top: '35%',
                     textAlign: 'center',
                     textStyle: { color: INK.primary, fontSize: 28, fontWeight: 'bold' },
-                    subtextStyle: { color: INK.muted, fontSize: 13 }
+                    subtextStyle: { color: INK.muted, fontSize: 14 }
                 },
                 tooltip: {
                     trigger: 'item',
                     backgroundColor: INK.surface,
                     borderColor: INK.grid,
-                    textStyle: { color: INK.primary, fontSize: 13 },
+                    textStyle: { color: INK.primary, fontSize: 14 },
                     formatter: function (params) {
                         var item = params.data || {};
                         var rankLine = item.rank ? '<br>第 ' + item.rank + ' 名' : '';
@@ -674,7 +674,7 @@
                     itemWidth: 9,
                     itemHeight: 9,
                     itemGap: 9,
-                    textStyle: { color: INK.secondary, fontSize: 13 },
+                    textStyle: { color: INK.secondary, fontSize: 14 },
                     formatter: function (name) {
                         var item = legendItems[name];
                         if (!item) {
@@ -707,7 +707,7 @@
                                 : '';
                         },
                         color: INK.secondary,
-                        fontSize: 13,
+                        fontSize: 14,
                         lineHeight: 17
                     },
                     labelLine: {
@@ -815,7 +815,7 @@
                 show: true,
                 position: 'top',
                 color: INK.primary,
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 'bold',
                 formatter: function (params) {
                     return params.value > 0 ? params.value : '';
@@ -839,7 +839,7 @@
                     show: true,
                     position: 'top',
                     color: INK.secondary,
-                    fontSize: 13,
+                    fontSize: 14,
                     formatter: function (params) {
                         return params.value > 0 ? params.value : '';
                     }
@@ -856,7 +856,7 @@
                 axisPointer: { type: 'shadow' },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 13 },
+                textStyle: { color: INK.primary, fontSize: 14 },
                 formatter: function (params) {
                     var lines = ['<strong>' + escapeHtml(params[0].axisValue) + ' 年</strong>'];
                     params.forEach(function (item) {
@@ -874,7 +874,7 @@
                 icon: 'roundRect',
                 itemWidth: 12,
                 itemHeight: 9,
-                textStyle: { color: INK.secondary, fontSize: 13 }
+                textStyle: { color: INK.secondary, fontSize: 14 }
             },
             xAxis: {
                 type: 'category',
@@ -891,8 +891,8 @@
                     return Math.ceil(value.max * 1.15);
                 },
                 name: '球',
-                nameTextStyle: { color: INK.muted, fontSize: 13, padding: [0, 0, 4, 0] },
-                axisLabel: { color: INK.secondary, fontSize: 13 },
+                nameTextStyle: { color: INK.muted, fontSize: 14, padding: [0, 0, 4, 0] },
+                axisLabel: { color: INK.secondary, fontSize: 14 },
                 axisLine: { show: false },
                 axisTick: { show: false },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
@@ -976,7 +976,7 @@
                 axisPointer: { type: 'line', lineStyle: { color: INK.axis, type: 'dashed' } },
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 13 },
+                textStyle: { color: INK.primary, fontSize: 14 },
                 formatter: function (params) {
                     var point = points[params[0].dataIndex];
                     if (!point) {
@@ -1005,7 +1005,7 @@
                 data: ['小组赛', '32 强', '16 强', '8 强', '半决赛', '三四名', '决赛'],
                 axisTick: { show: false },
                 axisLine: { show: false },
-                axisLabel: { color: INK.secondary, fontSize: 13, margin: 10 },
+                axisLabel: { color: INK.secondary, fontSize: 14, margin: 10 },
                 splitLine: { lineStyle: { color: INK.grid, width: 1, type: 'solid' } }
             },
             series: [{
@@ -1094,13 +1094,13 @@
                 icon: 'roundRect',
                 itemWidth: 12,
                 itemHeight: 8,
-                textStyle: { color: INK.secondary, fontSize: 13 }
+                textStyle: { color: INK.secondary, fontSize: 14 }
             },
             tooltip: {
                 trigger: 'item',
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
-                textStyle: { color: INK.primary, fontSize: 13 },
+                textStyle: { color: INK.primary, fontSize: 14 },
                 formatter: function (params) {
                     var mark = params.data && params.data.event;
                     if (!mark) {

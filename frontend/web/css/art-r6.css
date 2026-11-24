@@ -875,3 +875,34 @@ body.site-site-index .wall-closing::before {
     content: "";
     pointer-events: none;
 }
+
+/* 球队目录：桌面少一列、每格更大，减少“目录表”的拥挤感 */
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .ti-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1365px) {
+    body:not(.site-site-index) .ti-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* 检索区：从“大盒子”改成一条检索带，减少表单感 */
+body:not(.site-site-index) .pl-search,
+body:not(.site-site-index) .game-filter-panel,
+body:not(.site-site-index) .catalog-filters,
+body:not(.site-site-index) .news-search,
+body:not(.site-site-index) .game-filters {
+    border: 0;
+    border-top: 2px solid rgba(127, 221, 184, .55);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+}
