@@ -806,3 +806,18 @@ body:not(.site-site-index) .pd-head a {
         line-height: 1.05;
     }
 }
+
+/* 比分牌：队名是白字，比分才是唯一主角；链接感留给 hover */
+body:not(.site-site-index) .game-scoreboard {
+    border: 1px solid rgba(244, 242, 236, .10);
+}
+
+body:not(.site-site-index) .game-scoreboard .game-team,
+body:not(.site-site-index) .game-scoreboard .game-team a {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .game-scoreboard .game-team a:hover,
+body:not(.site-site-index) .game-scoreboard .game-team a:focus {
+    color: var(--gold);
+}
