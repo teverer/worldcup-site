@@ -166,6 +166,14 @@ if ($statusValue === Game::STATUS_PENDING) {
         </dl>
     </header>
 
+    <?= $this->render('_score_progress', [
+        'regularGoals' => $regularGoals,
+        'players' => $players,
+        'model' => $model,
+        'homeName' => $homeName,
+        'awayName' => $awayName,
+    ]) ?>
+
     <section class="game-section" aria-labelledby="game-goals-title">
         <div class="game-section-head">
             <h2 id="game-goals-title"><?= $regularGoalCount > 0 ? '进球时间线' : ($shootoutGoalCount > 0 ? '点球大战' : '进球时间线') ?></h2>

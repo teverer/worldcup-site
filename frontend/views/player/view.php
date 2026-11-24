@@ -122,8 +122,17 @@ $nameToggleUrl = [
         </div>
     </dl>
     <p class="pd-note">统计以已录入且已结束的比赛为准，不含乌龙球与点球大战。</p>
+    <?php if ($participations && $totalGoals + $totalAssists === 0): ?>
+        <p class="pd-note">
+            0 球 · 0 助攻 —— 样本不足，不绘制生涯图；参赛记录见下方
+            <a href="#pd-history-title">「世界杯生涯」表</a>。
+        </p>
+    <?php endif ?>
 
-    <?= $this->render('_career_chart', ['statistics' => $statistics]) ?>
+    <?= $this->render('_career_chart', [
+        'statistics' => $statistics,
+        'participations' => $participations,
+    ]) ?>
 
     <?php if ($model->intro): ?>
         <section class="pd-section" aria-labelledby="pd-intro-title">
