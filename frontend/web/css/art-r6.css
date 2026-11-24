@@ -821,3 +821,41 @@ body:not(.site-site-index) .game-scoreboard .game-team a:hover,
 body:not(.site-site-index) .game-scoreboard .game-team a:focus {
     color: var(--gold);
 }
+
+/* ==========================================================================
+   首页收场：前台页脚全站一致；收场带做成“最后一页档案”
+   ========================================================================== */
+body.site-site-index .site-footer {
+    border-top: 2px solid var(--gold);
+    background-color: #04090B;
+    background-image: none;
+    color: var(--muted);
+}
+
+body.site-site-index .site-footer-name,
+body.site-site-index .site-footer-title {
+    color: var(--ink);
+}
+
+body.site-site-index .site-footer-intro,
+body.site-site-index .site-footer a {
+    color: var(--muted);
+}
+
+body.site-site-index .site-footer a:hover,
+body.site-site-index .site-footer a:focus {
+    color: var(--gold);
+}
+
+body.site-site-index .site-footer-bottom {
+    border-top-color: rgba(244, 242, 236, .14);
+}
+
+body.site-site-index .wall-coda {
+    border: 1px solid rgba(244, 242, 236, .10);
+    border-top: 2px solid var(--gold);
+    border-radius: 2px;
+    background:
+        linear-gradient(180deg, rgba(10, 27, 34, .72), rgba(4, 9, 10, .86));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
