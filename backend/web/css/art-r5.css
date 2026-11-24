@@ -47,6 +47,11 @@
     box-shadow: inset 0 -2px 0 var(--accent);
 }
 
+/* 原设计用 ::before 做悬停铜线；本层已用 border-top 常驻，避免叠成双线 */
+.backend-main .dash-stat::before {
+    opacity: 0;
+}
+
 .backend-main .dash-stat-value {
     color: var(--ink);
 }
