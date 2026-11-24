@@ -1077,3 +1077,27 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
         display: none;
     }
 }
+
+/* ==========================================================================
+   球队详情：历届战绩 + 队史总计两栏，参赛球员跨两栏。
+   名单只有三列，锁在左栏会把右侧 500px 空出来；把主栏拆成网格项，
+   让名单在桌面占满整行，右栏只服务上面那段战绩。
+   ========================================================================== */
+@media (min-width: 1101px) {
+    .team-detail .td-body-main {
+        display: contents;
+    }
+
+    .team-detail .td-body-main > .td-section[aria-labelledby="td-records-title"] {
+        order: 1;
+    }
+
+    .team-detail .td-aside {
+        order: 2;
+    }
+
+    .team-detail .td-body-main > .td-section[aria-labelledby="td-roster-title"] {
+        order: 3;
+        grid-column: 1 / -1;
+    }
+}
