@@ -94,9 +94,9 @@ $renderWorks = static function (array $items) {
         </dl>
 
         <ul class="about-notes">
-            <li><strong>积分榜</strong>只统计小组赛且已结束的比赛；胜场积分按届次读取（1986 / 1990 为 2 分，之后为 3 分）。</li>
-            <li><strong>射手榜</strong>排除乌龙球与点球大战进球。</li>
-            <li><strong>进球归属</strong>按受益球队统计，乌龙球算给对方。</li>
+            <li><strong>积分榜</strong><span>只统计小组赛且已结束的比赛；胜场积分按届次读取（1986 / 1990 为 2 分，之后为 3 分）。</span></li>
+            <li><strong>射手榜</strong><span>排除乌龙球与点球大战进球。</span></li>
+            <li><strong>进球归属</strong><span>按受益球队统计，乌龙球算给对方。</span></li>
         </ul>
 
         <p class="about-source">
@@ -162,8 +162,27 @@ $renderWorks = static function (array $items) {
         </div>
 
         <?php if (!$hasWorks): ?>
-            <div class="about-empty">
-                <p><strong>六份课程文档还在整理中。</strong>最终 PDF 会出现在这里。</p>
+            <?php
+            $docPlaceholders = [
+                ['title' => '需求文档', 'desc' => '功能范围、角色与验收标准'],
+                ['title' => '设计文档', 'desc' => '数据库、模块与页面结构'],
+                ['title' => '实现文档', 'desc' => 'MVC 分层、关键流程与代码说明'],
+                ['title' => '用户手册', 'desc' => '前台与后台的操作路径'],
+                ['title' => '部署文档', 'desc' => '环境、建库、初始化与启动'],
+                ['title' => '项目展示 PPT', 'desc' => '分工、工作量与演示脚本'],
+            ];
+            ?>
+            <div class="about-doc-placeholder">
+                <p class="about-doc-placeholder-lead">六份课程文档还在整理中，最终 PDF 会出现在这里。</p>
+                <ul class="about-doc-grid">
+                    <?php foreach ($docPlaceholders as $doc): ?>
+                        <li class="about-doc-card">
+                            <strong><?= Html::encode($doc['title']) ?></strong>
+                            <span class="about-doc-status">整理中</span>
+                            <p><?= Html::encode($doc['desc']) ?></p>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
             </div>
         <?php else: ?>
             <div class="about-doc-group">
