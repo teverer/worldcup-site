@@ -426,7 +426,8 @@ $renderStack = static function (array $roundsForStack, $showNav = false) use ($r
         if ($matches === []) {
             continue;
         }
-        $html .= '<section class="bt-stack-round" id="bt-round-' . Html::encode($key) . '">';
+        $html .= '<section class="bt-stack-round' . ($key === 'final' ? ' bt-stack-round--final' : '')
+            . '" id="bt-round-' . Html::encode($key) . '">';
         $html .= '<h3 class="bt-stack-label">' . Html::encode($label) . '</h3>';
         $html .= '<div class="bt-stack-grid' . ($key === 'final' ? ' bt-stack-grid--final' : '') . '">';
         foreach ($matches as $match) {

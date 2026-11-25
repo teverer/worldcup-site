@@ -199,8 +199,14 @@
     border-bottom: 1px solid transparent;
 }
 
-.bt-round-nav a:hover,
+.bt-round-nav a:hover {
+    color: var(--flood);
+    border-bottom-color: var(--gold-light);
+}
+
 .bt-round-nav a:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 2px;
     color: var(--flood);
     border-bottom-color: var(--gold-light);
 }
@@ -208,4 +214,10 @@
 /* 跳轮次时别让页头 + 届次 tab 盖住轮次标题 */
 .bt-stack-round {
     scroll-margin-top: calc(var(--td-tab-h, 56px) + 8px);
+}
+
+/* 窄屏决赛：卡片居中，标题也跟着居中并点金，别把「决赛」丢在左边 */
+.bt-stack-round--final .bt-stack-label {
+    color: var(--gold-light);
+    text-align: center;
 }
