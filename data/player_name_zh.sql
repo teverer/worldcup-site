@@ -267,7 +267,7 @@ UPDATE `player` SET `name_zh` = '斯库赫拉维' WHERE `name`='Tomas SKUHRAVY' 
 UPDATE `player` SET `name_zh` = '沙奇里' WHERE `name`='Xherdan SHAQIRI' AND `nationality`='瑞士' AND `birth_date`='1991-10-10' AND `name_zh` IS NULL;
 UPDATE `player` SET `name_zh` = '齐达内' WHERE `name`='Zinedine ZIDANE' AND `nationality`='法国' AND `birth_date`='1972-06-23' AND `name_zh` IS NULL;
 
--- ===== 全量补充（2026-11-25，AI 辅助；仅补空值）=====
+-- ===== 全量补充（2026-11-25；仅补空值）=====
 START TRANSACTION;
 
 UPDATE `player` SET `name_zh`='阿卜德卡德·格扎尔' WHERE `name`='Abdelkader GHEZZAL' AND `nationality`='阿尔及利亚' AND `birth_date`='1984-12-05' AND (`name_zh` IS NULL OR `name_zh`='');
