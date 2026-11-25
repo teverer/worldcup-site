@@ -132,10 +132,11 @@
 
 .pl-search {
     margin-top: var(--space-3);
-    padding: var(--space-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-surface-alt);
+    padding: 0 0 var(--space-2);
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    background: transparent;
 }
 
 .pl-search-main {
@@ -145,17 +146,16 @@
     gap: var(--space-1);
 }
 
-.pl-search-main .pl-continent {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 150px;
-    max-width: 220px;
-}
 
 .pl-input {
     flex: 1 1 24rem;
     width: auto;
     min-width: 12rem;
+    padding-left: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23A9B8B2' stroke-width='1.6'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 13px center;
+    background-size: 15px 15px;
 }
 
 .pl-search-main .btn {
@@ -175,6 +175,13 @@
     width: auto;
     min-width: 150px;
     max-width: 220px;
+    padding-right: 32px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A9B8B2' stroke-width='1.6'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 11px 11px;
 }
 
 /* 姓名显示开关:不占主操作层级,放在筛选行末尾,当前项加粗。 */
@@ -418,12 +425,6 @@
 
     .pl-search-main .btn {
         width: 100%;
-        margin-top: var(--space-1);
-    }
-
-    .pl-search-main .pl-continent {
-        width: 100%;
-        max-width: none;
         margin-top: var(--space-1);
     }
 
