@@ -221,3 +221,8 @@
     color: var(--gold-light);
     text-align: center;
 }
+
+/* 冠军路径上的区：去向标签点金，和金色半决赛卡呼应 */
+.bt-quad-to.is-path {
+    color: var(--gold-light);
+}

@@ -488,11 +488,12 @@ $renderStack = static function (array $roundsForStack, $showNav = false) use ($r
                             $r16B = $quad['r16'][1]['match'];
                             $r32A = $quad['r16'][0]['r32'];
                             $r32B = $quad['r16'][1]['r32'];
+                            $qfOnPath = $isPathEdge($half['sf'], $qf);
                             ?>
                             <section class="bt-quad" aria-label="1/4 区 <?= Html::encode((string) $podNo) ?>，胜者进入半决赛 <?= Html::encode((string) $halfNo) ?>">
                                 <header class="bt-quad-head">
                                     <span class="bt-quad-title">1/4 区 <?= Html::encode((string) $podNo) ?></span>
-                                    <span class="bt-quad-to">胜者进半决赛 <?= Html::encode((string) $halfNo) ?></span>
+                                    <span class="bt-quad-to<?= $qfOnPath ? ' is-path' : '' ?>">胜者进半决赛 <?= Html::encode((string) $halfNo) ?></span>
                                 </header>
                                 <div class="bt-quad-labels" aria-hidden="true">
                                     <span style="grid-column:1">32 强</span>
