@@ -4,8 +4,9 @@
  * Coding by 李行阳 2411353, 20261122
  * 模块:届次与比赛 —— 淘汰赛晋级图
  *
- * 桌面是两侧向中间收拢的赛程表：左半区 1/8 → 1/4 → 半决赛，
- * 右半区镜像，决赛在中央；每场胜者固定在上行，读起来不跳。
+ * 2026 的 32 强淘汰赛用「四区 + 决赛台」：顶部是半决赛 / 决赛，
+ * 下方四个 1/4 区各是一棵 4 场 1/16 → 2 场 1/8 → 1 场 1/4 的小树；
+ * 决赛在中央，四个区各产出一个半决赛席位。其它届仍是两侧向中间收拢的 16 强树。
  * 窄屏 / 数据不足八场时退回按轮次纵向排列的名单。
  * 卡片 = 国旗 + 中文队名 + 比分，整卡可点；冠军路径亮金。
  *
@@ -28,6 +29,53 @@ foreach ($rounds as $round) {
         $roundByKey[(string) $round['key']] = $round;
     }
 }
+
+/**
+ * 按父场的两个参赛队,把子场按“父场主队 / 客队”的顺序排好。
+ * 用于四区版式:决赛 → 半决赛 → 1/4 → 1/8 → 1/16 逐层收拢。
+ * 任一环节无法由胜者唯一还原时返回 null,调用方回退到时间顺序。
+ *
+ * @param array $parent
+ * @param array $candidates
+ * @return array|null
+ */
+$feedersOf = static function (array $parent, array $candidates) {
+    $byWinner = [];
+    foreach ($candidates as $match) {
+        $winnerId = null;
+        if (!empty($match['home']['winner']) && isset($match['home']['team_id'])) {
+            $winnerId = (int) $match['home']['team_id'];
+        } elseif (!empty($match['away']['winner']) && isset($match['away']['team_id'])) {
+            $winnerId = (int) $match['away']['team_id'];
+        }
+        if ($winnerId !== null) {
+            $byWinner[$winnerId] = $match;
+        }
+    }
+
+    // 卡片把胜者放在上行；子场顺序也跟着卡片的上/下行，
+    // 否则会出现「上行写着法国，连过来的却是巴拉圭那场」的错位。
+    $topSide = 'home';
+    $bottomSide = 'away';
+    if (!empty($parent['away']['winner']) && empty($parent['home']['winner'])) {
+        $topSide = 'away';
+        $bottomSide = 'home';
+    }
+
+    $feeders = [];
+    foreach ([$topSide, $bottomSide] as $side) {
+        $teamId = isset($parent[$side]['team_id']) ? (int) $parent[$side]['team_id'] : 0;
+        if ($teamId <= 0 || !isset($byWinner[$teamId])) {
+            return null;
+        }
+        $feeders[] = $byWinner[$teamId];
+    }
+
+    $firstId = isset($feeders[0]['id']) ? (int) $feeders[0]['id'] : 0;
+    $secondId = isset($feeders[1]['id']) ? (int) $feeders[1]['id'] : 0;
+
+    return $firstId > 0 && $secondId > 0 && $firstId !== $secondId ? $feeders : null;
+};
 
 /**
  * 按下一轮对阵还原本轮签表顺序:下一轮主/客队正是本轮两场胜者。
@@ -130,6 +178,70 @@ $canTwoSided = count($r16Matches) === 8
     && count($qfMatches) === 4
     && count($sfMatches) === 2
     && count($finalMatches) === 1;
+
+/**
+ * 2026 版 32 强淘汰赛:按「决赛 → 半决赛 → 1/4 → 1/8 → 1/16」逐层反推,
+ * 得到两个半区、四个 1/4 区。每区是一棵 4 场 1/16 → 2 场 1/8 → 1 场 1/4 的小树。
+ * 数据不完整时返回 null,调用方回退到旧的 16 强树 + 折叠首轮。
+ *
+ * @return array|null
+ */
+$buildQuads = static function () use (
+    $finalMatches,
+    $sfMatches,
+    $qfMatches,
+    $r16Matches,
+    $r32Matches,
+    $feedersOf
+) {
+    $sfPair = $feedersOf($finalMatches[0], $sfMatches);
+    if ($sfPair === null) {
+        return null;
+    }
+
+    $halves = [];
+    foreach ($sfPair as $sf) {
+        $qfPair = $feedersOf($sf, $qfMatches);
+        if ($qfPair === null) {
+            return null;
+        }
+
+        $quads = [];
+        foreach ($qfPair as $qf) {
+            $r16Pair = $feedersOf($qf, $r16Matches);
+            if ($r16Pair === null) {
+                return null;
+            }
+
+            $r16Nodes = [];
+            foreach ($r16Pair as $r16) {
+                $r32Pair = $feedersOf($r16, $r32Matches);
+                if ($r32Pair === null) {
+                    return null;
+                }
+                $r16Nodes[] = ['match' => $r16, 'r32' => $r32Pair];
+            }
+
+            $quads[] = ['qf' => $qf, 'r16' => $r16Nodes];
+        }
+
+        $halves[] = ['sf' => $sf, 'quads' => $quads];
+    }
+
+    return count($halves) === 2 ? $halves : null;
+};
+
+$quadHalves = null;
+if ($r32Matches !== [] && $canTwoSided) {
+    $quadHalves = $buildQuads();
+}
+$hasQuads = $quadHalves !== null;
+$finalOfQuads = $hasQuads ? $finalMatches[0] : null;
+
+// 四区版式单独一份 CSS，避免和旧树 / 别人未提交的 bracket.css 改动互相覆盖。
+if ($hasQuads) {
+    $this->registerCssFile('@web/css/bracket-quads.css');
+}
 
 /**
  * 一张比赛卡。胜者固定在上行（无胜者时保留原始主客顺序）。
@@ -283,6 +395,7 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
         'sf' => '半决赛',
         'qf' => '1/4 决赛',
         'r16' => '1/8 决赛',
+        'r32' => '32 强赛（1/16 决赛）',
     ];
     $html = '<div class="bt-stack">';
     foreach ($labels as $key => $label) {
@@ -292,7 +405,7 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
         }
         $html .= '<section class="bt-stack-round">';
         $html .= '<h3 class="bt-stack-label">' . Html::encode($label) . '</h3>';
-        $html .= '<div class="bt-stack-grid">';
+        $html .= '<div class="bt-stack-grid' . ($key === 'final' ? ' bt-stack-grid--final' : '') . '">';
         foreach ($matches as $match) {
             $html .= '<div class="bt-stack-slot">' . $renderCard($match, $key) . '</div>';
         }
@@ -310,9 +423,96 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
     </div>
 <?php else: ?>
     <section class="bracket" aria-labelledby="bracket-title">
-        <h2 class="sr-only" id="bracket-title">淘汰赛对阵</h2>
+        <h2 class="sr-only" id="bracket-title"><?= $hasQuads ? '32 强淘汰赛对阵' : '淘汰赛对阵' ?></h2>
 
-        <?php if ($canTwoSided): ?>
+        <?php if ($hasQuads): ?>
+            <?php
+            // 四区版式：孩子的 x=0，父场的 x=100；与旧树共用同一组 SVG 路径。
+            $pairLtr = 'M0,25 H50 V75 H0 M50,50 H100';
+            $goldFirst = 'M0,25 H50 V50 H100';
+            $goldSecond = 'M0,75 H50 V50 H100';
+            ?>
+            <div class="bt-quads">
+                <p class="bt-quads-intro">32 强淘汰赛：四个 1/4 区，每区四场 1/16 决赛；四个区的胜者两两进入半决赛。</p>
+
+                <div class="bt-finalfour" role="group" aria-label="半决赛与决赛">
+                    <div class="bt-finalfour-cell">
+                        <span class="bt-round-label">半决赛 1</span>
+                        <div class="bt-finalfour-card"><?= $renderCard($quadHalves[0]['sf'], 'sf') ?></div>
+                        <span class="bt-finalfour-note">1/4 区 1 / 2 的胜者</span>
+                    </div>
+                    <div class="bt-finalfour-cell bt-finalfour-cell--final">
+                        <span class="bt-round-label bt-round-label--final">决赛</span>
+                        <div class="bt-finalfour-card"><?= $renderCard($finalOfQuads, 'final') ?></div>
+                        <span class="bt-finalfour-note">两场半决赛的胜者</span>
+                    </div>
+                    <div class="bt-finalfour-cell">
+                        <span class="bt-round-label">半决赛 2</span>
+                        <div class="bt-finalfour-card"><?= $renderCard($quadHalves[1]['sf'], 'sf') ?></div>
+                        <span class="bt-finalfour-note">1/4 区 3 / 4 的胜者</span>
+                    </div>
+                </div>
+
+                <div class="bt-quads-grid">
+                    <?php foreach ($quadHalves as $halfIndex => $half): ?>
+                        <?php foreach ($half['quads'] as $quadInHalf => $quad): ?>
+                            <?php
+                            $podNo = $halfIndex * 2 + $quadInHalf + 1;
+                            $halfNo = $halfIndex + 1;
+                            $qf = $quad['qf'];
+                            $r16A = $quad['r16'][0]['match'];
+                            $r16B = $quad['r16'][1]['match'];
+                            $r32A = $quad['r16'][0]['r32'];
+                            $r32B = $quad['r16'][1]['r32'];
+                            ?>
+                            <section class="bt-quad" aria-label="1/4 区 <?= Html::encode((string) $podNo) ?>，胜者进入半决赛 <?= Html::encode((string) $halfNo) ?>">
+                                <header class="bt-quad-head">
+                                    <span class="bt-quad-title">1/4 区 <?= Html::encode((string) $podNo) ?></span>
+                                    <span class="bt-quad-to">胜者进半决赛 <?= Html::encode((string) $halfNo) ?></span>
+                                </header>
+                                <div class="bt-quad-labels" aria-hidden="true">
+                                    <span style="grid-column:1">32 强</span>
+                                    <span style="grid-column:3">1/8</span>
+                                    <span style="grid-column:5">1/4</span>
+                                </div>
+                                <div class="bt-quad-tree">
+                                    <?php foreach ([[$r16A, $r32A], [$r16B, $r32B]] as $branchIndex => $branch): ?>
+                                        <?php
+                                        [$r16, $r32] = $branch;
+                                        $row = 1 + $branchIndex * 2;
+                                        ?>
+                                        <?= $renderNode(1, $row, 1, $r32[0], 'r32') ?>
+                                        <?= $renderNode(1, $row + 1, 1, $r32[1], 'r32') ?>
+                                        <?= $renderLink(2, $row, 2, $pairLtr,
+                                            $isPathEdge($r16, $r32[0]) ? $goldFirst
+                                                : ($isPathEdge($r16, $r32[1]) ? $goldSecond : null)) ?>
+                                        <?= $renderNode(3, $row, 2, $r16, 'r16') ?>
+                                    <?php endforeach ?>
+                                    <?= $renderLink(4, 1, 4, $pairLtr,
+                                        $isPathEdge($qf, $r16A) ? $goldFirst
+                                            : ($isPathEdge($qf, $r16B) ? $goldSecond : null)) ?>
+                                    <?= $renderNode(5, 1, 4, $qf, 'qf') ?>
+                                </div>
+                            </section>
+                        <?php endforeach ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+            <div class="bt-mobile">
+                <?= $renderStack([
+                    'final' => [$finalOfQuads],
+                    'sf' => [$quadHalves[0]['sf'], $quadHalves[1]['sf']],
+                    'qf' => [
+                        $quadHalves[0]['quads'][0]['qf'],
+                        $quadHalves[0]['quads'][1]['qf'],
+                        $quadHalves[1]['quads'][0]['qf'],
+                        $quadHalves[1]['quads'][1]['qf'],
+                    ],
+                    'r16' => $r16Matches,
+                    'r32' => $r32Matches,
+                ]) ?>
+            </div>
+        <?php elseif ($canTwoSided): ?>
             <?php
             $r16L = array_slice($r16Matches, 0, 4);
             $r16R = array_slice($r16Matches, 4, 4);
@@ -428,7 +628,7 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
             ]) ?>
         <?php endif ?>
 
-        <?php if ($r32Matches !== []): ?>
+        <?php if ($r32Matches !== [] && !$hasQuads): ?>
             <details class="bt-extra">
                 <summary class="bt-extra__summary">
                     首轮 1/16 · <?= Html::encode((string) count($r32Matches)) ?> 场
