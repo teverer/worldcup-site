@@ -9,7 +9,6 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\TeamFlag;
-use yii\db\Expression;
 use yii\db\Query;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -28,123 +27,6 @@ class ChartController extends Controller
         return parent::beforeAction($action);
     }
 
-    /**
-     * 积分榜:只统计 stage='小组赛' 且 status=2 的比赛。
-     * 胜场积分取自 tournament.win_points(1986/1990 为 2 分,其余为 3 分)。
-     *
-     * @param int|string|null $tournamentId 届次 id
-     * @param string|null $group 可选小组名,如 A
-     * @return array
-     */
-    public function actionStandings($tournamentId = null, $group = null)
-    {
-        list($tournamentId, $winPoints) = $this->resolveTournament($tournamentId);
-        $group = $this->normalizeGroup($group);
-
-        // 主队视角与客队视角合并成一张“每队每场”的临时结果集。
-        $homeMatches = (new Query())
-            ->select([
-                'team_id' => 'g.home_team_id',
-                'goals_for' => 'g.home_score',
-                'goals_against' => 'g.away_score',
-            ])
-            ->from(['g' => '{{%game}}'])
-            ->where([
-                'g.tournament_id' => $tournamentId,
-                'g.stage' => '小组赛',
-                'g.status' => 2,
-            ]);
-
-        $awayMatches = (new Query())
-            ->select([
-                'team_id' => 'g.away_team_id',
-                'goals_for' => 'g.away_score',
-                'goals_against' => 'g.home_score',
-            ])
-            ->from(['g' => '{{%game}}'])
-            ->where([
-                'g.tournament_id' => $tournamentId,
-                'g.stage' => '小组赛',
-                'g.status' => 2,
-            ]);
-
-        $matches = $homeMatches->union($awayMatches, true);
-
-        $query = (new Query())
-            ->select([
-                'group_name' => 'tt.group_name',
-                'team_id' => 'tt.team_id',
-                'team_name' => 't.name',
-                'team_code' => 't.code',
-                'played' => 'COUNT(m.team_id)',
-                'won' => 'COALESCE(SUM(CASE WHEN m.goals_for > m.goals_against THEN 1 ELSE 0 END), 0)',
-                'drawn' => 'COALESCE(SUM(CASE WHEN m.goals_for = m.goals_against THEN 1 ELSE 0 END), 0)',
-                'lost' => 'COALESCE(SUM(CASE WHEN m.goals_for < m.goals_against THEN 1 ELSE 0 END), 0)',
-                'goals_for' => 'COALESCE(SUM(m.goals_for), 0)',
-                'goals_against' => 'COALESCE(SUM(m.goals_against), 0)',
-            ])
-            ->from(['tt' => '{{%tournament_team}}'])
-            ->innerJoin(['t' => '{{%team}}'], 't.id = tt.team_id')
-            ->innerJoin(['m' => $matches], 'm.team_id = tt.team_id')
-            ->where(['tt.tournament_id' => $tournamentId]);
-
-        if ($group !== null) {
-            $query->andWhere(['tt.group_name' => $group]);
-        }
-
-        $rows = $query
-            ->groupBy(['tt.group_name', 'tt.team_id', 't.name', 't.code'])
-            ->orderBy(['tt.group_name' => SORT_ASC, 'tt.team_id' => SORT_ASC])
-            ->all();
-
-        $groups = [];
-        foreach ($rows as $row) {
-            $won = (int) $row['won'];
-            $drawn = (int) $row['drawn'];
-            $goalsFor = (int) $row['goals_for'];
-            $goalsAgainst = (int) $row['goals_against'];
-            $groupName = ($row['group_name'] === null || $row['group_name'] === '')
-                ? '未分组'
-                : (string) $row['group_name'];
-
-            if (!isset($groups[$groupName])) {
-                $groups[$groupName] = ['group' => $groupName, 'rows' => []];
-            }
-
-            $groups[$groupName]['rows'][] = [
-                'teamId' => (int) $row['team_id'],
-                'teamName' => (string) $row['team_name'],
-                'teamCode' => ($row['team_code'] === null) ? '' : (string) $row['team_code'],
-                'teamFlag' => TeamFlag::url($row['team_code']),
-                'played' => (int) $row['played'],
-                'won' => $won,
-                'drawn' => $drawn,
-                'lost' => (int) $row['lost'],
-                'goalsFor' => $goalsFor,
-                'goalsAgainst' => $goalsAgainst,
-                'goalDifference' => $goalsFor - $goalsAgainst,
-                'points' => $won * $winPoints + $drawn,
-            ];
-        }
-
-        foreach ($groups as &$groupData) {
-            usort($groupData['rows'], [$this, 'compareStandingRows']);
-            foreach ($groupData['rows'] as $index => &$standingRow) {
-                $standingRow['rank'] = $index + 1;
-            }
-            unset($standingRow);
-        }
-        unset($groupData);
-
-        ksort($groups, SORT_STRING);
-
-        return [
-            'tournamentId' => $tournamentId,
-            'winPoints' => $winPoints,
-            'group' => $group,
-            'groups' => array_values($groups),
-        ];
-    }
 
     /**
      * 射手榜:排除点球大战进球与乌龙球,按球员分组取前 10。
@@ -253,87 +135,6 @@ class ChartController extends Controller
         ];
     }
 
-    /**
-     * 进球时间分布:按 15 分钟分桶,排除点球大战;45+/90+ 含补时,加时单列。
-     * 分母是计入的进球数(不是 goal 表行数),与各队分布口径一致。
-     *
-     * @param int|string|null $tournamentId 届次 id
-     * @return array
-     */
-    public function actionGoalTiming($tournamentId = null)
-    {
-        list($tournamentId) = $this->resolveTournament($tournamentId);
-
-        $bucketCase = new Expression(
-            "CASE"
-            . " WHEN g.minute IS NULL THEN 'unknown'"
-            . " WHEN g.minute <= 15 THEN '1-15'"
-            . " WHEN g.minute <= 30 THEN '16-30'"
-            . " WHEN g.minute <= 45 THEN '31-45'"
-            . " WHEN g.minute <= 60 THEN '46-60'"
-            . " WHEN g.minute <= 75 THEN '61-75'"
-            . " WHEN g.minute <= 90 THEN '76-90'"
-            . " ELSE '91-120' END"
-        );
-
-        $rows = (new Query())
-            ->select([
-                'bucket' => $bucketCase,
-                'goals' => 'COUNT(*)',
-            ])
-            ->from(['g' => '{{%goal}}'])
-            ->innerJoin(['gm' => '{{%game}}'], 'gm.id = g.game_id')
-            ->where([
-                'gm.tournament_id' => $tournamentId,
-                'gm.status' => 2,
-                'g.is_shootout' => 0,
-            ])
-            ->groupBy('bucket')
-            ->all();
-
-        $counts = [];
-        foreach ($rows as $row) {
-            $counts[(string) $row['bucket']] = (int) $row['goals'];
-        }
-
-        $defs = [
-            ['key' => '1-15', 'label' => '1–15'],
-            ['key' => '16-30', 'label' => '16–30'],
-            ['key' => '31-45', 'label' => '31–45+'],
-            ['key' => '46-60', 'label' => '46–60'],
-            ['key' => '61-75', 'label' => '61–75'],
-            ['key' => '76-90', 'label' => '76–90+'],
-            ['key' => '91-120', 'label' => '加时 91–120'],
-        ];
-
-        $total = 0;
-        foreach ($defs as $def) {
-            $total += isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
-        }
-
-        $buckets = [];
-        $secondHalf = 0;
-        foreach ($defs as $def) {
-            $count = isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
-            if (in_array($def['key'], ['46-60', '61-75', '76-90'], true)) {
-                $secondHalf += $count;
-            }
-            $buckets[] = [
-                'key' => $def['key'],
-                'label' => $def['label'],
-                'goals' => $count,
-                'percent' => $total > 0 ? round($count / $total * 1000) / 10 : 0,
-            ];
-        }
-
-        return [
-            'tournamentId' => $tournamentId,
-            'totalGoals' => $total,
-            'secondHalfGoals' => $secondHalf,
-            'secondHalfPercent' => $total > 0 ? round($secondHalf / $total * 1000) / 10 : 0,
-            'buckets' => $buckets,
-        ];
-    }
 
     /**
      * 校验 tournamentId 并返回 [id, win_points]。
@@ -371,54 +172,6 @@ class ChartController extends Controller
         return [(int) $tournament['id'], (int) $tournament['win_points']];
     }
 
-    /**
-     * 小组参数只接受短字符串;空值表示不筛选。
-     *
-     * @param mixed $group
-     * @return string|null
-     * @throws BadRequestHttpException
-     */
-    private function normalizeGroup($group)
-    {
-        if ($group === null || $group === '') {
-            return null;
-        }
 
-        if (!is_scalar($group)) {
-            throw new BadRequestHttpException('参数 group 必须是字符串。');
-        }
 
-        $group = trim((string) $group);
-        if ($group === '') {
-            return null;
-        }
-
-        if (mb_strlen($group) > 10) {
-            throw new BadRequestHttpException('参数 group 过长。');
-        }
-
-        return $group;
-    }
-
-    /**
-     * 组内排序:积分 > 净胜球 > 进球数 > 队名。
-     *
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
-    private function compareStandingRows(array $a, array $b)
-    {
-        if ($a['points'] !== $b['points']) {
-            return $b['points'] <=> $a['points'];
-        }
-        if ($a['goalDifference'] !== $b['goalDifference']) {
-            return $b['goalDifference'] <=> $a['goalDifference'];
-        }
-        if ($a['goalsFor'] !== $b['goalsFor']) {
-            return $b['goalsFor'] <=> $a['goalsFor'];
-        }
-
-        return strcmp($a['teamName'], $b['teamName']);
-    }
 }

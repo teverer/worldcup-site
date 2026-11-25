@@ -9,7 +9,6 @@ namespace frontend\models;
 
 use common\components\CommentTarget;
 use common\models\Comment;
-use common\models\News;
 use yii\base\Model;
 
 class CommentForm extends Model
@@ -61,14 +60,8 @@ class CommentForm extends Model
             return;
         }
 
-        $exists = CommentTarget::exists($this->targetType, $this->targetId);
-        if ($exists && $this->targetType === CommentTarget::NEWS) {
-            $exists = News::findPublished()
-                ->andWhere(['id' => (int) $this->targetId])
-                ->exists();
-        }
-        if (!$exists) {
-            $this->addError($attribute, '留言目标不存在或尚未发布。');
+        if (!CommentTarget::exists($this->targetType, $this->targetId)) {
+            $this->addError($attribute, '留言目标不存在。');
         }
     }
 

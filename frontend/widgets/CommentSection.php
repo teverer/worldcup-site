@@ -64,7 +64,6 @@ class CommentSection extends Widget
             CommentTarget::GAME => '这一场，你记得哪一刻？',
             CommentTarget::TEAM => '你和这支球队，从哪一届开始？',
             CommentTarget::PLAYER => '关于他，你记得哪一个球？',
-            CommentTarget::NEWS => '读完这一篇，你想起了什么？',
             CommentTarget::SITE => '欢迎留言分享',
         ];
     }
@@ -92,7 +91,6 @@ class CommentSection extends Widget
             CommentTarget::GAME => '写下你记得的那一刻……',
             CommentTarget::TEAM => '写下你和这支球队的记忆……',
             CommentTarget::PLAYER => '写下你记得的那个球……',
-            CommentTarget::NEWS => '写下读完这一篇的想法……',
             CommentTarget::SITE => 'Ctrl + Enter 记下留言',
         ];
         return isset($placeholders[$type]) ? $placeholders[$type] : '写下你想留下的那句话……';
@@ -126,11 +124,6 @@ class CommentSection extends Widget
                 '你第一次记住他，是哪一届？',
                 '你记得他的哪一个球？',
                 '关于他，你还有什么想说？',
-            ],
-            CommentTarget::NEWS => [
-                '读完这篇，你想起了什么？',
-                '你同意作者的观点吗？',
-                '你还有什么想补充的？',
             ],
             CommentTarget::SITE => [
                 '那时我感到……',

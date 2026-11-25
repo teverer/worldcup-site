@@ -20,7 +20,9 @@ use yii\helpers\StringHelper;
 $this->title = '留言管理';
 $this->params['breadcrumbs'][] = $this->title;
 
-$targetOptions = CommentTarget::labels();
+$targetLabels = CommentTarget::labels();
+// 资讯留言已下线，筛选只列当前支持的留言目标；历史资讯留言仍按 label() 显示。
+$targetOptions = array_intersect_key($targetLabels, array_flip(CommentTarget::types()));
 $statusOptions = CommentSearch::statusOptions();
 $activeFilters = [];
 $keyword = trim((string) $searchModel->q);
@@ -28,8 +30,8 @@ if ($keyword !== '') {
     $activeFilters[] = '关键词：' . $keyword;
 }
 $targetType = (string) $searchModel->targetType;
-if ($targetType !== '' && isset($targetOptions[$targetType])) {
-    $activeFilters[] = '目标：' . $targetOptions[$targetType];
+if ($targetType !== '' && isset($targetLabels[$targetType])) {
+    $activeFilters[] = '目标：' . $targetLabels[$targetType];
 }
 $status = (string) $searchModel->status;
 if ($status !== '' && isset($statusOptions[$status])) {

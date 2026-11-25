@@ -30,11 +30,12 @@ class CommentTarget
      */
     public static function tables()
     {
+        // 资讯详情已统一不再提供留言；NEWS 只作为历史数据标签保留，
+        // 不再参与新留言的类型校验（见 labels() 与 News::beforeDelete()）。
         return [
             self::TEAM => 'team',
             self::PLAYER => 'player',
             self::GAME => 'game',
-            self::NEWS => 'news',
             self::TOURNAMENT => 'tournament',
         ];
     }
