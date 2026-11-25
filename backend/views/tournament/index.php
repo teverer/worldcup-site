@@ -30,7 +30,6 @@ if ($year !== '') {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">1986—2026 共十一届；年份决定记分牌墙的顺序与统计口径。</p>
     </div>
     <?= Html::a('新增届次', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
 </div>
@@ -78,7 +77,7 @@ if ($year !== '') {
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => '共 {totalCount} 届赛事,当前显示 {begin}–{end} 条',
+        'summary' => '共 {totalCount} 届赛事',
         'emptyText' => '<div class="admin-empty"><strong>没有符合条件的届次。</strong><p>换一个年份，或</p>' . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm']) . '</div>',
         'columns' => [
             'year',
@@ -86,22 +85,17 @@ if ($year !== '') {
                 'attribute' => 'name',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return Html::a(Html::encode($model->name), ['view', 'id' => $model->id]);
+                    $full = (string) $model->name;
+                    $short = preg_replace('/^\d{4}年/u', '', $full);
+                    return Html::a(
+                        Html::encode($short !== '' ? $short : $full),
+                        ['view', 'id' => $model->id],
+                        ['title' => $full]
+                    );
                 },
             ],
             'host_country',
             'team_count',
-            [
-                'attribute' => 'format',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    $format = (string) $model->format;
-                    return Html::tag('span', Html::encode(\yii\helpers\StringHelper::truncate($format, 18)), [
-                        'title' => $format,
-                        'class' => 'dash-ellipsis',
-                    ]);
-                },
-            ],
             [
                 'label' => '赛期',
                 'format' => 'raw',

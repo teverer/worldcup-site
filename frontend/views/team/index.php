@@ -29,7 +29,6 @@ foreach ($groups as $teams) {
     <header class="pl-head">
         <div class="pl-head-main">
             <h1>球队</h1>
-            <p>按大洲浏览；知道名字或代码，就在下方直接搜。</p>
         </div>
         <div class="idx-total" aria-label="共 <?= (int) $total ?> 支国家队">
             <b><?= (int) $total ?></b><span>支国家队</span>
@@ -37,12 +36,16 @@ foreach ($groups as $teams) {
     </header>
 
     <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-    <form class="pl-search" method="get" action="<?= Html::encode(Url::to(['/team/index'])) ?>" role="search">
+    <?php // GET 表单会丢掉 action 里的 ?r=，必须让 beginForm 生成 hidden r；否则提交后落到首页。 ?>
+    <?= Html::beginForm(['index'], 'get', ['class' => 'pl-search', 'role' => 'search']) ?>
         <div class="pl-search-main">
             <label class="sr-only" for="team-q">球队名称或 FIFA 代码</label>
             <input class="form-control pl-input" type="search" id="team-q" name="q"
                    value="<?= Html::encode((string) $searchModel->q) ?>"
                    placeholder="输入球队名或代码，如 巴西、BRA" maxlength="100">
+            <button class="btn btn-primary" type="submit">查找球队</button>
+        </div>
+        <div class="pl-search-filters">
             <label class="sr-only" for="team-continent">所属大洲</label>
             <select class="form-control pl-continent" id="team-continent" name="continent">
                 <option value="">全部大洲</option>
@@ -52,12 +55,11 @@ foreach ($groups as $teams) {
                     </option>
                 <?php endforeach ?>
             </select>
-            <button class="btn btn-primary" type="submit">查找球队</button>
             <?php if ($hasFilter): ?>
                 <?= Html::a('清除条件', ['/team/index'], ['class' => 'pl-clear']) ?>
             <?php endif ?>
         </div>
-    </form>
+    <?= Html::endForm() ?>
 
     <?php if ($hasFilter): ?>
         <p class="ti-summary">找到 <?= (int) $shown ?> 支球队。</p>
@@ -74,7 +76,7 @@ foreach ($groups as $teams) {
 
     <?php if (!$groups): ?>
         <div class="empty-state pl-empty">
-            <h3>没有找到球队</h3>
+            <h3 role="heading" aria-level="2">没有找到球队</h3>
             <p>换一个名称或代码，或者清除大洲条件。</p>
             <p><?= Html::a('清除全部条件', ['/team/index']) ?> · <?= Html::a('按球员找', ['/player/index']) ?></p>
         </div>
@@ -93,8 +95,8 @@ foreach ($groups as $teams) {
                                 <span class="ti-team-id">
                                     <?= TeamFlag::html($team->code, $team->name) ?>
                                     <span class="ti-team-name"><?= Html::encode($team->name) ?></span>
+                                    <span class="ti-team-code"><?= Html::encode($team->code ?: '—') ?></span>
                                 </span>
-                                <span class="ti-team-code"><?= Html::encode($team->code ?: '—') ?></span>
                             </a>
                         </li>
                     <?php endforeach ?>

@@ -714,3 +714,82 @@ body.site-game-view .game-chart-note {
     color: var(--steel);
     font-size: 14.5px;
 }
+
+/* 决赛列表的第 12 格：把“全部比赛”做成一张动作卡，桌面两列收齐，不留孤行。 */
+.game-all-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 22px 12px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+.game-all-card:hover,
+.game-all-card:focus {
+    background: var(--paper-2);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.game-all-kicker {
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.game-all-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.game-all-note {
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+@media (min-width: 1200px) {
+    body:not(.site-site-index) .game-all-card {
+        min-height: 214px;
+        padding: 20px 22px;
+        border: 1px dashed var(--line);
+        border-radius: 2px;
+        background-color: rgba(9, 18, 15, .55);
+        color: var(--ink);
+    }
+
+    body:not(.site-site-index) .game-all-card:hover,
+    body:not(.site-site-index) .game-all-card:focus {
+        border-color: rgba(127, 221, 184, .55);
+        background-color: rgba(12, 26, 21, .92);
+        color: var(--ink);
+    }
+
+    body:not(.site-site-index) .game-all-kicker {
+        color: var(--muted);
+        font-size: 15px;
+    }
+
+    body:not(.site-site-index) .game-all-title {
+        color: var(--ink);
+        font-size: 28px;
+        line-height: 1.25;
+    }
+
+    body:not(.site-site-index) .game-all-note {
+        color: var(--muted);
+    }
+}
+
+/* 已结束的比赛不再占一行「状态」；只剩开球 / 场地时两列均分，
+   有加时说明才回到三列。 */
+@media (min-width: 768px) {
+    .game-facts--two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

@@ -59,9 +59,9 @@ $renderWorks = static function (array $items) {
 <div class="about-page">
     <header class="about-hero">
         <div class="about-hero-main">
-            <p class="about-context">课程设计 · 数据库与 Web</p>
+            <p class="about-context"></p>
             <h1>关于本站</h1>
-            <p class="about-lead"><?= Html::encode($team->slogan ?: '用数据看懂世界杯') ?></p>
+            <p class="about-lead"><?= Html::encode($team->slogan ?: '本站为26nku互联网与数据库开发课程的小组作业,收录了近40年的一些世界杯数据来做展示') ?></p>
             <?php if ($hasWorks): ?>
                 <div class="about-actions">
                     <a class="btn btn-primary" href="#docs">下载课程文档</a>
@@ -83,7 +83,7 @@ $renderWorks = static function (array $items) {
     <section class="about-section" id="scope" aria-labelledby="about-scope-title">
         <div class="about-section-head">
             <h2 id="about-scope-title">收录范围</h2>
-            <p>1986—2026 年十一届世界杯，全部来自公开数据；缺失处标「待补」，不补造。</p>
+            <p>1986—2026 四十年世界杯，全部来自公开数据。</p>
         </div>
 
         <dl class="about-facts">
@@ -94,7 +94,7 @@ $renderWorks = static function (array $items) {
         </dl>
 
         <ul class="about-notes">
-            <li><strong>积分榜</strong><span>只统计小组赛且已结束的比赛；胜场积分按届次读取（1986 / 1990 为 2 分，之后为 3 分）。</span></li>
+            <li><strong>积分榜</strong><span>只统计小组赛且已结束的比赛；胜场积分按届次读取,1986 / 1990 为 2 分，之后为 3 分.</span></li>
             <li><strong>射手榜</strong><span>排除乌龙球与点球大战进球。</span></li>
             <li><strong>进球归属</strong><span>按受益球队统计，乌龙球算给对方。</span></li>
         </ul>
@@ -158,7 +158,7 @@ $renderWorks = static function (array $items) {
     <section class="about-section" id="docs" aria-labelledby="about-docs-title">
         <div class="about-section-head">
             <h2 id="about-docs-title">课程文档与作业</h2>
-            <p>课程要求的六份文档，以及团队与个人作业；文件经控制器校验后下载。</p>
+            <p>课程要求的六份文档，以及团队与个人作业。</p>
         </div>
 
         <?php if (!$hasWorks): ?>

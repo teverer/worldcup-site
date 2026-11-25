@@ -10,76 +10,72 @@
  * @var array $teams
  */
 
+use common\components\AdminActionColumn;
 use common\models\Tournament;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
 $this->title = '参赛名单管理';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p><?= Html::a('新增名单记录', ['create'], ['class' => 'btn btn-success']) ?></p>
+<div class="admin-page-head">
+    <div><h1><?= Html::encode($this->title) ?></h1></div>
+    <?= Html::a('新增名单记录', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
+</div>
 
 <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline', 'style' => 'margin:20px 0']) ?>
-    <div class="form-group">
-        <?= Html::label('关键词', 'squad-q', ['class' => 'sr-only']) ?>
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'name' => 'q',
-            'id' => 'squad-q',
-            'class' => 'form-control',
-            'placeholder' => '球员姓名 / 球队名称',
-            'maxlength' => 100,
-        ]) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::activeTextInput($searchModel, 'q', [
+                'name' => 'q',
+                'id' => 'squad-q',
+                'class' => 'form-control',
+                'placeholder' => '球员姓名 / 球队名称',
+                'maxlength' => 100,
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--tournament">
+            <span class="admin-filter-label">届次</span>
+            <?= Html::activeDropDownList($searchModel, 'tournamentId', Tournament::options(), [
+                'name' => 'tournamentId',
+                'class' => 'form-control',
+                'prompt' => '全部届次',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">球队</span>
+            <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
+                'name' => 'teamId',
+                'class' => 'form-control',
+                'prompt' => '全部球队',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'tournamentId', Tournament::options(), [
-            'name' => 'tournamentId',
-            'class' => 'form-control',
-            'prompt' => '全部届次',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
-            'name' => 'teamId',
-            'class' => 'form-control',
-            'prompt' => '全部球队',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeTextInput($searchModel, 'position', [
-            'name' => 'position',
-            'class' => 'form-control',
-            'placeholder' => '位置',
-            'style' => 'width:100px',
-            'maxlength' => 20,
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeTextInput($searchModel, 'shirtNumber', [
-            'name' => 'shirtNumber',
-            'class' => 'form-control',
-            'placeholder' => '球衣号',
-            'style' => 'width:90px',
-        ]) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => '共 {totalCount} 条名单记录,当前显示 {begin}–{end} 条',
+        'summary' => '共 {totalCount} 条名单记录',
         'emptyText' => '暂无符合条件的名单记录。',
         'columns' => [
-            'id',
             [
                 'attribute' => 'tournament_year',
                 'label' => '届次',
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->tournament === null ? '' : $model->tournament->name;
+                    if ($model->tournament === null) {
+                        return '';
+                    }
+                    return Html::tag('span', Html::encode((string) $model->tournament->year), [
+                        'title' => $model->tournament->name,
+                    ]);
                 },
             ],
             [
@@ -102,31 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         : Html::a(Html::encode($model->player->name), ['/player/view', 'id' => $model->player_id]);
                 },
             ],
-            'shirt_number',
-            'position',
-            'create_time:datetime',
-            [
-                'class' => ActionColumn::class,
-                'header' => '操作',
-                'template' => '{view} {update} {delete}',
-                'buttons' => [
-                    'view' => function ($url) {
-                        return Html::a('查看', $url, ['class' => 'btn btn-xs btn-default']);
-                    },
-                    'update' => function ($url) {
-                        return Html::a('编辑', $url, ['class' => 'btn btn-xs btn-primary']);
-                    },
-                    'delete' => function ($url) {
-                        return Html::a('删除', $url, [
-                            'class' => 'btn btn-xs btn-danger',
-                            'data' => [
-                                'method' => 'post',
-                                'confirm' => '确定删除这条名单记录吗?',
-                            ],
-                        ]);
-                    },
-                ],
-            ],
+            ['class' => AdminActionColumn::class],
         ],
     ]) ?>
 </div>

@@ -12,8 +12,8 @@
  * @var common\models\Game $model
  * @var common\models\Goal[] $goals
  * @var common\models\Player[] $players
- * @var array $statusLabels
  */
+use common\components\PlayerName;
 use common\components\TeamFlag;
 use common\models\Game;
 use yii\helpers\Html;
@@ -24,7 +24,6 @@ $awayName = $model->awayTeam !== null ? $model->awayTeam->name : '待定';
 $tournamentName = $model->tournament !== null ? $model->tournament->name : '待定';
 $tournamentId = $model->tournament_id;
 $statusValue = (int) $model->status;
-$statusText = isset($statusLabels[$statusValue]) ? $statusLabels[$statusValue] : '未知';
 $matchTime = $model->match_time !== null && $model->match_time !== ''
     ? substr((string) $model->match_time, 0, 16) : null;
 $venue = $model->venue !== null && $model->venue !== '' ? $model->venue : null;
@@ -106,11 +105,16 @@ $renderGoalRow = static function ($goal, array $players, $model, $homeName, $awa
         $minuteLabel = '—';
     }
 
+    $playerHtml = $player !== null
+        ? PlayerName::span($player->name, $player->name_zh, $player->nationality, [
+            'class' => 'goal-player',
+            'title' => $player->name,
+        ])
+        : Html::tag('span', '未知球员', ['class' => 'goal-player']);
+
     $html = '<li class="goal-item">';
     $html .= '<span class="goal-minute">' . Html::encode($minuteLabel) . '</span>';
-    $html .= '<span class="goal-player"'
-        . ($player !== null ? ' title="' . Html::encode($player->name) . '"' : '') . '>'
-        . Html::encode($player !== null ? $player->displayName() : '未知球员') . '</span>';
+    $html .= $playerHtml;
     $html .= '<span class="goal-team">' . Html::encode($goalTeamName) . '</span>';
     if (!$isShootout && (int) $goal->is_penalty === 1) {
         $html .= '<span class="label label-info">点球</span>';
@@ -119,8 +123,10 @@ $renderGoalRow = static function ($goal, array $players, $model, $homeName, $awa
         $html .= '<span class="label label-warning">乌龙球</span>';
     }
     if ($assist !== null) {
-        $html .= '<span class="goal-assist" title="' . Html::encode($assist->name) . '">助攻：'
-            . Html::encode($assist->displayName()) . '</span>';
+        $html .= '<span class="goal-assist">助攻：'
+            . PlayerName::span($assist->name, $assist->name_zh, $assist->nationality, [
+                'title' => $assist->name,
+            ]) . '</span>';
     }
 
     return $html . '</li>';
@@ -134,6 +140,10 @@ if ($statusValue === Game::STATUS_PENDING) {
 } else {
     $noGoalMessage = '这场比赛的进球会在数据补齐后显示；比分与赛果以上方比分为准。';
 }
+
+// 本站目前只展示已结束的世界杯比赛，状态行（未赛 / 进行中 / 已结束）不再显示；
+// 只有加时这种比赛事实需要说明时才留一行。
+$showStatusFact = $wentToExtraTime;
 ?>
 <article class="catalog-page game-detail">
     <header class="game-hero">
@@ -178,7 +188,7 @@ if ($statusValue === Game::STATUS_PENDING) {
             </span>
         </h1>
 
-        <dl class="game-facts">
+        <dl class="game-facts<?= $showStatusFact ? '' : ' game-facts--two' ?>">
             <div>
                 <dt>开球</dt>
                 <dd><?= $matchTime !== null ? Html::encode($matchTime) : '时间待补' ?></dd>
@@ -187,15 +197,12 @@ if ($statusValue === Game::STATUS_PENDING) {
                 <dt>场地</dt>
                 <dd><?= $venue !== null ? Html::encode($venue) : '场地待补' ?></dd>
             </div>
-            <div>
-                <dt>状态</dt>
-                <dd>
-                    <?= Html::encode($statusText) ?>
-                    <?php if ($wentToExtraTime): ?>
-                        <span aria-hidden="true">·</span> 加时
-                    <?php endif ?>
-                </dd>
-            </div>
+            <?php if ($showStatusFact): ?>
+                <div>
+                    <dt>赛况</dt>
+                    <dd>加时</dd>
+                </div>
+            <?php endif ?>
         </dl>
     </header>
 
@@ -208,7 +215,7 @@ if ($statusValue === Game::STATUS_PENDING) {
     ]) ?>
 
     <section class="game-section" aria-labelledby="game-goals-title">
-        <div class="game-section-head">
+        <div class="game-section-head game-section-head--names">
             <h2 id="game-goals-title"><?= $regularGoalCount > 0 ? '进球时间线' : ($shootoutGoalCount > 0 ? '点球大战' : '进球时间线') ?></h2>
             <?php if ($regularGoalCount > 0 || $shootoutGoalCount > 0): ?>
                 <p class="ui-note">
@@ -221,6 +228,7 @@ if ($statusValue === Game::STATUS_PENDING) {
                         <?= $shootoutGoalCount ?> 罚，仅记录命中
                     <?php endif ?>
                 </p>
+                <?= $this->render('//partials/_name_lang') ?>
             <?php endif ?>
         </div>
 

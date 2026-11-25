@@ -177,7 +177,8 @@
 
 /* 团队：一行一人，资料缺失时自动收起，不留空卡片。 */
 .about-intro {
-    max-width: 60ch;
+    /* 与上方 hero、下方成员列表同宽，不再单独收成 60/80ch 的行宽。 */
+    max-width: none;
     margin: 0 0 var(--space-3);
     line-height: 1.9;
 }

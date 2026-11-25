@@ -31,7 +31,6 @@ if ($status !== '' && isset($statusOptions[$status])) {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">按标题、作者或发布状态找一篇资讯；已发布与草稿分开看。</p>
     </div>
     <?= Html::a('新增资讯', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
 </div>
@@ -79,7 +78,6 @@ if ($status !== '' && isset($statusOptions[$status])) {
         'summary' => '共 {totalCount} 条资讯',
         'emptyText' => '<div class="admin-empty"><strong>没有符合条件的资讯。</strong><p>换一个关键词或状态，或</p>' . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm']) . '</div>',
         'columns' => [
-            'id',
             [
                 'attribute' => 'title',
                 'format' => 'raw',
@@ -99,7 +97,6 @@ if ($status !== '' && isset($statusOptions[$status])) {
                 },
             ],
             'publish_time:datetime',
-            'create_time:datetime',
             ['class' => AdminActionColumn::class],
         ],
     ]) ?>

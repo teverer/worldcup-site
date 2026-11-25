@@ -20,6 +20,23 @@
     var ticking = false;
     var HIDE_AFTER = 120;
     var DELTA = 6;
+    /* 页内锚点跳转也会触发 scroll:跳完先别收页头,否则页头让开后
+       届次 tab 还没到吸顶位置,两者之间会露出一段页面。 */
+    var suppressHide = false;
+    var suppressTimer = null;
+
+    function holdHeader(ms) {
+        suppressHide = true;
+        window.clearTimeout(suppressTimer);
+        suppressTimer = window.setTimeout(function () {
+            suppressHide = false;
+        }, ms);
+    }
+
+    function releaseHeader() {
+        suppressHide = false;
+        window.clearTimeout(suppressTimer);
+    }
 
     function setHeightVar() {
         root.style.setProperty('--site-header-h', (hidden ? 0 : headerHeight) + 'px');
@@ -43,7 +60,7 @@
     }
 
     function hide() {
-        if (hidden) {
+        if (hidden || suppressHide) {
             return;
         }
         hidden = true;
@@ -54,6 +71,58 @@
     function menuIsOpen() {
         return !!document.querySelector('.site-nav .navbar-collapse.in');
     }
+
+    var menuToggle = document.querySelector('.site-nav .navbar-toggle');
+    var menuToggleSr = menuToggle ? menuToggle.querySelector('.sr-only') : null;
+
+    function setMenuLabel(open) {
+        var label = open ? '收起导航' : '展开导航';
+        if (menuToggleSr) {
+            menuToggleSr.textContent = label;
+        }
+        if (menuToggle) {
+            menuToggle.setAttribute('aria-label', label);
+        }
+    }
+
+    function closeMenu() {
+        var nav = document.querySelector('.site-nav .navbar-collapse.in');
+        if (!nav) {
+            return;
+        }
+        if (window.jQuery && window.jQuery.fn.collapse) {
+            window.jQuery(nav).collapse('hide');
+        } else {
+            nav.classList.remove('in');
+        }
+        setMenuLabel(false);
+        if (menuToggle) {
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.focus();
+        }
+    }
+
+    // Bootstrap 3 用 jQuery 触发 collapse 事件，原生 document 监听不到；
+    // 点击后按实际开合状态更新按钮可访问名（展开导航 / 收起导航）。
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function () {
+            window.setTimeout(function () {
+                setMenuLabel(menuIsOpen());
+            }, 380);
+        });
+    }
+
+    // 非 Bootstrap 路径（或未来换成原生事件）也同步。
+    document.addEventListener('shown.bs.collapse', function (event) {
+        if (event.target && event.target.id === 'site-nav') {
+            setMenuLabel(true);
+        }
+    });
+    document.addEventListener('hidden.bs.collapse', function (event) {
+        if (event.target && event.target.id === 'site-nav') {
+            setMenuLabel(false);
+        }
+    });
 
     function onScroll() {
         var y = window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -86,17 +155,49 @@
         });
     }
 
-    // 减少动效：页头保持常驻，只量高度供二级粘性条使用。
+    // 减少动效：不注册“下滑收起”，页头保持常驻；菜单、焦点、高度测量照常。
     measure();
     if (reduced) {
         setHeightVar();
-        return;
+        // 不收起页头，但仍要在离开顶部后给它实底，避免内容从透明页头下透出。
+        window.addEventListener('scroll', function () {
+            header.classList.toggle('is-stuck', (window.pageYOffset || 0) > 8);
+        }, { passive: true });
+    } else {
+        window.addEventListener('scroll', schedule, { passive: true });
     }
-
-    window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', function () {
         measure();
-        schedule();
+        if (!reduced) {
+            schedule();
+        }
+    });
+
+    // 用户真正开始滚动时恢复“下滑收起”，锚点跳转本身不算。
+    ['wheel', 'touchstart'].forEach(function (name) {
+        window.addEventListener(name, releaseHeader, { passive: true });
+    });
+    window.addEventListener('keydown', function (event) {
+        var key = event.key;
+        if (key === 'Escape' && menuIsOpen()) {
+            closeMenu();
+            return;
+        }
+        if (key === 'PageDown' || key === 'PageUp' || key === 'ArrowDown'
+            || key === 'ArrowUp' || key === 'Home' || key === 'End' || key === ' ') {
+            releaseHeader();
+        }
+    });
+
+    // 带 #hash 直接打开时也保留页头,让读者先看到“这是哪一届”。
+    if (window.location.hash) {
+        holdHeader(2000);
+    }
+
+    // 浏览器前进 / 后退到某个锚点时同样先把页头叫回来。
+    window.addEventListener('hashchange', function () {
+        show();
+        holdHeader(1600);
     });
 
     // 移动端菜单展开会改变页头高度；页头被聚焦时保持可见。
@@ -118,6 +219,7 @@
         }
         if (target.closest('.td-tabs a, .stats-history-nav a, .chart-data summary')) {
             show();
+            holdHeader(1600);
         }
     });
 }());

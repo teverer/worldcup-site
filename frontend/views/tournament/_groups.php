@@ -20,7 +20,6 @@ use yii\helpers\Url;
          aria-labelledby="td-groups-title">
     <header class="td-section-head">
         <h2 class="section-title" id="td-groups-title">小组积分榜</h2>
-        <p class="td-section-note">仅统计已结束的小组赛；每组前两名出线，24 / 48 队制另取最佳小组第三。</p>
     </header>
 
     <?php if ($groups === []): ?>
@@ -29,6 +28,28 @@ use yii\helpers\Url;
             <p>该届参赛队或小组赛结果尚未录入。</p>
         </div>
     <?php else: ?>
+        <?php
+        // 32 队制没有「最佳第三名」；图例只在确有该出线方式时出现。
+        $hasBestThird = false;
+        foreach ($groups as $groupForLegend) {
+            $legendRows = isset($groupForLegend['rows']) && is_array($groupForLegend['rows'])
+                ? $groupForLegend['rows'] : [];
+            foreach ($legendRows as $rowForLegend) {
+                if (isset($rowForLegend['qualification']) && $rowForLegend['qualification'] === 'best_third') {
+                    $hasBestThird = true;
+                    break 2;
+                }
+            }
+        }
+        ?>
+        <p class="group-legend">
+            <span class="group-qual group-qual--top" aria-hidden="true"></span>
+            前二出线
+            <?php if ($hasBestThird): ?>
+                <span class="group-qual group-qual--third" aria-hidden="true"></span>
+                最佳第三
+            <?php endif ?>
+        </p>
         <div class="group-grid">
             <?php foreach ($groups as $group): ?>
                 <?php
@@ -47,6 +68,8 @@ use yii\helpers\Url;
                             <tr>
                                 <th scope="col" class="num">#</th>
                                 <th scope="col">球队</th>
+                                <th scope="col" class="num">场</th>
+                                <th scope="col" class="num group-col-record">胜–平–负</th>
                                 <th scope="col" class="num group-col-result">胜</th>
                                 <th scope="col" class="num group-col-result">平</th>
                                 <th scope="col" class="num group-col-result">负</th>
@@ -89,6 +112,8 @@ use yii\helpers\Url;
                                             <?php endif ?>
                                         </span>
                                     </th>
+                                    <td class="num"><?= Html::encode((string) $row['played']) ?></td>
+                                    <td class="num group-col-record"><?= Html::encode((int) $row['won'] . '–' . (int) $row['drawn'] . '–' . (int) $row['lost']) ?></td>
                                     <td class="num group-col-result"><?= Html::encode((string) $row['won']) ?></td>
                                     <td class="num group-col-result"><?= Html::encode((string) $row['drawn']) ?></td>
                                     <td class="num group-col-result"><?= Html::encode((string) $row['lost']) ?></td>
@@ -102,13 +127,6 @@ use yii\helpers\Url;
                 </article>
             <?php endforeach ?>
         </div>
-
-        <p class="group-legend">
-            <span class="group-qual group-qual--top" aria-hidden="true"></span>
-            小组前两名出线
-            <span class="group-qual group-qual--third" aria-hidden="true"></span>
-            最佳第三名出线
-        </p>
 
         <p class="td-section-more">
             <?= Html::a('查看小组赛全部比赛', [

@@ -14,6 +14,7 @@
  * @var string $awayName
  */
 
+use common\models\Player;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
@@ -33,7 +34,11 @@ foreach ($regularGoals as $goal) {
         'minute' => (int) $goal->minute,
         'team' => $isHome ? 'home' : 'away',
         'teamName' => $isHome ? $homeName : $awayName,
-        'player' => $player !== null ? $player->displayName() : '未知球员',
+        'playerOrig' => $player !== null ? $player->name : '未知球员',
+        'playerZh' => $player !== null && $player->name_zh !== ''
+            ? $player->name_zh
+            : ($player !== null ? $player->name : '未知球员'),
+        'alwaysZh' => $player !== null && Player::isChinesePlayer($player->nationality),
         'penalty' => (int) $goal->is_penalty === 1,
         'ownGoal' => (int) $goal->is_own_goal === 1,
     ];
@@ -71,7 +76,9 @@ foreach ($events as $event) {
         'score' => $event['team'] === 'home' ? $homeScore : $awayScore,
         'team' => $event['team'],
         'teamName' => $event['teamName'],
-        'player' => $event['player'],
+        'playerOrig' => $event['playerOrig'],
+        'playerZh' => $event['playerZh'],
+        'alwaysZh' => $event['alwaysZh'],
         'penalty' => $event['penalty'],
         'ownGoal' => $event['ownGoal'],
         'homeScore' => $homeScore,
@@ -86,10 +93,14 @@ $awaySeries[] = [$maxMinute, $awayScore];
 $this->registerCssFile('@web/css/charts.css');
 $this->registerCssFile('@web/css/chart-stage.css');
 $this->registerCssFile('@web/css/game-chart.css');
-$this->registerJsFile('@web/js/charts.js', [
-    'position' => View::POS_END,
-    'id' => 'charts-js',
-]);
+$chartsJsVersion = @filemtime(Yii::getAlias('@webroot/js/charts.js')) ?: '';
+$this->registerJsFile(
+    Url::to('@web/js/charts.js') . ($chartsJsVersion !== '' ? '?v=' . $chartsJsVersion : ''),
+    [
+        'position' => View::POS_END,
+        'id' => 'charts-js',
+    ]
+);
 
 $payload = [
     'homeName' => $homeName,

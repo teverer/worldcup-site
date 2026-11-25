@@ -46,16 +46,16 @@ $form = ActiveForm::begin();
 echo $form->errorSummary($model);
 echo $form->field($model, 'game_id')->dropDownList($gameOptions, ['prompt' => '请选择比赛']);
 echo $form->field($model, 'team_id')->dropDownList($teamOptions, ['prompt' => '请选择进球归属球队'])
-    ->hint('必须在本场比赛的主队和客队中选择;乌龙球请选择受益球队。');
+    ->hint('乌龙球选受益球队。');
 echo $form->field($model, 'player_id')->dropDownList($playerOptions, ['prompt' => '请选择进球球员'])
-    ->hint('乌龙球请选择防守方球员。');
+    ->hint('乌龙球选防守方球员。');
 echo $form->field($model, 'assist_player_id')->dropDownList($playerOptions, ['prompt' => '无助攻'])
-    ->hint('可留空;助攻球员不能与进球球员相同。');
+    ->hint('可留空；不能与进球球员相同。');
 echo $form->field($model, 'minute')->input('number', ['min' => 1, 'max' => 130])
-    ->hint('常规时间 1 至 90,加时赛可填至 120,点球大战可填至 130。');
-echo $form->field($model, 'is_penalty')->checkbox()->hint('常规比赛中的点球进球。');
-echo $form->field($model, 'is_own_goal')->checkbox()->hint('乌龙球,归属球队请选择受益方。');
-echo $form->field($model, 'is_shootout')->checkbox()->hint('点球大战进球,统计时会被排除。');
+    ->hint('1–90；加时到 120；点球大战到 130。');
+echo $form->field($model, 'is_penalty')->checkbox();
+echo $form->field($model, 'is_own_goal')->checkbox();
+echo $form->field($model, 'is_shootout')->checkbox()->hint('统计时排除。');
 ?>
 <div class="form-group">
     <?= Html::submitButton('保存进球', ['class' => 'btn btn-success']) ?>

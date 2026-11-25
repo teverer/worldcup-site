@@ -168,6 +168,43 @@ body .ledger {
     outline-offset: 2px;
 }
 
+.ledger .btn-record:disabled,
+.ledger .btn-record.is-busy {
+    opacity: .6;
+    cursor: progress;
+}
+
+.ledger .ledger-form-error {
+    margin: 10px 0 0;
+    color: #FF9E93;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+/* 新留言 / 新回复出现时只做一次短到达，和“发布”这个动作对应。 */
+.ledger .ledger-entry.is-new,
+.ledger .ledger-reply.is-new {
+    animation: ledger-arrive .5s cubic-bezier(.2, .8, .3, 1);
+}
+
+@keyframes ledger-arrive {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ledger .ledger-entry.is-new,
+    .ledger .ledger-reply.is-new {
+        animation: none;
+    }
+}
+
 .ledger .guest-line {
     display: flex;
     align-items: baseline;
@@ -269,7 +306,8 @@ body .ledger {
     max-height: min(62vh, 620px);
     padding: 2px 22px 6px;
     overflow-y: scroll;
-    overscroll-behavior: contain;
+    /* 到顶 / 到底后把滚轮交还页面，不做滚动陷阱；与 B 站 / 抖音评论区的滚动手感一致。 */
+    overscroll-behavior: auto;
 }
 
 .ledger-list-scroll::-webkit-scrollbar {
@@ -450,6 +488,11 @@ body .ledger {
     cursor: default;
 }
 
+.ledger .ledger-action:disabled {
+    opacity: .55;
+    cursor: progress;
+}
+
 .ledger .ledger-action.is-on {
     color: var(--ledger-accent);
 }
@@ -574,7 +617,7 @@ body .ledger {
 }
 
 .ledger .ledger-more[open] summary::before {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 
 .ledger .ledger-more-close {
@@ -587,6 +630,25 @@ body .ledger {
 
 .ledger .ledger-more[open] .ledger-more-close {
     display: inline;
+}
+
+/* 展开后把开关移到回复末尾：先读完全部回复，再在尾部“收起回复”，
+   不再让收起按钮停在展开前的位置。 */
+.ledger .ledger-more[open] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.ledger .ledger-more[open] > .ledger-reply {
+    order: 1;
+    align-self: stretch;
+}
+
+.ledger .ledger-more[open] > summary {
+    order: 2;
+    align-self: flex-start;
+    margin-top: 2px;
 }
 
 .ledger .ledger-more > .ledger-reply {
@@ -683,11 +745,32 @@ body.site-site-discussion .site-discussion .ledger {
 }
 
 
-/* 首页收场：直接嵌全站留言区，宽度跟收场一致。 */
+/* 首页收场：直接嵌全站留言区，宽度跟收场一致。
+   金色分隔线不再画在 1240px 的容器边上，而是通栏到视口两侧，
+   两端渐隐到背景里，避免在屏幕边缘出现生硬的截断。 */
 body.site-site-index .wall-closing .ledger {
+    position: relative;
     max-width: 100%;
     padding-top: clamp(24px, 3vw, 36px);
-    border-top: 1px solid rgba(224, 180, 87, .38);
+    border-top: 0;
+}
+
+body.site-site-index .wall-closing .ledger::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        90deg,
+        rgba(224, 180, 87, 0) 0%,
+        rgba(224, 180, 87, .38) 14%,
+        rgba(224, 180, 87, .38) 86%,
+        rgba(224, 180, 87, 0) 100%
+    );
+    content: "";
+    pointer-events: none;
 }
 
 body.site-site-index .wall-closing .ledger-title {

@@ -161,11 +161,17 @@
     margin-top: var(--space-3);
 }
 
-/* 文章页：面包屑、正文、留言簿共用 980 阅读列，不再出现 84 / 230 / 1070 三个左缘。 */
+/* 面包屑始终对齐资讯索引的左缘，不跟随 980 阅读列缩进；
+   文章正文仍收在 980 的阅读列里。这样从列表点进文章时，「首页 / 资讯」不会横向跳。
+   同时预留滚动条槽位，短文章没有滚动条时也不会让整列左右挪 7–15px。 */
+html {
+    scrollbar-gutter: stable;
+}
+
 body.site-news-view .breadcrumb {
-    max-width: 980px;
-    margin-right: auto;
-    margin-left: auto;
+    max-width: none;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 .news-detail .ledger {
@@ -488,9 +494,13 @@ body.site-news-view .breadcrumb {
     color: var(--color-muted-strong);
 }
 
-/* 资讯索引：与资讯详情共用 980 阅读列，检索带不再横跨 1272 只填 40%。 */
-.news-search,
+/* 资讯索引：列表与页头横线同宽，不再缩在 980 阅读列里；
+   正文摘要仍用 74ch 控制阅读行长，行的边界 / 分隔线拉满容器。 */
 .news-rows {
+    max-width: none;
+}
+
+.news-search {
     max-width: 980px;
 }
 
@@ -576,15 +586,10 @@ body.site-news-view .breadcrumb {
 }
 
 .news-row-excerpt {
-    max-width: 74ch;
+    max-width: none;
     color: var(--color-muted-strong);
     font-size: 15px;
     line-height: 1.7;
-}
-
-.news-row-author {
-    color: var(--color-muted);
-    font-size: 14px;
 }
 
 /* 空态不用虚线框,写成一条编辑式的说明。 */

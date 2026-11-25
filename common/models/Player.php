@@ -89,11 +89,21 @@ class Player extends ActiveRecord {
         $name = (string) $name;
         $nameZh = (string) $nameZh;
         // 中国球员的「原名」本身就是中文;拉丁写法只是报名罗马字,两种模式都显示中文名。
-        $chinesePlayer = in_array($nationality, ['中国', '中国台北', '中国香港', '中国澳门'], true);
-        if ($nameZh !== '' && ($chinesePlayer || !self::prefersOriginalName())) {
+        if ($nameZh !== '' && (self::isChinesePlayer($nationality) || !self::prefersOriginalName())) {
             return $nameZh;
         }
         return $name;
+    }
+
+    /**
+     * 中国球员的姓名在两种模式下都显示中文名。
+     *
+     * @param string|null $nationality
+     * @return bool
+     */
+    public static function isChinesePlayer($nationality)
+    {
+        return in_array($nationality, ['中国', '中国台北', '中国香港', '中国澳门'], true);
     }
 
     /**

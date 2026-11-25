@@ -16,6 +16,7 @@ use common\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Widget;
 use yii\db\Expression;
+use yii\helpers\Url;
 use yii\web\View;
 
 class CommentSection extends Widget
@@ -64,7 +65,7 @@ class CommentSection extends Widget
             CommentTarget::TEAM => '你和这支球队，从哪一届开始？',
             CommentTarget::PLAYER => '关于他，你记得哪一个球？',
             CommentTarget::NEWS => '读完这一篇，你想起了什么？',
-            CommentTarget::SITE => '你和世界杯的故事，从哪一届开始？',
+            CommentTarget::SITE => '欢迎留言分享',
         ];
     }
 
@@ -87,12 +88,12 @@ class CommentSection extends Widget
     public static function composerPlaceholderFor($type)
     {
         $placeholders = [
-            CommentTarget::TOURNAMENT => 'Ctrl + Enter 记下',
+            CommentTarget::TOURNAMENT => 'Ctrl + Enter 记下留言',
             CommentTarget::GAME => '写下你记得的那一刻……',
             CommentTarget::TEAM => '写下你和这支球队的记忆……',
             CommentTarget::PLAYER => '写下你记得的那个球……',
             CommentTarget::NEWS => '写下读完这一篇的想法……',
-            CommentTarget::SITE => '写下你和世界杯的一件小事……',
+            CommentTarget::SITE => 'Ctrl + Enter 记下留言',
         ];
         return isset($placeholders[$type]) ? $placeholders[$type] : '写下你想留下的那句话……';
     }
@@ -109,7 +110,7 @@ class CommentSection extends Widget
             CommentTarget::TOURNAMENT => [
                 '那时我感到……',
                 '那时我在……',
-                '你最想喷……',
+                '我最想喷……',
             ],
             CommentTarget::GAME => [
                 '你当时在哪看的？',
@@ -132,9 +133,9 @@ class CommentSection extends Widget
                 '你还有什么想补充的？',
             ],
             CommentTarget::SITE => [
-                '你第一次看世界杯是哪一届？',
-                '你和谁一起看过球？',
-                '哪一届是你的起点？',
+                '那时我感到……',
+                '那时我在……',
+                '当时我和……一起……',
             ],
         ];
         return isset($starters[$type]) ? $starters[$type] : ['写下你想留下的那句话……'];
@@ -216,7 +217,11 @@ class CommentSection extends Widget
      */
     public function run()
     {
-        $this->view->registerJsFile('@web/js/ledger.js', ['position' => View::POS_END]);
+        $ledgerVersion = @filemtime(Yii::getAlias('@webroot/js/ledger.js')) ?: '';
+        $this->view->registerJsFile(
+            Url::to('@web/js/ledger.js') . ($ledgerVersion !== '' ? '?v=' . $ledgerVersion : ''),
+            ['position' => View::POS_END]
+        );
 
         $comments = Comment::findForTarget($this->targetType, $this->targetId)
             ->with('user')
@@ -233,6 +238,12 @@ class CommentSection extends Widget
             }
         }
         $roots = isset($childrenByParent[0]) ? $childrenByParent[0] : [];
+        // 主留言新的在前，和 B 站 / 抖音一致：发完立刻能在顶部看到自己；
+        // 回复仍按时间正序排在同一条主留言下，保持对话顺序。
+        usort($roots, static function ($a, $b) {
+            $byTime = strcmp((string) $b->create_time, (string) $a->create_time);
+            return $byTime !== 0 ? $byTime : ((int) $b->id <=> (int) $a->id);
+        });
         $commentIds = array_map('intval', array_column($comments, 'id'));
 
         $likeCounts = [];

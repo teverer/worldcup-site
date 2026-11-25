@@ -13,6 +13,7 @@
  * @var int $totalPlayers
  */
 
+use common\components\PlayerName;
 use common\components\TeamFlag;
 use common\models\Player;
 use yii\helpers\Html;
@@ -32,7 +33,6 @@ $isAll = Yii::$app->request->get('all') === '1';
     <header class="pl-head">
         <div class="pl-head-main">
             <h1>球员</h1>
-            <p>跨越十一届；先搜中文名或原名，不记得名字，就从每届最佳射手进入。</p>
         </div>
         <div class="idx-total" aria-label="共 <?= (int) $totalPlayers ?> 名球员">
             <b><?= (int) $totalPlayers ?></b><span>名球员</span>
@@ -40,7 +40,8 @@ $isAll = Yii::$app->request->get('all') === '1';
     </header>
 
     <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-    <form class="pl-search" method="get" action="<?= Html::encode(Url::to(['/player/index'])) ?>" role="search">
+    <?php // GET 表单会丢掉 action 里的 ?r=，必须让 beginForm 生成 hidden r；否则提交后落到首页。 ?>
+    <?= Html::beginForm(['index'], 'get', ['class' => 'pl-search', 'role' => 'search']) ?>
         <div class="pl-search-main">
             <label class="sr-only" for="pl-q">球员姓名或国籍</label>
             <input class="form-control pl-input" type="search" id="pl-q" name="q"
@@ -72,14 +73,14 @@ $isAll = Yii::$app->request->get('all') === '1';
             <?php endif ?>
             <?= $this->render('//partials/_name_lang') ?>
         </div>
-    </form>
+    <?= Html::endForm() ?>
 
     <?php if ($spotlight): ?>
         <section class="pl-section" aria-labelledby="pl-spotlight-title">
             <div class="pl-section-head">
                 <div>
                     <h2 id="pl-spotlight-title">每届最佳射手</h2>
-                    <p>每届进球最多的球员；默认显示原名，可在上方切换中文名；未收录译名的球员保留原名。</p>
+                    <p>未收录译名时保留原名</p>
                 </div>
             </div>
 
@@ -89,7 +90,11 @@ $isAll = Yii::$app->request->get('all') === '1';
                         <a class="pl-scorer" href="<?= Html::encode(Url::to(['/player/view', 'id' => $leader['player_id']])) ?>">
                             <span class="pl-scorer-year"><?= Html::encode((string) $leader['year']) ?></span>
                             <span class="pl-scorer-text">
-                                <strong><?= Html::encode(Player::formatName($leader['name'], $leader['name_zh'], $leader['nationality'])) ?></strong>
+                                <?= Html::tag(
+                                    'strong',
+                                    Html::encode(Player::formatName($leader['name'], $leader['name_zh'], $leader['nationality'])),
+                                    PlayerName::options($leader['name'], $leader['name_zh'], $leader['nationality'])
+                                ) ?>
                                 <span>
                                     <?= TeamFlag::html(isset($leader['team_code']) ? $leader['team_code'] : null, (string) $leader['team_name'], 'pl-scorer-flag') ?>
                                     <?= Html::encode($leader['team_name'] ?: ($leader['nationality'] ?: '球队待补')) ?>
@@ -108,7 +113,6 @@ $isAll = Yii::$app->request->get('all') === '1';
                         <span class="pl-scorer-year">全部</span>
                         <span class="pl-scorer-text">
                             <strong>浏览全部 <?= (int) $totalPlayers ?> 名球员</strong>
-                            <span>按姓名、球队、位置继续筛</span>
                         </span>
                     </a>
                 </li>
@@ -154,10 +158,12 @@ $isAll = Yii::$app->request->get('all') === '1';
                             <?php foreach ($dataProvider->getModels() as $player): ?>
                                 <tr>
                                     <td>
-                                        <?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], [
-                                            'class' => 'pl-name',
-                                            'title' => $player->name,
-                                        ]) ?>
+                                        <?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], PlayerName::options(
+                                            $player->name,
+                                            $player->name_zh,
+                                            $player->nationality,
+                                            ['class' => 'pl-name', 'title' => $player->name]
+                                        )) ?>
                                     </td>
                                     <td><?= Html::encode($player->nationality ?: '—') ?></td>
                                     <td><?= Html::encode($player->position ?: '待补') ?></td>

@@ -10,12 +10,16 @@
 
 use common\components\CommentTarget;
 use common\components\TeamFlag;
+use frontend\models\EditionImage;
 use frontend\widgets\CommentSection;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-$this->title = '世界杯档案 · 1986—2026';
+$this->title = '世界杯40年概展 · 1986—2026';
 $this->registerCssFile('@web/css/root-wall.css');
+
+// 首页小缩略图：设 false 即可整块回滚，不改变墙的网格。
+$showBoardThumbs = true;
 
 ?>
 <div class="root-wall">
@@ -23,11 +27,9 @@ $this->registerCssFile('@web/css/root-wall.css');
         <div class="wall-head-main">
             <h1 class="wall-title">
                 <span class="wall-range">1986—2026</span>
-                <span class="wall-subtitle">十一届世界杯</span>
+                <span class="wall-subtitle">四十年十一届世界杯,从墨西哥到美加墨,足球的最高荣誉一直在等待着国足的到来
+                </span>
             </h1>
-            <p class="wall-lead">
-                从墨西哥到美加墨，四十年，十一届。选一届，进入那一届的晋级图、积分与射手。
-            </p>
         </div>
 
     </header>
@@ -39,30 +41,39 @@ $this->registerCssFile('@web/css/root-wall.css');
                 <p>数据库中还没有可展示的世界杯届次。</p>
             </div>
         <?php else: ?>
-            <?php foreach ($editions as $index => $edition): ?>
+            <?php foreach ($editions as $edition): ?>
                 <?php
                 $final = $edition['final'];
-                $isLit = $index === 0;
                 $hasChampion = $final !== null && $final['champion'] !== null;
                 $boardLabel = $edition['year'] . ' ' . $edition['name'];
                 if ($hasChampion) {
                     $boardLabel .= '，冠军 ' . $final['champion'];
                 }
                 ?>
-                <a class="wall-board<?= $isLit ? ' is-lit' : '' ?>"
+                <a class="wall-board"
                    href="<?= Html::encode(Url::to(['/tournament/view', 'id' => $edition['id']])) ?>"
                    aria-label="<?= Html::encode($boardLabel . '，进入本届') ?>">
                     <span class="board-year"><?= Html::encode((string) $edition['year']) ?></span>
 
                     <span class="board-main">
-                        <span class="board-name"><?= Html::encode($edition['name']) ?></span>
-                        <span class="board-meta">
-                            <span class="board-host">
-                                东道主 <?= Html::encode($edition['host']) ?>
+                        <?php
+                        $thumb = $showBoardThumbs
+                            ? EditionImage::forYear((int) $edition['year'])
+                            : null;
+                        ?>
+                        <?php if ($thumb !== null): ?>
+                            <span class="board-thumb" aria-hidden="true">
+                                <img src="<?= Html::encode($thumb['thumb_url']) ?>"
+                                     alt="" width="112" height="63"
+                                     loading="lazy" decoding="async">
                             </span>
-                            <span class="board-volume">
-                                <?= Html::encode((string) $edition['games']) ?> 场 /
-                                <?= Html::encode((string) $edition['goals']) ?> 球
+                        <?php endif ?>
+                        <span class="board-main-text">
+                            <span class="board-name"><?= Html::encode($edition['name']) ?></span>
+                            <span class="board-meta">
+                                <span class="board-host">
+                                    东道主 <?= Html::encode($edition['host']) ?>
+                                </span>
                             </span>
                         </span>
                     </span>
@@ -80,8 +91,6 @@ $this->registerCssFile('@web/css/root-wall.css');
                                 <span class="board-score"><?= Html::encode($final['champion_score'] . '–' . $final['opponent_score']) ?></span>
                                 <?php if ($final['has_penalty']): ?>
                                     <span class="board-badge">点球 <?= Html::encode(str_replace('-', '–', $final['penalty_text'])) ?></span>
-                                <?php elseif ($final['extra_time']): ?>
-                                    <span class="board-badge">加时</span>
                                 <?php endif ?>
                             </span>
                             <span class="board-side board-side--runner">
@@ -107,7 +116,7 @@ $this->registerCssFile('@web/css/root-wall.css');
             <?= CommentSection::widget([
                 'targetType' => CommentTarget::SITE,
                 'targetId' => CommentTarget::SITE_ID,
-                'heading' => '继续看，或者留一句',
+                'heading' => '全站留言簿',
                 'headingTag' => 'h2',
                 'emptyTitle' => '留言簿还是空的。',
             ]) ?>

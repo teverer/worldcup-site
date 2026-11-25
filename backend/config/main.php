@@ -25,6 +25,12 @@ return [
             // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
         ],
+        // 后台日期统一为 2026-11-25 / 8:57 这类中文站常用写法，避免列表里出现英文月份。
+        'formatter' => [
+            'dateFormat' => 'php:Y-m-d',
+            'datetimeFormat' => 'php:Y-m-d H:i',
+            'timeFormat' => 'php:H:i',
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

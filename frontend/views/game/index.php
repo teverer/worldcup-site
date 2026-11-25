@@ -52,67 +52,53 @@ if ($teamKeyword !== null) {
     <header class="game-heading">
         <div class="game-heading-main">
             <h1>比赛</h1>
-            <p>先看十一场决赛，或按届次、阶段、球队找到任意一场。</p>
         </div>
-        <div class="idx-total" aria-label="共 <?= (int) $totalGames ?> 场比赛，十一届">
-            <b><?= (int) $totalGames ?></b><span>场比赛 · 十一届</span>
+        <div class="idx-total" aria-label="共 <?= (int) $totalGames ?> 场比赛，四十年">
+            <b><?= (int) $totalGames ?></b><span>场比赛 · 四十年</span>
         </div>
     </header>
 
     <?php $filterCount = count($activeFilters); ?>
-    <details class="game-filter-panel"<?= $filterCount > 0 ? ' open' : '' ?>>
-        <summary class="game-filter-summary">
-            <span>筛选比赛</span>
-            <span class="game-filter-summary-note">
-                <?= $filterCount > 0 ? '已应用 ' . (int) $filterCount . ' 项条件' : '按届次、阶段、小组、球队' ?>
-            </span>
-        </summary>
-    <?= Html::beginForm(['index'], 'get', ['class' => 'catalog-filters game-filters']) ?>
-    <div class="form-group">
-        <?= Html::label('届次', 'game-tournament') ?>
+    <?= Html::beginForm(['index'], 'get', ['class' => 'pl-search', 'role' => 'search']) ?>
+    <div class="pl-search-main">
+        <label class="sr-only" for="game-team">球队</label>
+        <?= Html::input('search', 'team', $teamKeyword, [
+            'id' => 'game-team',
+            'class' => 'form-control pl-input',
+            'maxlength' => 50,
+            'placeholder' => '搜索球队，如 阿根廷',
+        ]) ?>
+        <?= Html::submitButton('查找比赛', ['class' => 'btn btn-primary']) ?>
+    </div>
+    <div class="pl-search-filters">
+        <label class="sr-only" for="game-tournament">届次</label>
         <?= Html::dropDownList('tournamentId', $tournamentId, $tournamentOptions, [
             'id' => 'game-tournament',
             'class' => 'form-control',
             'prompt' => '全部届次',
         ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::label('阶段', 'game-stage') ?>
+        <label class="sr-only" for="game-stage">阶段</label>
         <?= Html::dropDownList('stage', $stage, $stageOptions, [
             'id' => 'game-stage',
             'class' => 'form-control',
             'prompt' => '全部阶段',
         ]) ?>
-    </div>
-    <div class="form-group game-filter-group">
-        <?= Html::label('小组', 'game-group') ?>
+        <label class="sr-only" for="game-group">小组</label>
         <?= Html::dropDownList('group', $group, $groupOptions, [
             'id' => 'game-group',
             'class' => 'form-control',
             'prompt' => '全部小组',
         ]) ?>
-    </div>
-    <div class="form-group game-filter-team">
-        <?= Html::label('球队', 'game-team') ?>
-        <?= Html::textInput('team', $teamKeyword, [
-            'id' => 'game-team',
-            'class' => 'form-control',
-            'maxlength' => 50,
-            'placeholder' => '如：阿根廷',
-        ]) ?>
-    </div>
-    <div class="form-group catalog-filter-actions">
-        <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        <?php if ($filterCount > 0): ?>
+            <?= Html::a('清除条件', ['index'], ['class' => 'pl-clear']) ?>
+        <?php endif ?>
     </div>
     <?= Html::endForm() ?>
-    </details>
 
     <div class="game-list-head">
         <div>
             <?php if (!$showingAll): ?>
                 <h2>十一场决赛</h2>
-                <p>每一届的最后一战；点一行看进球时间线。</p>
             <?php elseif ($hasFilters): ?>
                 <h2>筛选结果</h2>
                 <p>
@@ -120,7 +106,6 @@ if ($teamKeyword !== null) {
                     <?php foreach ($activeFilters as $filter): ?>
                         <span class="game-chip"><?= Html::encode($filter) ?></span>
                     <?php endforeach ?>
-                    <?= Html::a('清除条件', ['index'], ['class' => 'game-clear']) ?>
                 </p>
             <?php else: ?>
                 <h2>全部比赛</h2>
@@ -129,7 +114,7 @@ if ($teamKeyword !== null) {
         </div>
         <?php if ($showingAll): ?>
             <?= Html::a('回到十一场决赛', ['index'], ['class' => 'game-list-alt']) ?>
-        <?php else: ?>
+        <?php elseif ($hasFilters): ?>
             <?= Html::a('看全部比赛', ['index', 'scope' => 'all'], [
                 'class' => 'game-list-alt',
             ]) ?>
@@ -208,6 +193,15 @@ if ($teamKeyword !== null) {
                     </a>
                 </li>
             <?php endforeach ?>
+            <?php // 十一场决赛正好差一格；第 12 格做成“全部比赛”，两列收齐，不留孤行。 ?>
+            <?php if (!$showingAll && !$hasFilters): ?>
+                <li class="game-item game-item--all">
+                    <a class="game-all-card" href="<?= Html::encode(Url::to(['index', 'scope' => 'all'])) ?>">
+                        <span class="game-all-kicker">全部</span>
+                        <strong class="game-all-title">浏览全部 <?= (int) $totalGames ?> 场比赛</strong>
+                    </a>
+                </li>
+            <?php endif ?>
         </ol>
 
         <?php if ($dataProvider->pagination !== false && $dataProvider->pagination->getPageCount() > 1): ?>

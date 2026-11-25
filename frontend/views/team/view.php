@@ -16,6 +16,7 @@
  * @var yii\data\ActiveDataProvider $dataProvider
  */
 
+use common\components\PlayerName;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -24,6 +25,12 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => '球队', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/catalog.css');
+// 名单按届次 / 翻页留在当前页更新，不整页刷新回顶部。
+$teamRosterJsVersion = @filemtime(Yii::getAlias('@webroot/js/team-roster.js')) ?: '';
+$this->registerJsFile(
+    Url::to('@web/js/team-roster.js') . ($teamRosterJsVersion !== '' ? '?v=' . $teamRosterJsVersion : ''),
+    ['position' => \yii\web\View::POS_END]
+);
 
 $currentTournament = null;
 foreach ($tournaments as $tournament) {
@@ -140,7 +147,7 @@ foreach ($records as $record) {
         <?php endif ?>
     </section>
 
-    <section class="td-section" aria-labelledby="td-roster-title">
+    <section class="td-section" data-roster-root aria-labelledby="td-roster-title">
         <div class="td-section-head">
             <div>
                 <h2 id="td-roster-title">参赛球员</h2>
@@ -159,16 +166,20 @@ foreach ($records as $record) {
             <nav class="td-editions" aria-label="按届次筛选名单">
                 <?= Html::a('全部届次', ['/team/view', 'id' => $model->id, 'tournamentId' => 'all'], [
                     'class' => 'td-edition' . ($allRoster ? ' is-active' : ''),
+                    'data-roster-nav' => '1',
                 ]) ?>
                 <?php foreach ($tournaments as $tournament): ?>
                     <?= Html::a(Html::encode((string) $tournament['year']), [
                         '/team/view', 'id' => $model->id, 'tournamentId' => $tournament['id'],
                     ], [
                         'class' => 'td-edition' . (!$allRoster && (string) $tournament['id'] === (string) $rosterTournamentId ? ' is-active' : ''),
+                        'data-roster-nav' => '1',
                     ]) ?>
                 <?php endforeach ?>
             </nav>
         <?php endif ?>
+
+        <p class="sr-only" data-roster-status aria-live="polite"></p>
 
         <?php if ($rosterTotal === 0): ?>
             <div class="empty-state td-empty">
@@ -190,10 +201,12 @@ foreach ($records as $record) {
                     <tbody>
                         <?php foreach ($dataProvider->getModels() as $player): ?>
                             <tr>
-                                <td><?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], [
-                                    'class' => 'td-player',
-                                    'title' => $player->name,
-                                ]) ?></td>
+                                <td><?= Html::a(Html::encode($player->displayName()), ['/player/view', 'id' => $player->id], PlayerName::options(
+                                    $player->name,
+                                    $player->name_zh,
+                                    $player->nationality,
+                                    ['class' => 'td-player', 'title' => $player->name]
+                                )) ?></td>
                                 <td><?= Html::encode($player->position ?: '待补') ?></td>
                                 <td><?= Html::encode($player->birth_date ? substr($player->birth_date, 0, 4) : '—') ?></td>
                             </tr>
@@ -205,6 +218,7 @@ foreach ($records as $record) {
                 'pagination' => $dataProvider->pagination,
                 'prevPageLabel' => '上一页',
                 'nextPageLabel' => '下一页',
+                'linkOptions' => ['data-roster-nav' => '1'],
             ]) ?>
         <?php endif ?>
     </section>

@@ -158,13 +158,7 @@ class Game extends ActiveRecord
      */
     public function attributeHints()
     {
-        return [
-            'home_score' => '120 分钟(含加时)比分,不含点球大战;比赛已结束时必填。',
-            'away_score' => '120 分钟(含加时)比分,不含点球大战;比赛已结束时必填。',
-            'home_penalty_score' => '只在决赛阶段或常规比分平局时填写,没有点球大战请留空。',
-            'away_penalty_score' => '只在决赛阶段或常规比分平局时填写,没有点球大战请留空。',
-            'match_time' => '例如 2026-06-11 18:00。',
-        ];
+        return [];
     }
 
     /**

@@ -15,20 +15,8 @@ use yii\web\NotFoundHttpException;
 
 class TournamentController extends Controller
 {
-    public const STAGES = [
-        '小组赛',
-        '1/16决赛',
-        '1/8决赛',
-        '1/4决赛',
-        '半决赛',
-        '三四名决赛',
-        '决赛',
-    ];
-
     /**
      * 旧编年列表页已由根页记分牌墙取代,统一跳回根页。
-     *
-     * 旧视图与 tournament-index.css 暂留但不被引用,后续清理。
      *
      * @return \yii\web\Response
      */

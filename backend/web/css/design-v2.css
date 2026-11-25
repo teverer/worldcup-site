@@ -14,7 +14,9 @@
     src: url("../fonts/SmileySans-Subset.woff2") format("woff2");
     font-style: normal;
     font-weight: 400;
-    font-display: optional;
+    /* 与前台一致：optional 在 100ms 内到达仍会换字，切页会看到标题换字形；
+       block 让标题等预加载的字体，通常一帧内完成。 */
+    font-display: block;
 }
 
 @font-face {

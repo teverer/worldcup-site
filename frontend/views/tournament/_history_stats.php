@@ -2,9 +2,9 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 李行阳 2411353, 20261124
- * 模块:届次与比赛 —— 统计页的「历史坐标」三块
+ * 模块:届次与比赛 —— 统计页的历届对照
  *
- * 历届总射手 / 谁常在决赛 / 四强版图，全部是跨届聚合。
+ * 历届总射手 / 谁常在决赛紧接在本届两张图下面，同列对照；四强版图接在后面。
  * 当前届次用金色行、冠军行和「本届 N 球」标出，其余行退后但仍可读。
  *
  * @var yii\web\View $this
@@ -24,14 +24,6 @@ use yii\helpers\Url;
 $scorers = isset($history['scorers']) && is_array($history['scorers']) ? $history['scorers'] : [];
 $nations = isset($history['nations']) && is_array($history['nations']) ? $history['nations'] : [];
 $four = isset($history['four']) && is_array($history['four']) ? $history['four'] : ['editions' => [], 'legends' => []];
-$topScorer = isset($stats['top_scorer']) ? $stats['top_scorer'] : null;
-$topScorerName = $topScorer !== null ? (string) $topScorer['name'] : '';
-foreach ($scorers as $scorerRow) {
-    if ($topScorer !== null && (int) $scorerRow['player_id'] === (int) $topScorer['player_id']) {
-        $topScorerName = (string) $scorerRow['display_name'];
-        break;
-    }
-}
 
 // 西德 / 德国在决赛聚合里合成一行；这里也用同一个键比较当前届冠军。
 $normCode = static function ($code) {
@@ -61,50 +53,48 @@ $contSlug = [
 <div class="stats-hist-grid">
     <section class="stats-hsection" id="hist-scorers" aria-labelledby="hist-scorers-title">
         <header class="stats-hsection-head">
-            <h3 id="hist-scorers-title">历届总射手</h3>
-            <p>跨十一届累计；不含乌龙球与点球大战。金 = 本届有进球。</p>
+            <h3 id="hist-scorers-title">四十年总射手榜</h3>
         </header>
 
-        <?php if ($topScorer !== null): ?>
-            <p class="stats-hcurrent-note">
-                本届最佳：
-                <a href="<?= Html::encode(Url::to(['/player/view', 'id' => (int) $topScorer['player_id']])) ?>"><?= Html::encode($topScorerName) ?></a>
-                <strong><?= (int) $topScorer['goals'] ?> 球</strong>
-                <span><?= Html::encode($topScorer['team']) ?></span>
-            </p>
-        <?php endif ?>
-
-        <ol class="scorer-list">
-            <?php foreach ($scorers as $scorer): ?>
-                <?php $currentGoalsForPlayer = isset($currentGoals[$scorer['player_id']]) ? (int) $currentGoals[$scorer['player_id']] : 0; ?>
-                <li class="scorer-row<?= $currentGoalsForPlayer > 0 ? ' is-current' : '' ?>">
-                    <a href="<?= Html::encode(Url::to(['/player/view', 'id' => $scorer['player_id']])) ?>">
-                        <span class="scorer-rank"><?= str_pad((string) $scorer['rank'], 2, '0', STR_PAD_LEFT) ?></span>
-                        <span class="scorer-name">
-                            <strong><?= Html::encode($scorer['display_name']) ?></strong>
-                            <small>
-                                <?php if ($scorer['code'] !== ''): ?>
-                                    <?= TeamFlag::html($scorer['code'], $scorer['nationality'], 'scorer-flag') ?>
-                                <?php endif ?>
-                                <?= Html::encode($scorer['nationality']) ?>
-                                · <?= (int) $scorer['first_year'] ?>–<?= (int) $scorer['last_year'] ?>
-                                · <?= (int) $scorer['editions'] ?> 届
-                                <?php if ($currentGoalsForPlayer > 0): ?>
-                                    · <span class="scorer-current">本届 <?= $currentGoalsForPlayer ?> 球</span>
-                                <?php endif ?>
-                            </small>
-                        </span>
-                        <span class="scorer-goals"><?= (int) $scorer['goals'] ?><small>球</small></span>
-                    </a>
-                </li>
-            <?php endforeach ?>
-        </ol>
+        <table class="scorer-table">
+            <caption class="sr-only">四十年总射手榜</caption>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">球员</th>
+                    <th scope="col">国家</th>
+                    <th scope="col">届次</th>
+                    <th scope="col" class="num">总进球</th>
+                    <th scope="col" class="num">本届</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($scorers as $scorer): ?>
+                    <?php $currentGoalsForPlayer = isset($currentGoals[$scorer['player_id']]) ? (int) $currentGoals[$scorer['player_id']] : 0; ?>
+                    <tr class="<?= $currentGoalsForPlayer > 0 ? 'is-current' : '' ?>">
+                        <td class="scorer-rank"><?= str_pad((string) $scorer['rank'], 2, '0', STR_PAD_LEFT) ?></td>
+                        <th scope="row" class="scorer-player">
+                            <a href="<?= Html::encode(Url::to(['/player/view', 'id' => $scorer['player_id']])) ?>"><?= Html::encode($scorer['display_name']) ?></a>
+                        </th>
+                        <td class="scorer-nation">
+                            <?php if ($scorer['code'] !== ''): ?>
+                                <?= TeamFlag::html($scorer['code'], $scorer['nationality'], 'scorer-flag') ?>
+                            <?php endif ?>
+                            <?= Html::encode($scorer['nationality']) ?>
+                        </td>
+                        <td class="scorer-years"><?= (int) $scorer['first_year'] ?>–<?= (int) $scorer['last_year'] ?> · <?= (int) $scorer['editions'] ?> 届</td>
+                        <td class="num scorer-total"><?= (int) $scorer['goals'] ?></td>
+                        <td class="num scorer-current"><?= $currentGoalsForPlayer > 0 ? $currentGoalsForPlayer : '—' ?></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
     </section>
 
     <section class="stats-hsection" id="hist-nations" aria-labelledby="hist-nations-title">
         <header class="stats-hsection-head">
-            <h3 id="hist-nations-title">谁常在决赛</h3>
-            <p>十一场决赛按国家累计；西德计入德国。金 = 本届冠军，银 = 本届亚军。</p>
+            <h3 id="hist-nations-title">国家决赛榜</h3>
+            <p>共 <?= count($nations) ?> 个国家进过决赛；西德计入德国</p>
         </header>
 
         <table class="nation-table">
@@ -157,14 +147,12 @@ $contSlug = [
                 <?php endforeach ?>
             </tbody>
         </table>
-        <p class="stats-hfoot">共 <?= count($nations) ?> 个国家进过决赛；金 / 银标记本届冠军与亚军。</p>
     </section>
 </div>
 
 <section class="stats-hsection stats-hsection--four" id="hist-four" aria-labelledby="hist-four-title">
     <header class="stats-hsection-head">
         <h3 id="hist-four-title">四强版图</h3>
-        <p>每一行是一届的半决赛四强，按大洲着色、格内是人数。金 = <?= Html::encode((string) $currentYear) ?> 本届。</p>
     </header>
 
     <?php if ($currentFour !== null): ?>
@@ -215,29 +203,4 @@ $contSlug = [
         <?php endforeach ?>
     </ol>
 
-    <details class="four-data">
-        <summary>查看四强名单数据表</summary>
-        <table class="four-table">
-            <thead>
-                <tr>
-                    <th scope="col">届次</th>
-                    <th scope="col">四强</th>
-                    <th scope="col">大洲构成</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($four['editions'] as $edition): ?>
-                    <tr>
-                        <th scope="row"><?= (int) $edition['year'] ?></th>
-                        <td><?= Html::encode(implode('、', array_map(static function ($team) {
-                            return $team['name'];
-                        }, $edition['teams']))) ?></td>
-                        <td><?= Html::encode(implode(' / ', array_map(static function ($segment) {
-                            return $segment['continent'] . ' ' . $segment['count'];
-                        }, $edition['segments']))) ?></td>
-                    </tr>
-                <?php endforeach ?>
-            </tbody>
-        </table>
-    </details>
 </section>

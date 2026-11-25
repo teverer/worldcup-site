@@ -171,7 +171,7 @@ body.site-record-index.site-body .atmo-dots {
 .record-totals dt {
     margin: 0 0 2px;
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: .06em;
     white-space: nowrap;
@@ -377,7 +377,7 @@ body.site-record-index.site-body .atmo-dots {
 
 .goal-clock th {
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: .04em;
     text-align: center;
@@ -462,7 +462,7 @@ body.site-record-index.site-body .atmo-dots {
     display: none;
     margin: 10px 0 0;
     color: var(--steel-2);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .04em;
 }
 
@@ -502,7 +502,7 @@ body.site-record-index.site-body .atmo-dots {
     gap: 8px 20px;
     margin: 0 0 12px;
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .03em;
 }
 
@@ -573,7 +573,7 @@ body.site-record-index.site-body .atmo-dots {
     color: #04070B;
     background: var(--gold);
     font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.6;
     letter-spacing: .04em;
@@ -605,12 +605,14 @@ body.site-record-index.site-body .atmo-dots {
     box-shadow: none;
 }
 
+/* 金色只留给“本届”标记（is-current 行、本届签），不再同时做欧洲的系列色；
+   否则 2018 全金条会被误读成“本届”。大洲用中性色 + 青绿/赭/蓝。 */
 .cont-europe {
-    background: #E0B457;
+    background: #9FB3AD;
 }
 
 .cont-south-america {
-    background: #7FC8A9;
+    background: #57B894;
 }
 
 .cont-africa {
@@ -633,7 +635,7 @@ body.site-record-index.site-body .atmo-dots {
 .four-names {
     overflow: hidden;
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .02em;
     text-align: right;
     text-overflow: ellipsis;
@@ -645,18 +647,17 @@ body.site-record-index.site-body .atmo-dots {
 }
 
 /* 从某一届进入时：其余行退后但仍可读；悬停或键盘聚焦立即恢复。 */
+/* 只把非本届的年份/队名退后；条本身保持满色——
+   半透明会让同一大洲在不同行变成不同颜色，跨届比较就失真了。 */
 .four-list.has-current .four-row:not(.is-current) .four-year,
-.four-list.has-current .four-row:not(.is-current) .four-bar,
 .four-list.has-current .four-row:not(.is-current) .four-names {
     opacity: .55;
     transition: opacity .18s ease;
 }
 
 .four-list.has-current .four-row:not(.is-current):hover .four-year,
-.four-list.has-current .four-row:not(.is-current):hover .four-bar,
 .four-list.has-current .four-row:not(.is-current):hover .four-names,
 .four-list.has-current .four-row:not(.is-current):focus-within .four-year,
-.four-list.has-current .four-row:not(.is-current):focus-within .four-bar,
 .four-list.has-current .four-row:not(.is-current):focus-within .four-names {
     opacity: 1;
 }
@@ -694,7 +695,7 @@ body.site-record-index.site-body .atmo-dots {
 
 .four-table thead th {
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .05em;
 }
 
@@ -790,7 +791,7 @@ body.site-record-index.site-body .atmo-dots {
 .final-score small {
     color: var(--red-bright);
     font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: .02em;
 }
@@ -836,7 +837,7 @@ body.site-record-index.site-body .atmo-dots {
 .nation-table thead th {
     padding: 0 16px 10px;
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: .06em;
     text-align: right;
@@ -1044,8 +1045,111 @@ body.site-record-index.site-body .atmo-dots {
 .scorer-goals small {
     color: var(--gold);
     font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
+}
+
+/* 历届总射手：和「谁常在决赛」同一套表，别再用高行列表拉长页面。 */
+.scorer-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--steel);
+    font-size: 14px;
+}
+
+.scorer-table thead th {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.scorer-table tbody th,
+.scorer-table tbody td {
+    padding: 11px 10px;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.scorer-table .num {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.scorer-table .scorer-rank {
+    width: 42px;
+    color: rgba(224, 180, 87, .62);
+    font-family: var(--font-display);
+    font-size: 16px;
+}
+
+.scorer-table .scorer-player a {
+    color: var(--flood);
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.scorer-table .scorer-player a:hover,
+.scorer-table .scorer-player a:focus-visible {
+    color: var(--gold-light);
+    text-decoration: underline;
+}
+
+.scorer-table .scorer-nation {
+    color: var(--steel);
+    font-size: 13.5px;
+}
+
+.scorer-table .scorer-nation .scorer-flag {
+    margin-right: 7px;
+    vertical-align: -2px;
+}
+
+.scorer-table .scorer-years {
+    color: var(--steel-2);
+    font-size: 13px;
+}
+
+.scorer-table .scorer-total {
+    color: var(--flood);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.scorer-table .scorer-current {
+    color: var(--steel-2);
+    font-size: 15px;
+}
+
+.scorer-table tbody tr.is-current {
+    background: linear-gradient(90deg, rgba(224, 180, 87, .13), rgba(224, 180, 87, 0) 78%);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.scorer-table tbody tr.is-current .scorer-player a,
+.scorer-table tbody tr.is-current .scorer-current {
+    color: var(--gold-light);
+    font-weight: 600;
+}
+
+@media (max-width: 767px) {
+    .scorer-table thead th:nth-child(4),
+    .scorer-table tbody td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .scorer-table thead th:nth-child(3),
+    .scorer-table tbody td:nth-child(3) {
+        display: none;
+    }
 }
 
 /* --------------------------------------------------------------------------
@@ -1243,7 +1347,7 @@ body.site-record-index.site-body .atmo-dots {
     }
 
     .four-tag {
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .four-bar {
@@ -1325,12 +1429,13 @@ body.site-tournament-view .site-main {
 }
 
 .stats-history {
+    --ps-fade: clamp(110px, 12vw, 170px);
     position: relative;
     isolation: isolate;
     scroll-margin-top: calc(var(--td-tab-h) + 8px);
     /* 渐变已经承担过渡，不再用 160px 的 margin+padding 制造“断层”。 */
-    margin-top: clamp(16px, 2.2vw, 32px);
-    padding: clamp(24px, 2.8vw, 36px) 0 clamp(44px, 6vw, 80px);
+    margin-top: clamp(8px, 1.2vw, 16px);
+    padding: clamp(8px, 1.2vw, 16px) 0 clamp(44px, 6vw, 80px);
     color: var(--flood);
 }
 
@@ -1342,7 +1447,14 @@ body.site-tournament-view .site-main {
     left: 50%;
     width: 100vw;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, rgba(4, 7, 11, 0) 0, #04070B 190px, #04070B 100%);
+    /* 球员星云已经是这一章的最后一块，底部渐隐由整章一起收，别在四强版图后断开。 */
+    background: linear-gradient(
+        180deg,
+        rgba(4, 7, 11, 0) 0,
+        #04070B 300px,
+        #04070B calc(100% - var(--ps-fade)),
+        rgba(4, 7, 11, 0) 100%
+    );
     content: "";
 }
 
@@ -1354,7 +1466,7 @@ body.site-tournament-view .site-main {
     margin: 0 0 10px;
     color: var(--gold-light);
     font-family: var(--font-display);
-    font-size: 12.5px;
+    font-size: 13px;
     letter-spacing: .16em;
 }
 
@@ -1403,22 +1515,29 @@ body.site-tournament-view .site-main {
     transition: color .16s ease, border-color .16s ease;
 }
 
-.stats-history-nav a:hover,
-.stats-history-nav a:focus-visible {
+/* art-r6 的深色页 a 默认绿会盖掉这里的静默色；用页面类拉回钢灰。 */
+body.site-tournament-view .stats-history-nav a {
+    color: var(--steel);
+}
+
+body.site-tournament-view .stats-history-nav a:hover,
+body.site-tournament-view .stats-history-nav a:focus-visible,
+body.site-tournament-view .stats-history-nav a[aria-current="location"] {
     border-color: var(--gold);
     color: var(--gold-light);
 }
 
 .stats-hist-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-    gap: 28px 48px;
+    /* 与上面的两张本届图同列同宽：左列射手榜 ↔ 历届总射手，右列各队分布 ↔ 谁常在决赛。 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 20px;
     align-items: start;
 }
 
 .stats-hsection {
     min-width: 0;
-    padding-top: 30px;
+    padding: 30px 28px 0;
     scroll-margin-top: calc(var(--td-tab-h) + 56px);
 }
 
@@ -1512,7 +1631,7 @@ body.site-tournament-view .site-main {
     padding: 1px 7px;
     border: 1px solid rgba(244, 242, 236, .22);
     border-radius: 2px;
-    font-size: 11.5px;
+    font-size: 13px;
     font-weight: 600;
     line-height: 1.5;
 }
@@ -1530,29 +1649,38 @@ body.site-tournament-view .site-main {
     color: var(--steel-2);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1080px) {
     .stats-hist-grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 0;
     }
 }
 
+@media (max-width: 860px) {
+    .stats-hsection,
+    .stats-hsection--four {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-hsection,
+    .stats-hsection--four {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
 @media (max-width: 767px) {
     .stats-history {
-        margin-top: 20px;
-        padding-top: 32px;
-    }
-
-    .stats-history-nav {
-        flex-wrap: nowrap;
-        gap: 20px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        margin-top: 8px;
+        padding-top: 16px;
     }
 
     .stats-hsection {
         padding-top: 24px;
-        scroll-margin-top: calc(var(--td-tab-h) + 8px);
+        scroll-margin-top: calc(var(--td-tab-h) + 16px);
     }
 
     .stats-hsection--four {
@@ -1599,7 +1727,7 @@ body.site-tournament-view .site-main {
         display: block;
         grid-area: names;
         color: var(--steel);
-        font-size: 12.5px;
+        font-size: 13px;
         line-height: 1.45;
         white-space: normal;
     }
@@ -1612,7 +1740,7 @@ body.site-tournament-view .site-main {
 .stats-hfoot {
     margin: 14px 0 0;
     color: var(--steel-2);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.6;
 }
 
@@ -1628,6 +1756,6 @@ body.site-tournament-view .site-main {
 .stats-history-nav-label {
     align-self: center;
     color: var(--steel-2);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .10em;
 }

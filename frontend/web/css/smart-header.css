@@ -8,9 +8,40 @@
     --site-header-h: 65px;
 }
 
+/* sticky 的包含块必须随内容长高。site.css 的 html, body { height: 100% }
+   让 body 只有一屏高，页头滚过一屏后就会脱离粘性、跟着文档走；
+   届次 tab 还按 --site-header-h 钉在 65px，两者之间就会漏出页面内容。
+   放开 body 高度后，页头和 tab 始终相差 0，页脚仍在文档流底部。 */
+html {
+    height: 100%;
+}
+
+body {
+    height: auto;
+    min-height: 100%;
+}
+
 /* 锚点跳转给页头留位置；页头收起时变量变 0，不会多留白。 */
 html {
     scroll-padding-top: var(--site-header-h, 0px);
+}
+
+/* 非首页的跳过链接：art-r6 的 a:focus 会把字染成金色，和金底同色。 */
+body:not(.site-site-index) .skip-link:focus,
+body:not(.site-site-index) .skip-link:focus-visible {
+    background-color: var(--gold);
+    color: var(--night);
+    outline-color: var(--night);
+}
+
+/* 移动菜单按钮：确保 44px 触控高度，并给键盘一个看得见的焦点。 */
+body .navbar-toggle {
+    min-height: 44px;
+}
+
+body .navbar-toggle:focus-visible {
+    outline: 3px solid var(--green-light);
+    outline-offset: 2px;
 }
 
 /* art-r6 / design-v2 给 .site-header 设了 position:relative + z-index:1；

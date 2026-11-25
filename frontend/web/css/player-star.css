@@ -1,0 +1,376 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:届次与比赛 —— 四十年球员星云
+   统计页的一块“夜空”：D3 点云 + 按届播放；星点用径向渐变与 screen 叠加，
+   密集处自然发亮；不替换原有两张本届图。 */
+
+/* 「历届数据」章的最后一块：和四强版图同左轴、同底纹，不再另起一章。 */
+.player-star {
+    --ps-fade: clamp(110px, 12vw, 170px);
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
+    padding: clamp(30px, 3.4vw, 46px) 28px var(--ps-fade);
+    color: var(--flood);
+}
+
+/* 不再给这一块单独铺底：底色和底部渐隐都由 .stats-history 统一承担，
+   否则会在星云上方出现一圈能看出来的色差。 */
+
+.player-star-head {
+    max-width: none;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+}
+
+.player-star-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px 30px;
+}
+
+/* 这四个字不用得意黑：它的字面倾斜不一致（“星”正、“球员云”斜）。
+   改用正文字体的 600 字重，和四强版图同左轴、同金色标题线。 */
+#player-star-title {
+    margin: 0;
+    color: var(--flood);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    line-height: 1.25;
+}
+
+/* 控制条：一条线，不做卡片。 */
+.player-star-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    margin: 24px 0 18px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(244, 242, 236, .10);
+    border-bottom: 1px solid rgba(244, 242, 236, .10);
+}
+
+.player-star-controls button {
+    min-height: 36px;
+    padding: 6px 14px;
+    border: 1px solid rgba(244, 242, 236, .18);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--steel);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color .16s ease, border-color .16s ease, background-color .16s ease;
+}
+
+.player-star-controls button:hover,
+.player-star-controls button:focus-visible {
+    border-color: var(--green-light);
+    color: var(--flood);
+}
+
+.player-star-controls button:focus-visible {
+    outline: 2px solid var(--green-light);
+    outline-offset: 2px;
+}
+
+.player-star-play {
+    border-color: rgba(127, 221, 184, .55) !important;
+    color: var(--green-light) !important;
+}
+
+.player-star-play[aria-pressed="true"] {
+    background-color: rgba(87, 184, 148, .16);
+    color: var(--flood) !important;
+}
+
+.player-star-mode {
+    display: inline-flex;
+    gap: 0;
+}
+
+.player-star-mode button {
+    border-radius: 0;
+}
+
+.player-star-mode button:first-child {
+    border-radius: 2px 0 0 2px;
+}
+
+.player-star-mode button:last-child {
+    border-radius: 0 2px 2px 0;
+}
+
+/* 两段共边：后一段左移 1px 压住前一段的右边线。选中时抬到上层，
+   四边都是完整的高亮边框，左侧不会缺一条。 */
+.player-star-mode button + button {
+    margin-left: -1px;
+}
+
+.player-star-mode button[aria-pressed="true"] {
+    position: relative;
+    z-index: 1;
+    border-color: var(--green-light);
+    background-color: rgba(87, 184, 148, .14);
+    color: var(--flood);
+}
+
+.player-star-year-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--steel);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.player-star-year-wrap input[type="range"] {
+    width: clamp(120px, 18vw, 220px);
+    accent-color: var(--green-light);
+    cursor: pointer;
+}
+
+.player-star-year {
+    min-width: 4.2em;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.player-star-layout {
+    display: block;
+}
+
+.player-star-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 14px;
+}
+
+.player-star-foot .player-star-legend {
+    margin: 0;
+}
+
+.player-star-stage {
+    position: relative;
+    isolation: isolate;
+    min-height: 360px;
+    overflow: hidden;
+    border: 1px solid rgba(244, 242, 236, .08);
+    border-radius: 2px;
+    /* 透明底：让星云直接落在 .stats-history 的同一块黑上，不再有一层浅色卡片。 */
+    background: transparent;
+}
+
+/* 巨大的幽灵年份坐在横轴上，而不是画布底边；--ps-axis-bottom 由 JS 按
+   当前边距与缩放写入，窄屏和桌面都贴着 x 轴。 */
+.player-star-ghost-year {
+    position: absolute;
+    right: 16px;
+    bottom: var(--ps-axis-bottom, 72px);
+    z-index: 0;
+    color: rgba(244, 242, 236, .055);
+    font-family: var(--font-display);
+    font-size: clamp(64px, 9vw, 132px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.03em;
+    line-height: .8;
+    pointer-events: none;
+    user-select: none;
+}
+
+.player-star-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    color: var(--steel);
+    font-size: 14px;
+}
+
+.player-star-svg {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.player-star-tip {
+    position: absolute;
+    z-index: 3;
+    max-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid rgba(244, 242, 236, .12);
+    border-radius: 2px;
+    background: #0A1512;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    color: var(--flood);
+    font-size: 13.5px;
+    line-height: 1.55;
+    white-space: pre-line;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity .12s ease, transform .12s ease;
+}
+
+.player-star-tip.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ps-label {
+    paint-order: stroke;
+    stroke: #04070B;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+/* 星点本体用径向渐变画成“有核的星”，再以 screen 叠加：
+   点越密的地方自然更亮，像星云，而不是一堆等大的平涂圆。 */
+.ps-glows,
+.ps-halos,
+.ps-dots,
+.ps-cores {
+    mix-blend-mode: screen;
+}
+
+/* 只让最亮的十几颗星极轻地呼吸；减少动态时完全静止。 */
+.ps-star-bright {
+    animation: ps-twinkle 7s ease-in-out infinite;
+}
+
+@keyframes ps-twinkle {
+    0%,
+    100% { fill-opacity: .86; }
+    50% { fill-opacity: 1; }
+}
+
+.player-star-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 16px 0 0;
+    color: var(--steel);
+    font-size: 13px;
+}
+
+.player-star-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ps-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.ps-eu { background: #9FB3AD; }
+.ps-sa { background: #57B894; }
+.ps-af { background: #C97A4A; }
+.ps-as { background: #7FA8C9; }
+.ps-na { background: #9C8FC4; }
+.ps-other { background: #6E8389; }
+
+.ps-lit {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(244, 242, 236, .9);
+    border-radius: 50%;
+    box-shadow: 0 0 7px rgba(244, 242, 236, .7);
+}
+
+
+.player-star-note {
+    max-width: 62em;
+    margin: 16px 0 0;
+    color: var(--steel);
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+
+.player-star-empty {
+    margin: 16px 0 0;
+    color: var(--steel);
+    font-size: 13px;
+}
+
+@media (max-width: 860px) {
+    .player-star {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    #player-star-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .player-star {
+        padding: 28px 18px var(--ps-fade);
+    }
+
+    .player-star-ghost-year {
+        bottom: var(--ps-axis-bottom, 64px);
+    }
+
+    .player-star-head-row {
+        display: block;
+    }
+
+    .player-star-controls {
+        gap: 8px 12px;
+    }
+
+    .player-star-year-wrap {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+
+    .player-star-year-wrap input[type="range"] {
+        flex: 1;
+        width: auto;
+    }
+
+    .player-star-legend {
+        margin-top: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .player-star {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .player-star-tip,
+    .player-star-controls button {
+        transition: none;
+    }
+
+    .ps-star-bright {
+        animation: none;
+    }
+}

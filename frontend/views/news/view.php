@@ -10,8 +10,6 @@
 
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
-use common\components\CommentTarget;
-use frontend\widgets\CommentSection;
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => '资讯', 'url' => ['index']];
@@ -28,7 +26,6 @@ $date = $model->publish_time ?: $model->create_time;
         <h1><?= Html::encode($model->title) ?></h1>
         <p class="news-detail-meta">
             <?= Html::encode(Yii::$app->formatter->asDate($date, 'php:Y-m-d')) ?>
-            <?php if ($model->author): ?> · <?= Html::encode($model->author) ?><?php endif ?>
         </p>
     </header>
 
@@ -41,10 +38,4 @@ $date = $model->publish_time ?: $model->create_time;
     <div class="news-content">
         <?= $safeContent !== '' ? $safeContent : '<div class="empty-state"><h3>暂无正文</h3><p>该资讯的正文尚未发布。</p></div>' ?>
     </div>
-
-    <?php // 面包屑和导航已经能回列表；文章读完直接进入本页留言。 ?>
-    <?= CommentSection::widget([
-        'targetType' => CommentTarget::NEWS,
-        'targetId' => $model->id,
-    ]) ?>
 </article>

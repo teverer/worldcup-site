@@ -16,7 +16,18 @@ use yii\helpers\Html;
 
 $this->title = $isTeam ? '球队管理' : '球员管理';
 $this->params['breadcrumbs'][] = $this->title;
-$columns = array_merge(['id', 'name'], $isTeam ? ['code', 'continent'] : ['nationality', 'position', 'birth_date']);
+$columns = [
+    [
+        'attribute' => 'name',
+        'format' => 'raw',
+        'value' => static function ($model) {
+            return Html::a(Html::encode($model->name), ['view', 'id' => $model->id]);
+        },
+    ],
+];
+foreach ($isTeam ? ['code', 'continent'] : ['nationality', 'position', 'birth_date'] as $attribute) {
+    $columns[] = $attribute;
+}
 $columns[] = ['class' => AdminActionColumn::class];
 
 // 球员位置是受控词表;后台只做筛选,不在这里新增词典。
@@ -52,11 +63,6 @@ if ($isTeam) {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">
-            <?= $isTeam
-                ? '按名称、代码或所属大洲找一支国家队。'
-                : '按姓名、国籍、代表球队或位置找一名球员。' ?>
-        </p>
     </div>
     <?= Html::a($isTeam ? '新增球队' : '新增球员', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
 </div>
@@ -134,6 +140,6 @@ if ($isTeam) {
             . '<p>换一个关键词或筛选条件，或</p>'
             . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm'])
             . '</div>',
-        'summary' => '共 {totalCount} 条记录，当前显示 {begin}–{end} 条',
+        'summary' => '共 {totalCount} 条记录',
     ]) ?>
 </div>

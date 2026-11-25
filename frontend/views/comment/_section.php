@@ -28,6 +28,7 @@
  * @var string $emptyTitle
  */
 
+use common\components\CommentTarget;
 use yii\helpers\Html;
 
 $total = count($comments);
@@ -78,7 +79,7 @@ $collectReplies = function ($parentId) use (&$collectReplies, $childrenByParent)
                 'targetId' => $targetId,
                 'parentId' => null,
                 'placeholder' => $placeholder,
-                'submitLabel' => '记下',
+                'submitLabel' => '留言',
                 'isReply' => false,
             ]) ?>
         <?php endif ?>
@@ -88,10 +89,11 @@ $collectReplies = function ($parentId) use (&$collectReplies, $childrenByParent)
         <?php if (!$roots): ?>
             <div class="ledger-empty">
                 <p class="ledger-empty-title"><?= Html::encode($emptyTitle) ?></p>
-                <?php if ($isGuest): ?>
-                    <p class="ledger-empty-sub">登录后，成为第一个留下记忆的人。</p>
-                <?php else: ?>
-                    <p class="ledger-empty-sub">第一个坐下来的人，通常记得最清楚。可以从这些开始：</p>
+                <?php if (!$isGuest): ?>
+                    <?php $emptySub = in_array($targetType, [CommentTarget::TOURNAMENT, CommentTarget::SITE], true)
+                        ? '可以从这里开始'
+                        : '第一个坐下来的人，通常记得最清楚。可以从这些开始：'; ?>
+                    <p class="ledger-empty-sub"><?= Html::encode($emptySub) ?></p>
                     <div class="ledger-starters">
                         <?php foreach ($starters as $starter): ?>
                             <button type="button" class="ledger-starter"

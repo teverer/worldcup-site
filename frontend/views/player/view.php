@@ -12,6 +12,7 @@
  * @var array $statistics
  */
 
+use common\components\PlayerName;
 use common\models\Player;
 use yii\helpers\Html;
 
@@ -60,41 +61,37 @@ foreach ($statistics as $row) {
 }
 krsort($career);
 $showingChineseName = $model->hasChineseName() && !Player::prefersOriginalName();
-// 两种显示模式都保留另一种姓名,避免切到原名后认不出中文名。
-$nameContext = null;
-if ($model->hasChineseName()) {
-    $nameContext = $showingChineseName
-        ? '原名 ' . $model->name
-        : '中文名 ' . $model->name_zh;
-}
+// 两种显示模式都保留另一种姓名：显示中文名时副行给原名，显示原名时副行给中文名。
+$nameContextOrig = $model->hasChineseName() ? '中文名 ' . $model->name_zh : null;
+$nameContextZh = $model->hasChineseName() ? '原名 ' . $model->name : null;
 $metaParts = array_filter([
-    $nameContext,
     $model->nationality,
     $model->position,
     $model->birth_date,
 ]);
-$nameToggleUrl = [
-    '/preference/name-lang',
-    'lang' => $showingChineseName ? 'orig' : 'zh',
-    'return' => Yii::$app->request->url,
-];
 ?>
-<article class="catalog-page player-detail">
+<article class="catalog-page player-detail"
+         data-page-name-orig="<?= Html::encode($model->name) ?>"
+         data-page-name-zh="<?= Html::encode($model->name_zh) ?>">
     <header class="pd-head">
         <div class="pd-head-text">
             <?php if ($model->photo): ?>
                 <?= Html::img('@web/' . $model->photo, ['alt' => $model->name . '照片', 'class' => 'pd-photo']) ?>
             <?php endif ?>
             <div>
-                <h1><?= Html::encode($model->displayName()) ?></h1>
-                <p class="pd-meta"><?= Html::encode($metaParts ? implode(' · ', $metaParts) : '资料待补') ?></p>
-                <?php if ($model->hasChineseName()): ?>
-                    <?= Html::a(
-                        $showingChineseName ? '显示原名' : '显示中文名',
-                        $nameToggleUrl,
-                        ['class' => 'pd-name-toggle']
-                    ) ?>
-                <?php endif ?>
+                <?= Html::tag(
+                    'h1',
+                    Html::encode($model->displayName()),
+                    PlayerName::options($model->name, $model->name_zh, $model->nationality)
+                ) ?>
+                <p class="pd-meta">
+                    <?php if ($nameContextOrig !== null): ?>
+                        <span data-name-orig="<?= Html::encode($nameContextOrig) ?>"
+                              data-name-zh="<?= Html::encode($nameContextZh) ?>"><?= Html::encode($showingChineseName ? $nameContextZh : $nameContextOrig) ?></span>
+                        <?= $metaParts ? ' · ' : '' ?>
+                    <?php endif ?>
+                    <?= Html::encode($metaParts ? implode(' · ', $metaParts) : ($nameContextOrig === null ? '资料待补' : '')) ?>
+                </p>
             </div>
         </div>
         <div class="pd-actions">

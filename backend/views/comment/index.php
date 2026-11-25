@@ -39,7 +39,6 @@ if ($status !== '' && isset($statusOptions[$status])) {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">按留言内容、用户名、目标或状态筛选；已删除的留言仍保留记录。</p>
     </div>
 </div>
 
@@ -97,7 +96,6 @@ if ($status !== '' && isset($statusOptions[$status])) {
             return $model->status === Comment::STATUS_DELETED ? ['class' => 'warning'] : [];
         },
         'columns' => [
-            'id',
             [
                 'label' => '用户',
                 'value' => function ($model) {
@@ -153,7 +151,10 @@ if ($status !== '' && isset($statusOptions[$status])) {
                         return Html::a('删除', $url, [
                             'class' => 'btn btn-danger btn-xs',
                             'data' => [
-                                'confirm' => '确定删除这条留言及其全部回复吗？',
+                                'confirm' => '这条留言及其全部回复会一并删除，无法恢复。',
+                                'confirm-title' => '删除这条留言？',
+                                'confirm-ok' => '删除',
+                                'confirm-tone' => 'danger',
                                 'method' => 'post',
                             ],
                         ]);

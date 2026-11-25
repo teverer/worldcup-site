@@ -42,7 +42,6 @@ if ($keyword !== '') {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">按球员、球队、届次或比赛编号定位一条进球；乌龙球与点球单独标注。</p>
     </div>
     <?= Html::a('录入进球', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
 </div>
@@ -105,10 +104,9 @@ if ($keyword !== '') {
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => '共 {totalCount} 条进球记录,当前显示 {begin}–{end} 条',
+        'summary' => '共 {totalCount} 条进球记录',
         'emptyText' => '暂无符合条件的进球记录。',
         'columns' => [
-            'id',
             [
                 'attribute' => 'match_time',
                 'label' => '比赛时间',
@@ -120,10 +118,14 @@ if ($keyword !== '') {
             [
                 'attribute' => 'tournament_year',
                 'label' => '届次',
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->game === null || $model->game->tournament === null
-                        ? ''
-                        : $model->game->tournament->name;
+                    if ($model->game === null || $model->game->tournament === null) {
+                        return '';
+                    }
+                    return Html::tag('span', Html::encode((string) $model->game->tournament->year), [
+                        'title' => $model->game->tournament->name,
+                    ]);
                 },
             ],
             [
@@ -159,22 +161,11 @@ if ($keyword !== '') {
                 },
             ],
             [
-                'label' => '助攻',
-                'value' => function ($model) {
-                    return $model->assistPlayer === null ? '—' : $model->assistPlayer->name;
-                },
-            ],
-            [
                 'attribute' => 'minute',
                 'label' => '分钟',
-                'value' => function ($model) {
-                    return $model->minute === null ? '—' : $model->minute . "'";
-                },
-            ],
-            [
-                'label' => '标记',
                 'format' => 'raw',
                 'value' => function ($model) {
+                    $minute = $model->minute === null ? '—' : (int) $model->minute . "'";
                     $tags = [];
                     if ((int) $model->is_penalty === 1) {
                         $tags[] = Html::tag('span', '点球', ['class' => 'label label-info']);
@@ -185,7 +176,7 @@ if ($keyword !== '') {
                     if ((int) $model->is_shootout === 1) {
                         $tags[] = Html::tag('span', '点球大战', ['class' => 'label label-default']);
                     }
-                    return $tags === [] ? '—' : implode(' ', $tags);
+                    return Html::encode($minute) . ($tags === [] ? '' : ' ' . implode(' ', $tags));
                 },
             ],
             [

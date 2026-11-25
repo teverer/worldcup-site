@@ -35,10 +35,15 @@ $this->registerCssFile('@web/css/charts.css');
 $this->registerCssFile('@web/css/chart-stage.css');
 // ECharts 不在首屏加载:charts.js 在统计面板第一次可见时才注入本地脚本。
 // 本地 /js/vendor/echarts.min.js(Apache-2.0),避免部署环境无外网或 CDN 不可用。
-$this->registerJsFile('@web/js/charts.js', [
-    'position' => View::POS_END,
-    'id' => 'charts-js',
-]);
+// 追加 filemtime 版本号,避免用户拿到旧图表脚本。
+$chartsJsVersion = @filemtime(Yii::getAlias('@webroot/js/charts.js')) ?: '';
+$this->registerJsFile(
+    Url::to('@web/js/charts.js') . ($chartsJsVersion !== '' ? '?v=' . $chartsJsVersion : ''),
+    [
+        'position' => View::POS_END,
+        'id' => 'charts-js',
+    ]
+);
 ?>
 <section id="charts-panel" class="charts-panel"
          data-tournament-id="<?= (int) $tournamentId ?>"
@@ -50,37 +55,34 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>本届射手榜 Top 10</h3>
-                <p class="chart-caption">不计乌龙球与点球大战；金 = 最佳射手</p>
             </div>
             <div id="chart-scorers" class="chart-canvas chart-canvas--scorers"
                  data-chart="scorers" role="img" aria-label="本届射手榜横向柱状图">
                 <p class="chart-loading">图表加载中…</p>
             </div>
-            <details class="chart-data">
-                <summary>查看射手榜数据表</summary>
-                <div id="table-scorers" class="chart-table-wrap"></div>
-            </details>
             <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
         </article>
 
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>本届各队进球分布</h3>
-                <p class="chart-caption">前 8 队 + 其他；分母 = 全届总进球</p>
             </div>
-            <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
-                 data-chart="team-goals" role="img" aria-label="本届各队进球占比圆环图">
-                <p class="chart-loading">图表加载中…</p>
+            <div class="chart-teams-wrap">
+                <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
+                     data-chart="team-goals" role="img" aria-label="本届各队进球占比圆环图">
+                    <p class="chart-loading">图表加载中…</p>
+                </div>
+                <?php /* 环心数字用 HTML 叠层：随圆心百分比走，不会被 ECharts 文字锚点带偏。 */ ?>
+                <div class="chart-donut-center" data-donut-center hidden>
+                    <strong>—</strong>
+                    <span>全届进球</span>
+                </div>
             </div>
-            <details class="chart-data">
-                <summary>查看各队进球数据表</summary>
-                <div id="table-team-goals" class="chart-table-wrap"></div>
-            </details>
             <noscript><p class="chart-empty-state">图表需要启用 JavaScript。</p></noscript>
         </article>
     </div>
 
     <p class="chart-footnote">
-        只计已结束比赛；乌龙球计入受益队；点球大战不计入射手与球队进球
+        乌龙球计入受益队；点球大战不计入射手与球队进球
     </p>
 </section>

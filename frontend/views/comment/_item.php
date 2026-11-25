@@ -58,7 +58,10 @@ $shortTime = Yii::$app->formatter->asDatetime($comment->create_time, 'php:m-d H:
                     <?php if ($likeCount > 0): ?><span class="num"><?= $likeCount ?></span><?php endif ?>
                 </span>
             <?php else: ?>
-                <?= Html::beginForm(['/comment/like', 'id' => $comment->id], 'post', ['class' => 'ledger-inline-form']) ?>
+                <?= Html::beginForm(['/comment/like', 'id' => $comment->id], 'post', [
+                    'class' => 'ledger-inline-form',
+                    'data-ledger-like' => '1',
+                ]) ?>
                     <?= Html::submitButton(
                         '<svg class="ledger-icon" viewBox="0 0 24 24" aria-hidden="true">'
                         . '<path d="M7 10v10H4V10h3Zm0 10h9.2a2 2 0 0 0 2-1.6l1.2-6A2 2 0 0 0 17.5 10H13V6a2 2 0 0 0-2-2l-4 6v10Z"></path>'
@@ -97,7 +100,10 @@ $shortTime = Yii::$app->formatter->asDatetime($comment->create_time, 'php:m-d H:
                         [
                             'class' => 'ledger-action ledger-action--quiet ledger-action--danger',
                             'encode' => false,
-                            'data-confirm' => '确定删除这条留言及其回复吗？',
+                            'data-confirm' => '这条留言及其回复会一并删除，无法恢复。',
+                            'data-confirm-title' => '删除这条留言？',
+                            'data-confirm-ok' => '删除',
+                            'data-confirm-tone' => 'danger',
                         ]
                     ) ?>
                 <?= Html::endForm() ?>

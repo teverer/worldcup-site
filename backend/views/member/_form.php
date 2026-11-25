@@ -26,7 +26,7 @@ use yii\helpers\Html;
     </div>
     <?= $form->field($model, 'avatarFile')->fileInput([
         'accept' => 'image/jpeg,image/png,image/webp,image/gif,image/avif',
-    ])->hint('支持 JPG、PNG、WebP、GIF、AVIF，最大 5 MB。') ?>
+    ])->hint('JPG / PNG / WebP / GIF / AVIF，≤ 5 MB。') ?>
     <?php if ($model->avatar): ?>
         <p class="help-block">当前照片：<code><?= Html::encode($model->avatar) ?></code></p>
     <?php endif ?>

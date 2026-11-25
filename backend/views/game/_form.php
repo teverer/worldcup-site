@@ -38,27 +38,23 @@ echo $form->field($model, 'tournament_id')->dropDownList($tournamentOptions, ['p
     <?= $form->field($model, 'stage')->dropDownList(Game::stageOptions(), ['prompt' => '请选择比赛阶段']) ?>
     <?= $form->field($model, 'status')->dropDownList(Game::statusOptions()) ?>
 </div>
-<?= $form->field($model, 'match_time')->input('datetime-local', ['value' => $matchTimeValue])
-    ->hint('例如 2026-06-11 18:00，可留空。') ?>
+<?= $form->field($model, 'match_time')->input('datetime-local', ['value' => $matchTimeValue]) ?>
 <div class="form-grid">
     <?= $form->field($model, 'home_team_id')->dropDownList($teamOptions, ['prompt' => '请选择主队']) ?>
     <?= $form->field($model, 'away_team_id')->dropDownList($teamOptions, ['prompt' => '请选择客队'])
-        ->hint('主队和客队不能相同。') ?>
+        ->hint('主客队不能相同。') ?>
 </div>
 <div class="form-grid">
     <?= $form->field($model, 'home_score')->input('number', ['min' => 0, 'max' => 99])
-        ->hint('120 分钟（含加时）比分；已结束时必填。') ?>
-    <?= $form->field($model, 'away_score')->input('number', ['min' => 0, 'max' => 99])
-        ->hint('120 分钟（含加时）比分；已结束时必填。') ?>
+        ->hint('120 分钟比分；未结束可留空。') ?>
+    <?= $form->field($model, 'away_score')->input('number', ['min' => 0, 'max' => 99]) ?>
 </div>
 <div class="form-grid">
     <?= $form->field($model, 'home_penalty_score')->input('number', ['min' => 0, 'max' => 30])
-        ->hint('没有点球大战请留空。') ?>
-    <?= $form->field($model, 'away_penalty_score')->input('number', ['min' => 0, 'max' => 30])
-        ->hint('必须与主队成对填写。') ?>
+        ->hint('点球大战才填，成对填写。') ?>
+    <?= $form->field($model, 'away_penalty_score')->input('number', ['min' => 0, 'max' => 30]) ?>
 </div>
-<?= $form->field($model, 'venue')->textInput(['maxlength' => 50])
-    ->hint('例如 卢塞尔球场。') ?>
+<?= $form->field($model, 'venue')->textInput(['maxlength' => 50, 'placeholder' => '如 卢塞尔球场']) ?>
 <div class="form-group">
     <?= Html::submitButton('保存比赛', ['class' => 'btn btn-success']) ?>
     <?= Html::a('取消', ['index'], ['class' => 'btn btn-default']) ?>

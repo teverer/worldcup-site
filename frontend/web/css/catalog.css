@@ -1146,3 +1146,11 @@ body.site-team-view .td-intro {
         margin-inline: 0;
     }
 }
+
+/* 球队名单按届次 / 翻页时就地更新：只给这一块一个轻量的 busy 反馈，
+   不遮页面、不移动滚动位置。 */
+[data-roster-root][aria-busy="true"] {
+    opacity: .55;
+    cursor: progress;
+    transition: opacity .15s ease;
+}

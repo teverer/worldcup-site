@@ -25,9 +25,6 @@ $dateText = Yii::$app->formatter->asDate($date, 'php:Y-m-d');
             <?php if ($excerpt !== ''): ?>
                 <span class="news-row-excerpt"><?= Html::encode($excerpt) ?></span>
             <?php endif ?>
-            <?php if ($model->author): ?>
-                <span class="news-row-author"><?= Html::encode($model->author) ?></span>
-            <?php endif ?>
         </span>
     </a>
 </article>

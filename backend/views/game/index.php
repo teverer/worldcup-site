@@ -49,7 +49,6 @@ if ($keyword !== '') {
 <div class="admin-page-head">
     <div>
         <h1><?= Html::encode($this->title) ?></h1>
-        <p class="admin-page-sub">按届次、阶段、球队或年份找一场比赛；列表默认按时间倒序。</p>
     </div>
     <?= Html::a('新增比赛', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
 </div>
@@ -128,7 +127,7 @@ if ($keyword !== '') {
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => '共 {totalCount} 场比赛,当前显示 {begin}–{end} 条',
+        'summary' => '共 {totalCount} 场比赛',
         'emptyText' => '<div class="admin-empty"><strong>没有符合条件的比赛。</strong>'
             . '<p>换一个届次或球队试试，或</p>'
             . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm'])
@@ -139,10 +138,11 @@ if ($keyword !== '') {
                 'label' => '届次',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $name = $model->tournament === null ? '' : (string) $model->tournament->name;
-                    return Html::tag('span', Html::encode(\yii\helpers\StringHelper::truncate($name, 12)), [
-                        'title' => $name,
-                        'class' => 'dash-ellipsis',
+                    if ($model->tournament === null) {
+                        return '';
+                    }
+                    return Html::tag('span', Html::encode((string) $model->tournament->year), [
+                        'title' => $model->tournament->name,
                     ]);
                 },
             ],

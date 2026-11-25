@@ -98,13 +98,19 @@ body.site-site-index .site-main {
     padding: clamp(40px, 6vw, 88px) 0 clamp(48px, 7vw, 96px);
 }
 
+/* 页头不再单独画一条横线：横线只保留在届次列表顶端，
+   紧贴第一条记录；否则句子和列表之间会浮着一条孤立的线。 */
 .wall-head {
-    padding-bottom: clamp(32px, 5vw, 64px);
-    border-bottom: 1px solid var(--line-dark);
+    padding-bottom: 0;
+    border-bottom: 0;
 }
 
 .wall-title {
+    /* 标题块（年份 + 副标题）之后留一段空白；用 padding 而不是 margin，
+       免得和外层 / 列表的 margin 合并，看起来“加了没反应”。
+       需要“空一行”时改这里，不要用 \n、<br><br> 或空的 <p> 撑高度。 */
     margin: 0;
+    padding-bottom: clamp(20px, 2.6vw, 32px);
 }
 
 .wall-range {
@@ -135,9 +141,25 @@ body.site-site-index .site-main {
     line-height: 1.6;
 }
 
+/* 列表顶线：紧贴第一条记录，并向两侧通栏出血到屏幕边缘。
+   用伪元素而不是 border，避免被容器宽度限制；.site-main 的 overflow-x: clip
+   负责裁掉 100vw 在滚动条上多出的几像素。 */
 .wall {
-    margin-top: clamp(32px, 5vw, 56px);
-    border-top: 1px solid var(--line-dark);
+    position: relative;
+    margin-top: clamp(28px, 3.4vw, 44px);
+    border-top: 0;
+}
+
+.wall::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: 1px;
+    transform: translateX(-50%);
+    background-color: var(--line-dark);
+    content: "";
+    pointer-events: none;
 }
 
 .wall-board {
@@ -210,20 +232,6 @@ body.site-site-index .site-main {
 .board-host {
     color: var(--steel);
     font-size: 14.5px;
-}
-
-.board-volume {
-    color: var(--steel-2);
-    font-size: 14px;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: .02em;
-    white-space: nowrap;
-}
-
-.board-volume::before {
-    margin-right: 8px;
-    color: var(--steel);
-    content: "·";
 }
 
 /* 横向记分牌：冠军与亚军分列两侧，决赛比分是行里最亮的一个数。 */
@@ -855,392 +863,340 @@ body.site-site-index .site-main {
 }
 
 /* ==========================================================================
-   四十年，场均进球：一条线看十一次世界杯
+   首页届次缩略图 + 轻悬浮（2026-11-25）
+   缩略图是可选层：删除 .board-thumb 的渲染或把 $showBoardThumbs 设 false，
+   网格和文字不受影响。所有届次同权，没有 is-lit 放大。
    ========================================================================== */
-.era-trend {
-    margin-top: clamp(64px, 8vw, 104px);
-    padding-top: clamp(28px, 4vw, 44px);
-    border-top: 1px solid var(--line-dark);
-}
-
-.era-trend-head {
+.board-main {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 18px 48px;
+    align-items: center;
+    gap: 14px;
 }
 
-.era-trend-head-main {
-    max-width: 720px;
+.board-main-text {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
 }
 
-.era-trend-head h2 {
-    margin: 0;
-    color: var(--flood);
-    font-family: var(--font-cn-display);
-    font-size: clamp(28px, 3vw, 44px);
-    font-weight: 400;
-    letter-spacing: .01em;
-    line-height: 1.15;
+.board-thumb {
+    flex: 0 0 112px;
+    width: 112px;
+    height: 63px;
+    overflow: hidden;
+    border: 1px solid var(--line-dark);
+    border-radius: 2px;
+    background-color: #0A1512;
 }
 
-.era-trend-head p {
-    max-width: 46em;
-    margin: 10px 0 0;
-    color: var(--steel);
-    font-size: 16px;
-    line-height: 1.7;
-}
-
-.era-trend-insight {
-    flex: 0 1 auto;
-    max-width: 30em;
-    min-width: 0;
-    margin: 0;
-    color: var(--steel-2);
-    font-size: 14px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
-    text-align: right;
-}
-
-.era-chart-scroll {
-    max-width: 100%;
-    margin-top: clamp(20px, 3vw, 32px);
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-}
-
-.era-chart {
+.board-thumb img {
     display: block;
     width: 100%;
-    min-width: 1200px;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    opacity: .78;
+    filter: saturate(.85) brightness(.9);
+    transition: transform .35s ease, opacity .25s ease, filter .25s ease;
 }
 
-.era-grid {
-    stroke: rgba(244, 242, 236, .10);
-    stroke-width: 1;
+.wall-board {
+    transition: background-color .16s ease, color .16s ease,
+        transform .18s ease, box-shadow .18s ease;
 }
 
-.era-baseline {
-    stroke: rgba(244, 242, 236, .24);
-    stroke-width: 1;
+.wall-board:hover,
+.wall-board:focus-visible {
+    z-index: 2;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .24);
 }
 
-.era-axis-label {
-    fill: var(--steel);
-    font-family: var(--font-display);
-    font-size: 13px;
-    text-anchor: end;
-    font-variant-numeric: tabular-nums;
-}
-
-.era-axis-title {
-    fill: var(--steel);
-    font-family: var(--font-display);
-    font-size: 13px;
-    letter-spacing: .06em;
-    text-anchor: start;
-}
-
-.era-line {
-    fill: none;
-    stroke: var(--flood);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.era-mean {
-    stroke: rgba(244, 242, 236, .34);
-    stroke-width: 1;
-    stroke-dasharray: 4 6;
-}
-
-.era-mean-label {
-    fill: var(--steel);
-    font-family: var(--font-display);
-    font-size: 12px;
-    letter-spacing: .04em;
-    text-anchor: end;
-}
-
-.era-year {
-    fill: var(--flood);
-    font-family: var(--font-display);
-    font-size: 13.5px;
-    text-anchor: middle;
-    font-variant-numeric: tabular-nums;
-}
-
-.era-champion-name {
-    fill: var(--steel-2);
-    font-family: var(--font-cn-display);
-    font-size: 11.5px;
-    letter-spacing: .02em;
-    text-anchor: middle;
-}
-
-.era-flag-frame {
-    fill: none;
-    stroke: rgba(244, 242, 236, .2);
-    stroke-width: 1;
-}
-
-.era-flag {
-    pointer-events: none;
-}
-
-.era-flag-code {
-    fill: var(--steel);
-    font-family: var(--font-display);
-    font-size: 10px;
-    text-anchor: middle;
-}
-
-.era-dot {
-    fill: var(--flood);
-    stroke: var(--night);
-    stroke-width: 2;
-    transition: r .16s ease, fill .16s ease;
-}
-
-.era-guide {
-    stroke: rgba(224, 180, 87, .38);
-    stroke-width: 1;
-    stroke-dasharray: 2 4;
-    opacity: 0;
-    transition: opacity .16s ease;
-}
-
-.era-point {
-    cursor: pointer;
-}
-
-.era-point:hover .era-dot,
-.era-point:focus-visible .era-dot {
-    r: 6.4px;
-    fill: var(--gold-light);
-}
-
-.era-point:hover .era-guide,
-.era-point:focus-visible .era-guide {
+.wall-board:hover .board-thumb img,
+.wall-board:focus-visible .board-thumb img {
+    transform: scale(1.05);
     opacity: 1;
+    filter: none;
 }
 
-.era-point:focus-visible .era-flag-frame {
-    stroke: var(--gold-light);
-}
-
-.era-point:focus {
-    outline: none;
-}
-
-/* 键盘焦点：不要沿整条导引线画大框，改成点上的金环 + 数据标签。 */
-body.site-site-index .era-chart .era-point:focus-visible {
-    outline: none;
-}
-
-.era-point:focus-visible .era-dot {
-    r: 7px;
-    stroke: var(--gold-light);
-    stroke-width: 3;
-}
-
-.era-tip {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .12s ease;
-}
-
-.era-tip rect {
-    fill: rgba(4, 7, 11, .96);
-    stroke: rgba(244, 242, 236, .28);
-    stroke-width: 1;
-}
-
-.era-tip text {
-    fill: var(--flood);
-    font-family: var(--font-cn-body);
-    font-size: 12px;
-}
-
-.era-point:hover .era-tip,
-.era-point:focus-visible .era-tip {
-    opacity: 1;
-}
-
-.era-scroll-hint {
-    margin: 0 0 8px;
-    color: var(--steel-2);
-    font-size: 12px;
-    text-align: right;
-}
-
-.era-scroll-hint[hidden] {
-    display: none;
-}
-
-.era-trend-note {
-    margin: 10px 0 0;
-    color: var(--steel-2);
-    font-size: 13px;
-    line-height: 1.7;
-}
-
-.era-data {
-    margin-top: 18px;
-    padding-top: 12px;
-    border-top: 1px solid var(--line-dark);
-}
-
-.era-more {
-    margin: 16px 0 0;
-    font-size: 14px;
-}
-
-.era-more a {
-    color: var(--green-light);
-}
-
-.era-more a:hover,
-.era-more a:focus {
-    color: var(--gold-light);
-}
-
-.era-data summary {
-    color: var(--green-light);
-    font-size: 14px;
-    cursor: pointer;
-    outline-offset: 3px;
-}
-
-.era-data summary:hover,
-.era-data summary:focus {
-    color: var(--gold-light);
-}
-
-.era-table-wrap {
-    margin-top: 12px;
-    overflow-x: auto;
-    scrollbar-color: rgba(244, 242, 236, .3) transparent;
-    scrollbar-width: thin;
-}
-
-.era-table-wrap::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.era-table-wrap::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(244, 242, 236, .28);
-}
-
-.era-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: var(--steel);
-    font-size: 14px;
-}
-
-.era-table th,
-.era-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--line-dark);
-    text-align: left;
-    white-space: nowrap;
-}
-
-.era-table thead th {
-    color: var(--steel-2);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: .04em;
-}
-
-.era-table tbody th {
-    color: var(--flood);
-    font-weight: 500;
-}
-
-.era-table .num {
-    font-family: var(--font-display);
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-}
-
-.era-table a {
-    color: var(--green-light);
-}
-
-.era-table a:hover,
-.era-table a:focus {
-    color: var(--gold-light);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .era-line {
-        animation: era-draw 1.2s ease-out .15s both;
-    }
-
-    .era-point {
-        animation: era-fade .45s ease-out both;
-    }
-
-    .era-point:nth-of-type(1) { animation-delay: .25s; }
-    .era-point:nth-of-type(2) { animation-delay: .32s; }
-    .era-point:nth-of-type(3) { animation-delay: .39s; }
-    .era-point:nth-of-type(4) { animation-delay: .46s; }
-    .era-point:nth-of-type(5) { animation-delay: .53s; }
-    .era-point:nth-of-type(6) { animation-delay: .60s; }
-    .era-point:nth-of-type(7) { animation-delay: .67s; }
-    .era-point:nth-of-type(8) { animation-delay: .74s; }
-    .era-point:nth-of-type(9) { animation-delay: .81s; }
-    .era-point:nth-of-type(10) { animation-delay: .88s; }
-    .era-point:nth-of-type(11) { animation-delay: .95s; }
-}
-
-@keyframes era-draw {
-    from {
-        stroke-dasharray: 1;
-        stroke-dashoffset: 1;
-    }
-    to {
-        stroke-dasharray: 1;
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes era-fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@media (max-width: 600px) {
-    /* 窄屏优先保留 年份 / 冠军 / 场次 / 进球 / 场均；东道主与决赛在届次页可看。 */
-    .era-table th:nth-child(2),
-    .era-table td:nth-child(2),
-    .era-table th:nth-child(4),
-    .era-table td:nth-child(4) {
+@media (max-width: 1100px) {
+    .board-thumb {
         display: none;
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .wall-board,
+    .board-thumb img {
+        transition: none;
+    }
+
+    .wall-board:hover,
+    .wall-board:focus-visible {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* ==========================================================================
+   首页记分牌卡片放大（2026-11-25）
+   --------------------------------------------------------------------------
+   用户反馈：每届条目纵向太瘦，姓名 / 国旗 / 决赛比分偏小；「多少场多少球」
+   与卡片主信息重复且占地，已从视图删除。这里把行高、缩略图、字阶和旗标
+   一起抬一档，桌面像一张横向赛果卡，窄屏仍有足够留白。
+   ========================================================================== */
+.site-site-index .wall-board {
+    grid-template-columns: minmax(150px, 196px) minmax(0, 1fr) minmax(420px, 500px);
+    gap: clamp(20px, 2.8vw, 36px);
+    min-height: 188px;
+    padding: clamp(34px, 3.2vw, 46px) 24px;
+}
+
+.site-site-index .wall-board .board-year {
+    font-size: clamp(56px, 5vw, 82px);
+}
+
+.site-site-index .wall-board.is-lit .board-year {
+    font-size: clamp(68px, 6.2vw, 104px);
+}
+
+.site-site-index .wall-board .board-main {
+    gap: 22px;
+}
+
+.site-site-index .wall-board .board-thumb {
+    flex-basis: 168px;
+    width: 168px;
+    height: 94px;
+}
+
+.site-site-index .wall-board .board-name {
+    font-size: clamp(24px, 2vw, 30px);
+    line-height: 1.22;
+}
+
+.site-site-index .wall-board .board-meta {
+    margin-top: 10px;
+}
+
+.site-site-index .wall-board .board-host {
+    font-size: 16.5px;
+}
+
+.site-site-index .wall-board .board-side {
+    gap: 12px;
+}
+
+.site-site-index .wall-board .board-role {
+    font-size: 13px;
+}
+
+.site-site-index .wall-board .board-team {
+    font-size: 21px;
+}
+
+.site-site-index .wall-board .board-flag,
+.site-site-index .wall-board .board-flag img {
+    width: 38px;
+    height: 28px;
+}
+
+.site-site-index .wall-board.is-lit .board-flag,
+.site-site-index .wall-board.is-lit .board-flag img {
+    width: 42px;
+    height: 31px;
+}
+
+.site-site-index .wall-board .board-score-wrap {
+    min-width: 96px;
+    gap: 6px;
+}
+
+.site-site-index .wall-board .board-score {
+    font-size: clamp(42px, 3.4vw, 52px);
+}
+
+.site-site-index .wall-board.is-lit .board-score {
+    font-size: clamp(48px, 3.8vw, 60px);
+}
+
+.site-site-index .wall-board .board-badge {
+    padding: 2px 9px;
+    font-size: 13px;
+}
+
+@media (max-width: 1100px) and (min-width: 992px) {
+    .site-site-index .wall-board {
+        grid-template-columns: 120px minmax(0, 1fr) minmax(320px, 380px);
+        gap: 16px 20px;
+        min-height: 160px;
+        padding: 28px 20px;
+    }
+
+    .site-site-index .wall-board .board-thumb {
+        display: block;
+        flex-basis: 112px;
+        width: 112px;
+        height: 63px;
+    }
+
+    .site-site-index .wall-board .board-year {
+        font-size: 60px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-year {
+        font-size: 72px;
+    }
+
+    .site-site-index .wall-board .board-name {
+        font-size: 23px;
+    }
+
+    .site-site-index .wall-board .board-host {
+        font-size: 16px;
+    }
+
+    .site-site-index .wall-board .board-team {
+        font-size: 18px;
+    }
+
+    .site-site-index .wall-board .board-flag,
+    .site-site-index .wall-board .board-flag img {
+        width: 30px;
+        height: 22px;
+    }
+
+    .site-site-index .wall-board .board-score {
+        font-size: 42px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-score {
+        font-size: 46px;
+    }
+}
+
+@media (max-width: 991px) {
+    .site-site-index .wall-board {
+        grid-template-columns: 120px minmax(0, 1fr);
+        row-gap: 22px;
+        min-height: 0;
+        padding: 30px 20px;
+    }
+
+    .site-site-index .wall-board .board-thumb {
+        display: block;
+        flex-basis: 150px;
+        width: 150px;
+        height: 84px;
+    }
+
+    .site-site-index .wall-board .board-year {
+        font-size: 64px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-year {
+        font-size: 78px;
+    }
+
+    .site-site-index .wall-board .board-name {
+        font-size: 26px;
+    }
+
+    .site-site-index .wall-board .board-final {
+        max-width: 640px;
+    }
+
+    .site-site-index .wall-board .board-team {
+        font-size: 20px;
+    }
+
+    .site-site-index .wall-board .board-flag,
+    .site-site-index .wall-board .board-flag img {
+        width: 34px;
+        height: 26px;
+    }
+
+    .site-site-index .wall-board .board-score {
+        font-size: 46px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-score {
+        font-size: 52px;
+    }
+}
+
 @media (max-width: 767px) {
-    .era-trend {
-        margin-top: 56px;
-        padding-top: 28px;
+    .site-site-index .wall-board {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px 16px;
+        padding: 24px 0;
     }
 
-    .era-trend-insight {
-        flex-basis: 100%;
-        max-width: 100%;
-        text-align: left;
+    .site-site-index .wall-board .board-main {
+        gap: 16px;
     }
 
+    .site-site-index .wall-board .board-thumb {
+        display: block;
+        flex-basis: 132px;
+        width: 132px;
+        height: 74px;
+    }
+
+    .site-site-index .wall-board .board-year {
+        font-size: 58px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-year {
+        font-size: 66px;
+    }
+
+    .site-site-index .wall-board .board-name {
+        font-size: 23px;
+    }
+
+    .site-site-index .wall-board .board-host {
+        font-size: 15.5px;
+    }
+
+    .site-site-index .wall-board .board-team {
+        font-size: 19px;
+    }
+
+    .site-site-index .wall-board .board-role {
+        font-size: 12px;
+    }
+
+    .site-site-index .wall-board .board-flag,
+    .site-site-index .wall-board .board-flag img {
+        width: 30px;
+        height: 22px;
+    }
+
+    .site-site-index .wall-board .board-score {
+        font-size: 40px;
+    }
+
+    .site-site-index .wall-board.is-lit .board-score {
+        font-size: 44px;
+    }
+}
+
+@media (max-width: 420px) {
+    .site-site-index .wall-board .board-thumb {
+        flex-basis: 112px;
+        width: 112px;
+        height: 63px;
+    }
+
+    .site-site-index .wall-board .board-name {
+        font-size: 21px;
+    }
+
+    .site-site-index .wall-board .board-team {
+        font-size: 17px;
+    }
+
+    .site-site-index .wall-board .board-score {
+        font-size: 36px;
+    }
 }

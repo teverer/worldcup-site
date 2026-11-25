@@ -27,6 +27,8 @@
 
     var chartInstances = {};
     var resizeTimer = null;
+    // 最近一次射手榜数据:姓名切换后就地重绘，不再请求接口。
+    var lastScorersData = null;
     // 站内硬规则:尊重 prefers-reduced-motion;开启时取消 ECharts 入场动画。
     var prefersReducedMotion = !!(window.matchMedia
         && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -158,6 +160,20 @@
             return String(row.playerNameZh);
         }
         return formatPlayerName(row ? row.playerName : '');
+    }
+
+    // 比赛比分走势的进球点:tooltip 每次打开时读当前 cookie,切换后不用重绘图表。
+    function displayMarkName(mark) {
+        if (!mark) {
+            return '';
+        }
+        if (mark.alwaysZh && mark.playerZh) {
+            return String(mark.playerZh);
+        }
+        if (!prefersOriginalName() && mark.playerZh) {
+            return String(mark.playerZh);
+        }
+        return String(mark.playerOrig || mark.player || '');
     }
 
     function formatPlayerName(value) {
@@ -378,13 +394,15 @@
                 // 横向条形:队名在左、积分在右,四支球队比竖向柱更紧凑、也更容易读排名。
                 grid: { left: 10, right: compact ? 42 : 64, top: 24, bottom: 20, containLabel: true },
                 tooltip: {
-                    trigger: 'axis',
-                    axisPointer: { type: 'shadow' },
+                    // 只在条形上响应；不要 trigger:'axis' + shadow，
+                    // 否则指针落在整条类目带（含空白画布）都会把整块高亮。
+                    trigger: 'item',
                     backgroundColor: INK.surface,
                     borderColor: INK.grid,
                     textStyle: { color: INK.primary, fontSize: 14, fontFamily: CN_FONT },
                     formatter: function (params) {
-                        var row = chartRows[params[0].dataIndex];
+                        var item = Array.isArray(params) ? params[0] : params;
+                        var row = chartRows[item.dataIndex];
                         if (!row) {
                             return '';
                         }
@@ -504,7 +522,8 @@
         drawGroup(findGroup(availableGroups, activeGroup));
     }
 
-    function renderScorers(data) {
+    function renderScorers(data, instant) {
+        lastScorersData = data;
         var scorers = (data && data.scorers) || [];
         var chartRows = scorers.slice().reverse();
 
@@ -550,16 +569,17 @@
         }
 
         chart.setOption({
-            animationDuration: ANIMATION_DURATION,
+            animationDuration: instant ? 0 : ANIMATION_DURATION,
             grid: { left: 10, right: compact ? 54 : 64, top: 12, bottom: 16, containLabel: true },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
+                // 单系列条形：指针在条形上才提示；空白画布不响应。
+                trigger: 'item',
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
                 textStyle: { color: INK.primary, fontSize: 14, fontFamily: CN_FONT },
                 formatter: function (params) {
-                    var row = chartRows[params[0].dataIndex];
+                    var item = Array.isArray(params) ? params[0] : params;
+                    var row = chartRows[item.dataIndex];
                     if (!row) {
                         return '';
                     }
@@ -726,13 +746,14 @@
                 containLabel: true
             },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
+                // 单系列柱状：只在柱子上响应，不在整条时段带/画布上高亮。
+                trigger: 'item',
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
                 textStyle: { color: INK.primary, fontSize: 14, fontFamily: CN_FONT },
                 formatter: function (params) {
-                    var index = params[0].dataIndex;
+                    var item = Array.isArray(params) ? params[0] : params;
+                    var index = item.dataIndex;
                     var row = buckets[index];
                     return row
                         ? '<strong>' + escapeHtml(row.label) + '</strong><br>'
@@ -864,7 +885,9 @@
         if (!chart) {
             return;
         }
-        var compact = container.clientWidth < 560;
+        // 侧图例只适合 560–700px 的半宽卡；整宽卡（≥701）改用底部图例，
+        // 否则圆环会缩在左边、图例孤零零挂在最右。
+        var compact = container.clientWidth < 560 || container.clientWidth > 700;
         var topCount = 8;
         var topRows = tableRows.slice(0, topCount);
         var restRows = tableRows.slice(topCount);
@@ -916,13 +939,13 @@
             var row = index === undefined ? null : topRows[index];
             var flag = useFlags && row ? flagTag(row, index, 'lg') : '';
             if (compact) {
-                return flag + name;
+                // 触屏没有 hover：图例直接给占比，别只留队名。
+                return flag + name + ' ' + (row ? row.percent : restPercent) + '%';
             }
             return flag + name
                 + (row ? '  ' + row.goals + ' 球 · ' + row.percent + '%' : '  ' + restGoals + ' 球 · ' + restPercent + '%');
         };
-        var centerX = compact ? '50%' : '36%';
-
+        // 桌面右图例 + 圆环并排：圆心左移，给右侧旗标图例留出整列。
         chart.setOption({
             animationDuration: ANIMATION_DURATION,
             tooltip: {
@@ -960,11 +983,11 @@
                 // 同上：桌面图例也不参与筛选。
                 selectedMode: false,
                 orient: 'vertical',
-                right: '2%',
+                right: '0%',
                 top: 'middle',
                 itemWidth: 9,
                 itemHeight: 9,
-                itemGap: 14,
+                itemGap: 12,
                 icon: 'circle',
                 textStyle: {
                     color: INK.secondary,
@@ -974,35 +997,14 @@
                 },
                 formatter: legendFormatter
             },
-            graphic: [
-                {
-                    type: 'text',
-                    left: centerX,
-                    top: compact ? '25%' : '43%',
-                    style: {
-                        text: String(total),
-                        fill: INK.primary,
-                        font: 'bold ' + (compact ? 36 : 54) + 'px ' + NUM_FONT,
-                        textAlign: 'center'
-                    }
-                },
-                {
-                    type: 'text',
-                    left: centerX,
-                    top: compact ? '38%' : '53%',
-                    style: {
-                        text: '全届进球',
-                        fill: INK.muted,
-                        font: '13px ' + CN_FONT,
-                        textAlign: 'center'
-                    }
-                }
-            ],
+            // 环心数字不在这里画：用 .chart-donut-center 的 HTML 叠层，
+            // 与圆心的百分比位置共用一套坐标，缩放时不会偏。
+
             series: [{
                 name: '进球',
                 type: 'pie',
-                radius: compact ? ['34%', '56%'] : ['48%', '70%'],
-                center: compact ? ['50%', '34%'] : ['36%', '52%'],
+                radius: compact ? ['44%', '72%'] : ['48%', '72%'],
+                center: compact ? ['50%', '40%'] : ['30%', '52%'],
                 avoidLabelOverlap: true,
                 label: { show: false },
                 labelLine: { show: false },
@@ -1021,6 +1023,16 @@
                 data: slices
             }]
         });
+        var wrap = container.closest('.chart-teams-wrap');
+        var centerEl = wrap ? wrap.querySelector('.chart-donut-center') : null;
+        if (wrap && centerEl) {
+            var totalEl = centerEl.querySelector('strong');
+            if (totalEl) {
+                totalEl.textContent = String(total);
+            }
+            centerEl.hidden = false;
+            wrap.classList.toggle('is-compact', compact);
+        }
         chart.resize();
     }
 
@@ -1130,19 +1142,16 @@
             animationDuration: ANIMATION_DURATION,
             grid: { left: 8, right: 20, top: 46, bottom: 10, containLabel: true },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
+                // 分组柱也按“哪根柱子”提示，不再把整年（两根柱子 + 空白）一起选中。
+                trigger: 'item',
                 backgroundColor: INK.surface,
                 borderColor: INK.grid,
                 textStyle: { color: INK.primary, fontSize: 14, fontFamily: CN_FONT },
                 formatter: function (params) {
-                    var lines = ['<strong>' + escapeHtml(params[0].axisValue) + ' 年</strong>'];
-                    params.forEach(function (item) {
-                        if (item.value > 0 || item.seriesName === '进球') {
-                            lines.push(item.seriesName + '：' + item.value);
-                        }
-                    });
-                    return lines.join('<br>');
+                    var item = Array.isArray(params) ? params[0] : params;
+                    var year = item.axisValue || item.name || '';
+                    return '<strong>' + escapeHtml(year) + ' 年</strong><br>'
+                        + item.seriesName + '：' + item.value;
                 }
             },
             legend: {
@@ -1401,7 +1410,7 @@
                         tags.push('乌龙球');
                     }
                     return '<strong>第 ' + mark.minute + ' 分钟</strong><br>'
-                        + escapeHtml(mark.player)
+                        + escapeHtml(displayMarkName(mark))
                         + (tags.length ? '（' + tags.join(' · ') + '）' : '')
                         + '<br>' + escapeHtml(homeName) + ' ' + mark.homeScore
                         + '–' + mark.awayScore + ' ' + escapeHtml(awayName);
@@ -1643,6 +1652,13 @@
             });
         });
     }
+
+    // 姓名切换:射手榜的轴标签、tooltip 和数据表都跟着改，不刷新页面。
+    window.addEventListener('worldcup:name-lang-changed', function () {
+        if (lastScorersData) {
+            renderScorers(lastScorersData, true);
+        }
+    });
 
     // 统计面板默认隐藏;tab 切到 #charts 后由页面脚本派发事件,再懒加载图表。
     window.addEventListener('worldcup:charts-shown', function () {
