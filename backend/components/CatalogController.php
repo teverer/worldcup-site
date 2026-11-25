@@ -1,8 +1,9 @@
 <?php
 /**
  * Team: 国足世界杯夺冠队
- * Coding by Codex (AI assistance), 20261021
- * 模块:球队与球员 —— 共享后台维护流程、管理员鉴权与历史数据删除保护。
+ * Coding by 高家铭 2412267, 20261021
+ * Coding by 李行阳 2411353, 20261115
+ * 模块:球队与球员 / 届次与比赛 —— 共享后台维护流程、管理员鉴权与历史数据删除保护。
  */
 
 namespace backend\components;

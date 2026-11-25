@@ -1,5 +1,5 @@
 -- Team: 国足世界杯夺冠队
--- Coding by Codex (AI assistance), 20261021
+-- Coding by 高家铭 2412267, 20261021
 -- 模块②演示数据：先导入 install.sql，再执行本文件；不删除或覆盖已有资料。
 -- 参赛名单和决赛记录仅用于联调，不代表完整的 2022 年世界杯数据集。
 SET NAMES utf8mb4;

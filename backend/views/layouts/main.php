@@ -2,7 +2,6 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 李佳婕 2413745, 20261122
- * Coding by Codex (AI assistance), 20261021
  * Coding by 石子川 2411966, 20261117
  * Coding by 李行阳 2411353, 20261123
  * 模块:框架与团队主页 —— 后台公共布局。

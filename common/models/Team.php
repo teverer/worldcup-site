@@ -1,7 +1,7 @@
 <?php
 /**
  * Team: 国足世界杯夺冠队
- * Coding by Codex (AI assistance), 20261021
+ * Coding by 高家铭 2412267, 20261021
  * 模块:球队与球员 —— 球队资料与跨届名单查询。
  */
 
