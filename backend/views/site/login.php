@@ -7,29 +7,25 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = '后台管理登录';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = '后台登录';
+$frontendHome = rtrim((string) (Yii::$app->params['frontendUrl'] ?? 'http://localhost:8080'), '/') . '/';
 ?>
-<div class="site-login">
+<?php /* 与前台登录同一张表单卡：标题、说明、字段、按钮、页脚一条线。
+         必要差别只有「记住我」和没有注册 / 找回密码；颜色换成工作间的冷纸。 */ ?>
+<div class="form-page site-login backend-login">
     <h1><?= Html::encode($this->title) ?></h1>
+    <p>使用管理员账号继续。</p>
 
-    <p>请输入用户名和密码</p>
-
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
-
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('用户名') ?>
-
-                <?= $form->field($model, 'password')->passwordInput()->label('密码') ?>
-
-                <?= $form->field($model, 'rememberMe')->checkbox()->label('记住我') ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('登录', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+        <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => '用户名'])->label('用户名') ?>
+        <?= $form->field($model, 'password')->passwordInput(['placeholder' => '密码'])->label('密码') ?>
+        <?= $form->field($model, 'rememberMe')->checkbox()->label('记住我') ?>
+        <div class="form-group">
+            <?= Html::submitButton('登录', ['class' => 'btn btn-primary btn-block', 'name' => 'login-button']) ?>
         </div>
-    </div>
+    <?php ActiveForm::end(); ?>
+
+    <p class="form-page-footer">
+        <?= Html::a('查看前台', $frontendHome) ?>
+    </p>
 </div>

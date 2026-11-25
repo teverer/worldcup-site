@@ -19,48 +19,83 @@ use yii\helpers\StringHelper;
 
 $this->title = '留言管理';
 $this->params['breadcrumbs'][] = $this->title;
-?>
-<h1><?= Html::encode($this->title) ?></h1>
 
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline']) ?>
-    <div class="form-group">
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'name' => 'q',
-            'class' => 'form-control',
-            'maxlength' => 100,
-            'placeholder' => '留言内容、用户名或昵称',
-        ]) ?>
+$targetOptions = CommentTarget::labels();
+$statusOptions = CommentSearch::statusOptions();
+$activeFilters = [];
+$keyword = trim((string) $searchModel->q);
+if ($keyword !== '') {
+    $activeFilters[] = '关键词：' . $keyword;
+}
+$targetType = (string) $searchModel->targetType;
+if ($targetType !== '' && isset($targetOptions[$targetType])) {
+    $activeFilters[] = '目标：' . $targetOptions[$targetType];
+}
+$status = (string) $searchModel->status;
+if ($status !== '' && isset($statusOptions[$status])) {
+    $activeFilters[] = '状态：' . $statusOptions[$status];
+}
+?>
+<div class="admin-page-head">
+    <div>
+        <h1><?= Html::encode($this->title) ?></h1>
     </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList(
-            $searchModel,
-            'targetType',
-            CommentTarget::labels(),
-            ['name' => 'targetType', 'class' => 'form-control', 'prompt' => '全部目标']
-        ) ?>
+</div>
+
+<?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::activeTextInput($searchModel, 'q', [
+                'name' => 'q',
+                'class' => 'form-control',
+                'maxlength' => 100,
+                'placeholder' => '留言内容、用户名或昵称',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">目标</span>
+            <?= Html::activeDropDownList($searchModel, 'targetType', $targetOptions, [
+                'name' => 'targetType',
+                'class' => 'form-control',
+                'prompt' => '全部目标',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">状态</span>
+            <?= Html::activeDropDownList($searchModel, 'status', $statusOptions, [
+                'name' => 'status',
+                'class' => 'form-control',
+                'prompt' => '全部状态',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList(
-            $searchModel,
-            'status',
-            CommentSearch::statusOptions(),
-            ['name' => 'status', 'class' => 'form-control', 'prompt' => '全部状态']
-        ) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
+
+<?php if ($activeFilters): ?>
+    <div class="admin-filter-active" aria-label="当前筛选">
+        <span class="admin-filter-active-label">当前筛选</span>
+        <?php foreach ($activeFilters as $filterText): ?>
+            <span class="admin-chip"><?= Html::encode($filterText) ?></span>
+        <?php endforeach ?>
+        <?= Html::a('清除全部', ['index'], ['class' => 'admin-chip-clear']) ?>
+    </div>
+<?php endif ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '共 {totalCount} 条留言记录',
-        'emptyText' => '暂无符合条件的信息。',
+        'emptyText' => '<div class="admin-empty"><strong>没有符合条件的留言。</strong><p>换一个关键词、目标或状态，或</p>' . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm']) . '</div>',
         'rowOptions' => function ($model) {
             return $model->status === Comment::STATUS_DELETED ? ['class' => 'warning'] : [];
         },
         'columns' => [
-            'id',
             [
                 'label' => '用户',
                 'value' => function ($model) {
@@ -116,7 +151,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a('删除', $url, [
                             'class' => 'btn btn-danger btn-xs',
                             'data' => [
-                                'confirm' => '确定删除这条留言及其全部回复吗？',
+                                'confirm' => '这条留言及其全部回复会一并删除，无法恢复。',
+                                'confirm-title' => '删除这条留言？',
+                                'confirm-ok' => '删除',
+                                'confirm-tone' => 'danger',
                                 'method' => 'post',
                             ],
                         ]);

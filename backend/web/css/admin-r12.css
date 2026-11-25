@@ -1,0 +1,471 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:界面设计 —— 后台 R12：组件层与导轨交互。
+
+   在 admin-r10.css 之后加载，只做增量：
+   - 侧栏项补图标、分组可折叠（AdminLTE 2 的 treeview 行为）；
+   - 顶栏补「查看前台」；
+   - 把 vendor/adminlte-components.css 的 Info Box / Box 换成本站令牌。
+   不改 r10 的骨架宽度、配色和表单 / 表格规则。 */
+
+/* ==========================================================================
+   1. 导轨：图标 + 可折叠分组
+   ========================================================================== */
+.wb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wb-item-icon {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    color: currentColor;
+    opacity: .62;
+}
+
+.wb-item-icon svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.wb-item.is-active .wb-item-icon,
+.wb-item[aria-current="page"] .wb-item-icon {
+    color: var(--accent-2);
+    opacity: 1;
+}
+
+.wb-group {
+    margin-top: 12px;
+}
+
+.wb-group .wb-item {
+    padding-left: 14px;
+}
+
+/* 有图标之后不再用文字前的小圆点。 */
+.wb-group .wb-item::before {
+    display: none;
+}
+
+.wb-group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 2px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--rail-muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+}
+
+.wb-group-toggle:hover,
+.wb-group-toggle:focus-visible {
+    background: rgba(243, 246, 242, .05);
+    color: var(--accent-2);
+}
+
+.wb-group-toggle:focus-visible {
+    outline: 1px solid rgba(232, 199, 102, .6);
+    outline-offset: -1px;
+}
+
+.wb-group-title {
+    margin: 0;
+    padding: 0;
+}
+
+.wb-group.is-current .wb-group-title {
+    color: inherit;
+}
+
+.wb-chevron {
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .18s ease;
+}
+
+.wb-group.is-collapsed .wb-chevron {
+    transform: rotate(-90deg);
+}
+
+.wb-group-items[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wb-chevron {
+        transition: none;
+    }
+}
+
+/* ==========================================================================
+   2. 顶栏：只在面包屑右侧放一个前台入口，不再叠第二套用户菜单
+   ========================================================================== */
+.wb-top-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    padding-left: 16px;
+}
+
+.wb-top-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+}
+
+.wb-top-link:hover,
+.wb-top-link:focus {
+    border-color: #B9D8C6;
+    background: var(--panel);
+    color: var(--green);
+    text-decoration: none;
+}
+
+.wb-top-link:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+    .wb-top-actions {
+        padding-left: 8px;
+    }
+
+    .wb-top-link {
+        padding: 0 8px;
+        font-size: 12px;
+    }
+}
+
+/* ==========================================================================
+   3. AdminLTE Info Box → 本站数据带
+   ========================================================================== */
+.info-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 0;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--panel);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.info-box:hover,
+.info-box:focus {
+    border-color: #B9D8C6;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+.info-box:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .25);
+    outline-offset: 2px;
+}
+
+.info-box-icon {
+    display: grid;
+    flex: 0 0 46px;
+    float: none;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: rgba(20, 107, 69, .1);
+    color: var(--green);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.info-box-icon svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.info-box--gold .info-box-icon {
+    background: rgba(201, 162, 39, .14);
+    color: var(--accent-ink);
+}
+
+.info-box--red .info-box-icon {
+    background: rgba(179, 38, 30, .09);
+    color: var(--danger);
+}
+
+.info-box-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.info-box-text {
+    overflow: visible;
+    color: var(--muted);
+    font-size: 12.5px;
+    letter-spacing: 0;
+    line-height: 1.4;
+    text-overflow: clip;
+    text-transform: none;
+    white-space: normal;
+}
+
+.info-box-number {
+    color: var(--ink);
+    font-size: 27px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.info-box-meta {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted-2);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.info-box .dash-progress {
+    display: block;
+    overflow: hidden;
+    height: 3px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: var(--line-soft);
+}
+
+.info-box .dash-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--green);
+}
+
+/* ==========================================================================
+   4. AdminLTE Box → 工作台面板
+   ========================================================================== */
+.box {
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--panel);
+    box-shadow: none;
+}
+
+.box--accent {
+    border-top-color: var(--green);
+}
+
+.box--gold {
+    border-top-color: var(--accent);
+}
+
+.box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    color: var(--ink);
+}
+
+/* AdminLTE 的 clearfix 伪元素在 flex 容器里会变成两个看不见的 flex 项，
+   把标题和右侧链接挤到中间；工作台用 flex，不需要这两个伪元素。 */
+.box-header::before,
+.box-header::after {
+    display: none;
+    content: none;
+}
+
+.box-header.with-border {
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.box-header .box-title {
+    margin: 0;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.35;
+}
+
+.box-header > .box-tools {
+    float: none;
+    margin: 0;
+}
+
+.box-body {
+    padding: 14px 16px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.box-body.no-padding {
+    padding: 0;
+}
+
+.box-body > .table {
+    margin-bottom: 0;
+}
+
+.box-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line-soft);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    background: transparent;
+}
+
+.box-link {
+    color: var(--green);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.box-link:hover,
+.box-link:focus {
+    color: var(--green-2);
+    text-decoration: none;
+}
+
+.box-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.box-badge--alert {
+    background: rgba(179, 38, 30, .08);
+    color: var(--danger);
+}
+
+@media (max-width: 560px) {
+    .box-header {
+        padding: 12px 14px;
+    }
+
+    .box-body {
+        padding: 12px 14px;
+    }
+}
+
+/* ==========================================================================
+   5. 登录：与前台登录同一张表单卡，只换工作间颜色
+   --------------------------------------------------------------------------
+   前台登录（frontend/web/css/theme.css + art-r6.css）的卡宽 460、内边距 24、
+   圆角 2、标题 26、字段间距 16；这里按同一组几何值覆盖 admin-r10 的 430/34。
+   必要差别只保留后台的「记住我」和没有注册 / 找回密码。 */
+body.backend-site-login .site-login {
+    width: 100%;
+    max-width: 460px;
+    margin: 16px auto;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--accent);
+    border-radius: 2px;
+    background: var(--panel);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 24px 60px rgba(7, 26, 38, .18);
+}
+
+body.backend-site-login .site-login > h1 {
+    margin-bottom: 4px;
+    font-size: 26px;
+}
+
+body.backend-site-login .site-login > p {
+    margin-bottom: 24px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+body.backend-site-login .site-login .form-group {
+    margin-bottom: 16px;
+}
+
+body.backend-site-login .site-login .form-control {
+    height: 41px;
+    padding: 9px 12px;
+}
+
+body.backend-site-login .site-login .btn-primary {
+    min-height: 40px;
+}
+
+body.backend-site-login .form-page-footer {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+body.backend-site-login .form-page-footer a {
+    color: var(--green);
+    font-weight: 600;
+}
+
+@media (max-width: 767px) {
+    body.backend-site-login .site-login {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: 2px;
+    }
+}

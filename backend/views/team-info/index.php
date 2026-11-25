@@ -15,12 +15,14 @@ $this->title = '团队信息';
 $this->params['breadcrumbs'][] = '团队管理';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p>
-    <?= Html::a('编辑团队信息', ['update'], ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('成员管理', ['/member/index'], ['class' => 'btn btn-default']) ?>
-    <?= Html::a('作业管理', ['/work/index'], ['class' => 'btn btn-default']) ?>
-</p>
+<div class="admin-page-head">
+    <div><h1><?= Html::encode($this->title) ?></h1></div>
+    <div class="admin-page-actions">
+        <?= Html::a('成员管理', ['/member/index'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('作业管理', ['/work/index'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('编辑团队信息', ['update'], ['class' => 'btn btn-primary']) ?>
+    </div>
+</div>
 
 <?php if ($model->isNewRecord): ?>
     <div class="alert alert-info">团队介绍尚未创建，点击“编辑团队信息”补全。</div>
@@ -28,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'name',
             'slogan',
             [
@@ -39,7 +40,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     : '<span class="not-set">未上传</span>',
             ],
             'intro:ntext',
-            'create_time:datetime',
         ],
     ]) ?>
 <?php endif ?>

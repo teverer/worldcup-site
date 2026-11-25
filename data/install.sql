@@ -1,5 +1,5 @@
 -- ============================================================================
--- 世界杯数据门户网站 —— 数据库安装脚本
+-- 世界杯40年概展 —— 数据库安装脚本
 -- Team: 国足世界杯夺冠队
 -- 文件:data/install.sql
 -- 日期:2026-10-18(第 2 版:表名 match→game 等修正)
@@ -72,7 +72,8 @@ CREATE TABLE `team` (
 DROP TABLE IF EXISTS `player`;
 CREATE TABLE `player` (
   `id`          int          NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name`        varchar(50)  NOT NULL COMMENT '姓名',
+  `name`        varchar(50)  NOT NULL COMMENT '姓名(原名)',
+  `name_zh`     varchar(50)  DEFAULT NULL COMMENT '中文名(可空;空则展示原名)',
   `birth_date`  date         DEFAULT NULL COMMENT '出生日期',
   `nationality` varchar(50)  DEFAULT NULL COMMENT '国籍(仅展示;代表哪队以 squad 为准)',
   `position`    varchar(20)  DEFAULT NULL COMMENT '主要位置',
@@ -202,7 +203,7 @@ CREATE TABLE `comment` (
   `id`          int          NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id`     int          NOT NULL COMMENT '用户 → user.id(留言需登录)',
   `content`     text         NOT NULL COMMENT '留言内容',
-  `target_type` varchar(20)  NOT NULL COMMENT '挂载实体 team/player/game/news/tournament',
+  `target_type` varchar(20)  NOT NULL COMMENT '挂载实体 team/player/game/news/tournament/site',
   `target_id`   int          NOT NULL COMMENT '挂载实体 id',
   `parent_id`   int          DEFAULT NULL COMMENT '父留言 id,NULL 表示顶层留言',
   `status`      tinyint      NOT NULL DEFAULT 0 COMMENT '状态 0正常 1已删除',
@@ -214,7 +215,7 @@ CREATE TABLE `comment` (
   CONSTRAINT `fk_comment_user`   FOREIGN KEY (`user_id`)   REFERENCES `user` (`id`),
   CONSTRAINT `fk_comment_parent` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_comment_target_type`
-    CHECK (`target_type` IN ('team', 'player', 'game', 'news', 'tournament')),
+    CHECK (`target_type` IN ('team', 'player', 'game', 'news', 'tournament', 'site')),
   CONSTRAINT `chk_comment_status` CHECK (`status` IN (0, 1))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='留言(通过 target_type + target_id 挂载到任意实体)';
 
@@ -303,8 +304,8 @@ INSERT INTO `user` (`username`, `password`, `nickname`, `role`) VALUES
 
 -- 2.2 团队介绍(单例,id 固定为 1,插入时不写 id) ---------------------------------
 INSERT INTO `team_info` (`name`, `logo`, `slogan`, `intro`) VALUES
-('国足世界杯夺冠队', NULL, '用数据看懂世界杯',
- '我们是一个四人小组。本次课程设计以世界杯为主题,搭建一个集球队、球员、比赛数据展示与社区留言于一体的数据门户网站。');
+('国足世界杯夺冠队', NULL, '本站为26nku互联网与数据库开发课程的小组作业,收录了近40年的一些世界杯数据来做展示',
+ '我们是一个四人小组.');
 
 -- 2.3 团队成员 -----------------------------------------------------------------
 -- 占位数据:等队友信息齐了直接改这几行,或让模块①的人在后台上传维护

@@ -48,7 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         [
             'attribute' => 'match_time',
-            'format' => ['datetime', 'php:Y-m-d H:i'],
+            'value' => function ($model) {
+                return $model->match_time !== null
+                    ? substr((string) $model->match_time, 0, 16)
+                    : null;
+            },
         ],
         'venue',
         [
@@ -87,7 +91,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'label' => '比分汇总',
             'value' => $model->scoreText,
         ],
-        'create_time:datetime',
+        [
+            'attribute' => 'create_time',
+            'format' => ['datetime', 'php:Y-m-d H:i'],
+        ],
     ],
 ]) ?>
 

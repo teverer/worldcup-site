@@ -1,0 +1,1761 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:纪录页 —— 黑金颁奖层
+
+   这一页是总纲里的「颁奖」：只留黑、泛光白、哑光金。
+   纪录数字是主角，其余信息退到周边；不用卡片、不用阴影、不用图表。
+   金只给纪录与冠军，绿留给离场动作。 */
+
+body.site-record-index {
+    background: #04070B;
+    color: var(--flood);
+}
+
+/* 这一页不要全站的青绿极光层：art-r6 给非根页也开了 atmo，
+   记录页用黑金，所以更具体地盖掉它，避免页面中段出现一条绿色断带。 */
+body.site-record-index.site-body .atmo {
+    background:
+        radial-gradient(70% 46% at 50% -6%, rgba(224, 180, 87, .16), transparent 62%),
+        linear-gradient(180deg, #04070B 0%, #05090C 58%, #04070B 100%);
+}
+
+body.site-record-index.site-body .atmo-glow,
+body.site-record-index.site-body .atmo-pitch,
+body.site-record-index.site-body .atmo-era {
+    display: none;
+}
+
+body.site-record-index.site-body .atmo-dots {
+    opacity: .22;
+}
+
+.site-record-index .atmo-dots {
+    opacity: .28;
+}
+
+.site-record-index .site-main {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 0;
+}
+
+.site-record-index .breadcrumb {
+    margin: 18px 0 0;
+    padding: 0;
+    background: transparent;
+    color: var(--steel);
+    font-size: 13px;
+}
+
+.site-record-index .breadcrumb > li + li::before {
+    color: rgba(224, 180, 87, .5);
+}
+
+.site-record-index .breadcrumb a {
+    color: var(--steel);
+    border-bottom: 1px solid transparent;
+}
+
+.site-record-index .breadcrumb a:hover,
+.site-record-index .breadcrumb a:focus {
+    color: var(--gold-light);
+    border-bottom-color: rgba(224, 180, 87, .5);
+    text-decoration: none;
+}
+
+.record-page {
+    position: relative;
+    z-index: 1;
+}
+
+.record-wrap {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --------------------------------------------------------------------------
+   1. 开场：一个标题 + 三个总数
+   -------------------------------------------------------------------------- */
+.record-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 56px 0 48px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+    background:
+        radial-gradient(52% 120% at 50% 118%, rgba(224, 180, 87, .10), transparent 70%);
+}
+
+/* 颁奖台：同心金环，只在标题右侧出现一次。是这一页唯一的装饰，
+   和「纪录 = 被留下的数字」对应，不作为卡片背景重复。 */
+.record-hero::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -6%;
+    width: 780px;
+    height: 780px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+        circle at center,
+        transparent 0 88px,
+        rgba(224, 180, 87, .14) 88px 89px
+    );
+    mask-image: radial-gradient(circle at center, #000 0 34%, rgba(0, 0, 0, .55) 60%, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 0 34%, rgba(0, 0, 0, .55) 60%, transparent 78%);
+    pointer-events: none;
+}
+
+.record-hero .record-wrap {
+    position: relative;
+    z-index: 1;
+}
+
+.record-kicker {
+    margin: 0 0 18px;
+    color: var(--steel);
+    font-size: 14px;
+    letter-spacing: .08em;
+}
+
+.record-kicker::before {
+    content: "";
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    margin-right: 12px;
+    vertical-align: middle;
+    background: var(--gold);
+}
+
+.record-hero-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 48px;
+    align-items: end;
+}
+
+.record-hero h1 {
+    margin: 0 0 14px;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: clamp(76px, 8.6vw, 128px);
+    font-weight: 400;
+    line-height: .98;
+    letter-spacing: .02em;
+}
+
+.record-lede {
+    max-width: 36em;
+    margin: 0;
+    color: #C9D3D2;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.record-totals {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid rgba(224, 180, 87, .28);
+}
+
+.record-totals > div {
+    padding: 4px 0 4px 26px;
+}
+
+.record-totals dt {
+    margin: 0 0 2px;
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    white-space: nowrap;
+}
+
+.record-totals dd {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 0;
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 54px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.record-totals dd small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   2. 区块骨架
+   -------------------------------------------------------------------------- */
+.record-section {
+    padding: 56px 0 20px;
+}
+
+.record-section + .record-section {
+    border-top: 1px solid rgba(244, 242, 236, .10);
+}
+
+.record-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 26px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+}
+
+.record-section-head h2 {
+    margin: 0;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: clamp(30px, 2.6vw, 40px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.record-section-head p {
+    max-width: 44em;
+    margin: 0;
+    color: var(--steel);
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   3. 四十年之最：两列，大数字，细线分隔
+   -------------------------------------------------------------------------- */
+.moment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    column-gap: 72px;
+}
+
+.moment {
+    border-top: 1px solid rgba(244, 242, 236, .10);
+}
+
+.moment:nth-child(-n + 2) {
+    border-top: 0;
+}
+
+.moment-link {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(0, 1fr);
+    gap: 8px 28px;
+    padding: 30px 0 30px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .2s ease;
+}
+
+.moment-link:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+    text-decoration: none;
+}
+
+.moment-value {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: clamp(64px, 6.4vw, 98px);
+    font-weight: 700;
+    line-height: .86;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+    transition: color .2s ease;
+}
+
+.moment-value small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: .04em;
+}
+
+.moment-body {
+    display: block;
+    padding-top: 8px;
+}
+
+.moment-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gold-light);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: .03em;
+}
+
+.moment-text {
+    display: block;
+    color: #C9D3D2;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.moment-meta {
+    display: block;
+    margin-top: 10px;
+    color: var(--steel-2);
+    font-size: 13px;
+    letter-spacing: .04em;
+}
+
+.moment-action {
+    grid-column: 2;
+    align-self: end;
+    justify-self: start;
+    margin-top: 14px;
+    padding-bottom: 2px;
+    color: var(--gold);
+    font-size: 13px;
+    border-bottom: 1px solid rgba(224, 180, 87, .34);
+}
+
+.moment-link:hover .moment-value,
+.moment-link:focus .moment-value {
+    color: var(--gold-light);
+}
+
+.moment-link:hover .moment-action,
+.moment-link:focus .moment-action {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+}
+
+/* --------------------------------------------------------------------------
+   4. 十一届的进球时钟：跨届热力图
+   -------------------------------------------------------------------------- */
+.clock-lede {
+    max-width: 54em;
+    margin: -4px 0 24px;
+    color: #C9D3D2;
+    font-size: 15px;
+    line-height: 1.85;
+}
+
+.heat-scroll {
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(224, 180, 87, .4) transparent;
+}
+
+.goal-clock {
+    width: 100%;
+    min-width: 820px;
+    border-collapse: separate;
+    border-spacing: 4px;
+    table-layout: fixed;
+}
+
+.goal-clock th {
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .04em;
+    text-align: center;
+}
+
+.goal-clock thead th {
+    padding: 0 4px 9px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+}
+
+.goal-clock thead th:first-child {
+    width: 92px;
+    text-align: left;
+}
+
+.goal-clock tbody th {
+    padding-left: 4px;
+    text-align: left;
+}
+
+.goal-clock tbody th a {
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.goal-clock tbody th a:hover,
+.goal-clock tbody th a:focus {
+    color: var(--gold-light);
+    border-bottom-color: rgba(224, 180, 87, .5);
+    text-decoration: none;
+}
+
+.goal-clock tbody th a:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 3px;
+}
+
+.heat-cell {
+    height: 54px;
+    padding: 0 6px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    background: rgba(224, 180, 87, var(--heat-alpha, .05));
+    border-radius: 2px;
+}
+
+.heat-cell.is-hot {
+    color: #04070B;
+    font-weight: 700;
+}
+
+.goal-clock tbody tr:hover .heat-cell {
+    box-shadow: inset 0 0 0 1px rgba(244, 242, 236, .22);
+}
+
+.clock-total-head {
+    width: 78px;
+    text-align: right !important;
+}
+
+.clock-total {
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding-right: 6px;
+}
+
+.heat-hint {
+    display: none;
+    margin: 10px 0 0;
+    color: var(--steel-2);
+    font-size: 13px;
+    letter-spacing: .04em;
+}
+
+/* --------------------------------------------------------------------------
+   5. 四强版图：11 届 × 大洲的 100% 堆叠行
+   -------------------------------------------------------------------------- */
+.four-current {
+    margin: -4px 0 18px;
+    color: #C9D3D2;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.four-current strong {
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.four-current a {
+    margin-left: 8px;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(224, 180, 87, .4);
+}
+
+.four-current a:hover,
+.four-current a:focus {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+}
+
+.four-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 0 0 12px;
+    color: var(--steel);
+    font-size: 13px;
+    letter-spacing: .03em;
+}
+
+.four-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.four-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.four-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.four-row {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) minmax(0, 300px);
+    gap: 20px;
+    align-items: center;
+    min-height: 54px;
+    padding: 5px 10px 5px 4px;
+    border-top: 1px solid rgba(244, 242, 236, .08);
+    transition: background-color .18s ease;
+}
+
+.four-row:first-child {
+    border-top: 0;
+}
+
+.four-row.is-current {
+    background: linear-gradient(90deg, rgba(224, 180, 87, .12), rgba(224, 180, 87, 0) 78%);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.four-year {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.four-year:hover,
+.four-year:focus {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.four-year:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 3px;
+}
+
+.four-tag {
+    padding: 1px 5px;
+    color: #04070B;
+    background: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+.four-bar {
+    display: flex;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgba(244, 242, 236, .05);
+}
+
+.four-seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--w, 25) * 1%);
+    color: #04070B;
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    box-shadow: inset -1px 0 0 rgba(4, 7, 11, .5);
+}
+
+.four-seg:last-child {
+    box-shadow: none;
+}
+
+/* 金色只留给“本届”标记（is-current 行、本届签），不再同时做欧洲的系列色；
+   否则 2018 全金条会被误读成“本届”。大洲用中性色 + 青绿/赭/蓝。 */
+.cont-europe {
+    background: #9FB3AD;
+}
+
+.cont-south-america {
+    background: #57B894;
+}
+
+.cont-africa {
+    background: #C97A4A;
+}
+
+.cont-asia {
+    background: #7FA8C9;
+}
+
+.cont-north-america {
+    background: #9C8FC4;
+}
+
+.cont-oceania,
+.cont-other {
+    background: #6E8389;
+}
+
+.four-names {
+    overflow: hidden;
+    color: var(--steel);
+    font-size: 13px;
+    letter-spacing: .02em;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.four-row:hover .four-names {
+    color: #C9D3D2;
+}
+
+/* 从某一届进入时：其余行退后但仍可读；悬停或键盘聚焦立即恢复。 */
+/* 只把非本届的年份/队名退后；条本身保持满色——
+   半透明会让同一大洲在不同行变成不同颜色，跨届比较就失真了。 */
+.four-list.has-current .four-row:not(.is-current) .four-year,
+.four-list.has-current .four-row:not(.is-current) .four-names {
+    opacity: .55;
+    transition: opacity .18s ease;
+}
+
+.four-list.has-current .four-row:not(.is-current):hover .four-year,
+.four-list.has-current .four-row:not(.is-current):hover .four-names,
+.four-list.has-current .four-row:not(.is-current):focus-within .four-year,
+.four-list.has-current .four-row:not(.is-current):focus-within .four-names {
+    opacity: 1;
+}
+
+.four-data {
+    margin-top: 18px;
+}
+
+.four-data summary {
+    color: var(--steel);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.four-data summary:hover,
+.four-data summary:focus {
+    color: var(--gold-light);
+}
+
+.four-table {
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: collapse;
+    color: #C9D3D2;
+    font-size: 13px;
+}
+
+.four-table th,
+.four-table td {
+    padding: 9px 12px;
+    font-weight: 400;
+    text-align: left;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+}
+
+.four-table thead th {
+    color: var(--steel);
+    font-size: 13px;
+    letter-spacing: .05em;
+}
+
+.four-table tbody th {
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   6. 冠军的十一夜
+   -------------------------------------------------------------------------- */
+.final-list,
+.scorer-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.final-row {
+    border-top: 1px solid rgba(244, 242, 236, .08);
+}
+
+.final-row:first-child {
+    border-top: 0;
+}
+
+.final-row > a {
+    display: grid;
+    grid-template-columns: 104px minmax(220px, 1.25fr) 200px minmax(160px, 1fr);
+    gap: 24px;
+    align-items: center;
+    min-height: 88px;
+    padding: 12px 16px 12px 0;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.final-row > a:hover,
+.final-row > a:focus {
+    background: rgba(224, 180, 87, .06);
+    text-decoration: none;
+}
+
+.final-row > a:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: -2px;
+}
+
+.final-year {
+    color: var(--steel);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.final-champ {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.final-champ strong {
+    overflow: hidden;
+    color: var(--gold-light);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: .03em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.final-score {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+    white-space: nowrap;
+}
+
+.final-score small {
+    color: var(--red-bright);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .02em;
+}
+
+.final-runner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: var(--steel);
+    font-size: 17px;
+    text-align: right;
+}
+
+.final-flag,
+.final-flag img,
+.final-flag.team-flag--code {
+    width: 28px;
+    height: 21px;
+}
+
+.final-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .22);
+    object-fit: cover;
+}
+
+.final-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   5. 谁常在决赛：决赛的聚合表
+   -------------------------------------------------------------------------- */
+.nation-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nation-table thead th {
+    padding: 0 16px 10px;
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-align: right;
+    border-bottom: 1px solid rgba(244, 242, 236, .10);
+}
+
+.nation-table thead th:first-child {
+    padding-left: 0;
+    text-align: left;
+}
+
+.nation-table tbody th,
+.nation-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+}
+
+.nation-table tbody th {
+    padding-left: 0;
+    font-weight: 400;
+    text-align: left;
+}
+
+.nation-table tbody td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.nation-table tbody tr:hover {
+    background: rgba(224, 180, 87, .05);
+}
+
+.nation-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--flood);
+    text-decoration: none;
+}
+
+.nation-name strong {
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: .03em;
+}
+
+.nation-name:hover,
+.nation-name:focus {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.nation-name:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+}
+
+.nation-flag,
+.nation-flag img,
+.nation-flag.team-flag--code {
+    width: 30px;
+    height: 22px;
+}
+
+.nation-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .22);
+    object-fit: cover;
+}
+
+.nation-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+}
+
+.nation-title {
+    color: var(--gold-light);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.nation-count {
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.nation-span {
+    color: var(--steel);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   6. 历届总射手
+   -------------------------------------------------------------------------- */
+.scorer-row {
+    border-top: 1px solid rgba(244, 242, 236, .08);
+}
+
+.scorer-row:first-child {
+    border-top: 0;
+}
+
+.scorer-row > a {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 132px;
+    gap: 24px;
+    align-items: center;
+    min-height: 74px;
+    padding: 10px 16px 10px 0;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.scorer-row > a:hover,
+.scorer-row > a:focus {
+    background: rgba(224, 180, 87, .06);
+    text-decoration: none;
+}
+
+.scorer-row > a:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: -2px;
+}
+
+.scorer-rank {
+    color: rgba(224, 180, 87, .62);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.scorer-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.scorer-name strong {
+    overflow: hidden;
+    color: var(--flood);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: .01em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scorer-name small {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: .02em;
+}
+
+.scorer-flag,
+.scorer-flag img,
+.scorer-flag.team-flag--code {
+    width: 20px;
+    height: 15px;
+}
+
+.scorer-flag img {
+    display: block;
+    border: 1px solid rgba(244, 242, 236, .2);
+    object-fit: cover;
+}
+
+.scorer-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+}
+
+.scorer-goals {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    color: var(--flood);
+    font-family: "Saira Condensed", "Arial Narrow", sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.scorer-goals small {
+    color: var(--gold);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* 历届总射手：和「谁常在决赛」同一套表，别再用高行列表拉长页面。 */
+.scorer-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--steel);
+    font-size: 14px;
+}
+
+.scorer-table thead th {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.scorer-table tbody th,
+.scorer-table tbody td {
+    padding: 11px 10px;
+    border-bottom: 1px solid rgba(244, 242, 236, .08);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.scorer-table .num {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.scorer-table .scorer-rank {
+    width: 42px;
+    color: rgba(224, 180, 87, .62);
+    font-family: var(--font-display);
+    font-size: 16px;
+}
+
+.scorer-table .scorer-player a {
+    color: var(--flood);
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.scorer-table .scorer-player a:hover,
+.scorer-table .scorer-player a:focus-visible {
+    color: var(--gold-light);
+    text-decoration: underline;
+}
+
+.scorer-table .scorer-nation {
+    color: var(--steel);
+    font-size: 13.5px;
+}
+
+.scorer-table .scorer-nation .scorer-flag {
+    margin-right: 7px;
+    vertical-align: -2px;
+}
+
+.scorer-table .scorer-years {
+    color: var(--steel-2);
+    font-size: 13px;
+}
+
+.scorer-table .scorer-total {
+    color: var(--flood);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.scorer-table .scorer-current {
+    color: var(--steel-2);
+    font-size: 15px;
+}
+
+.scorer-table tbody tr.is-current {
+    background: linear-gradient(90deg, rgba(224, 180, 87, .13), rgba(224, 180, 87, 0) 78%);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.scorer-table tbody tr.is-current .scorer-player a,
+.scorer-table tbody tr.is-current .scorer-current {
+    color: var(--gold-light);
+    font-weight: 600;
+}
+
+@media (max-width: 767px) {
+    .scorer-table thead th:nth-child(4),
+    .scorer-table tbody td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .scorer-table thead th:nth-child(3),
+    .scorer-table tbody td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. 收场
+   -------------------------------------------------------------------------- */
+.record-outro {
+    margin-top: 64px;
+    padding: 72px 0 88px;
+    border-top: 1px solid rgba(224, 180, 87, .22);
+    background:
+        radial-gradient(52% 130% at 50% -20%, rgba(224, 180, 87, .10), transparent 70%);
+    text-align: center;
+}
+
+.record-outro p {
+    margin: 0 0 18px;
+    color: var(--steel);
+    font-size: 15px;
+}
+
+.record-outro .record-scope {
+    max-width: 52em;
+    margin: 26px auto 0;
+    color: var(--steel-2);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.record-cta {
+    display: inline-block;
+    padding: 0 2px 5px;
+    color: var(--flood);
+    font-family: "Smiley Sans", "Noto Sans SC", sans-serif;
+    font-size: 26px;
+    letter-spacing: .03em;
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    transition: color .18s ease, border-color .18s ease;
+}
+
+.record-cta:hover,
+.record-cta:focus {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+    text-decoration: none;
+}
+
+.record-cta:focus {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   7. 窄屏：只做不溢出兜底（桌面优先）
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+    .record-hero-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 30px;
+    }
+
+    .record-totals {
+        justify-self: start;
+    }
+
+    .final-row > a {
+        grid-template-columns: 84px minmax(180px, 1.2fr) 160px minmax(120px, 1fr);
+        gap: 18px;
+    }
+
+    .four-row {
+        grid-template-columns: 88px minmax(0, 1fr) minmax(0, 240px);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 860px) {
+    .record-section-head {
+        display: block;
+    }
+
+    .record-section-head p {
+        margin-top: 10px;
+        text-align: left;
+    }
+
+    .moment-grid {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
+
+    .moment:nth-child(2) {
+        border-top: 1px solid rgba(244, 242, 236, .10);
+    }
+
+    .goal-clock th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: #04070B;
+    }
+
+    .goal-clock thead th:first-child {
+        z-index: 3;
+    }
+
+    .heat-hint {
+        display: block;
+    }
+
+    .final-row > a {
+        grid-template-columns: 76px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "year champ score"
+            "year runner runner";
+        gap: 6px 16px;
+        padding: 14px 0;
+    }
+
+    .four-row {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 12px;
+        padding-right: 0;
+    }
+
+    .four-names {
+        display: none;
+    }
+
+    .four-current {
+        font-size: 14px;
+    }
+
+    .final-year { grid-area: year; }
+    .final-champ { grid-area: champ; }
+    .final-score { grid-area: score; font-size: 32px; }
+    .final-runner { grid-area: runner; justify-content: flex-start; font-size: 14px; }
+}
+
+@media (max-width: 560px) {
+    .record-wrap {
+        padding: 0 18px;
+    }
+
+    .record-hero {
+        padding: 36px 0 34px;
+    }
+
+    .record-hero h1 {
+        font-size: 72px;
+    }
+
+    .record-lede {
+        font-size: 15px;
+    }
+
+    .record-totals {
+        width: 100%;
+        border-left: 0;
+        border-top: 1px solid rgba(224, 180, 87, .28);
+    }
+
+    .record-totals > div {
+        padding: 14px 18px 4px 0;
+    }
+
+    .record-totals dd {
+        font-size: 42px;
+    }
+
+    .record-section {
+        padding-top: 40px;
+    }
+
+    .moment-link {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .moment-value {
+        font-size: 66px;
+    }
+
+    .moment-action {
+        grid-column: 1;
+    }
+
+    .four-row {
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .four-year {
+        font-size: 21px;
+    }
+
+    .four-tag {
+        font-size: 11px;
+    }
+
+    .four-bar {
+        height: 26px;
+    }
+
+    .four-seg {
+        font-size: 13px;
+    }
+
+    .final-champ strong {
+        font-size: 20px;
+    }
+
+    .final-runner .final-flag {
+        display: none;
+    }
+
+    .nation-span-col {
+        display: none;
+    }
+
+    .nation-table thead th,
+    .nation-table tbody th,
+    .nation-table tbody td {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .nation-table thead th:first-child,
+    .nation-table tbody th {
+        padding-left: 0;
+    }
+
+    .nation-name strong {
+        font-size: 18px;
+    }
+
+    .nation-flag,
+    .nation-flag img,
+    .nation-flag.team-flag--code {
+        width: 24px;
+        height: 18px;
+    }
+
+    .nation-title {
+        font-size: 30px;
+    }
+
+    .nation-count {
+        font-size: 22px;
+    }
+
+    .scorer-row > a {
+        grid-template-columns: 44px minmax(0, 1fr) 84px;
+        gap: 14px;
+    }
+
+    .scorer-name strong {
+        font-size: 18px;
+    }
+
+    .scorer-goals {
+        font-size: 34px;
+    }
+
+    .record-outro {
+        margin-top: 48px;
+        padding: 52px 0 64px;
+    }
+}
+
+/* ==========================================================================
+   统计页 · 历史坐标（原纪录页的三块，2026-11-24 合并）
+   本届图下面是本届；从这里开始，背景用渐变沉到纪录页的近黑 #04070B。
+   ========================================================================== */
+body.site-tournament-view .site-main {
+    overflow-x: clip;
+}
+
+.stats-history {
+    --ps-fade: clamp(110px, 12vw, 170px);
+    position: relative;
+    isolation: isolate;
+    scroll-margin-top: calc(var(--td-tab-h) + 8px);
+    /* 渐变已经承担过渡，不再用 160px 的 margin+padding 制造“断层”。 */
+    margin-top: clamp(8px, 1.2vw, 16px);
+    padding: clamp(8px, 1.2vw, 16px) 0 clamp(44px, 6vw, 80px);
+    color: var(--flood);
+}
+
+.stats-history::before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    /* 球员星云已经是这一章的最后一块，底部渐隐由整章一起收，别在四强版图后断开。 */
+    background: linear-gradient(
+        180deg,
+        rgba(4, 7, 11, 0) 0,
+        #04070B 300px,
+        #04070B calc(100% - var(--ps-fade)),
+        rgba(4, 7, 11, 0) 100%
+    );
+    content: "";
+}
+
+.stats-history-head {
+    max-width: 820px;
+}
+
+.stats-history-kicker {
+    margin: 0 0 10px;
+    color: var(--gold-light);
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: .16em;
+}
+
+.stats-history-head h2 {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-cn-display);
+    font-size: clamp(30px, 3.2vw, 46px);
+    font-weight: 400;
+    letter-spacing: .01em;
+    line-height: 1.15;
+}
+
+.stats-history-head p {
+    max-width: 46em;
+    margin: 12px 0 0;
+    color: var(--steel);
+    font-size: 15.5px;
+    line-height: 1.7;
+}
+
+.stats-history-nav {
+    position: sticky;
+    z-index: 20;
+    top: var(--td-tab-h);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 26px;
+    margin: 30px 0 4px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(244, 242, 236, .10);
+    border-bottom: 1px solid rgba(244, 242, 236, .10);
+    background-color: #04070B;
+    box-shadow: 0 0 0 100vmax #04070B;
+    clip-path: inset(0 -100vmax);
+}
+
+.stats-history-nav a {
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    color: var(--steel);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color .16s ease, border-color .16s ease;
+}
+
+/* art-r6 的深色页 a 默认绿会盖掉这里的静默色；用页面类拉回钢灰。 */
+body.site-tournament-view .stats-history-nav a {
+    color: var(--steel);
+}
+
+body.site-tournament-view .stats-history-nav a:hover,
+body.site-tournament-view .stats-history-nav a:focus-visible,
+body.site-tournament-view .stats-history-nav a[aria-current="location"] {
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+.stats-hist-grid {
+    display: grid;
+    /* 与上面的两张本届图同列同宽：左列射手榜 ↔ 历届总射手，右列各队分布 ↔ 谁常在决赛。 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 20px;
+    align-items: start;
+}
+
+.stats-hsection {
+    min-width: 0;
+    padding: 30px 28px 0;
+    scroll-margin-top: calc(var(--td-tab-h) + 56px);
+}
+
+.stats-hsection--four {
+    margin-top: 38px;
+}
+
+.stats-hsection-head {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(224, 180, 87, .22);
+}
+
+.stats-hsection-head h3 {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-cn-display);
+    font-size: clamp(22px, 2.1vw, 30px);
+    font-weight: 400;
+    letter-spacing: .01em;
+    line-height: 1.2;
+}
+
+.stats-hsection-head p {
+    margin: 8px 0 0;
+    color: var(--steel);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.stats-hcurrent-note {
+    margin: 0 0 8px;
+    color: var(--steel);
+    font-size: 13.5px;
+}
+
+.stats-hcurrent-note a {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.stats-hcurrent-note a:hover,
+.stats-hcurrent-note a:focus-visible {
+    text-decoration: underline;
+}
+
+.stats-hcurrent-note strong {
+    margin-left: 4px;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-hcurrent-note span {
+    margin-left: 6px;
+}
+
+/* 本届参战过的射手：金线 + 金名；其余行保持纪录页的原样。 */
+.scorer-row.is-current {
+    background: linear-gradient(90deg, rgba(224, 180, 87, .13), rgba(224, 180, 87, 0) 72%);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.scorer-row.is-current .scorer-name strong {
+    color: var(--gold-light);
+}
+
+.scorer-current {
+    color: var(--gold-light);
+    font-weight: 600;
+}
+
+.nation-table tbody tr.is-champion {
+    background: rgba(224, 180, 87, .10);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.nation-table tbody tr.is-runner {
+    background: rgba(244, 242, 236, .05);
+    box-shadow: inset 2px 0 0 rgba(244, 242, 236, .35);
+}
+
+.nation-current {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.hist-tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border: 1px solid rgba(244, 242, 236, .22);
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.hist-tag--gold {
+    border-color: rgba(224, 180, 87, .5);
+    color: var(--gold-light);
+}
+
+.hist-tag--silver {
+    color: var(--flood);
+}
+
+.hist-empty {
+    color: var(--steel-2);
+}
+
+@media (max-width: 1080px) {
+    .stats-hist-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+}
+
+@media (max-width: 860px) {
+    .stats-hsection,
+    .stats-hsection--four {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-hsection,
+    .stats-hsection--four {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
+@media (max-width: 767px) {
+    .stats-history {
+        margin-top: 8px;
+        padding-top: 16px;
+    }
+
+    .stats-hsection {
+        padding-top: 24px;
+        scroll-margin-top: calc(var(--td-tab-h) + 16px);
+    }
+
+    .stats-hsection--four {
+        margin-top: 28px;
+    }
+
+    .nation-table thead th,
+    .nation-table tbody th,
+    .nation-table tbody td {
+        padding: 12px 8px;
+    }
+
+    .nation-name strong {
+        font-size: 18px;
+    }
+
+    .nation-flag,
+    .nation-flag img,
+    .nation-flag.team-flag--code {
+        width: 24px;
+        height: 18px;
+    }
+}
+
+/* 四强图在窄屏把队名放回第二行：只留色条会失去“哪四队”这个信息。 */
+@media (max-width: 860px) {
+    .stats-history .four-row {
+        grid-template-columns: 86px minmax(0, 1fr);
+        grid-template-areas:
+            "year bar"
+            "names names";
+        row-gap: 6px;
+    }
+
+    .stats-history .four-year {
+        grid-area: year;
+    }
+
+    .stats-history .four-bar {
+        grid-area: bar;
+    }
+
+    .stats-history .four-names {
+        display: block;
+        grid-area: names;
+        color: var(--steel);
+        font-size: 13px;
+        line-height: 1.45;
+        white-space: normal;
+    }
+
+    .stats-history .four-list.has-current .four-row:not(.is-current) .four-names {
+        opacity: .78;
+    }
+}
+
+.stats-hfoot {
+    margin: 14px 0 0;
+    color: var(--steel-2);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 子导航的当前段：点进哪一块，哪一块亮金。 */
+.stats-history:has(#hist-scorers:target) .stats-history-nav a[href="#hist-scorers"],
+.stats-history:has(#hist-nations:target) .stats-history-nav a[href="#hist-nations"],
+.stats-history:has(#hist-four:target) .stats-history-nav a[href="#hist-four"] {
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+
+.stats-history-nav-label {
+    align-self: center;
+    color: var(--steel-2);
+    font-size: 13px;
+    letter-spacing: .10em;
+}

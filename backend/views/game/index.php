@@ -18,80 +18,143 @@ use yii\helpers\Html;
 
 $this->title = '比赛管理';
 $this->params['breadcrumbs'][] = $this->title;
+
+$tournamentOptions = Tournament::options();
+$stageOptions = Game::stageOptions();
+$statusOptions = Game::statusOptions();
+
+// 当前生效的筛选,用来在表单下方给出可清除的摘要;
+// 只写实际选中的条件,不把“全部”也当成条件。
+$activeFilters = [];
+foreach ([
+    ['label' => '届次', 'value' => $searchModel->tournamentId, 'options' => $tournamentOptions],
+    ['label' => '球队', 'value' => $searchModel->teamId, 'options' => $teams],
+    ['label' => '阶段', 'value' => $searchModel->stage, 'options' => $stageOptions],
+    ['label' => '状态', 'value' => $searchModel->status, 'options' => $statusOptions],
+] as $filter) {
+    $key = (string) $filter['value'];
+    if ($key !== '' && isset($filter['options'][$key])) {
+        $activeFilters[] = $filter['label'] . '：' . $filter['options'][$key];
+    }
+}
+$year = trim((string) $searchModel->year);
+if ($year !== '') {
+    $activeFilters[] = '年份：' . $year;
+}
+$keyword = trim((string) $searchModel->q);
+if ($keyword !== '') {
+    $activeFilters[] = '关键词：' . $keyword;
+}
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p><?= Html::a('新增比赛', ['create'], ['class' => 'btn btn-success']) ?></p>
+<div class="admin-page-head">
+    <div>
+        <h1><?= Html::encode($this->title) ?></h1>
+    </div>
+    <?= Html::a('新增比赛', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
+</div>
 
 <?= Html::errorSummary($searchModel, ['class' => 'alert alert-danger']) ?>
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline', 'style' => 'margin:20px 0']) ?>
-    <div class="form-group">
-        <?= Html::label('关键词', 'game-q', ['class' => 'sr-only']) ?>
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'name' => 'q',
-            'id' => 'game-q',
-            'class' => 'form-control',
-            'placeholder' => '球队 / 场地',
-            'maxlength' => 100,
-        ]) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::activeTextInput($searchModel, 'q', [
+                'name' => 'q',
+                'id' => 'game-q',
+                'class' => 'form-control',
+                'placeholder' => '球队或球场，如 阿根廷、卢塞尔',
+                'maxlength' => 100,
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--tournament">
+            <span class="admin-filter-label">届次</span>
+            <?= Html::activeDropDownList($searchModel, 'tournamentId', $tournamentOptions, [
+                'name' => 'tournamentId',
+                'class' => 'form-control',
+                'prompt' => '全部届次',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">球队</span>
+            <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
+                'name' => 'teamId',
+                'class' => 'form-control',
+                'prompt' => '全部球队',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">阶段</span>
+            <?= Html::activeDropDownList($searchModel, 'stage', $stageOptions, [
+                'name' => 'stage',
+                'class' => 'form-control',
+                'prompt' => '全部阶段',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">状态</span>
+            <?= Html::activeDropDownList($searchModel, 'status', $statusOptions, [
+                'name' => 'status',
+                'class' => 'form-control',
+                'prompt' => '全部状态',
+            ]) ?>
+        </label>
+        <label class="admin-filter-field admin-filter-field--year">
+            <span class="admin-filter-label">年份</span>
+            <?= Html::activeTextInput($searchModel, 'year', [
+                'name' => 'year',
+                'class' => 'form-control',
+                'placeholder' => '如 2022',
+                'inputmode' => 'numeric',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'tournamentId', Tournament::options(), [
-            'name' => 'tournamentId',
-            'class' => 'form-control',
-            'prompt' => '全部届次',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'teamId', $teams, [
-            'name' => 'teamId',
-            'class' => 'form-control',
-            'prompt' => '全部球队',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'stage', Game::stageOptions(), [
-            'name' => 'stage',
-            'class' => 'form-control',
-            'prompt' => '全部阶段',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeDropDownList($searchModel, 'status', Game::statusOptions(), [
-            'name' => 'status',
-            'class' => 'form-control',
-            'prompt' => '全部状态',
-        ]) ?>
-    </div>
-    <div class="form-group">
-        <?= Html::activeTextInput($searchModel, 'year', [
-            'name' => 'year',
-            'class' => 'form-control',
-            'placeholder' => '年份',
-            'style' => 'width:90px',
-        ]) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
+
+<?php if ($activeFilters): ?>
+    <div class="admin-filter-active" aria-label="当前筛选">
+        <span class="admin-filter-active-label">当前筛选</span>
+        <?php foreach ($activeFilters as $filterText): ?>
+            <span class="admin-chip"><?= Html::encode($filterText) ?></span>
+        <?php endforeach ?>
+        <?= Html::a('清除全部', ['index'], ['class' => 'admin-chip-clear']) ?>
+    </div>
+<?php endif ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => '共 {totalCount} 场比赛,当前显示 {begin}–{end} 条',
-        'emptyText' => '暂无符合条件的比赛。',
+        'summary' => '共 {totalCount} 场比赛',
+        'emptyText' => '<div class="admin-empty"><strong>没有符合条件的比赛。</strong>'
+            . '<p>换一个届次或球队试试，或</p>'
+            . Html::a('清除全部筛选', ['index'], ['class' => 'btn btn-default btn-sm'])
+            . '</div>',
         'columns' => [
-            'id',
             [
                 'attribute' => 'tournament_year',
                 'label' => '届次',
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->tournament === null ? '' : $model->tournament->name;
+                    if ($model->tournament === null) {
+                        return '';
+                    }
+                    return Html::tag('span', Html::encode((string) $model->tournament->year), [
+                        'title' => $model->tournament->name,
+                    ]);
                 },
             ],
             [
                 'attribute' => 'match_time',
                 'label' => '比赛时间',
-                'format' => ['datetime', 'php:Y-m-d H:i'],
+                // 比赛时间是“墙上时间”，按库里存的字面值显示；交给 Formatter 会被时区平移。
+                'value' => function ($model) {
+                    return $model->match_time !== null
+                        ? substr((string) $model->match_time, 0, 16)
+                        : null;
+                },
             ],
             'stage',
             [
@@ -122,7 +185,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::tag('span', Html::encode($model->statusText), ['class' => 'label ' . $class]);
                 },
             ],
-            'venue',
+            [
+                'attribute' => 'venue',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $venue = (string) $model->venue;
+                    return Html::tag('span', Html::encode($venue), [
+                        'title' => $venue,
+                        'class' => 'dash-ellipsis',
+                    ]);
+                },
+            ],
             [
                 'class' => ActionColumn::class,
                 'header' => '操作',

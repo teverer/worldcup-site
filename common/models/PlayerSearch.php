@@ -27,12 +27,12 @@ class PlayerSearch extends Model {
     }
 
     public function attributeLabels() {
-        return ['q' => '球员姓名或国籍', 'teamId' => '代表球队', 'position' => '主要位置'];
+        return ['q' => '球员姓名(中文/原名)或国籍', 'teamId' => '代表球队', 'position' => '主要位置'];
     }
 
     public function search($params) {
         $query = Player::find();
-        $provider = new ActiveDataProvider(['query' => $query, 'pagination' => ['pageSize' => 12],
+        $provider = new ActiveDataProvider(['query' => $query, 'pagination' => ['pageSize' => 24],
             'sort' => ['defaultOrder' => ['name' => SORT_ASC, 'id' => SORT_ASC],
                 'attributes' => ['id', 'name', 'nationality', 'position', 'birth_date']]]);
         $this->load($params, '');
@@ -40,7 +40,11 @@ class PlayerSearch extends Model {
             $query->where('0=1');
             return $provider;
         }
-        $query->andFilterWhere(['or', ['like', 'name', $this->q], ['like', 'nationality', $this->q]]);
+        $query->andFilterWhere(['or',
+            ['like', 'name', $this->q],
+            ['like', 'name_zh', $this->q],
+            ['like', 'nationality', $this->q],
+        ]);
         $query->andFilterWhere(['position' => $this->position]);
         if ($this->teamId !== null && $this->teamId !== '') {
             $query->andWhere(['id' => (new Query())->select('player_id')->from('{{%squad}}')->where(['team_id' => $this->teamId])]);

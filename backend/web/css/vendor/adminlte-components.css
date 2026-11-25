@@ -1,0 +1,167 @@
+/*
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261125
+ * 模块:界面设计 —— 后台组件层。
+ *
+ * 来源：AdminLTE 2（https://github.com/ColorlibHQ/AdminLTE/tree/v2）
+ * 文件：dist/css/AdminLTE.css，只摘出本站在用的 Info Box / Box 两组规则，
+ * 保留原始类名与 DOM 契约，颜色、圆角、字号由 admin-r12.css 覆盖。
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2014-2017 Abdullah Almsaeed
+ * 完整许可见同目录 AdminLTE-LICENSE.txt。
+ */
+
+/* Component: Info Box */
+.info-box {
+    display: block;
+    min-height: 90px;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+}
+
+.info-box small {
+    font-size: 14px;
+}
+
+.info-box .progress {
+    height: 2px;
+    margin: 5px -10px;
+    background: rgba(0, 0, 0, .2);
+}
+
+.info-box .progress,
+.info-box .progress .progress-bar {
+    border-radius: 0;
+}
+
+.info-box .progress .progress-bar {
+    background: #fff;
+}
+
+.info-box-icon {
+    display: block;
+    float: left;
+    width: 90px;
+    height: 90px;
+    border-radius: 2px 0 0 2px;
+    background: rgba(0, 0, 0, .2);
+    font-size: 45px;
+    line-height: 90px;
+    text-align: center;
+}
+
+.info-box-icon > img {
+    max-width: 100%;
+}
+
+.info-box-content {
+    margin-left: 90px;
+    padding: 5px 10px;
+}
+
+.info-box-number {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.info-box-text {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.info-box-more {
+    display: block;
+}
+
+/* Component: Box */
+.box {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    border-top: 3px solid #d2d6de;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+}
+
+.box-header:before,
+.box-body:before,
+.box-footer:before,
+.box-header:after,
+.box-body:after,
+.box-footer:after {
+    display: table;
+    content: " ";
+}
+
+.box-header:after,
+.box-body:after,
+.box-footer:after {
+    clear: both;
+}
+
+.box-header {
+    position: relative;
+    display: block;
+    padding: 10px;
+    color: #444;
+}
+
+.box-header.with-border {
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.collapsed-box .box-header.with-border {
+    border-bottom: none;
+}
+
+.box-header > .fa,
+.box-header > .glyphicon,
+.box-header > .ion,
+.box-header .box-title {
+    display: inline-block;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.box-header > .fa,
+.box-header > .glyphicon,
+.box-header > .ion {
+    margin-right: 5px;
+}
+
+.box-header > .box-tools {
+    float: right;
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+
+.box-body {
+    padding: 10px;
+    border-radius: 0 0 3px 3px;
+}
+
+.no-header .box-body {
+    border-radius: 3px 3px 0 0;
+}
+
+.box-body > .table {
+    margin-bottom: 0;
+}
+
+.box-footer {
+    padding: 10px;
+    border-top: 1px solid #f4f4f4;
+    border-radius: 0 0 3px 3px;
+    background-color: #fff;
+}

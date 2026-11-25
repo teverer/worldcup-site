@@ -2,66 +2,125 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 石子川 2411966, 20261108
- * 模块:留言与资讯 —— 留言区容器与顶层发表入口。
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:留言与资讯 —— 留言簿：输入卡 + 有边界的留言区。
+ *
+ * 输入与已发布留言分成两块，留言区自带滚动，不再和页面背景糊在一起。
  *
  * @var frontend\widgets\CommentSection $this
  * @var string $targetType
  * @var int $targetId
- * @var string $targetLabel
  * @var common\models\Comment[] $comments
  * @var common\models\Comment[] $roots
  * @var array $childrenByParent
+ * @var array $authorsById
  * @var array $likeCounts
  * @var array $likedIds
  * @var bool $isAdmin
+ * @var int|null $currentUserId
+ * @var string $prompt
+ * @var string $placeholder
+ * @var string[] $starters
+ * @var int $participantCount
+ * @var string $heading
+ * @var string $headingTag
+ * @var string $intro
+ * @var string $emptyTitle
  */
 
+use common\components\CommentTarget;
 use yii\helpers\Html;
 
-$sectionId = 'comments-' . $targetType . '-' . $targetId;
+$total = count($comments);
+$isGuest = $currentUserId === null;
+$loginReturnUrl = Yii::$app->request->url . '#comments';
+
+// 楼层只做两级：一条主留言 + 它下面拍平的全部回复。
+// 更深的回复不再缩进，而是在正文前写“回复 @某人”，避免无限叠楼。
+$collectReplies = function ($parentId) use (&$collectReplies, $childrenByParent) {
+    $flat = [];
+    $children = isset($childrenByParent[$parentId]) ? $childrenByParent[$parentId] : [];
+    foreach ($children as $child) {
+        $flat[] = $child;
+        foreach ($collectReplies((int) $child->id) as $deeper) {
+            $flat[] = $deeper;
+        }
+    }
+
+    return $flat;
+};
 ?>
-<section class="comment-section" id="<?= Html::encode($sectionId) ?>" aria-labelledby="<?= Html::encode($sectionId) ?>-title">
-    <header class="comment-section-heading">
-        <div>
-            <p class="community-kicker">COMMUNITY</p>
-            <h2 id="<?= Html::encode($sectionId) ?>-title"><?= Html::encode($targetLabel) ?>留言</h2>
+<section class="ledger" id="comments" aria-labelledby="comments-title">
+    <header class="ledger-head">
+        <div class="ledger-title-row">
+            <?= Html::tag($headingTag, Html::encode($heading), ['class' => 'ledger-title', 'id' => 'comments-title']) ?>
         </div>
-        <span class="comment-total"><?= count($comments) ?> 条讨论</span>
+        <?php if ($total > 0): ?>
+            <span class="ledger-count">
+                <b><?= $total ?></b> 条留言<?php if ($participantCount > 0): ?> · <b><?= $participantCount ?></b> 人<?php endif ?>
+            </span>
+        <?php endif ?>
     </header>
 
-    <?php if (Yii::$app->user->isGuest): ?>
-        <div class="comment-login-prompt">
-            <span>登录后可以发表留言、回复和点赞。</span>
-            <?= Html::a('前往登录', ['/site/login'], ['class' => 'btn btn-primary']) ?>
-        </div>
-    <?php else: ?>
-        <div class="comment-compose">
+    <?php if ($intro !== ''): ?>
+        <p class="ledger-intro"><?= Html::encode($intro) ?></p>
+    <?php endif ?>
+
+    <div class="ledger-compose-card">
+        <p class="ledger-prompt"><?= Html::encode($prompt) ?></p>
+        <?php if ($isGuest): ?>
+            <p class="guest-line">
+                登录后即可留言。<?= Html::a('登录', ['/site/login', 'returnUrl' => $loginReturnUrl]) ?>
+                <span class="muted">还没有账号？<?= Html::a('注册', ['/site/signup', 'returnUrl' => $loginReturnUrl]) ?></span>
+            </p>
+        <?php else: ?>
             <?= $this->render('_form', [
                 'targetType' => $targetType,
                 'targetId' => $targetId,
                 'parentId' => null,
-                'placeholder' => '分享你的观点……',
-                'submitLabel' => '发表留言',
+                'placeholder' => $placeholder,
+                'submitLabel' => '留言',
+                'isReply' => false,
             ]) ?>
-        </div>
-    <?php endif ?>
+        <?php endif ?>
+    </div>
 
-    <?php if (!$roots): ?>
-        <p class="comment-empty">还没有留言，来写下第一条讨论吧。</p>
-    <?php else: ?>
-        <div class="comment-list">
-            <?php foreach ($roots as $comment): ?>
-                <?= $this->render('_item', [
-                    'comment' => $comment,
-                    'childrenByParent' => $childrenByParent,
-                    'likeCounts' => $likeCounts,
-                    'likedIds' => $likedIds,
-                    'targetType' => $targetType,
-                    'targetId' => $targetId,
-                    'isAdmin' => $isAdmin,
-                    'depth' => 0,
-                ]) ?>
-            <?php endforeach ?>
-        </div>
-    <?php endif ?>
+    <div class="ledger-discussion">
+        <?php if (!$roots): ?>
+            <div class="ledger-empty">
+                <p class="ledger-empty-title"><?= Html::encode($emptyTitle) ?></p>
+                <?php if (!$isGuest): ?>
+                    <?php $emptySub = in_array($targetType, [CommentTarget::TOURNAMENT, CommentTarget::SITE], true)
+                        ? '可以从这里开始'
+                        : '第一个坐下来的人，通常记得最清楚。可以从这些开始：'; ?>
+                    <p class="ledger-empty-sub"><?= Html::encode($emptySub) ?></p>
+                    <div class="ledger-starters">
+                        <?php foreach ($starters as $starter): ?>
+                            <button type="button" class="ledger-starter"
+                                    data-ledger-starter="<?= Html::encode($starter) ?>"><?= Html::encode($starter) ?></button>
+                        <?php endforeach ?>
+                    </div>
+                <?php endif ?>
+            </div>
+        <?php else: ?>
+            <div class="ledger-list-scroll" tabindex="0" role="region" aria-label="留言列表，可滚动">
+                <div class="ledger-list">
+                    <?php foreach ($roots as $comment): ?>
+                        <?= $this->render('_item', [
+                            'comment' => $comment,
+                            'replies' => $collectReplies((int) $comment->id),
+                            'authorsById' => $authorsById,
+                            'likeCounts' => $likeCounts,
+                            'likedIds' => $likedIds,
+                            'targetType' => $targetType,
+                            'targetId' => $targetId,
+                            'isAdmin' => $isAdmin,
+                            'currentUserId' => $currentUserId,
+                        ]) ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+            <button type="button" class="ledger-scroll-hint">向下滚动看更多</button>
+        <?php endif ?>
+    </div>
 </section>

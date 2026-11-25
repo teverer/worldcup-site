@@ -1,243 +1,273 @@
 /* Team: 国足世界杯夺冠队
    Coding by 李行阳 2411353, 20261122
-   模块:届次与比赛 —— 淘汰赛纵向晋级树
-   决赛在顶,1/8 在最宽一行;卡片只有中文队名 + 比分,整卡可点。
-   夜场舞台:深色底、暗灯连线,只有冠军路径亮金。 */
+   模块:届次与比赛 —— 淘汰赛晋级图
+   桌面是两侧向中间收拢的赛程表（左半区 / 决赛 / 右半区），
+   窄屏退回按轮次纵向排列。卡片只有国旗、中文队名、比分，整卡可点；
+   胜者固定在上行，冠军路径亮金。 */
 
 .bracket {
-    --tree-gap: clamp(6px, .7vw, 10px);
-    --tree-line-h: clamp(32px, 3.1vw, 44px);
-    --tree-line: rgba(243, 246, 242, .18);
+    --bt-row: clamp(52px, 4.4vw, 62px);
+    --bt-link: 24px;
+    /* 连线是理解父子关系的必需品，按非文本图形 3:1 提亮；金色仍只走冠军路径。 */
+    --bt-line: rgba(244, 242, 236, .40);
     color: var(--flood);
 }
 
 /* ==========================================================================
-   1. 主树:决赛 → 半决赛 → 1/4 → 1/8
-   不画轮次标签,树占满舞台宽度;轮次靠卡片尺寸与连线表达。
+   1. 桌面：左半区 → 决赛 ← 右半区
    ========================================================================== */
-.tree-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
+.bt-wrap {
+    margin-top: 8px;
 }
 
-.tree {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.tree-row {
+.bt-labels,
+.bt-grid {
     display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    align-items: stretch;
-    gap: var(--tree-gap);
+    grid-template-columns:
+        minmax(108px, 1.15fr) var(--bt-link)
+        minmax(108px, 1.15fr) var(--bt-link)
+        minmax(118px, 1.25fr) var(--bt-link)
+        minmax(146px, 1.45fr)
+        var(--bt-link) minmax(118px, 1.25fr)
+        var(--bt-link) minmax(108px, 1.15fr)
+        var(--bt-link) minmax(108px, 1.15fr);
+    column-gap: 0;
 }
 
-.tree-slot {
+.bt-labels {
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line-dark);
+}
+
+.bt-label {
+    padding: 0 2px;
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    line-height: 1.4;
+}
+
+.bt-label--final {
+    color: var(--gold-light);
+}
+
+.bt-grid {
+    grid-template-rows: repeat(8, var(--bt-row));
+    margin-top: 14px;
+}
+
+.bt-node {
     display: flex;
-    align-items: stretch;
-    justify-content: center;
+    align-items: center;
     min-width: 0;
+}
+
+.bt-link {
+    display: flex;
+    height: 100%;
+    min-width: 0;
+}
+
+.bt-link svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.bt-link__base {
+    fill: none;
+    stroke: var(--bt-line);
+    stroke-width: 1.5;
+}
+
+.bt-link__gold {
+    fill: none;
+    stroke: var(--gold-light);
+    stroke-width: 2.2;
+    filter: drop-shadow(0 0 5px rgba(232, 199, 102, .5));
 }
 
 /* ==========================================================================
-   2. 比赛卡:中文队名 + 比分,整卡可点
+   2. 比赛卡：国旗 + 队名 + 比分，胜者上行
    ========================================================================== */
-.tree-match {
+.bt-card {
     display: grid;
     grid-template-rows: 1fr 1fr;
     width: 100%;
-    max-width: 100%;
-    height: 100%;
-    border: 1px solid var(--tree-line);
+    border: 1px solid var(--line-dark);
     border-radius: 2px;
-    background-color: var(--night-2);
+    background-color: rgba(10, 27, 34, .94);
     color: var(--flood);
     text-decoration: none;
-    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+    transition: border-color 160ms ease, background-color 160ms ease;
 }
 
-.tree-match:hover,
-.tree-match:focus {
-    border-color: rgba(127, 200, 169, .65);
-    background-color: rgba(20, 82, 62, .55);
+.bt-card:hover,
+.bt-card:focus {
+    border-color: rgba(127, 200, 169, .6);
+    background-color: rgba(17, 52, 43, .94);
     color: var(--flood);
     text-decoration: none;
 }
 
-.tree-match:focus-visible {
+.bt-card:focus-visible {
     outline: 2px solid var(--green-light);
     outline-offset: 2px;
 }
 
-/* 冠军路径上的比赛:左侧一条金线,和树上的金线呼应 */
-.tree-match.is-path {
-    border-color: rgba(201, 162, 39, .45);
-    box-shadow: inset 2px 0 0 rgba(201, 162, 39, .8);
+.bt-card.is-path {
+    border-color: rgba(224, 180, 87, .38);
 }
 
-.tree-team {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+.bt-team {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    min-height: 0;
-    padding: 4px 11px;
+    gap: 7px;
+    min-width: 0;
+    padding: 4px 8px;
 }
 
-.tree-team + .tree-team {
-    border-top: 1px solid rgba(243, 246, 242, .10);
+.bt-team + .bt-team {
+    border-top: 1px solid rgba(244, 242, 236, .08);
 }
 
-.tree-team-name {
+.bt-name {
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
-    color: rgba(243, 246, 242, .55);
-    font-size: 13px;
-    line-height: 1.3;
+    color: rgba(244, 242, 236, .74);
+    font-size: 15px;
+    line-height: 1.35;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: color 160ms ease;
 }
 
-.tree-team-score {
-    min-width: 16px;
-    color: rgba(243, 246, 242, .68);
+.bt-score {
+    flex: 0 0 auto;
+    min-width: 1.2em;
+    color: rgba(244, 242, 236, .6);
     font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
     text-align: right;
 }
 
-.tree-team-score.is-pending {
+.bt-score.is-pending {
     color: var(--steel);
-    font-family: var(--font-sans);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
 }
 
-/* 胜者加亮;决赛冠军名字用灯下金 */
-.tree-team.is-winner .tree-team-name,
-.tree-team.is-winner .tree-team-score {
-    color: var(--flood);
-    font-weight: 700;
+/* 胜者：上行高亮 + 左侧青绿签条；决赛冠军用金色 */
+.bt-team.is-winner {
+    background-color: rgba(99, 201, 164, .07);
+    box-shadow: inset 2px 0 0 var(--green-light);
 }
 
-.tree-team.is-champion .tree-team-name,
-.tree-team.is-champion .tree-team-score {
+.bt-team.is-winner .bt-name,
+.bt-team.is-winner .bt-score {
+    color: var(--flood);
+    font-weight: 600;
+}
+
+.bt-team.is-champion {
+    background-color: rgba(224, 180, 87, .1);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.bt-team.is-champion .bt-name,
+.bt-team.is-champion .bt-score {
     color: var(--gold-light);
 }
 
-/* 逐层放大:决赛 > 半决赛 > 1/4 > 1/8 */
-.tree-match--r16 {
-    min-height: 60px;
+.bt-card:hover .bt-name {
+    color: var(--flood);
 }
 
-.tree-match--qf {
-    max-width: 232px;
-    min-height: 68px;
+/* 逐层放大：1/8 < 1/4 < 半决赛 < 决赛 */
+.bt-card--r16 {
+    min-height: 58px;
 }
 
-.tree-match--qf .tree-team {
-    padding: 5px 12px;
+.bt-card--qf {
+    min-height: 84px;
 }
 
-.tree-match--qf .tree-team-name {
-    font-size: 13.5px;
+.bt-card--qf .bt-name {
+    font-size: 16px;
 }
 
-.tree-match--qf .tree-team-score {
-    font-size: 1.35rem;
+.bt-card--qf .bt-score {
+    font-size: 19px;
 }
 
-.tree-match--sf {
-    max-width: 340px;
-    min-height: 80px;
+.bt-card--sf {
+    min-height: 110px;
 }
 
-.tree-match--sf .tree-team {
-    padding: 6px 14px;
+.bt-card--sf .bt-team {
+    padding: 6px 10px;
 }
 
-.tree-match--sf .tree-team-name {
-    font-size: 14.5px;
-}
-
-.tree-match--sf .tree-team-score {
-    font-size: 1.55rem;
-}
-
-/* 决赛是整棵树的主角:最大、居顶、冠军金色、带一点灯光 */
-.tree-match--final {
-    max-width: 430px;
-    min-height: 112px;
-    border-color: rgba(232, 199, 102, .34);
-    background:
-        radial-gradient(120% 160% at 50% 0%, rgba(232, 199, 102, .10), transparent 62%),
-        var(--night-2);
-    box-shadow: inset 0 1px 0 rgba(232, 199, 102, .55), 0 0 48px rgba(232, 199, 102, .10);
-}
-
-.tree-match--final .tree-team {
-    padding: 8px 18px;
-}
-
-.tree-match--final .tree-team-name {
+.bt-card--sf .bt-name {
     font-size: 17px;
 }
 
-.tree-match--final .tree-team-score {
-    font-size: 2.1rem;
+.bt-card--sf .bt-score {
+    font-size: 23px;
+}
+
+/* 决赛是整张赛程表的主角：最高、金色、带一点灯光 */
+.bt-card--final {
+    min-height: 210px;
+    border-color: rgba(224, 180, 87, .4);
+    background:
+        radial-gradient(120% 160% at 50% 0%, rgba(224, 180, 87, .1), transparent 62%),
+        var(--night-2);
+    box-shadow: 0 0 48px rgba(224, 180, 87, .08);
+}
+
+.bt-card--final .bt-team {
+    padding: 10px 14px;
+}
+
+.bt-card--final .bt-name {
+    font-size: 19px;
+    font-weight: 500;
+}
+
+.bt-card--final .bt-score {
+    font-size: 32px;
     font-weight: 700;
 }
 
-/* ==========================================================================
-   3. 汇流线:暗灯线是结构,金线是冠军路径
-   ========================================================================== */
-.tree-connectors {
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    gap: var(--tree-gap);
-    height: var(--tree-line-h);
+.bt-card--r32 {
+    min-height: 48px;
 }
 
-.tree-connector {
-    display: flex;
-    min-width: 0;
-    height: var(--tree-line-h);
+.bt-card--r32 .bt-name {
+    font-size: 13px;
 }
 
-.tree-connector svg {
-    display: block;
-    width: 100%;
-    height: var(--tree-line-h);
-    overflow: visible;
-}
-
-.tree-connector__base {
-    fill: none;
-    stroke: var(--tree-line);
-    stroke-width: 1.5;
-}
-
-.tree-connector__path {
-    fill: none;
-    stroke: var(--gold-light);
-    stroke-width: 2.2;
-    filter: drop-shadow(0 0 5px rgba(232, 199, 102, .55));
+.bt-card--consolation {
+    min-height: 56px;
 }
 
 /* ==========================================================================
-   4. 2026 首轮 1/16 折叠区
+   3. 1/16 折叠区 / 三四名决赛
    ========================================================================== */
-.tree-extra {
-    margin-top: clamp(22px, 3vw, 36px);
+.bt-extra {
+    margin-top: clamp(24px, 3vw, 36px);
     padding-top: 16px;
     border-top: 1px solid var(--line-dark);
 }
 
-.tree-extra__summary {
+.bt-extra__summary {
     color: var(--flood);
     font-size: var(--fs-sm);
     font-weight: 600;
@@ -245,82 +275,132 @@
     outline-offset: 3px;
 }
 
-.tree-extra__summary::marker {
+.bt-extra__summary::marker {
     color: var(--gold-light);
 }
 
-.tree-extra__summary:hover {
+.bt-extra__summary:hover {
     color: var(--gold-light);
 }
 
-.tree-extra__summary:focus-visible {
+.bt-extra__summary:focus-visible {
     outline: 2px solid var(--green-light);
     outline-offset: 3px;
 }
 
-.tree-extra-scroll {
-    padding-top: 14px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.tree-extra-grid {
+.bt-extra-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--tree-gap);
+    gap: 10px;
+    margin-top: 14px;
 }
 
-.tree-extra-slot {
-    display: flex;
-    justify-content: center;
+.bt-extra-slot {
     min-width: 0;
 }
 
-.tree-match--r32 {
-    width: 100%;
-    min-height: 56px;
-}
-
-.tree-match--r32 .tree-team {
-    padding: 4px 11px;
-}
-
-/* ==========================================================================
-   5. 三四名决赛:独立小条,不参与主树
-   ========================================================================== */
-.tree-consolation {
-    display: flex;
+/* 季军战是脚注:比分卡在左,标题在右。说明句已删,块宽随内容收,不拉满整行。 */
+.bt-third {
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) auto;
+    grid-template-areas:
+        "card title";
+    align-content: center;
     align-items: center;
-    gap: 14px;
-    margin-top: clamp(22px, 3vw, 32px);
-    padding-top: 18px;
-    border-top: 1px dashed rgba(243, 246, 242, .16);
+    gap: 6px 28px;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: clamp(22px, 3vw, 30px);
+    padding: 16px 20px;
+    border: 1px solid var(--line-dark);
+    border-radius: 2px;
+    background-color: rgba(10, 27, 34, .55);
 }
 
-.tree-consolation__title {
+.bt-third__title {
+    grid-area: title;
+    align-self: center;
     margin: 0;
-    color: var(--steel);
-    font-size: var(--fs-xs);
+    color: var(--flood);
+    font-size: 14.5px;
     font-weight: 600;
-    letter-spacing: .08em;
+    letter-spacing: .04em;
     white-space: nowrap;
 }
 
-.tree-consolation__card {
-    width: min(100%, 260px);
+.bt-third__card {
+    grid-area: card;
+    width: 100%;
 }
 
-.tree-match--consolation {
-    max-width: 260px;
-    min-height: 60px;
+.bt-third__note {
+    grid-area: note;
+    align-self: start;
+    max-width: 46em;
+    margin: 0;
+    color: var(--steel-2);
+    font-size: 13.5px;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.bt-extra__summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bt-extra__summary::after {
+    margin-left: auto;
+    color: var(--steel-2);
+    content: "展开";
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: .04em;
+}
+
+.bt-extra[open] .bt-extra__summary::after {
+    content: "收起";
 }
 
 /* ==========================================================================
-   6. 空态:在深色舞台上不出现白框
+   4. 窄屏 / 数据不足：按轮次纵向排列
+   ========================================================================== */
+.bt-mobile {
+    display: none;
+}
+
+.bt-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.bt-stack-label {
+    margin: 0 0 8px;
+    color: var(--steel);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: .06em;
+}
+
+.bt-stack-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.bt-card--final {
+    min-width: 0;
+}
+
+/* ==========================================================================
+   5. 空态
    ========================================================================== */
 .td-panel--knockout .bracket-empty {
     padding: 40px 24px;
-    border: 1px dashed rgba(243, 246, 242, .2);
+    border: 0;
+    border-left: 2px solid rgba(244, 242, 236, .2);
     background-color: transparent;
     color: var(--steel);
 }
@@ -330,75 +410,51 @@
 }
 
 /* ==========================================================================
-   7. 窄屏:树不再横向滚动,按 1 / 2 / 4 / 8 逐轮纵向摆开
+   6. 断点
    ========================================================================== */
 @media (max-width: 1099px) {
-    .tree,
-    .tree-extra-grid {
-        min-width: 0;
-    }
-
-    .tree-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .tree-row--final {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .tree-slot {
-        grid-column: auto !important;
-    }
-
-    .tree-connectors {
+    .bt-wrap {
         display: none;
     }
 
-    .tree-row + .tree-row {
-        margin-top: 22px;
-        padding-top: 22px;
-        border-top: 1px solid rgba(243, 246, 242, .10);
+    .bt-mobile {
+        display: block;
     }
 
-    .tree-match--final {
-        max-width: 560px;
-    }
-
-    .tree-match--sf,
-    .tree-match--qf,
-    .tree-match--r32 {
-        max-width: none;
-    }
-
-    .tree-scroll,
-    .tree-extra-scroll {
-        overflow: visible;
-    }
-
-    .tree-extra-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .bt-card--final {
+        min-height: 120px;
     }
 }
 
 @media (max-width: 767px) {
-    .tree-match--final {
-        max-width: none;
+    .bt-stack-grid,
+    .bt-extra-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 
-    .tree-team-name {
-        font-size: 13px;
-    }
-
-    .tree-consolation {
-        align-items: flex-start;
-        flex-direction: column;
+    .bt-third {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "title"
+            "card";
+        align-items: stretch;
+        width: 100%;
         gap: 10px;
+        padding: 14px;
+    }
+
+    .bt-third__card {
+        width: 100%;
+    }
+
+    .bt-third__note {
+        text-align: left;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .tree-match {
+    .bt-card,
+    .bt-name {
         transition: none;
     }
 }

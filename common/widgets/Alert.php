@@ -65,6 +65,9 @@ class Alert extends \yii\bootstrap\Widget
                     'options' => array_merge($this->options, [
                         'id' => $this->getId() . '-' . $type . '-' . $i,
                         'class' => $this->alertTypes[$type] . $appendClass,
+                        // wc-ui.js 会把带这个标记的 flash 移到右上角轻提示；
+                        // 没有 JS 时仍保留为页面内的 Bootstrap 提示。
+                        'data-wc-flash' => $type,
                     ]),
                 ]);
             }

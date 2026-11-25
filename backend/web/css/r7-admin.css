@@ -1,0 +1,249 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— 后台工作间:页头工具条、筛选面板、当前筛选与空态。
+   只加结构性的排版权式,颜色沿用 design-v2 的纸面 / 铜色令牌。 */
+
+/* 页头:标题在左、主动作在右;页面说明压到标题下面一行。 */
+.admin-page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+    margin-bottom: 20px;
+}
+
+.admin-page-head h1 {
+    margin: 0;
+}
+
+.admin-page-sub {
+    max-width: 62ch;
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    text-wrap: pretty;
+}
+
+.admin-page-action {
+    flex: 0 0 auto;
+    margin-bottom: 2px;
+}
+
+/* 筛选:每个字段都有自己的小标签;一行放不下时整体换行,不把控件挤扁。
+   筛选是工具条而不是登记表,所以不受后台表单 860px 的收窄限制。 */
+.backend-main > form.admin-filter,
+.admin-filter {
+    width: 100%;
+    max-width: none;
+    margin: 0 0 4px;
+    padding: 14px 16px 16px;
+    border: 1px solid var(--line);
+    background-color: var(--panel);
+}
+
+.admin-filter-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px 14px;
+}
+
+.admin-filter-field {
+    display: flex;
+    flex: 0 0 132px;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    margin: 0;
+    font-weight: normal;
+}
+
+/* 届次名最长(如“2026年美加墨世界杯”),给它多留一点,别让选项被省略号截断。 */
+.admin-filter-field--tournament {
+    flex-basis: 190px;
+}
+
+.admin-filter-field--wide {
+    flex: 1 1 190px;
+    max-width: 380px;
+}
+
+.admin-filter-field--year {
+    flex-basis: 100px;
+}
+
+.admin-filter-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    line-height: 1.3;
+}
+
+.admin-filter-field .form-control {
+    height: 36px;
+    border-radius: 2px;
+}
+
+.admin-filter-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    margin-left: 4px;
+}
+
+.admin-filter-actions .btn {
+    height: 36px;
+    padding: 6px 16px;
+    border-radius: 2px;
+}
+
+/* 当前筛选:只在有筛选时出现;每个条件是一枚可读的静态 chip。 */
+.admin-filter-active {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 0;
+}
+
+.admin-filter-active-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.admin-chip {
+    padding: 3px 9px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    background-color: var(--panel);
+    color: var(--ink-2);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.admin-chip-clear {
+    margin-left: 2px;
+    color: var(--accent-ink);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-chip-clear:hover,
+.admin-chip-clear:focus {
+    color: var(--ink);
+}
+
+/* 空态:说清楚发生什么、下一步点哪;不像一条系统报错。 */
+.admin-empty {
+    padding: 34px 16px 38px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.admin-empty strong {
+    display: block;
+    color: var(--ink);
+    font-size: 16px;
+}
+
+.admin-empty p {
+    margin: 6px 0 14px;
+}
+
+/* 表格行悬停只提一点暖纸面,不整行变绿;操作列保持原样。 */
+.table-responsive .table > tbody > tr:hover > td {
+    background-color: rgba(201, 138, 46, .055);
+}
+
+/* 后台表格的字号下限:表头 11.5px 偏小,正文 13.5px 读长串队名也吃力。
+   数字统一等宽,扫描比分 / 分钟 / 进球数时不会左右跳。 */
+@media (min-width: 601px) {
+    body .table > thead > tr > th {
+        font-size: 12.5px;
+        letter-spacing: .02em;
+    }
+
+    body .table > tbody > tr > td {
+        font-size: 14px;
+    }
+}
+
+body .table > tbody > tr > td {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 宽屏长列表:表头钉在顶部工具条下方。
+   只有 ≥1400 才放开 table-responsive 的横向滚动;否则页面会出现横向溢出。 */
+@media (min-width: 1400px) {
+    .backend-main .table-responsive {
+        overflow: visible;
+    }
+
+    .backend-main .grid-view .table > thead > tr > th {
+        position: sticky;
+        top: 56px;
+        z-index: 3;
+    }
+
+    /* 操作列本来就钉右,这里只补上顶部的 sticky 行为。 */
+    .backend-main .grid-view .table > thead > tr > th:last-child {
+        right: 0;
+    }
+}
+
+/* 手机上的比赛表:先把「对阵 + 比分」留在第一屏。
+   时间 / 阶段 / 状态 / 场地都可在详情里看到,不值得让它们把对阵挤到横滚区。 */
+@media (max-width: 600px) {
+    body.backend-game-index .grid-view .table > thead > tr > th:nth-child(2),
+    body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(2),
+    body.backend-game-index .grid-view .table > thead > tr > th:nth-child(3),
+    body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(3),
+    body.backend-game-index .grid-view .table > thead > tr > th:nth-child(6),
+    body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(6),
+    body.backend-game-index .grid-view .table > thead > tr > th:nth-child(7),
+    body.backend-game-index .grid-view .table > tbody > tr > td:nth-child(7) {
+        display: none;
+    }
+
+    /* 进球表同理:第一屏留比赛、球员、分钟、标记。 */
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(1),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(1),
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(2),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(2),
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(3),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(3),
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(4),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(4),
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(5),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(5),
+    body.backend-goal-index .grid-view .table > thead > tr > th:nth-child(7),
+    body.backend-goal-index .grid-view .table > tbody > tr > td:nth-child(7) {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .admin-page-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-filter-field,
+    .admin-filter-field--year {
+        flex: 1 1 calc(50% - 14px);
+    }
+
+    .admin-filter-field--wide {
+        flex-basis: 100%;
+    }
+
+    .admin-filter-actions {
+        flex-basis: 100%;
+        margin-left: 0;
+    }
+}

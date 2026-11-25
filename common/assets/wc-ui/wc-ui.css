@@ -1,0 +1,423 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:界面设计 —— 前后台共用的确认对话框与轻提示。
+
+   视觉按本站夜场 / 工作间两套令牌分派：默认夜场（前台），
+   body.backend-body 覆盖为冷纸工作间。组件结构参考原生 <dialog> 与
+   常见后台模板的 toast，不加载第三方 UI 库。 */
+
+.wc-dialog {
+    --wc-surface: var(--night-2, #0C2431);
+    --wc-text: var(--flood, #F3F6F2);
+    --wc-muted: rgba(243, 246, 242, .68);
+    --wc-line: rgba(243, 246, 242, .16);
+    --wc-accent: var(--gold, #C9A227);
+    --wc-danger: var(--red, #C8102E);
+    --wc-danger-bright: var(--red-bright, #FF5A5F);
+
+    width: min(440px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    border: 1px solid var(--wc-line);
+    border-radius: 0;
+    background: var(--wc-surface);
+    color: var(--wc-text);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, .58), 0 2px 0 rgba(255, 255, 255, .04) inset;
+}
+
+.wc-dialog::backdrop {
+    background: rgba(3, 8, 12, .68);
+    backdrop-filter: blur(3px);
+}
+
+.wc-dialog__panel {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 0 14px;
+    padding: 24px 24px 20px;
+}
+
+.wc-dialog__panel::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--wc-accent), rgba(201, 162, 39, 0) 62%);
+    content: "";
+    pointer-events: none;
+}
+
+.wc-dialog--danger .wc-dialog__panel::before {
+    background: linear-gradient(90deg, var(--wc-danger-bright), rgba(200, 16, 46, 0) 62%);
+}
+
+.wc-dialog__mark {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(232, 199, 102, .32);
+    border-radius: 2px;
+    background: rgba(232, 199, 102, .1);
+    color: var(--wc-accent);
+}
+
+.wc-dialog--danger .wc-dialog__mark {
+    border-color: rgba(255, 90, 95, .34);
+    background: rgba(200, 16, 46, .12);
+    color: var(--wc-danger-bright);
+}
+
+.wc-dialog__mark svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.wc-dialog__copy {
+    min-width: 0;
+    padding-top: 1px;
+}
+
+.wc-dialog__title {
+    margin: 0;
+    color: var(--wc-text);
+    font-family: var(--font-sans, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    line-height: 1.35;
+}
+
+.wc-dialog__message {
+    margin: 8px 0 0;
+    color: var(--wc-muted);
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.wc-dialog__actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.wc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    min-height: 38px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.wc-btn--ghost {
+    border-color: var(--wc-line);
+    background: transparent;
+    color: var(--wc-text);
+}
+
+.wc-btn--ghost:hover {
+    background: rgba(243, 246, 242, .08);
+}
+
+.wc-btn--danger {
+    border-color: var(--wc-danger);
+    background: var(--wc-danger);
+    color: #fff;
+}
+
+.wc-btn--danger:hover {
+    background: #a90d26;
+    border-color: #a90d26;
+}
+
+.wc-btn--primary {
+    border-color: var(--green-action, #146B45);
+    background: var(--green-action, #146B45);
+    color: #fff;
+}
+
+.wc-btn--primary:hover {
+    background: var(--green-light, #7FC8A9);
+    border-color: var(--green-light, #7FC8A9);
+    color: var(--night, #071A26);
+}
+
+.wc-btn:focus-visible {
+    outline: 2px solid var(--green-light, #7FC8A9);
+    outline-offset: 2px;
+}
+
+/* 轻提示：默认夜场玻璃；后台覆盖为冷纸卡片。 */
+.wc-toast-stack {
+    position: fixed;
+    top: 78px;
+    right: 18px;
+    z-index: 2100;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(390px, calc(100vw - 24px));
+    pointer-events: none;
+}
+
+.wc-toast {
+    --wc-toast-bg: rgba(12, 36, 49, .96);
+    --wc-toast-text: var(--flood, #F3F6F2);
+    --wc-toast-muted: rgba(243, 246, 242, .64);
+    --wc-toast-line: rgba(232, 199, 102, .26);
+    --wc-toast-accent: var(--gold, #C9A227);
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 12px 12px 14px;
+    border: 1px solid var(--wc-toast-line);
+    border-left: 3px solid var(--wc-toast-accent);
+    border-radius: 8px;
+    background: var(--wc-toast-bg);
+    color: var(--wc-toast-text);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, .34);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: auto;
+    transform: translateY(-8px);
+    transition: opacity .16s ease, transform .16s ease;
+}
+
+.wc-toast.is-in {
+    opacity: 1;
+    transform: none;
+}
+
+.wc-toast.is-out {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+.wc-toast--success {
+    --wc-toast-accent: var(--green-light, #7FC8A9);
+    --wc-toast-line: rgba(127, 200, 169, .3);
+}
+
+.wc-toast--error {
+    --wc-toast-accent: var(--red-bright, #FF5A5F);
+    --wc-toast-line: rgba(255, 90, 95, .34);
+}
+
+.wc-toast--warning {
+    --wc-toast-accent: var(--gold-light, #E8C766);
+    --wc-toast-line: rgba(232, 199, 102, .34);
+}
+
+.wc-toast__mark {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--wc-toast-accent);
+}
+
+.wc-toast__mark svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.wc-toast__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    color: var(--wc-toast-text);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.wc-toast__close {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    margin: -1px -2px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--wc-toast-muted);
+    font-size: 18px;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.wc-toast__close:hover,
+.wc-toast__close:focus-visible {
+    background: rgba(255, 255, 255, .08);
+    color: var(--wc-toast-text);
+}
+
+.wc-toast__close:focus-visible {
+    outline: 1px solid var(--wc-toast-accent);
+    outline-offset: 0;
+}
+
+/* 后台：冷纸工作间，与 admin-r10.css 的令牌一致。 */
+body.backend-body .wc-dialog {
+    --wc-surface: var(--panel, #F5F7F4);
+    --wc-text: var(--ink, #0B1A22);
+    --wc-muted: var(--ink-2, #33454C);
+    --wc-line: var(--line, #D3DBD6);
+    --wc-accent: var(--accent, #C9A227);
+    --wc-danger: var(--danger, #B3261E);
+    --wc-danger-bright: var(--danger, #B3261E);
+
+    border-color: var(--line, #D3DBD6);
+    box-shadow: 0 26px 80px rgba(7, 26, 38, .28), 0 1px 0 rgba(255, 255, 255, .6) inset;
+}
+
+body.backend-body .wc-dialog::backdrop {
+    background: rgba(7, 26, 38, .46);
+    backdrop-filter: blur(2px);
+}
+
+body.backend-body .wc-dialog__mark {
+    border-color: rgba(201, 162, 39, .34);
+    background: rgba(201, 162, 39, .1);
+    color: var(--accent-ink, #8A6500);
+}
+
+body.backend-body .wc-dialog--danger .wc-dialog__mark {
+    border-color: rgba(179, 38, 30, .3);
+    background: rgba(179, 38, 30, .08);
+    color: var(--danger, #B3261E);
+}
+
+body.backend-body .wc-btn--ghost:hover {
+    background: var(--panel-2, #E2E8E3);
+}
+
+body.backend-body .wc-btn--danger:hover {
+    background: #8F1D17;
+    border-color: #8F1D17;
+}
+
+body.backend-body .wc-btn:focus-visible {
+    outline-color: var(--green, #146B45);
+}
+
+body.backend-body .wc-toast-stack {
+    top: 70px;
+    right: 16px;
+}
+
+body.backend-body .wc-toast {
+    --wc-toast-bg: var(--panel, #F5F7F4);
+    --wc-toast-text: var(--ink, #0B1A22);
+    --wc-toast-muted: var(--muted, #5F6B66);
+    --wc-toast-line: var(--line, #D3DBD6);
+    --wc-toast-accent: var(--green, #146B45);
+
+    box-shadow: 0 12px 30px rgba(7, 26, 38, .16);
+    backdrop-filter: none;
+}
+
+body.backend-body .wc-toast--success {
+    --wc-toast-accent: var(--green, #146B45);
+}
+
+body.backend-body .wc-toast--error {
+    --wc-toast-accent: var(--danger, #B3261E);
+}
+
+body.backend-body .wc-toast--warning {
+    --wc-toast-accent: var(--accent, #C9A227);
+}
+
+body.backend-body .wc-toast__close:hover,
+body.backend-body .wc-toast__close:focus-visible {
+    background: var(--panel-2, #E2E8E3);
+}
+
+/* 打开 / 关闭只做一个短位移，不做滚动入场。 */
+.wc-dialog[open] .wc-dialog__panel {
+    animation: wc-dialog-in .16s ease-out both;
+}
+
+@keyframes wc-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px) scale(.985);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 560px) {
+    .wc-toast-stack {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+    }
+
+    .wc-dialog__panel {
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 0 12px;
+        padding: 20px 18px 18px;
+    }
+
+    .wc-dialog__mark {
+        width: 36px;
+        height: 36px;
+    }
+
+    .wc-dialog__title {
+        font-size: 17.5px;
+    }
+
+    .wc-dialog__actions {
+        gap: 8px;
+        margin-top: 18px;
+    }
+
+    .wc-btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wc-dialog[open] .wc-dialog__panel {
+        animation: none;
+    }
+
+    .wc-toast,
+    .wc-btn {
+        transition: none;
+    }
+}

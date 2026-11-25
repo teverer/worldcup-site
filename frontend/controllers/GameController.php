@@ -10,6 +10,7 @@ namespace frontend\controllers;
 use Yii;
 use common\models\Game;
 use common\models\Player;
+use common\models\Team;
 use common\models\Tournament;
 use common\models\TournamentTeam;
 use yii\data\ActiveDataProvider;
@@ -36,7 +37,11 @@ class GameController extends Controller
     ];
 
     /**
-     * 比赛列表：支持按届次、阶段、小组筛选并分页。
+     * 比赛列表：默认先给「十一场决赛」这个可记忆的集合，
+     * 再用届次 / 阶段 / 小组 / 球队筛选出任意一场。
+     *
+     * 结构意图（总纲 §16）：比赛页的任务是「找一场记得的事」，
+     * 不是把 708 场按时间堆成一张表；所以默认集合与筛选结果分开。
      *
      * @return string
      */
@@ -46,11 +51,25 @@ class GameController extends Controller
         $tournamentId = $this->normalizeId($request->get('tournamentId'));
         $stage = $this->normalizeStage($request->get('stage'));
         $group = $this->normalizeGroup($request->get('group'));
+        $teamKeyword = $this->normalizeKeyword($request->get('team'));
+        $scopeAll = $request->get('scope') === 'all';
+
+        $hasFilters = $tournamentId !== null || $stage !== null || $group !== null
+            || $teamKeyword !== null;
+        $showingAll = $hasFilters || $scopeAll;
 
         $query = Game::find()
             ->alias('g')
-            ->with(['tournament', 'homeTeam', 'awayTeam'])
-            ->orderBy(['g.match_time' => SORT_DESC, 'g.id' => SORT_DESC]);
+            ->with(['tournament', 'homeTeam', 'awayTeam']);
+
+        if ($showingAll) {
+            $query->orderBy(['g.match_time' => SORT_DESC, 'g.id' => SORT_DESC]);
+        } else {
+            // 默认集合：每届的决赛。按届次年份倒序，像一份决赛名单。
+            $query->innerJoin(['t' => Tournament::tableName()], 't.id = g.tournament_id')
+                ->andWhere(['g.stage' => Game::STAGE_FINAL, 'g.status' => Game::STATUS_FINISHED])
+                ->orderBy(['t.year' => SORT_DESC, 'g.id' => SORT_DESC]);
+        }
 
         if ($tournamentId !== null) {
             $query->andWhere(['g.tournament_id' => $tournamentId]);
@@ -66,6 +85,14 @@ class GameController extends Controller
             )
                 ->andWhere(['tt.group_name' => $group])
                 ->andWhere(['g.stage' => '小组赛']);
+        }
+        if ($teamKeyword !== null) {
+            $query->leftJoin(['ht' => Team::tableName()], 'ht.id = g.home_team_id')
+                ->leftJoin(['at' => Team::tableName()], 'at.id = g.away_team_id')
+                ->andWhere(['or',
+                    ['like', 'ht.name', $teamKeyword],
+                    ['like', 'at.name', $teamKeyword],
+                ]);
         }
 
         $dataProvider = new ActiveDataProvider([
@@ -99,10 +126,13 @@ class GameController extends Controller
             'tournamentId' => $tournamentId,
             'stage' => $stage,
             'group' => $group,
+            'teamKeyword' => $teamKeyword,
+            'hasFilters' => $hasFilters,
+            'showingAll' => $showingAll,
+            'totalGames' => (int) Game::find()->count(),
             'tournamentOptions' => $tournamentOptions,
             'stageOptions' => array_combine(self::STAGES, self::STAGES),
             'groupOptions' => $groupOptions,
-            'statusLabels' => self::STATUSES,
         ]);
     }
 
@@ -180,6 +210,26 @@ class GameController extends Controller
         }
 
         return $value;
+    }
+
+    /**
+     * 球队关键词：去掉首尾空白，限制长度；空串视为未传。
+     *
+     * @param mixed $value
+     * @return string|null
+     */
+    private function normalizeKeyword($value)
+    {
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        return mb_substr($value, 0, 50, 'UTF-8');
     }
 
     /**

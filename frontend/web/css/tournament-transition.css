@@ -1,0 +1,33 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:届次与比赛 —— 届次页尾部背景过渡
+
+   淘汰赛晋级图结束后，先把页面底色从 #04070B 渐隐到青绿，再把
+   「上一届 / 下一届」导航放在渐隐之后的绿底上。导航不再夹在黑色
+   与绿色之间成为一条硬带，深绿按钮在绿底上也更容易看清。
+   只作用于淘汰赛舞台；统计页自己已有底部渐隐，不受影响。 */
+
+.tournament-detail[data-stage="knockout"] .td-history {
+    --td-history-gap: clamp(96px, 9vw, 132px);
+    position: relative;
+    isolation: isolate;
+    margin-top: var(--td-history-gap);
+}
+
+.tournament-detail[data-stage="knockout"] .td-history::before {
+    position: absolute;
+    z-index: -1;
+    top: calc(-1 * var(--td-history-gap));
+    left: 50%;
+    width: 100vw;
+    height: var(--td-history-gap);
+    transform: translateX(-50%);
+    background: linear-gradient(
+        180deg,
+        #04070B 0%,
+        rgba(4, 7, 11, .72) 46%,
+        rgba(4, 7, 11, 0) 100%
+    );
+    content: "";
+    pointer-events: none;
+}

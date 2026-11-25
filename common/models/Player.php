@@ -19,25 +19,116 @@ class Player extends ActiveRecord {
 
     public function rules() {
         return [
-            [['name', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'trim'],
-            [['birth_date', 'nationality', 'position', 'photo', 'intro'], 'default', 'value' => null],
+            [['name', 'name_zh', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'trim'],
+            [['name_zh', 'birth_date', 'nationality', 'position', 'photo', 'intro'], 'default', 'value' => null],
             ['name', 'required'],
-            [['name', 'nationality'], 'string', 'max' => 50],
+            [['name', 'name_zh', 'nationality'], 'string', 'max' => 50],
             ['position', 'string', 'max' => 20],
-            ['birth_date', 'date', 'format' => 'php:Y-m-d', 'max' => date('Y-m-d'), 'tooBig' => '出生日期不能晚于今天。'],
+            // PHP 8.2 + Yii 2.0.32 的 DateValidator 在 DateTime::getLastErrors() 返回 false 时会炸；
+            // 出生日期只有“格式 + 不得晚于今天”两条规则，这里用轻量自定义校验替代。
+            ['birth_date', 'validateBirthDate'],
             ['photo', 'string', 'max' => 255],
             ['photo', AssetPathValidator::class],
             ['intro', 'string', 'max' => 15000],
         ];
     }
 
+    /**
+     * 出生日期：空值允许；否则必须是 Y-m-d，且不能晚于今天。
+     *
+     * @param string $attribute
+     * @return void
+     */
+    public function validateBirthDate($attribute)
+    {
+        $value = $this->$attribute;
+        if ($value === null || $value === '') {
+            return;
+        }
+
+        $text = (string) $value;
+        $date = \DateTime::createFromFormat('!Y-m-d', $text);
+        if ($date === false || $date->format('Y-m-d') !== $text) {
+            $this->addError($attribute, '出生日期格式应为 YYYY-MM-DD。');
+            return;
+        }
+
+        if ($date->format('Y-m-d') > date('Y-m-d')) {
+            $this->addError($attribute, '出生日期不能晚于今天。');
+        }
+    }
+
     public function attributeLabels() {
-        return ['id' => '编号', 'name' => '球员姓名', 'birth_date' => '出生日期', 'nationality' => '国籍',
-            'position' => '主要位置', 'photo' => '照片路径', 'intro' => '球员简介', 'create_time' => '创建时间'];
+        return ['id' => '编号', 'name' => '球员姓名(原名)', 'name_zh' => '中文名', 'birth_date' => '出生日期',
+            'nationality' => '国籍', 'position' => '主要位置', 'photo' => '照片路径', 'intro' => '球员简介',
+            'create_time' => '创建时间'];
+    }
+
+    /**
+     * 访客是否选择显示原名（cookie 记住；默认中文名）。
+     *
+     * @return bool
+     */
+    public static function prefersOriginalName()
+    {
+        // 默认显示原名,访客主动切到中文名后才显示中文名。
+        // 读原生 $_COOKIE:该 cookie 不参与 Yii 签名,前端 JS 也要读同一份值。
+        $value = isset($_COOKIE['wc_player_name_v2']) ? $_COOKIE['wc_player_name_v2'] : 'orig';
+        return $value !== 'zh';
+    }
+
+    /**
+     * 按访客偏好格式化姓名:中文名优先,未收录或选择原名时回退原名。
+     *
+     * @param string|null $name 原名
+     * @param string|null $nameZh 中文名
+     * @return string
+     */
+    public static function formatName($name, $nameZh, $nationality = null)
+    {
+        $name = (string) $name;
+        $nameZh = (string) $nameZh;
+        // 中国球员的「原名」本身就是中文;拉丁写法只是报名罗马字,两种模式都显示中文名。
+        if ($nameZh !== '' && (self::isChinesePlayer($nationality) || !self::prefersOriginalName())) {
+            return $nameZh;
+        }
+        return $name;
+    }
+
+    /**
+     * 中国球员的姓名在两种模式下都显示中文名。
+     *
+     * @param string|null $nationality
+     * @return bool
+     */
+    public static function isChinesePlayer($nationality)
+    {
+        return in_array($nationality, ['中国', '中国台北', '中国香港', '中国澳门'], true);
+    }
+
+    /**
+     * 面向中文读者的显示名:有中文名用中文名,否则回退原名。
+     * 原名仍在详情页/搜索里保留,避免译名差异造成认不出人。
+     *
+     * @return string
+     */
+    public function displayName()
+    {
+        return self::formatName($this->name, $this->name_zh, $this->nationality);
+    }
+
+    /**
+     * 是否已收录中文名。
+     *
+     * @return bool
+     */
+    public function hasChineseName()
+    {
+        return $this->name_zh !== null && $this->name_zh !== '';
     }
 
     public function participations() {
-        return (new Query())->select(['t.year', 't.name', 'team_id' => 'tm.id', 'team_name' => 'tm.name',
+        return (new Query())->select(['tournament_id' => 't.id', 't.year', 't.name', 'team_id' => 'tm.id', 'team_name' => 'tm.name',
             's.shirt_number', 's.position'])->from(['s' => '{{%squad}}'])
             ->innerJoin(['t' => '{{%tournament}}'], 't.id = s.tournament_id')
             ->innerJoin(['tm' => '{{%team}}'], 'tm.id = s.team_id')

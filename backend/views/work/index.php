@@ -10,8 +10,8 @@
  * @var string $type
  */
 
+use common\components\AdminActionColumn;
 use common\models\Work;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -19,25 +19,33 @@ $this->title = '作业管理';
 $this->params['breadcrumbs'][] = '团队管理';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1><?= Html::encode($this->title) ?></h1>
-<p><?= Html::a('上传作业文件', ['create'], ['class' => 'btn btn-success']) ?></p>
+<div class="admin-page-head">
+    <div><h1><?= Html::encode($this->title) ?></h1></div>
+    <?= Html::a('上传作业文件', ['create'], ['class' => 'btn btn-primary admin-page-action']) ?>
+</div>
 
-<?= Html::beginForm(['index'], 'get', ['class' => 'form-inline', 'style' => 'margin-bottom:20px']) ?>
-    <div class="form-group">
-        <?= Html::textInput('q', $q, [
-            'class' => 'form-control',
-            'placeholder' => '作业名称或说明',
-            'maxlength' => 100,
-        ]) ?>
+<?= Html::beginForm(['index'], 'get', ['class' => 'admin-filter']) ?>
+    <div class="admin-filter-grid">
+        <label class="admin-filter-field admin-filter-field--wide">
+            <span class="admin-filter-label">关键词</span>
+            <?= Html::textInput('q', $q, [
+                'class' => 'form-control',
+                'placeholder' => '作业名称或说明',
+                'maxlength' => 100,
+            ]) ?>
+        </label>
+        <label class="admin-filter-field">
+            <span class="admin-filter-label">类型</span>
+            <?= Html::dropDownList('type', $type, Work::typeOptions(), [
+                'class' => 'form-control',
+                'prompt' => '全部类型',
+            ]) ?>
+        </label>
+        <div class="admin-filter-actions">
+            <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= Html::dropDownList('type', $type, Work::typeOptions(), [
-            'class' => 'form-control',
-            'prompt' => '全部类型',
-        ]) ?>
-    </div>
-    <?= Html::submitButton('筛选', ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('重置', ['index'], ['class' => 'btn btn-default']) ?>
 <?= Html::endForm() ?>
 
 <div class="table-responsive">
@@ -46,7 +54,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => '共 {totalCount} 个作业文件',
         'emptyText' => '暂无符合条件的作业文件。',
         'columns' => [
-            'id',
             [
                 'attribute' => 'title',
                 'format' => 'raw',
@@ -56,8 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'type',
             'description',
-            'create_time:datetime',
-            ['class' => ActionColumn::class, 'header' => '操作'],
+            ['class' => AdminActionColumn::class],
         ],
     ]) ?>
 </div>

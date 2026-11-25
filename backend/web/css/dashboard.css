@@ -1,0 +1,428 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:界面设计 —— 后台工作台。
+
+   结构借 AdminLTE 2 / Gentelella 的「数据带 + 内容盒 + 侧栏辅助」：
+   第一行是 4 个可点的 Info Box，第二行左侧是最近留言与待补，
+   右侧是快速操作与最近资讯。颜色与圆角全部来自 admin-r10 / theme 令牌。 */
+
+.dash {
+    min-width: 0;
+}
+
+.dash-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.dash-title {
+    margin: 0 0 3px;
+    color: var(--ink);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+}
+
+.dash-lead {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.dash-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dash-actions .btn {
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 第一行：4 个关键数字，每个都能点进对应管理页。 */
+.dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+/* 第二行：主内容 2/3，辅助 1/3。 */
+.dash-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+    align-items: start;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.dash-main,
+.dash-side {
+    min-width: 0;
+}
+
+.dash-side .box:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   最近留言：一行一个人，身份 / 内容 / 时间三段
+   ========================================================================== */
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.dash-table th,
+.dash-table td {
+    padding: 10px 16px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.dash-table th {
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.dash-table td {
+    border-top: 1px solid var(--line-soft);
+}
+
+.dash-table tbody tr:first-child td {
+    border-top: 0;
+}
+
+.dash-table tbody tr:hover {
+    background: var(--panel-2);
+}
+
+.dash-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 110px;
+}
+
+.dash-avatar {
+    display: grid;
+    flex: 0 0 26px;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(20, 107, 69, .1);
+    color: var(--green);
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dash-user-name {
+    overflow: hidden;
+    color: var(--ink);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dash-cell-main {
+    min-width: 0;
+}
+
+.dash-comment-text {
+    display: block;
+    overflow: hidden;
+    max-width: 34em;
+    color: var(--ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dash-comment-target {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted-2);
+    font-size: 11.5px;
+}
+
+.dash-time {
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.dash-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 20px;
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(179, 38, 30, .08);
+    color: var(--danger);
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1;
+    vertical-align: 1px;
+}
+
+/* ==========================================================================
+   待补内容
+   ========================================================================== */
+.dash-tasks {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dash-tasks li + li {
+    border-top: 1px solid var(--line-soft);
+}
+
+.dash-task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.dash-task:hover,
+.dash-task:focus {
+    background: var(--panel-2);
+    color: inherit;
+    text-decoration: none;
+}
+
+.dash-task:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .25);
+    outline-offset: -3px;
+}
+
+.dash-task-text {
+    display: block;
+    min-width: 0;
+}
+
+.dash-task-text strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.dash-task-text span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.dash-task-action {
+    flex: 0 0 auto;
+    color: var(--green);
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.dash-done {
+    padding: 4px 0;
+}
+
+.dash-done strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13.5px;
+}
+
+.dash-done p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.dash-done a {
+    color: var(--green);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   快速操作 / 最近资讯
+   ========================================================================== */
+.dash-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.dash-quick {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel-2);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+
+.dash-quick:hover,
+.dash-quick:focus {
+    border-color: #B9D8C6;
+    background: var(--panel);
+    color: var(--green);
+    text-decoration: none;
+}
+
+.dash-quick:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .25);
+    outline-offset: 1px;
+}
+
+.dash-quick svg {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .8;
+}
+
+/* 旧工作台的 .dash-quick span 是隐藏的快捷键说明；新结构把 span 当按钮文字，
+   这里显式恢复，避免沿用 admin-r10 的 display:none。 */
+.dash-quick > span {
+    display: inline;
+    min-width: 0;
+    color: inherit;
+    font-size: inherit;
+}
+
+.dash-news {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dash-news li + li {
+    border-top: 1px solid var(--line-soft);
+}
+
+.dash-news a {
+    display: block;
+    padding: 11px 16px;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.dash-news a:hover,
+.dash-news a:focus {
+    background: var(--panel-2);
+    color: inherit;
+    text-decoration: none;
+}
+
+.dash-news a:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .25);
+    outline-offset: -3px;
+}
+
+.dash-news-title {
+    display: block;
+    overflow: hidden;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dash-news-time {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted-2);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   空态
+   ========================================================================== */
+.dash-empty {
+    padding: 18px 16px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.dash-empty a {
+    color: var(--green);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+@media (max-width: 1199px) {
+    .dash-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991px) {
+    .dash-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .dash-header {
+        display: block;
+    }
+
+    .dash-actions {
+        margin-top: 12px;
+    }
+
+    .dash-kpis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dash-table th,
+    .dash-table td {
+        padding: 9px 12px;
+    }
+
+    .dash-when {
+        display: none;
+    }
+}

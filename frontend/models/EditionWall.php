@@ -232,12 +232,17 @@ class EditionWall
             ? ($championIsHome ? $awayPenalty : $homePenalty)
             : null;
 
+        $championTeam = $championIsHome ? $final->homeTeam : $final->awayTeam;
+        $opponentTeam = $championIsHome ? $final->awayTeam : $final->homeTeam;
+
         return [
             'home' => $homeName,
             'away' => $awayName,
             'champion' => $champion,
             'runner_up' => $runnerUp,
             'opponent' => $runnerUp,
+            'champion_code' => $champion !== null && $championTeam !== null ? (string) $championTeam->code : null,
+            'opponent_code' => $champion !== null && $opponentTeam !== null ? (string) $opponentTeam->code : null,
             'champion_score' => $championScore,
             'opponent_score' => $opponentScore,
             'has_penalty' => $hasPenalty,

@@ -2,12 +2,14 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 李行阳 2411353, 20261115
- * 模块:届次与比赛 —— 动态图 JSON 接口(积分榜 / 射手榜 / 各队进球分布)。
+ * 模块:届次与比赛 —— 动态图 JSON 接口(进球时间分布 / 射手榜 / 各队进球分布；积分榜保留备用)。
  */
 
 namespace frontend\controllers;
 
 use Yii;
+use common\components\TeamFlag;
+use yii\db\Expression;
 use yii\db\Query;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -113,6 +115,7 @@ class ChartController extends Controller
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
                 'teamCode' => ($row['team_code'] === null) ? '' : (string) $row['team_code'],
+                'teamFlag' => TeamFlag::url($row['team_code']),
                 'played' => (int) $row['played'],
                 'won' => $won,
                 'drawn' => $drawn,
@@ -157,8 +160,11 @@ class ChartController extends Controller
             ->select([
                 'player_id' => 'g.player_id',
                 'player_name' => 'p.name',
+                'player_name_zh' => 'p.name_zh',
+                'player_nationality' => 'p.nationality',
                 'team_id' => 'g.team_id',
                 'team_name' => 't.name',
+                'team_code' => 't.code',
                 'goals' => 'COUNT(g.id)',
             ])
             ->from(['g' => '{{%goal}}'])
@@ -170,7 +176,7 @@ class ChartController extends Controller
                 'g.is_shootout' => 0,
                 'g.is_own_goal' => 0,
             ])
-            ->groupBy(['g.player_id', 'p.name', 'g.team_id', 't.name'])
+            ->groupBy(['g.player_id', 'p.name', 'p.name_zh', 'p.nationality', 'g.team_id', 't.name', 't.code'])
             ->orderBy(['goals' => SORT_DESC, 'p.name' => SORT_ASC])
             ->limit(10)
             ->all();
@@ -181,8 +187,12 @@ class ChartController extends Controller
                 'rank' => $index + 1,
                 'playerId' => (int) $row['player_id'],
                 'playerName' => (string) $row['player_name'],
+                'playerNameZh' => (string) ($row['player_name_zh'] ?: ''),
+                'alwaysZh' => in_array($row['player_nationality'], ['中国', '中国台北', '中国香港', '中国澳门'], true),
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
+                'teamCode' => (string) ($row['team_code'] ?? ''),
+                'teamFlag' => TeamFlag::url($row['team_code'] ?? ''),
                 'goals' => (int) $row['goals'],
             ];
         }
@@ -208,6 +218,7 @@ class ChartController extends Controller
             ->select([
                 'team_id' => 'g.team_id',
                 'team_name' => 't.name',
+                'team_code' => 't.code',
                 'goals' => 'COUNT(g.id)',
             ])
             ->from(['g' => '{{%goal}}'])
@@ -229,6 +240,8 @@ class ChartController extends Controller
             $teams[] = [
                 'teamId' => (int) $row['team_id'],
                 'teamName' => (string) $row['team_name'],
+                'teamCode' => (string) ($row['team_code'] ?? ''),
+                'teamFlag' => TeamFlag::url($row['team_code'] ?? ''),
                 'goals' => $goals,
             ];
         }
@@ -237,6 +250,88 @@ class ChartController extends Controller
             'tournamentId' => $tournamentId,
             'totalGoals' => $totalGoals,
             'teams' => $teams,
+        ];
+    }
+
+    /**
+     * 进球时间分布:按 15 分钟分桶,排除点球大战;45+/90+ 含补时,加时单列。
+     * 分母是计入的进球数(不是 goal 表行数),与各队分布口径一致。
+     *
+     * @param int|string|null $tournamentId 届次 id
+     * @return array
+     */
+    public function actionGoalTiming($tournamentId = null)
+    {
+        list($tournamentId) = $this->resolveTournament($tournamentId);
+
+        $bucketCase = new Expression(
+            "CASE"
+            . " WHEN g.minute IS NULL THEN 'unknown'"
+            . " WHEN g.minute <= 15 THEN '1-15'"
+            . " WHEN g.minute <= 30 THEN '16-30'"
+            . " WHEN g.minute <= 45 THEN '31-45'"
+            . " WHEN g.minute <= 60 THEN '46-60'"
+            . " WHEN g.minute <= 75 THEN '61-75'"
+            . " WHEN g.minute <= 90 THEN '76-90'"
+            . " ELSE '91-120' END"
+        );
+
+        $rows = (new Query())
+            ->select([
+                'bucket' => $bucketCase,
+                'goals' => 'COUNT(*)',
+            ])
+            ->from(['g' => '{{%goal}}'])
+            ->innerJoin(['gm' => '{{%game}}'], 'gm.id = g.game_id')
+            ->where([
+                'gm.tournament_id' => $tournamentId,
+                'gm.status' => 2,
+                'g.is_shootout' => 0,
+            ])
+            ->groupBy('bucket')
+            ->all();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[(string) $row['bucket']] = (int) $row['goals'];
+        }
+
+        $defs = [
+            ['key' => '1-15', 'label' => '1–15'],
+            ['key' => '16-30', 'label' => '16–30'],
+            ['key' => '31-45', 'label' => '31–45+'],
+            ['key' => '46-60', 'label' => '46–60'],
+            ['key' => '61-75', 'label' => '61–75'],
+            ['key' => '76-90', 'label' => '76–90+'],
+            ['key' => '91-120', 'label' => '加时 91–120'],
+        ];
+
+        $total = 0;
+        foreach ($defs as $def) {
+            $total += isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
+        }
+
+        $buckets = [];
+        $secondHalf = 0;
+        foreach ($defs as $def) {
+            $count = isset($counts[$def['key']]) ? $counts[$def['key']] : 0;
+            if (in_array($def['key'], ['46-60', '61-75', '76-90'], true)) {
+                $secondHalf += $count;
+            }
+            $buckets[] = [
+                'key' => $def['key'],
+                'label' => $def['label'],
+                'goals' => $count,
+                'percent' => $total > 0 ? round($count / $total * 1000) / 10 : 0,
+            ];
+        }
+
+        return [
+            'tournamentId' => $tournamentId,
+            'totalGoals' => $total,
+            'secondHalfGoals' => $secondHalf,
+            'secondHalfPercent' => $total > 0 ? round($secondHalf / $total * 1000) / 10 : 0,
+            'buckets' => $buckets,
         ];
     }
 
