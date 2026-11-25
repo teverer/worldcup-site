@@ -174,6 +174,16 @@ p {
     margin: 0 0 var(--space-2);
 }
 
+/* UI 注：数据口径、图注、表注。和正文分开走 --fs-xs 一档，
+   不跟着 17.5px 的正文走；正文解释留在「关于 / 统计口径」页。 */
+.ui-note {
+    margin: 0;
+    color: inherit;
+    opacity: .72;
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+}
+
 small, .small {
     color: var(--color-muted);
     font-size: var(--fs-xs);
@@ -1651,12 +1661,17 @@ input[type="radio"] {
         --fs-3xl: 32px;
     }
 
-    /* 比分板在窄屏保持“主队 - 比分 - 客队”同一行,避免折成两行 */
+    /* 比分板在窄屏保持“主队 - 比分 - 客队”同一行,避免折成两行；
+       点球大战的说明比比分宽，这一场改成竖排，别把队名挤成两行。 */
     body .game-scoreboard {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
         gap: var(--space-1);
         padding: var(--space-2) var(--space-2);
+    }
+
+    body .game-scoreboard:has(.game-penalty) {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     body .game-scoreboard .game-team {
@@ -1807,7 +1822,7 @@ body.site-body {
     justify-content: center;
     color: #C8D4CE;
     font-family: var(--font-display);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: .02em;
     line-height: 1;

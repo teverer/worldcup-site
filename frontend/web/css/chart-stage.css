@@ -48,24 +48,24 @@
 }
 
 .chart-caption {
-    max-width: 92ch;
+    max-width: 72ch;
     margin-bottom: 18px;
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 13.5px;
+    line-height: 1.6;
 }
 
 #charts-panel .chart-card .chart-caption,
 .td-history-chart .chart-card-head .chart-caption {
-    font-size: 16px;
+    font-size: 13.5px;
 }
 
 .player-detail .pd-career .pd-section-head p,
 body.site-game .game-progress .game-section-head p {
-    font-size: 16px;
+    font-size: 13.5px;
 }
 
 #charts-panel .chart-footnote {
-    font-size: 15px;
+    font-size: 13.5px;
 }
 
 .chart-canvas {
@@ -95,8 +95,8 @@ body.site-game .game-progress .game-section-head p {
 
 .chart-footnote {
     margin-top: 22px;
-    font-size: 15px;
-    line-height: 1.75;
+    font-size: 13.5px;
+    line-height: 1.6;
 }
 
 /* --------------------------------------------------------------------------

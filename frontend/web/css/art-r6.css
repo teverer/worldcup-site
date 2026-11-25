@@ -144,10 +144,8 @@ body:not(.site-site-index) .about-section-head {
 }
 
 body:not(.site-site-index) .td-section-note,
-body:not(.site-site-index) .pd-section-head p,
-body:not(.site-site-index) .pl-section-head p,
 body:not(.site-site-index) .section-subtitle {
-    color: var(--muted);
+    color: var(--steel-2);
 }
 
 /* 检索区：深色面板，金色抬头线 */
@@ -391,7 +389,7 @@ body:not(.site-site-index) .chart-caption,
 body:not(.site-site-index) .chart-footnote,
 body:not(.site-site-index) .chart-note,
 body:not(.site-site-index) .chart-loading {
-    color: var(--muted);
+    color: var(--steel-2);
 }
 
 /* 榜单 / 资讯 / 成员 */
@@ -720,12 +718,12 @@ body:not(.site-site-index) .pd-head a {
         line-height: 1.25;
     }
 
-    body:not(.site-site-index) p,
-    body:not(.site-site-index) .about-notes,
-    body:not(.site-site-index) .pd-note,
-    body:not(.site-site-index) .td-section-note,
-    body:not(.site-site-index) .pl-section-head p,
-    body:not(.site-site-index) .pd-section-head p {
+    /* 正文默认 17.5；用 :where 把这条默认规则的特异性降到 0，
+       让组件自己的字号（数据注、图注、表头、图例）能生效。
+       之前这里的 `body ... p` 特异性高过 `.pd-note` / `.td-section-note`，
+       把 13–14px 的注全抬成 17.5px，和「标签小、说明大」的层级反了。 */
+    :where(body:not(.site-site-index)) p,
+    body:not(.site-site-index) .about-notes {
         font-size: 17.5px;
         line-height: 1.75;
     }

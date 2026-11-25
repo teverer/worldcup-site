@@ -121,7 +121,7 @@ $nameToggleUrl = [
             <dd><?= count($participations) ?></dd>
         </div>
     </dl>
-    <p class="pd-note">统计以已录入且已结束的比赛为准，不含乌龙球与点球大战。</p>
+    <p class="pd-note">不含乌龙球与点球大战</p>
     <?php if ($participations && $totalGoals + $totalAssists === 0): ?>
         <p class="pd-note">
             0 球 · 0 助攻 —— 样本不足，不绘制生涯图；参赛记录见下方
@@ -144,7 +144,6 @@ $nameToggleUrl = [
     <section class="pd-section" aria-labelledby="pd-history-title">
         <div class="pd-section-head">
             <h2 id="pd-history-title">世界杯生涯</h2>
-            <p>按届次倒序；只列有出场记录的届次。</p>
         </div>
         <?php if (!$career): ?>
             <div class="empty-state">

@@ -50,7 +50,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>本届射手榜 Top 10</h3>
-                <p class="chart-caption">按进球数降序；不计乌龙球与点球大战。金色为最佳射手。</p>
+                <p class="chart-caption">不计乌龙球与点球大战；金 = 最佳射手</p>
             </div>
             <div id="chart-scorers" class="chart-canvas chart-canvas--scorers"
                  data-chart="scorers" role="img" aria-label="本届射手榜横向柱状图">
@@ -66,7 +66,7 @@ $this->registerJsFile('@web/js/charts.js', [
         <article class="chart-card">
             <div class="chart-card-head">
                 <h3>本届各队进球分布</h3>
-                <p class="chart-caption">前 8 队 + 其他；扇面为占全届总进球的比例，分母固定，颜色越亮进球越多。</p>
+                <p class="chart-caption">前 8 队 + 其他；分母 = 全届总进球</p>
             </div>
             <div id="chart-team-goals" class="chart-canvas chart-canvas--teams"
                  data-chart="team-goals" role="img" aria-label="本届各队进球占比圆环图">
@@ -81,6 +81,6 @@ $this->registerJsFile('@web/js/charts.js', [
     </div>
 
     <p class="chart-footnote">
-        口径：只统计已结束的比赛；乌龙球计入受益球队；点球大战进球单独统计，不计入球员进球与球队进球分布。
+        只计已结束比赛；乌龙球计入受益队；点球大战不计入射手与球队进球
     </p>
 </section>

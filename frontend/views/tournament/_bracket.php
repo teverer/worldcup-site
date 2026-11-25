@@ -457,23 +457,20 @@ $renderStack = static function (array $roundsForStack, $showNav = false) use ($r
             $goldSecond = 'M0,75 H50 V50 H100';
             ?>
             <div class="bt-quads">
-                <p class="bt-quads-intro">32 强淘汰赛：四个 1/4 区，每区四场 1/16 决赛；四个区的胜者两两进入半决赛。</p>
-
                 <div class="bt-finalfour" role="group" aria-label="半决赛与决赛">
                     <div class="bt-finalfour-cell">
                         <span class="bt-round-label">半决赛 1</span>
                         <div class="bt-finalfour-card"><?= $renderCard($quadHalves[0]['sf'], 'sf') ?></div>
-                        <span class="bt-finalfour-note">1/4 区 1 / 2 的胜者</span>
+                        <span class="bt-finalfour-note">1/4 区 1、2</span>
                     </div>
                     <div class="bt-finalfour-cell bt-finalfour-cell--final">
                         <span class="bt-round-label bt-round-label--final">决赛</span>
                         <div class="bt-finalfour-card"><?= $renderCard($finalOfQuads, 'final') ?></div>
-                        <span class="bt-finalfour-note">两场半决赛的胜者</span>
                     </div>
                     <div class="bt-finalfour-cell">
                         <span class="bt-round-label">半决赛 2</span>
                         <div class="bt-finalfour-card"><?= $renderCard($quadHalves[1]['sf'], 'sf') ?></div>
-                        <span class="bt-finalfour-note">1/4 区 3 / 4 的胜者</span>
+                        <span class="bt-finalfour-note">1/4 区 3、4</span>
                     </div>
                 </div>
 
@@ -493,7 +490,7 @@ $renderStack = static function (array $roundsForStack, $showNav = false) use ($r
                             <section class="bt-quad" aria-label="1/4 区 <?= Html::encode((string) $podNo) ?>，胜者进入半决赛 <?= Html::encode((string) $halfNo) ?>">
                                 <header class="bt-quad-head">
                                     <span class="bt-quad-title">1/4 区 <?= Html::encode((string) $podNo) ?></span>
-                                    <span class="bt-quad-to<?= $qfOnPath ? ' is-path' : '' ?>">胜者进半决赛 <?= Html::encode((string) $halfNo) ?></span>
+                                    <span class="bt-quad-to<?= $qfOnPath ? ' is-path' : '' ?>">半决赛 <?= Html::encode((string) $halfNo) ?></span>
                                 </header>
                                 <div class="bt-quad-labels" aria-hidden="true">
                                     <span style="grid-column:1">32 强</span>
@@ -670,7 +667,6 @@ $renderStack = static function (array $roundsForStack, $showNav = false) use ($r
             <div class="bt-third">
                 <h3 class="bt-third__title">三四名决赛</h3>
                 <div class="bt-third__card"><?= $renderCard($thirdPlaceMatch, 'consolation') ?></div>
-                <p class="bt-third__note">两场半决赛的负者；季军战不计入冠军路径。</p>
             </div>
         <?php endif ?>
     </section>

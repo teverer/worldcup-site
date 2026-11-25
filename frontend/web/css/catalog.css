@@ -228,7 +228,8 @@
 
 .pl-section-head p {
     margin: 0;
-    color: var(--color-muted-strong);
+    color: inherit;
+    opacity: .72;
     font-size: var(--fs-sm);
 }
 
@@ -326,7 +327,7 @@
     background: rgba(244, 242, 236, .08);
     color: var(--steel);
     font-family: var(--font-display);
-    font-size: 8px;
+    font-size: 9px;
     line-height: 13px;
     text-align: center;
 }
@@ -342,7 +343,7 @@
 .pl-scorer-goals small {
     margin-left: 2px;
     color: var(--color-muted-strong);
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
 }
 
@@ -806,7 +807,8 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
 
 .td-section-head p {
     margin: 0;
-    color: var(--color-muted-strong);
+    color: inherit;
+    opacity: .72;
     font-size: 15px;
 }
 
@@ -965,7 +967,7 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
 
 .pd-note {
     margin: var(--space-1) 0 0;
-    color: var(--color-muted);
+    color: var(--steel-2);
     font-size: 13.5px;
 }
 
@@ -1097,7 +1099,7 @@ body:not(.site-site-index) .ti-jump .td-edition:focus {
 
 .td-head-facts dt {
     color: var(--steel);
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: .03em;
     line-height: 1.4;
 }

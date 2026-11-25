@@ -69,7 +69,6 @@ $singleTournament = count($points) === 1;
 <section class="pd-section pd-career" aria-labelledby="pd-career-chart-title">
     <div class="pd-section-head">
         <h2 id="pd-career-chart-title"><?= $chartTitle ?></h2>
-        <p>柱为当届<?= $totalAssists > 0 ? '进球与助攻' : '进球' ?>。</p>
     </div>
     <div class="chart-card pd-career-card">
         <div id="player-career-chart" class="chart-canvas chart-canvas--player<?= $singleTournament ? ' is-single' : '' ?>"

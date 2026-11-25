@@ -99,7 +99,7 @@ foreach ($records as $record) {
         <div class="td-section-head">
             <div>
                 <h2 id="td-records-title">历届战绩</h2>
-                <p>只计已结束比赛；进球按受益球队计入，乌龙球算给对方；点年份进入那一届的晋级图与统计。</p>
+                <p class="ui-note">乌龙球计入受益方</p>
             </div>
         </div>
 
@@ -144,11 +144,9 @@ foreach ($records as $record) {
         <div class="td-section-head">
             <div>
                 <h2 id="td-roster-title">参赛球员</h2>
-                <p>
-                    <?= $currentTournament && !$allRoster
-                        ? Html::encode($currentTournament['name']) . '的名单，共 ' . $rosterTotal . ' 人。'
-                        : '所有届次去重后共 ' . $rosterTotal . ' 人；点年份只看那一届。' ?>
-                </p>
+                <?php if (!$currentTournament || $allRoster): ?>
+                    <p class="ui-note">去重后共 <?= (int) $rosterTotal ?> 人</p>
+                <?php endif ?>
             </div>
             <?php if (!$tournaments): ?>
                 <span class="badge badge-muted">暂无参赛记录</span>

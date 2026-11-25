@@ -103,7 +103,7 @@ $payload = [
 <section class="game-section game-progress" aria-labelledby="game-progress-title">
     <div class="game-section-head">
         <h2 id="game-progress-title">比分走势</h2>
-        <p>按进球分钟累计；点球大战不计入。</p>
+        <p class="ui-note">点球大战不计入</p>
     </div>
     <div id="game-score-chart" class="chart-canvas chart-canvas--game"
          role="img" data-echarts-src="<?= Html::encode(Url::to('@web/js/vendor/echarts.min.js')) ?>"

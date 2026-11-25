@@ -20,7 +20,6 @@ $this->registerCssFile('@web/css/community.css');
 <section class="community-page news-index">
     <header class="news-head">
         <h1>资讯</h1>
-        <p>赛事回顾、数据观察与团队动态。</p>
     </header>
 
     <?php // 2 篇资讯不值得一条搜索框；文章多起来再恢复。 ?>

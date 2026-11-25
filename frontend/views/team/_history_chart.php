@@ -59,7 +59,7 @@ $payload = ['points' => $points];
     <div class="chart-card-head">
         <h3>世界杯轨迹</h3>
         <p class="chart-caption">
-            按参赛届次排列；纵轴是最终阶段，金点为夺冠。只画已录入比赛的届次。
+            金点 = 夺冠；只画已录入比赛的届次
         </p>
     </div>
     <div id="team-history-chart" class="chart-canvas chart-canvas--team"

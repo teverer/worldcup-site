@@ -46,8 +46,14 @@ if ($hasScore && $model->stage === Game::STAGE_FINAL) {
 }
 $championName = $championSide === 'home' ? $homeName : ($championSide === 'away' ? $awayName : null);
 $penaltyText = $model->home_penalty_score !== null && $model->away_penalty_score !== null
-    ? '点球 ' . $model->home_penalty_score . '–' . $model->away_penalty_score
+    ? '点球大战 ' . $model->home_penalty_score . '–' . $model->away_penalty_score
     : null;
+// 点球大战的胜者要说出来：只写 4–2，读者还得自己比大小。
+$penaltyWinnerName = null;
+if ($penaltyText !== null) {
+    $penaltyWinnerName = (int) $model->home_penalty_score > (int) $model->away_penalty_score
+        ? $homeName : $awayName;
+}
 
 $this->title = $homeName . ' vs ' . $awayName;
 $this->params['breadcrumbs'][] = ['label' => '比赛', 'url' => ['index']];
@@ -60,10 +66,11 @@ if ($model->tournament !== null) {
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/catalog.css');
 $this->registerCssFile('@web/css/game.css');
+$this->registerCssFile('@web/css/game-penalty.css');
 
 $scoreLabel = $hasScore ? $model->home_score . ' 比 ' . $model->away_score : '比分待补';
 if ($penaltyText !== null) {
-    $scoreLabel .= '，' . $penaltyText;
+    $scoreLabel .= '，' . $penaltyText . '，' . $penaltyWinnerName . '胜';
 }
 
 // 点球大战行不是常规进球:单独成段、单独计数，也不参与“加时”判断。
@@ -153,7 +160,12 @@ if ($statusValue === Game::STATUS_PENDING) {
             <span class="game-score-main">
                 <span class="game-score-value"><?= Html::encode($mainScore) ?></span>
                 <?php if ($penaltyText !== null): ?>
-                    <span class="game-penalty"><?= Html::encode($penaltyText) ?></span>
+                    <span class="game-penalty">
+                        <span class="game-penalty-label">点球大战</span>
+                        <?= Html::encode($model->home_penalty_score . '–' . $model->away_penalty_score) ?>
+                        <span class="game-penalty-sep" aria-hidden="true">·</span>
+                        <strong><?= Html::encode($penaltyWinnerName) ?>胜</strong>
+                    </span>
                 <?php endif ?>
             </span>
             <span class="game-team<?= $championSide === 'away' ? ' is-champion' : '' ?>">
@@ -199,14 +211,14 @@ if ($statusValue === Game::STATUS_PENDING) {
         <div class="game-section-head">
             <h2 id="game-goals-title"><?= $regularGoalCount > 0 ? '进球时间线' : ($shootoutGoalCount > 0 ? '点球大战' : '进球时间线') ?></h2>
             <?php if ($regularGoalCount > 0 || $shootoutGoalCount > 0): ?>
-                <p>
+                <p class="ui-note">
                     <?php if ($regularGoalCount > 0): ?>
-                        共 <?= $regularGoalCount ?> 个进球，按分钟排列。
+                        <?= $regularGoalCount ?> 个进球
                         <?php if ($shootoutGoalCount > 0): ?>
                             点球大战另记 <?= $shootoutGoalCount ?> 罚。
                         <?php endif ?>
                     <?php elseif ($shootoutGoalCount > 0): ?>
-                        共 <?= $shootoutGoalCount ?> 罚，仅记录命中。
+                        <?= $shootoutGoalCount ?> 罚，仅记录命中
                     <?php endif ?>
                 </p>
             <?php endif ?>
