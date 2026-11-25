@@ -1,0 +1,86 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:界面设计 —— 页头登录态：游客显示「登录」，登录后显示昵称与「退出」。
+
+   与主导航共用同一套盒子：左右没有额外 margin / padding，
+   悬停时的下划线由 nav-underline.js 按 li[data-nav-index] 追踪。 */
+
+.nav-account-user {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--line-dark, rgba(243, 246, 242, .14));
+}
+
+.nav-account-guest > a {
+    border-left: 1px solid var(--line-dark, rgba(243, 246, 242, .14));
+}
+
+.nav-account-name {
+    max-width: 10em;
+    padding: 22px 14px;
+    overflow: hidden;
+    color: rgba(244, 242, 236, .64);
+    font-size: var(--fs-sm, 14px);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-account-user:hover .nav-account-name,
+.nav-account-user:focus-within .nav-account-name {
+    color: var(--flood, #F3F6F2);
+}
+
+.nav-account-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.nav-account .btn-link.logout {
+    color: rgba(244, 242, 236, .64);
+    font-size: var(--fs-sm, 14px);
+    font-weight: 500;
+}
+
+.nav-account .btn-link.logout:hover,
+.nav-account .btn-link.logout:focus {
+    color: var(--flood, #F3F6F2);
+    text-decoration: none;
+}
+
+/* 768–991 宽度下昵称会把导航挤成两行；只留「退出」，与游客态「登录」等价宽。 */
+@media (min-width: 768px) and (max-width: 991px) {
+    .nav-account-name {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .nav-account-user {
+        display: block;
+        border-top: 1px solid var(--line-dark, rgba(243, 246, 242, .14));
+        border-left: 0;
+    }
+
+    .nav-account-guest > a {
+        border-top: 1px solid var(--line-dark, rgba(243, 246, 242, .14));
+        border-left: 0;
+    }
+
+    .nav-account-name {
+        display: block;
+        max-width: none;
+        padding: 12px 16px 0;
+    }
+
+    .nav-account-form {
+        display: block;
+    }
+
+    .nav-account .btn-link.logout {
+        display: block;
+        width: 100%;
+        padding: 8px 16px 12px;
+        text-align: left;
+    }
+}

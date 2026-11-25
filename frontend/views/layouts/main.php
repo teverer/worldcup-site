@@ -127,6 +127,12 @@ $this->registerCssFile(
 );
 // 滚动导航：下滑收起、上滑滑回；二级粘性条跟随页头高度。
 $this->registerCssFile('@web/css/smart-header.css', ['depends' => [\yii\bootstrap\BootstrapAsset::class]]);
+// 页头登录态：游客显示「登录」，登录后显示昵称与「退出」。
+$accountCssVersion = @filemtime(Yii::getAlias('@webroot/css/account-nav.css')) ?: '';
+$this->registerCssFile(
+    Url::to('@web/css/account-nav.css') . ($accountCssVersion !== '' ? '?v=' . $accountCssVersion : ''),
+    ['depends' => [\yii\bootstrap\BootstrapAsset::class]]
+);
 $this->registerJsFile('@web/js/smart-header.js', ['position' => \yii\web\View::POS_END]);
 $navUnderlineVersion = @filemtime(Yii::getAlias('@webroot/js/nav-underline.js')) ?: '';
 $this->registerJsFile(
@@ -222,6 +228,27 @@ $titleSuffix = strpos($pageTitle, Yii::$app->name) === 0 ? '' : ' | ' . Yii::$ap
                                 : []) ?>
                         </li>
                     <?php endforeach ?>
+                    <?php
+                    // 登录态入口：游客给「登录」，登录后显示昵称与「退出」。
+                    // 登录 / 注册等认证页不再重复显示「登录」。
+                    $authPages = ['login', 'signup', 'request-password-reset', 'reset-password', 'resend-verification-email', 'verify-email'];
+                    $showGuestLogin = !($controllerId === 'site' && in_array($actionId, $authPages, true));
+                    ?>
+                    <?php if (Yii::$app->user->isGuest): ?>
+                        <?php if ($showGuestLogin): ?>
+                            <li class="nav-account nav-account-guest" data-nav-index="<?= $navIndex ?>">
+                                <?= Html::a('登录', ['/site/login', 'returnUrl' => Yii::$app->request->url]) ?>
+                            </li>
+                        <?php endif ?>
+                    <?php else: ?>
+                        <?php $identity = Yii::$app->user->identity; ?>
+                        <li class="nav-account nav-account-user" data-nav-index="<?= $navIndex ?>">
+                            <span class="nav-account-name"><?= Html::encode($identity->nickname ?: $identity->username) ?></span>
+                            <?= Html::beginForm(['/site/logout'], 'post', ['class' => 'nav-account-form']) ?>
+                            <?= Html::submitButton('退出', ['class' => 'btn btn-link logout']) ?>
+                            <?= Html::endForm() ?>
+                        </li>
+                    <?php endif ?>
                 </ul>
             </div>
         </div>

@@ -29,7 +29,8 @@
 
     function linkAt(index) {
         var item = itemAt(index);
-        return item ? item.querySelector('a') : null;
+        // 账户区没有 <a> 时（登录后=昵称+退出按钮），用整个 li 当高光范围。
+        return item ? (item.querySelector('a') || item) : null;
     }
 
     function activeIndex() {
@@ -123,8 +124,7 @@
         if (!isDesktop()) {
             return;
         }
-        var link = event.target.closest ? event.target.closest('a') : null;
-        var item = link ? link.closest('li[data-nav-index]') : null;
+        var item = event.target.closest ? event.target.closest('li[data-nav-index]') : null;
         if (!item) {
             return;
         }
