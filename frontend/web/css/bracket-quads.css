@@ -177,3 +177,35 @@
     max-width: 560px;
     margin: 0 auto;
 }
+
+/* 窄屏长名单的轮次锚点：32 强比往届长一倍，先给一排「决赛 / 半决赛 / 1/4 / 1/8 / 32 强」 */
+.bt-round-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line-dark);
+}
+
+.bt-round-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 6px;
+    color: var(--steel);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.bt-round-nav a:hover,
+.bt-round-nav a:focus-visible {
+    color: var(--flood);
+    border-bottom-color: var(--gold-light);
+}
+
+/* 跳轮次时别让页头 + 届次 tab 盖住轮次标题 */
+.bt-stack-round {
+    scroll-margin-top: calc(var(--td-tab-h, 56px) + 8px);
+}

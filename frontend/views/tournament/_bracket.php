@@ -389,7 +389,7 @@ $renderNode = static function ($col, $row, $span, array $match, $level) use ($re
 /**
  * 窄屏 / 数据不足时的纵向名单：按轮次分组，卡片仍是同一张。
  */
-$renderStack = static function (array $roundsForStack) use ($renderCard) {
+$renderStack = static function (array $roundsForStack, $showNav = false) use ($renderCard) {
     $labels = [
         'final' => '决赛',
         'sf' => '半决赛',
@@ -397,13 +397,36 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
         'r16' => '1/8 决赛',
         'r32' => '32 强赛（1/16 决赛）',
     ];
+    $shortLabels = [
+        'final' => '决赛',
+        'sf' => '半决赛',
+        'qf' => '1/4',
+        'r16' => '1/8',
+        'r32' => '32 强',
+    ];
     $html = '<div class="bt-stack">';
+
+    // 32 强名单比往届长一倍，先给一排轮次锚点，别让人一路滚到 1/16。
+    if ($showNav) {
+        $nav = '';
+        foreach ($labels as $key => $label) {
+            if (empty($roundsForStack[$key])) {
+                continue;
+            }
+            $nav .= '<a href="#bt-round-' . Html::encode($key) . '">'
+                . Html::encode(isset($shortLabels[$key]) ? $shortLabels[$key] : $label) . '</a>';
+        }
+        if ($nav !== '') {
+            $html .= '<nav class="bt-round-nav" aria-label="淘汰赛轮次">' . $nav . '</nav>';
+        }
+    }
+
     foreach ($labels as $key => $label) {
         $matches = isset($roundsForStack[$key]) ? $roundsForStack[$key] : [];
         if ($matches === []) {
             continue;
         }
-        $html .= '<section class="bt-stack-round">';
+        $html .= '<section class="bt-stack-round" id="bt-round-' . Html::encode($key) . '">';
         $html .= '<h3 class="bt-stack-label">' . Html::encode($label) . '</h3>';
         $html .= '<div class="bt-stack-grid' . ($key === 'final' ? ' bt-stack-grid--final' : '') . '">';
         foreach ($matches as $match) {
@@ -510,7 +533,7 @@ $renderStack = static function (array $roundsForStack) use ($renderCard) {
                     ],
                     'r16' => $r16Matches,
                     'r32' => $r32Matches,
-                ]) ?>
+                ], true) ?>
             </div>
         <?php elseif ($canTwoSided): ?>
             <?php
