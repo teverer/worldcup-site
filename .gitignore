@@ -52,3 +52,6 @@ Thumbs.db
 # Python test caches
 __pycache__/
 *.py[cod]
+
+# 本地 AI 会话配置（仅本机使用，不提交）
+/CLAUDE.md
