@@ -1,0 +1,763 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— 浅色数据页美术层（R5）
+
+   设计意图：纸面数据页不是“米色后台”，而是一份赛后档案登记册。
+   - 纸：比 v2 更中性的档案纸，去掉发黄的奶油感；细墨线替代米色边框。
+   - 墨：深绿墨；铜色只做小面积的结构标记（目录线、区块起笔、页脚压边）。
+   - 几何：页面右上角一枚极淡的球场中圈水印，把夜场身份带进纸面。
+   - 表格 / 目录 / 检索行按“登记册”处理：去掉盒子，用横线与左边线组织。
+   本文件最后加载，只覆盖颜色、边框、背景、焦点与悬停；
+   不改字号、间距、栅格、断点、图表逻辑与任何视图结构。 */
+
+/* ==========================================================================
+   0. 纸面令牌（只作用于前台浅色页，不影响根页夜场与后台）
+   ========================================================================== */
+body:not(.site-site-index) {
+    --paper: #F2F1EA;
+    --paper-2: #FBFAF5;
+    --color-surface-alt: #E9E7DC;
+    --line: #D4D5C9;
+    --ink: #0B1A15;
+    --ink-2: #2E3D38;
+    --muted: #52605A;
+    --steel: #94A29D;
+    --steel-2: #5F6D68;
+    --green-action: #13553C;
+    --gold-ink: #7C5712;
+    --line-dark: rgba(244, 242, 236, .14);
+    --focus-ring: 0 0 0 3px rgba(19, 85, 60, .22);
+
+    background-color: var(--paper);
+    /* 球场中圈水印：只做纸面底纹，不参与布局 */
+    background-image:
+        radial-gradient(72% 58% at 104% -8%, rgba(19, 85, 60, .060), transparent 70%),
+        radial-gradient(56% 46% at -8% 106%, rgba(185, 137, 47, .050), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'%3E%3Cg fill='none' stroke='%2313553C' stroke-opacity='.055'%3E%3Ccircle cx='1462' cy='118' r='432'/%3E%3Ccircle cx='1462' cy='118' r='298'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-position: top right, bottom left, top right;
+    background-size: auto, auto, 1600px 900px;
+    background-attachment: fixed;
+}
+
+/* 移动端不做 fixed 背景，避免滚动时反复重绘 */
+@media (max-width: 767px) {
+    body:not(.site-site-index) {
+        background-attachment: scroll;
+    }
+}
+
+/* 左侧“装订线”：容器外的装饰线，桌面才出现，不占布局宽度 */
+@media (min-width: 1300px) {
+    body:not(.site-site-index) .site-main > .container {
+        position: relative;
+    }
+
+    body:not(.site-site-index) .site-main > .container::before {
+        position: absolute;
+        top: 56px;
+        bottom: 0;
+        left: -26px;
+        width: 1px;
+        background: linear-gradient(180deg,
+            rgba(185, 137, 47, .42) 0,
+            rgba(185, 137, 47, .14) 32%,
+            rgba(185, 137, 47, 0) 78%);
+        content: "";
+        pointer-events: none;
+    }
+}
+
+/* ==========================================================================
+   1. 壳层：页头压一条铜线，页脚收成深墨
+   ========================================================================== */
+body:not(.site-site-index) .site-header .navbar {
+    border-bottom-color: rgba(224, 180, 87, .26);
+    background-image: none;
+}
+
+body:not(.site-site-index) .navbar-inverse {
+    background-color: var(--ink);
+}
+
+body:not(.site-site-index) .navbar-inverse .navbar-nav > .active > a,
+body:not(.site-site-index) .navbar-inverse .navbar-nav > .active > a:hover,
+body:not(.site-site-index) .navbar-inverse .navbar-nav > .active > a:focus {
+    box-shadow: inset 0 -2px 0 var(--green-light);
+}
+
+body:not(.site-site-index) .navbar-inverse .navbar-nav > li.nav-utility > a {
+    border-left-color: rgba(224, 180, 87, .30);
+}
+
+/* 页脚：深墨压底，和页头一起把纸面“夹住” */
+body:not(.site-site-index) .site-footer {
+    border-top: 2px solid var(--gold);
+    background-color: var(--ink);
+    background-image: none;
+    color: rgba(244, 242, 236, .62);
+}
+
+body:not(.site-site-index) .site-footer-name,
+body:not(.site-site-index) .site-footer-title {
+    color: var(--flood);
+}
+
+body:not(.site-site-index) .site-footer a {
+    color: rgba(244, 242, 236, .68);
+}
+
+body:not(.site-site-index) .site-footer a:hover,
+body:not(.site-site-index) .site-footer a:focus {
+    color: var(--gold-light);
+}
+
+body:not(.site-site-index) .site-footer-bottom {
+    border-top-color: rgba(244, 242, 236, .14);
+}
+
+body:not(.site-site-index) .site-footer-intro {
+    color: rgba(244, 242, 236, .56);
+}
+
+/* 面包屑：档案页眉上的登记线 */
+body:not(.site-site-index) .breadcrumb {
+    color: var(--steel-2);
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .breadcrumb > li + li::before {
+    color: var(--gold-ink);
+}
+
+body:not(.site-site-index) .breadcrumb a {
+    color: var(--green-action);
+    text-underline-offset: 3px;
+}
+
+body:not(.site-site-index) .breadcrumb a:hover,
+body:not(.site-site-index) .breadcrumb a:focus {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: rgba(185, 137, 47, .55);
+}
+
+/* ==========================================================================
+   2. 区块标题：铜色起笔，替代绿色小方块
+   ========================================================================== */
+body:not(.site-site-index) .section-title::before,
+body:not(.site-site-index) .about-section-head h2::before,
+body:not(.site-site-index) .td-section-head h2::before,
+body:not(.site-site-index) .pd-section-head h2::before,
+body:not(.site-site-index) .pl-section-head h2::before {
+    width: 18px;
+    height: 2px;
+    background-color: var(--gold-ink);
+    border-radius: 0;
+}
+
+body:not(.site-site-index) .td-section-head,
+body:not(.site-site-index) .pd-section-head,
+body:not(.site-site-index) .pl-section-head,
+body:not(.site-site-index) .about-section-head {
+    border-bottom-color: rgba(11, 26, 21, .16);
+}
+
+/* ==========================================================================
+   3. 检索区：从“卡片”改成登记册的抬头行
+   ========================================================================== */
+body:not(.site-site-index) .pl-search,
+body:not(.site-site-index) .game-filter-panel,
+body:not(.site-site-index) .catalog-filters,
+body:not(.site-site-index) .news-search,
+body:not(.site-site-index) .game-filters {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .game-filter-group,
+body:not(.site-site-index) .pl-search-filters,
+body:not(.site-site-index) .catalog-filter-actions {
+    border-color: var(--line);
+}
+
+body:not(.site-site-index) .pl-input,
+body:not(.site-site-index) .form-control {
+    border-color: var(--line);
+    background-color: var(--paper-2);
+}
+
+body:not(.site-site-index) .pl-input:focus,
+body:not(.site-site-index) .form-control:focus {
+    border-color: var(--green-action);
+    background-color: #FFFFFF;
+    box-shadow: inset 0 -2px 0 rgba(185, 137, 47, .55), 0 0 0 3px rgba(19, 85, 60, .10);
+}
+
+/* 年份 / 小组筛选：做成登记册的页签，不再是一排盒子 */
+body:not(.site-site-index) .td-edition,
+body:not(.site-site-index) .game-chip {
+    border-color: transparent;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--muted);
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .td-edition:hover,
+body:not(.site-site-index) .td-edition:focus,
+body:not(.site-site-index) .game-chip:hover,
+body:not(.site-site-index) .game-chip:focus {
+    border-bottom-color: var(--gold-ink);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .td-edition.is-active,
+body:not(.site-site-index) .game-chip.is-active {
+    border-color: transparent;
+    border-bottom-color: transparent;
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--gold-ink);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .pl-name-lang {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .pl-name-lang a {
+    color: var(--green-action);
+}
+
+body:not(.site-site-index) .pl-name-lang strong {
+    color: var(--ink);
+}
+
+/* ==========================================================================
+   4. 按钮：铜线压在动作下面，像记分牌的按键
+   ========================================================================== */
+body:not(.site-site-index) .btn-primary,
+body:not(.site-site-index) .btn-success {
+    border-color: var(--green-action);
+    background-color: var(--green-action);
+    background-image: none;
+    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .65);
+    color: var(--flood);
+}
+
+body:not(.site-site-index) .btn-primary:hover,
+body:not(.site-site-index) .btn-primary:focus,
+body:not(.site-site-index) .btn-success:hover,
+body:not(.site-site-index) .btn-success:focus {
+    border-color: var(--ink);
+    background-color: var(--ink);
+    box-shadow: inset 0 -2px 0 var(--gold);
+    color: var(--flood);
+}
+
+body:not(.site-site-index) .btn-default {
+    border-color: rgba(11, 26, 21, .28);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .btn-default:hover,
+body:not(.site-site-index) .btn-default:focus {
+    border-color: var(--ink);
+    background-color: rgba(11, 26, 21, .04);
+    color: var(--ink);
+}
+
+/* ==========================================================================
+   5. 表格：登记册的横线，不要每格一个盒子
+   ========================================================================== */
+body:not(.site-site-index) .table > thead > tr > th {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid rgba(11, 26, 21, .28);
+    background-color: transparent;
+    color: var(--ink-2);
+}
+
+body:not(.site-site-index) .table > tbody > tr > td,
+body:not(.site-site-index) .table > tbody > tr > th {
+    border-top: 1px solid rgba(212, 213, 201, .85);
+}
+
+body:not(.site-site-index) .table > tbody > tr:last-child > td {
+    border-bottom: 1px solid rgba(11, 26, 21, .28);
+}
+
+body:not(.site-site-index) .table > tbody > tr:hover {
+    background-color: rgba(19, 85, 60, .05);
+}
+
+body:not(.site-site-index) .td-table td,
+body:not(.site-site-index) .pd-table td,
+body:not(.site-site-index) .table td {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 数字列右对齐的辅助：只对已有 .num 的单元格生效 */
+body:not(.site-site-index) .num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 身份头的统计带：一条上墨线 + 下细线，内部只留竖分隔 */
+body:not(.site-site-index) .pd-stats {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .td-stat,
+body:not(.site-site-index) .pd-stat {
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .pd-stat + .pd-stat {
+    border-left: 1px solid var(--line);
+}
+
+body:not(.site-site-index) .pd-stat dt,
+body:not(.site-site-index) .td-stat dt {
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .pd-stat dd,
+body:not(.site-site-index) .td-stat dd {
+    color: var(--ink);
+}
+
+/* ==========================================================================
+   6. 球队目录：从“卡片墙”改成印刷索引
+   ========================================================================== */
+body:not(.site-site-index) .ti-team {
+    border: 0;
+    border-bottom: 1px solid rgba(212, 213, 201, .9);
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: inset 2px 0 0 transparent;
+}
+
+body:not(.site-site-index) .ti-team:hover,
+body:not(.site-site-index) .ti-team:focus {
+    border-bottom-color: rgba(11, 26, 21, .30);
+    background-color: rgba(19, 85, 60, .045);
+    box-shadow: inset 2px 0 0 var(--gold-ink);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .ti-team-code {
+    color: var(--steel-2);
+}
+
+body:not(.site-site-index) .ti-group-head {
+    border-bottom-color: rgba(11, 26, 21, .22);
+}
+
+body:not(.site-site-index) .ti-jump {
+    border-color: var(--line);
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .ti-jump:hover,
+body:not(.site-site-index) .ti-jump:focus {
+    border-color: var(--gold-ink);
+    color: var(--gold-ink);
+}
+
+/* ==========================================================================
+   7. 榜单 / 资讯 / 成员：行悬停用铜线起笔
+   ========================================================================== */
+body:not(.site-site-index) .pl-scorer:hover,
+body:not(.site-site-index) .pl-scorer:focus,
+body:not(.site-site-index) .news-row-link:hover,
+body:not(.site-site-index) .news-row-link:focus {
+    background-color: rgba(19, 85, 60, .045);
+    box-shadow: inset 3px 0 0 var(--gold-ink);
+}
+
+body:not(.site-site-index) .pl-scorer-goals {
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .news-row-date {
+    color: var(--steel-2);
+}
+
+body:not(.site-site-index) .news-row-excerpt {
+    color: var(--ink-2);
+}
+
+body:not(.site-site-index) .about-member {
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .about-member:hover {
+    background-color: rgba(19, 85, 60, .035);
+}
+
+/* 关于页四格数字：一条深墨记分牌，而不是四个白盒 */
+body:not(.site-site-index) .about-facts {
+    border: 0;
+    border-top: 3px solid var(--gold);
+    border-bottom: 1px solid var(--ink);
+    background-color: var(--ink);
+    color: var(--flood);
+}
+
+body:not(.site-site-index) .about-facts > div + div {
+    border-left-color: rgba(244, 242, 236, .16);
+}
+
+body:not(.site-site-index) .about-facts dt {
+    color: rgba(244, 242, 236, .58);
+}
+
+body:not(.site-site-index) .about-facts dd {
+    color: var(--flood);
+}
+
+body:not(.site-site-index) .about-notes {
+    border-left: 2px solid var(--gold-ink);
+}
+
+body:not(.site-site-index) .about-source {
+    color: var(--muted);
+    border-top-color: var(--line);
+}
+
+/* ==========================================================================
+   8. 卡片 / 图表 / 空态
+   ========================================================================== */
+body:not(.site-site-index) .card,
+body:not(.site-site-index) .news-card,
+body:not(.site-site-index) .tournament-card,
+body:not(.site-site-index) .chart-card,
+body:not(.site-site-index) .comment-section,
+body:not(.site-site-index) .panel,
+body:not(.site-site-index) .site-login,
+body:not(.site-site-index) .form-page {
+    border-color: var(--line);
+    background-color: var(--paper-2);
+    background-image: none;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .chart-card {
+    border-top: 2px solid var(--ink);
+}
+
+/* 球员页只有一张图：让它和下面的生涯表同一条纸面语法，不做孤立的卡片 */
+body:not(.site-site-index) .pd-career-card {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+body:not(.site-site-index) .chart-card-head {
+    border-bottom-color: rgba(11, 26, 21, .16);
+}
+
+body:not(.site-site-index) .chart-caption,
+body:not(.site-site-index) .chart-footnote,
+body:not(.site-site-index) .chart-note {
+    color: var(--muted);
+}
+
+/* 空态：总纲 §17.5 不做虚线空框；改成一句安静的登记说明 */
+body:not(.site-site-index) .empty-state,
+body:not(.site-site-index) .community-empty,
+body:not(.site-site-index) .comment-empty,
+body:not(.site-site-index) .about-empty,
+body:not(.site-site-index) .ledger-empty,
+body:not(.site-site-index) .chart-empty-state {
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--muted);
+}
+
+/* 徽标 / 标签：细线，不用软色块 */
+body:not(.site-site-index) .badge,
+body:not(.site-site-index) .label {
+    border: 1px solid currentColor;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .badge-accent,
+body:not(.site-site-index) .label-warning {
+    color: var(--gold-ink);
+}
+
+body:not(.site-site-index) .badge-primary,
+body:not(.site-site-index) .label-success {
+    color: var(--green-action);
+}
+
+body:not(.site-site-index) .badge-muted,
+body:not(.site-site-index) .label-default,
+body:not(.site-site-index) .label-info {
+    color: var(--muted);
+}
+
+/* 提示条：一条侧线，不用 Bootstrap 的粉彩色块 */
+body:not(.site-site-index) .alert {
+    border: 0;
+    border-left: 2px solid var(--gold-ink);
+    border-radius: 0;
+    background-color: rgba(19, 85, 60, .045);
+    color: var(--ink);
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .alert-success {
+    border-left-color: var(--green-action);
+    background-color: rgba(19, 85, 60, .06);
+}
+
+body:not(.site-site-index) .alert-danger,
+body:not(.site-site-index) .alert-error {
+    border-left-color: var(--danger);
+    background-color: rgba(168, 35, 47, .05);
+}
+
+body:not(.site-site-index) .alert-info {
+    border-left-color: var(--steel-2);
+    background-color: rgba(11, 26, 21, .035);
+}
+
+body:not(.site-site-index) .help-block,
+body:not(.site-site-index) .has-error .help-block {
+    color: var(--danger);
+}
+
+body:not(.site-site-index) .has-error .form-control {
+    border-color: var(--danger);
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .has-error .form-control:focus {
+    box-shadow: inset 0 -2px 0 rgba(168, 35, 47, .55);
+}
+
+/* 分页：像页码，不像按钮组 */
+body:not(.site-site-index) .pagination > li > a,
+body:not(.site-site-index) .pagination > li > span {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--ink-2);
+}
+
+body:not(.site-site-index) .pagination > li > a:hover,
+body:not(.site-site-index) .pagination > li > a:focus {
+    border-color: var(--line);
+    background-color: var(--paper-2);
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .pagination > .active > a,
+body:not(.site-site-index) .pagination > .active > span {
+    border-color: var(--ink);
+    background-color: var(--ink);
+    color: var(--flood);
+}
+
+/* ==========================================================================
+   9. 细节：选择、焦点、滚动条
+   ========================================================================== */
+body:not(.site-site-index) ::selection {
+    background-color: rgba(19, 85, 60, .86);
+    color: var(--paper-2);
+}
+
+body:not(.site-site-index) a:focus-visible,
+body:not(.site-site-index) button:focus-visible,
+body:not(.site-site-index) summary:focus-visible,
+body:not(.site-site-index) [tabindex]:focus-visible {
+    outline: 2px solid var(--gold-ink);
+    outline-offset: 3px;
+}
+
+/* 深色表面上的焦点改用浅铜，铜墨在深底上读不出来 */
+body:not(.site-site-index) .site-header a:focus-visible,
+body:not(.site-site-index) .site-header button:focus-visible,
+body:not(.site-site-index) .site-footer a:focus-visible,
+body:not(.site-site-index) .site-footer button:focus-visible,
+body:not(.site-site-index) .skip-link:focus-visible {
+    outline-color: var(--gold-light);
+}
+
+body:not(.site-site-index) a {
+    text-underline-offset: 3px;
+}
+
+body:not(.site-site-index) a:hover {
+    text-decoration-color: rgba(185, 137, 47, .55);
+}
+
+@supports (scrollbar-width: thin) {
+    body:not(.site-site-index) {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(11, 26, 21, .28) transparent;
+    }
+}
+
+/* 深色身份头：底部压一条铜线，和夜场舞台接上 */
+body:not(.site-site-index) .td-head,
+body:not(.site-site-index) .pd-head {
+    box-shadow: inset 0 -2px 0 rgba(224, 180, 87, .45);
+}
+
+/* 届次 hero 用 100vmax box-shadow 做出血；不要覆盖它，否则会露出纸边。
+   铜线交给它下方的 tab 栏，不动 hero 的出血。 */
+
+body:not(.site-site-index) .td-tabs {
+    border-bottom-color: rgba(224, 180, 87, .22);
+}
+
+/* 小组积分卡：一张登记表，不 Floating 的白卡 */
+body:not(.site-site-index) .td-panel--groups .group-card {
+    border-color: var(--line);
+    border-top: 2px solid var(--ink);
+    border-radius: 0;
+    background-color: var(--paper-2);
+}
+
+body:not(.site-site-index) .group-card__head {
+    border-bottom-color: rgba(11, 26, 21, .18);
+}
+
+/* 图表卡：上墨线 + 铜色页眉线，和纸面其他区块同一语法 */
+body:not(.site-site-index) .td-panel--stats .chart-card {
+    border-color: var(--line);
+    border-top: 2px solid var(--ink);
+    border-radius: 0;
+    background-color: var(--paper-2);
+}
+
+body:not(.site-site-index) .chart-card-head {
+    border-bottom: 1px solid rgba(11, 26, 21, .16);
+}
+
+body:not(.site-site-index) .chart-card-head--standings {
+    border-bottom-color: rgba(11, 26, 21, .16);
+}
+
+body:not(.site-site-index) .chart-group-switch-btn {
+    border-color: transparent;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--muted);
+}
+
+body:not(.site-site-index) .chart-group-switch-btn:hover,
+body:not(.site-site-index) .chart-group-switch-btn:focus {
+    border-bottom-color: var(--gold-ink);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+body:not(.site-site-index) .chart-group-switch-btn.is-active,
+body:not(.site-site-index) .chart-group-switch-btn[aria-pressed="true"] {
+    border-color: transparent;
+    border-bottom-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--gold-ink);
+    background-color: transparent;
+    color: var(--ink);
+}
+
+/* 登录 / 注册：一张登记表，不是浮起来的白卡 */
+body:not(.site-site-index) .site-login,
+body:not(.site-site-index) .form-page {
+    border: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background-color: transparent;
+}
+
+/* 错误页 / 空态：页眉线 + 安静说明，去掉虚线框 */
+body:not(.site-site-index) .site-error .page-header {
+    border-bottom-color: rgba(11, 26, 21, .18);
+}
+
+body:not(.site-site-index) .empty-state {
+    border: 0;
+    border-top: 1px solid var(--line);
+    background-color: transparent;
+}
+
+/* 错误页的页眉已经有收口线，空态不要再来一条平行线 */
+body:not(.site-site-index) .site-error .empty-state {
+    border-top: 0;
+}
+
+/* 比赛详情：比分牌压铜线，进球时间线像一条比赛记录 */
+body:not(.site-site-index) .game-scoreboard {
+    box-shadow: inset 0 1px 0 rgba(244, 242, 236, .10), inset 0 -2px 0 rgba(224, 180, 87, .50);
+}
+
+body:not(.site-site-index) .goal-timeline {
+    border-left-color: rgba(11, 26, 21, .18);
+}
+
+body:not(.site-site-index) .goal-minute {
+    color: var(--gold-ink);
+}
+
+body:not(.site-site-index) .goal-item {
+    border-bottom-color: rgba(212, 213, 201, .85);
+}
+
+body:not(.site-site-index) .goal-item:hover {
+    background-color: rgba(19, 85, 60, .04);
+    box-shadow: inset 3px 0 0 var(--gold-ink);
+}
+
+body:not(.site-site-index) .game-facts {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+body:not(.site-site-index) .game-item:hover,
+body:not(.site-site-index) .game-item:focus {
+    background-color: rgba(19, 85, 60, .045);
+    box-shadow: inset 3px 0 0 var(--gold-ink);
+}
+
+/* 上/下届卡片：纸面“档案页” */
+body:not(.site-site-index) .td-history-link {
+    border-color: var(--line);
+    background-color: var(--paper-2);
+    box-shadow: inset 0 2px 0 var(--gold);
+}
+
+body:not(.site-site-index) .td-history-link:hover,
+body:not(.site-site-index) .td-history-link:focus {
+    border-color: var(--gold-ink);
+    background-color: #FFFFFF;
+}
+
+body:not(.site-site-index) .td-history-year {
+    color: var(--ink);
+}

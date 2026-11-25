@@ -24,10 +24,17 @@ body.site-tournament-view {
 body.site-tournament-view .site-main {
     padding-top: 0;
     padding-bottom: var(--space-6);
+    /* hero 用 50vw 出血；滚动条多出的几像素在这里裁掉，避免横向滚动。 */
+    overflow-x: clip;
 }
 
 body.site-tournament-view .breadcrumb {
     display: none;
+}
+
+/* 届次页的留言簿与晋级图同宽：页尾不再突然缩成 840 靠左。 */
+body.site-tournament-view .ledger {
+    max-width: 100%;
 }
 
 body.site-tournament-view .site-header .navbar {
@@ -59,30 +66,37 @@ body.site-tournament-view .navbar-inverse .navbar-nav > li > a:focus {
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a,
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:hover,
 body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
-    background-color: rgba(127, 200, 169, .14);
-    box-shadow: inset 0 -3px 0 var(--green-light);
+    background-color: transparent;
+    box-shadow: inset 0 -2px 0 var(--green-light);
     color: var(--flood);
 }
 
 /* ==========================================================================
-   1. 紧凑身份头 · 夜场记分牌
+   1. 全宽身份头 · 届次大图
    ========================================================================== */
 .td-hero {
     position: relative;
     z-index: 1;
-    padding: 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: clamp(480px, 64vh, 700px);
+    min-height: clamp(480px, 64svh, 700px);
+    padding: 0;
     background-color: var(--night);
-    /* 横向出血到视口两侧,但不参与布局溢出计算 */
+    color: var(--flood);
+    isolation: isolate;
+    /* 夜场色出血到视口；照片层单独用 100vw，不参与布局。 */
     box-shadow: 0 0 0 100vmax var(--night);
     clip-path: inset(0 -100vmax);
-    color: var(--flood);
 }
 
-/* 极淡的顶部灯光与扫描线质感,不铺满、不抢字 */
+/* 无图时的极光底；有图时这两层让位给照片和 scrim。 */
 .td-hero::before,
 .td-hero::after {
     position: absolute;
     inset: 0;
+    z-index: 0;
     pointer-events: none;
     content: "";
 }
@@ -95,58 +109,84 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     background-image: repeating-linear-gradient(0deg, rgba(243, 246, 242, .028) 0 1px, transparent 1px 3px);
 }
 
-.td-hero > * {
-    position: relative;
+body.site-tournament-view .td-hero[data-hero-image]::before,
+body.site-tournament-view .td-hero[data-hero-image]::after {
+    display: none;
+}
+
+/* 照片层：左右 100vw 出血，hero 本身仍是容器宽度，
+   因此标题始终和下方的 facts / tab 对齐；多出的滚动条像素由 .site-main 裁掉。 */
+.td-hero-media {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 50vw);
+    width: 100vw;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.td-hero-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--td-hero-focus, center center);
+}
+
+.td-hero-scrim {
+    position: absolute;
+    inset: 0;
     z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(4, 7, 11, .08) 0%, rgba(4, 7, 11, .12) 32%, rgba(4, 7, 11, .70) 68%, var(--night) 100%),
+        linear-gradient(90deg, rgba(4, 7, 11, .86) 0%, rgba(4, 7, 11, .56) 34%, rgba(4, 7, 11, .10) 68%, rgba(4, 7, 11, .30) 100%),
+        linear-gradient(180deg, rgba(4, 7, 11, .52) 0%, transparent 16%),
+        radial-gradient(92% 150% at 12% -20%, rgba(22, 146, 120, .18), transparent 58%),
+        radial-gradient(70% 120% at 88% -10%, rgba(224, 180, 87, .08), transparent 62%),
+        radial-gradient(110% 90% at 50% 120%, rgba(18, 112, 80, .24), transparent 60%);
 }
 
-.td-hero-top {
+.td-hero-inner {
+    position: relative;
+    z-index: 2;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--line-dark);
+    flex: 1 1 auto;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    /* hero 本身已经在 .container 的内容区里，横向不再加内边距；
+       标题 / 数据带 / tab 共用同一条左轴。 */
+    padding: clamp(96px, 14vh, 150px) 0 clamp(30px, 4.6vh, 48px);
+    padding-top: clamp(96px, 14svh, 150px);
+    padding-bottom: clamp(30px, 4.6svh, 48px);
+    color: var(--flood);
 }
 
-.td-hero-back {
-    color: var(--green-light);
-    font-size: var(--fs-sm);
+.td-hero-kicker {
+    margin: 0 0 clamp(12px, 1.6vh, 18px);
+    color: rgba(243, 246, 242, .78);
+    font-size: 13px;
     font-weight: 600;
-    text-decoration: none;
+    letter-spacing: .12em;
+    line-height: 1.5;
 }
 
-.td-hero-back:hover,
-.td-hero-back:focus {
-    color: var(--gold-light);
-    text-decoration: none;
-}
-
-.td-hero-top-meta {
-    margin: 0;
-    color: var(--steel);
-    font-size: var(--fs-xs);
-    letter-spacing: .06em;
-    white-space: nowrap;
-}
-
-.td-hero-main {
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(320px, .5fr);
-    align-items: center;
-    gap: clamp(24px, 3.4vw, 56px);
-    padding: 22px 0 20px;
-}
-
-.td-hero-identity {
-    min-width: 0;
+.td-hero-kicker span {
+    padding: 0 6px;
+    color: rgba(243, 246, 242, .38);
 }
 
 .td-hero-title {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
     margin: 0;
     color: var(--flood);
     text-wrap: balance;
@@ -155,76 +195,58 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .td-hero-year {
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(4rem, 6.4vw, 6rem);
+    font-size: clamp(5rem, 10.5vw, 9.5rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -.02em;
-    line-height: .82;
+    letter-spacing: -.035em;
+    line-height: .78;
 }
 
-.td-hero-name {
+body.site-tournament-view .td-hero-name {
     color: var(--flood);
-    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+    font-family: var(--font-cn-display);
+    font-size: clamp(1.7rem, 2.8vw, 2.5rem);
     font-weight: 700;
-    letter-spacing: -.02em;
-    line-height: 1.15;
-}
-
-.td-hero-sub {
-    margin: 10px 0 0;
-    color: var(--steel);
-    font-size: 13px;
-    letter-spacing: .02em;
-}
-
-.td-hero-sub span {
-    padding: 0 6px;
-    color: rgba(243, 246, 242, .32);
+    letter-spacing: -.01em;
+    line-height: 1.2;
 }
 
 .td-hero-honor {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    min-width: 0;
-    padding-left: clamp(0px, 2vw, 28px);
-    border-left: 1px solid var(--line-dark);
-}
-
-.td-hero-champion {
-    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 10px;
-    margin: 0;
+    gap: 4px 14px;
+    margin: clamp(16px, 2.6vh, 26px) 0 0;
+    padding: 0;
+    color: var(--flood);
 }
 
 .td-hero-honor-label {
-    color: var(--steel);
-    font-size: var(--fs-xs);
+    color: rgba(243, 246, 242, .62);
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: .16em;
 }
 
-.td-hero-champion strong {
+.td-hero-champion {
     color: var(--gold-light);
-    font-size: clamp(1.75rem, 2.4vw, 2.4rem);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
     font-weight: 700;
     letter-spacing: -.01em;
     line-height: 1.1;
 }
 
-.td-hero-champion.is-pending strong {
+.td-hero-champion.is-pending {
     color: var(--steel);
 }
 
 .td-hero-final {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 4px 8px;
     color: var(--flood);
-    font-size: var(--fs-sm);
+    font-size: 15px;
     text-decoration: none;
 }
 
@@ -236,8 +258,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-final:hover .td-hero-final-opp,
 .td-hero-final:focus .td-hero-final-opp {
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration-color: currentColor;
 }
 
 .td-hero-final.is-pending {
@@ -246,14 +267,14 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 }
 
 .td-hero-final-label {
-    color: var(--steel);
-    font-size: var(--fs-xs);
+    color: rgba(243, 246, 242, .62);
+    font-size: 12px;
 }
 
 .td-hero-final-score {
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 2.2vw, 2.2rem);
+    font-size: clamp(1.5rem, 2vw, 2rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -261,46 +282,88 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
 .td-hero-final-opp {
     color: var(--flood);
-    font-size: var(--fs-sm);
+    font-size: 15px;
     font-weight: 600;
+    /* 触屏没有 hover：决赛链接给一条常驻的淡下划线，弱化但看得见。 */
+    text-decoration: underline;
+    text-decoration-color: rgba(244, 242, 236, .35);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
 }
 
 .td-hero-final-note {
     color: var(--red-bright);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: .04em;
     white-space: nowrap;
 }
 
-.td-hero-facts {
+.td-hero-credit {
+    position: absolute;
+    top: 16px;
+    right: 0;
+    z-index: 2;
+    margin: 0;
+    color: rgba(244, 242, 236, .55);
+    font-size: 10.5px;
+    line-height: 1.5;
+    text-align: right;
+}
+
+.td-hero-credit a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.td-hero-credit a:hover,
+.td-hero-credit a:focus-visible {
+    color: var(--gold-light);
+    text-decoration: underline;
+}
+
+/* 大图下的数据带：独立于 hero，整块删掉不会留下空档。 */
+.td-facts {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(244, 242, 236, .14);
+    background-color: var(--night);
+    box-shadow: 0 0 0 100vmax var(--night);
+    clip-path: inset(0 -100vmax);
+}
+
+.td-facts-inner {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px var(--space-3) 18px;
+}
+
+.td-fact {
+    padding: 0 clamp(8px, 1.6vw, 22px);
+    border-left: 1px solid rgba(244, 242, 236, .14);
+}
+
+.td-fact:first-child {
+    padding-left: 0;
+    border-left: 0;
+}
+
+.td-fact dt {
     margin: 0;
-    border-top: 1px solid var(--line-dark);
-}
-
-.td-hero-fact {
-    padding: 16px 20px 18px 0;
-    border-right: 1px solid var(--line-dark);
-}
-
-.td-hero-fact:last-child {
-    border-right: 0;
-}
-
-.td-hero-fact dt {
     color: var(--steel);
-    font-size: var(--fs-xs);
-    font-weight: 400;
-    letter-spacing: .1em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    line-height: 1.4;
 }
 
-.td-hero-fact dd {
-    margin: 4px 0 0;
+.td-fact dd {
+    margin: 3px 0 0;
     color: var(--flood);
     font-family: var(--font-display);
-    font-size: clamp(2rem, 2.6vw, 2.6rem);
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -348,44 +411,91 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     text-decoration: none;
 }
 
+/* art-r6 把深色页所有 a 都设成绿色，会盖掉 tab 的静默色；
+   这里用页面级选择器把非当前 tab 拉回中性灰。 */
+body.site-tournament-view .td-tabs a {
+    color: rgba(243, 246, 242, .62);
+}
+
+body.site-tournament-view .td-tabs a:hover,
+body.site-tournament-view .td-tabs a:focus {
+    color: var(--flood);
+}
+
 .td-tabs a:focus-visible {
     outline: 2px solid var(--green-light);
     outline-offset: -2px;
 }
 
-/* 默认高亮淘汰赛;hash 指向其他面板时让位 */
-.td-tabs a[href="#knockout"] {
+/* 默认高亮淘汰赛;hash 指向其他面板时让位。当前 tab 用白字 + 绿下划线。 */
+body.site-tournament-view .td-tabs a[href="#knockout"] {
     border-bottom-color: var(--green-light);
-    color: var(--green-light);
+    color: var(--flood);
 }
 
 .tournament-detail:has(#groups:target) .td-tabs a[href="#knockout"],
-.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"] {
+.tournament-detail:has(#charts:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#history:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-scorers:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-nations:target) .td-tabs a[href="#knockout"],
+.tournament-detail:has(#hist-four:target) .td-tabs a[href="#knockout"] {
     border-bottom-color: transparent;
     color: rgba(243, 246, 242, .62);
 }
 
 .tournament-detail:has(#knockout:target) .td-tabs a[href="#knockout"],
 .tournament-detail:has(#groups:target) .td-tabs a[href="#groups"],
-.tournament-detail:has(#charts:target) .td-tabs a[href="#charts"] {
+.tournament-detail:has(#charts:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#history:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-scorers:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-nations:target) .td-tabs a[href="#charts"],
+.tournament-detail:has(#hist-four:target) .td-tabs a[href="#charts"] {
     border-bottom-color: var(--green-light);
-    color: var(--green-light);
-}
-
-.td-tabs-comments {
-    margin-left: auto;
-}
-
-.td-tabs-comments span {
-    margin-left: 4px;
     color: var(--flood);
-    font-variant-numeric: tabular-nums;
 }
 
-/* 看台展开时点亮右侧“讨论”;不改 hash,舞台 tab 的当前项保持不变 */
-.tournament-detail:has(.td-stands[open]) .td-tabs-comments,
-.tournament-detail:has(#comments:target) .td-tabs-comments {
-    color: var(--green-light);
+/* 讨论是页内落点，不是舞台 tab：常态保持中性，避免和当前 tab 抢绿色。
+   计数做成 badge，像 GitHub 的 Conversation 计数。 */
+.tournament-detail .td-tabs a.td-tabs-comments {
+    margin-left: auto;
+    color: rgba(243, 246, 242, .62);
+}
+
+.tournament-detail .td-tabs a.td-tabs-comments:hover,
+.tournament-detail .td-tabs a.td-tabs-comments:focus {
+    color: var(--flood);
+}
+
+.tournament-detail .td-tabs a.td-tabs-comments span {
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background-color: rgba(243, 246, 242, .10);
+    color: var(--flood);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+}
+
+/* 跳到页尾留言簿或某条记录时，用一个小圆点标“当前位置”；
+   舞台 tab 仍是唯一的绿色下划线，不出现两个“选中”。 */
+.tournament-detail:has(#comments:target) .td-tabs a.td-tabs-comments,
+.tournament-detail:has(.ledger-entry:target) .td-tabs a.td-tabs-comments,
+.tournament-detail:has(.ledger-reply:target) .td-tabs a.td-tabs-comments {
+    color: var(--flood);
+}
+
+.tournament-detail:has(#comments:target) .td-tabs a.td-tabs-comments::before,
+.tournament-detail:has(.ledger-entry:target) .td-tabs a.td-tabs-comments::before,
+.tournament-detail:has(.ledger-reply:target) .td-tabs a.td-tabs-comments::before {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background-color: var(--green-light);
+    content: "";
+    vertical-align: middle;
 }
 
 .td-stage {
@@ -396,11 +506,16 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     scroll-margin-top: calc(var(--td-tab-h) + 8px);
 }
 
-/* 面板由 hash 跳转获得焦点;整块舞台不适合画一圈焦点框 */
+/* 面板由 hash 跳转获得焦点;整块舞台不适合画一圈焦点框。
+   art-r6 的 [tabindex]:focus-visible 特异性更高，这里用页面类压住它。 */
 .tournament-detail .td-panel:focus,
 .tournament-detail .td-panel:focus-visible,
 .tournament-detail .td-section:focus,
-.tournament-detail .td-section:focus-visible {
+.tournament-detail .td-section:focus-visible,
+body.site-tournament-view .tournament-detail .td-panel:focus,
+body.site-tournament-view .tournament-detail .td-panel:focus-visible,
+body.site-tournament-view .tournament-detail .td-section:focus,
+body.site-tournament-view .tournament-detail .td-section:focus-visible {
     outline: none;
 }
 
@@ -451,16 +566,48 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 
     .td-stage:has(#knockout:target) > #knockout,
     .td-stage:has(#groups:target) > #groups,
-    .td-stage:has(#charts:target) > #charts {
+    .td-stage:has(#charts:target) > #charts,
+    .td-stage:has(#history:target) > #charts,
+    .td-stage:has(#hist-scorers:target) > #charts,
+    .td-stage:has(#hist-nations:target) > #charts,
+    .td-stage:has(#hist-four:target) > #charts {
         display: block;
     }
 
     .td-stage:has(#groups:target) > #knockout,
     .td-stage:has(#charts:target) > #knockout,
+    .td-stage:has(#history:target) > #knockout,
+    .td-stage:has(#hist-scorers:target) > #knockout,
+    .td-stage:has(#hist-nations:target) > #knockout,
+    .td-stage:has(#hist-four:target) > #knockout,
     .td-stage:has(#knockout:target) > #groups,
     .td-stage:has(#knockout:target) > #charts {
         display: none;
     }
+
+    /* 记住当前舞台：#comments 不是舞台 target，别因此掉回淘汰赛默认态。 */
+    .tournament-detail[data-stage="groups"] .td-stage > #groups,
+    .tournament-detail[data-stage="charts"] .td-stage > #charts {
+        display: block;
+    }
+
+    .tournament-detail[data-stage="groups"] .td-stage > #knockout,
+    .tournament-detail[data-stage="charts"] .td-stage > #knockout {
+        display: none;
+    }
+}
+
+/* JS 记下的舞台；在 #comments 时 tab 仍指向最后看的舞台。 */
+.tournament-detail[data-stage="groups"] .td-tabs a[href="#groups"],
+.tournament-detail[data-stage="charts"] .td-tabs a[href="#charts"] {
+    border-bottom-color: var(--green-light);
+    color: var(--flood);
+}
+
+.tournament-detail[data-stage="groups"] .td-tabs a[href="#knockout"],
+.tournament-detail[data-stage="charts"] .td-tabs a[href="#knockout"] {
+    border-bottom-color: transparent;
+    color: rgba(243, 246, 242, .62);
 }
 
 /* ==========================================================================
@@ -496,7 +643,8 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     max-width: 62ch;
     margin: 0;
     color: var(--muted);
-    font-size: var(--fs-xs);
+    font-size: 14px;
+    line-height: 1.6;
     text-wrap: pretty;
 }
 
@@ -538,7 +686,7 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-1);
-    padding: 8px 12px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--line);
     background-color: var(--paper);
 }
@@ -546,14 +694,8 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
 .group-card__head h3 {
     margin: 0;
     color: var(--ink);
-    font-size: var(--fs-sm);
+    font-size: 15px;
     letter-spacing: .02em;
-}
-
-.group-card__count {
-    color: var(--muted);
-    font-size: var(--fs-xs);
-    white-space: nowrap;
 }
 
 .group-card__table-wrap {
@@ -561,32 +703,34 @@ body.site-tournament-view .navbar-inverse .navbar-nav > .active > a:focus {
     -webkit-overflow-scrolling: touch;
 }
 
+/* 积分榜是数据表,不是标签:正文 14px、表头 12.5px,行高和内边距都要让数字好扫。 */
 body .td-panel--groups .group-table {
     margin-bottom: 0;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 14px;
 }
 
 body .td-panel--groups .group-table > thead > tr > th {
-    padding: 7px 7px;
+    padding: 9px 8px;
     border-top: 0;
     border-bottom: 1px solid var(--line);
     background-color: var(--paper);
-    color: var(--muted);
-    font-size: 10.5px;
+    color: var(--muted-strong, var(--muted));
+    font-size: 12.5px;
     letter-spacing: .02em;
     white-space: nowrap;
 }
 
 body .td-panel--groups .group-table > tbody > tr > td,
 body .td-panel--groups .group-table > tbody > tr > th {
-    padding: 8px 7px;
+    padding: 14px 10px;
     border-top: 1px solid var(--line);
-    line-height: 1.45;
+    line-height: 1.5;
 }
 
 body .td-panel--groups .group-table > tbody > tr > th.group-team {
-    min-width: 96px;
+    min-width: 112px;
+    font-size: 15px;
     font-weight: 600;
     text-align: left;
 }
@@ -608,6 +752,50 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     width: 22px;
     text-align: center;
     white-space: nowrap;
+}
+
+/* 窄屏没有横向空间时，把胜/平/负合成一列；桌面仍分列。 */
+body .td-panel--groups .group-table .group-col-record {
+    display: none;
+}
+
+.group-team-inner {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+
+.group-flag {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 15px;
+    overflow: hidden;
+    border-radius: 1px;
+    line-height: 0;
+}
+
+.group-flag img {
+    display: block;
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+}
+
+.group-flag.team-flag--code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(244, 242, 236, .08);
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: 8px;
+    letter-spacing: .03em;
+}
+
+.group-team-inner > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .group-team a {
@@ -658,18 +846,54 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     background-color: var(--gold);
 }
 
+/* 出线标记只保留行左缘色轨 + 排名颜色；队名后的小圆点像标点，删掉。 */
+.group-table .group-qual {
+    display: none;
+}
+
+/* 最佳第三用金色条纹轨，前二用实线轨：颜色 + 图案双编码，灰度下也分得开。 */
+body:not(.site-site-index) .td-panel--groups .group-table > tbody > tr.is-best-third > td.group-rank-cell {
+    position: relative;
+    box-shadow: none;
+}
+
+body:not(.site-site-index) .td-panel--groups .group-table > tbody > tr.is-best-third > td.group-rank-cell::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background-image: repeating-linear-gradient(180deg, var(--gold-light) 0 3px, transparent 3px 6px);
+    content: "";
+}
+
 .group-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
     margin: var(--space-2) 0 0;
-    color: var(--muted);
+    color: var(--steel-2);
     font-size: var(--fs-xs);
 }
 
+/* 图例用和行左缘一致的短竖条，别人一眼能对上。 */
 .group-legend .group-qual {
+    display: inline-block;
+    width: 3px;
+    height: 14px;
     margin-left: 8px;
+    border-radius: 1px;
+    vertical-align: -2px;
+}
+
+.group-legend .group-qual--top {
+    background-color: var(--green-light);
+}
+
+.group-legend .group-qual--third {
+    background-color: transparent;
+    background-image: repeating-linear-gradient(180deg, var(--gold-light) 0 3px, transparent 3px 6px);
 }
 
 .group-legend .group-qual:first-child {
@@ -684,170 +908,86 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 }
 
 /* ==========================================================================
-   6. 上一届 / 下一届 · 看台
+   6. 上一届 / 下一届
    ========================================================================== */
+/* 翻页是一条文档式的页脚导航，不是两张空卡片：
+   一条横线、两个方向、年份做锚点，视线从左到右或从右到左各走一次。 */
 .td-history {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-2);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: var(--space-4);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 }
 
 .td-history-link {
     display: flex;
-    flex: 1 1 0;
-    max-width: calc(50% - var(--space-1));
-    flex-direction: column;
-    gap: 2px;
+    align-items: baseline;
+    gap: 10px;
     min-width: 0;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    background-color: var(--paper-2);
+    padding: 16px 20px;
     color: var(--ink);
     text-decoration: none;
-    transition: border-color 160ms ease, background-color 160ms ease;
+    transition: background-color 160ms ease;
+}
+
+.td-history-link + .td-history-link {
+    border-left: 1px solid var(--line);
 }
 
 .td-history-link:hover,
 .td-history-link:focus {
-    border-color: var(--green-action);
-    background-color: #FFFFFF;
+    background-color: rgba(14, 81, 56, .045);
     color: var(--ink);
     text-decoration: none;
 }
 
 .td-history-link--next {
-    margin-left: auto;
+    justify-content: flex-end;
     text-align: right;
+}
+
+/* 首尾届：空出来的一格是「全部届次」出口，文字退一级，不抢邻届。 */
+.td-history-link--all .td-history-year {
+    color: var(--muted);
+}
+
+.td-history-link--all:hover .td-history-year,
+.td-history-link--all:focus .td-history-year {
+    color: var(--green-action);
 }
 
 .td-history-dir {
     color: var(--muted);
     font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.td-history-link--prev .td-history-dir::before {
+    margin-right: 6px;
+    content: "←";
+}
+
+.td-history-link--next .td-history-dir::after {
+    margin-left: 6px;
+    content: "→";
 }
 
 .td-history-year {
     color: var(--green-action);
     font-family: var(--font-display);
-    font-size: var(--fs-xl);
+    font-size: 24px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    line-height: 1;
 }
 
 .td-history-name {
-    color: var(--ink);
+    overflow: hidden;
+    color: var(--ink-2);
     font-size: var(--fs-sm);
-    text-wrap: balance;
-}
-
-/* 看台:页尾的社区区,默认收起成一条深绿门;展开后是一张居中纸卡。
-   用 pitch 深绿和夜场舞台分开,讨论不再直接贴着比赛详情。 */
-.td-stands {
-    margin-top: var(--space-6);
-    background-color: var(--pitch);
-    box-shadow: 0 0 0 100vmax var(--pitch);
-    clip-path: inset(0 -100vmax);
-    color: var(--flood);
-    scroll-margin-top: calc(var(--td-tab-h) + 16px);
-}
-
-.td-stands__bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 16px;
-    padding: 20px 0;
-    cursor: pointer;
-    list-style: none;
-}
-
-.td-stands__bar::-webkit-details-marker {
-    display: none;
-}
-
-.td-stands__bar:focus-visible {
-    outline: 2px solid var(--green-light);
-    outline-offset: -2px;
-}
-
-.td-stands__name {
-    color: var(--flood);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    line-height: 1.2;
-}
-
-.td-stands__note {
-    color: rgba(243, 246, 242, .66);
-    font-size: 13px;
-}
-
-.td-stands__toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-    color: var(--green-light);
-    font-size: 13px;
-    font-weight: 600;
+    text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.td-stands__bar:hover .td-stands__toggle {
-    color: var(--flood);
-}
-
-.td-stands__toggle-close {
-    display: none;
-}
-
-.td-stands[open] .td-stands__toggle-open {
-    display: none;
-}
-
-.td-stands[open] .td-stands__toggle-close {
-    display: inline;
-}
-
-.td-stands__chevron {
-    width: 7px;
-    height: 7px;
-    margin-top: -4px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg);
-    transition: transform 160ms ease, margin-top 160ms ease;
-}
-
-.td-stands[open] .td-stands__chevron {
-    margin-top: 4px;
-    transform: rotate(225deg);
-}
-
-.td-stands__body {
-    padding: 0 0 var(--space-5);
-}
-
-/* 纸卡坐在看台上,评论组件本身的视觉保持不变 */
-.td-stands .comment-section {
-    max-width: 760px;
-    margin: 0 auto;
-    border-radius: 2px;
-    background-color: var(--paper-2);
-    box-shadow: none;
-}
-
-.td-stands .comment-login-prompt {
-    border-radius: 2px;
-    background-color: var(--paper);
-}
-
-/* 看台标题在 summary 上;隐藏组件自带的 COMMUNITY 与重复评论数。 */
-.td-stands .comment-section-heading {
-    display: none;
 }
 
 /* ==========================================================================
@@ -864,42 +1004,79 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .td-hero-main {
-        grid-template-columns: minmax(0, 1fr);
-        align-items: start;
+    .td-hero {
+        min-height: clamp(430px, 58vh, 600px);
+        min-height: clamp(430px, 58svh, 600px);
     }
 
-    .td-hero-honor {
-        padding-top: 8px;
-        padding-left: 0;
-        border-top: 1px solid var(--line-dark);
-        border-left: 0;
-    }
-
-    .td-hero-facts {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .td-hero-fact {
-        border-right: 0;
-    }
-
-    .td-hero-fact:nth-child(n+3) {
-        margin-top: 4px;
-        padding-top: 8px;
-        border-top: 1px solid var(--line-dark);
+    .td-hero-inner {
+        padding-top: clamp(80px, 12vh, 120px);
     }
 }
 
 @media (max-width: 767px) {
-    .td-hero-top {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 4px;
+    .td-hero {
+        min-height: clamp(400px, 56vh, 500px);
+        min-height: clamp(400px, 56svh, 500px);
     }
 
-    .td-hero-top-meta {
-        white-space: normal;
+    .td-hero-inner {
+        padding-top: 84px;
+        padding-bottom: 26px;
+    }
+
+    .td-hero-kicker {
+        margin-bottom: 12px;
+        font-size: 12px;
+        letter-spacing: .08em;
+    }
+
+    .td-hero-year {
+        font-size: clamp(4.2rem, 18vw, 5.4rem);
+    }
+
+    body.site-tournament-view .td-hero-name {
+        font-size: clamp(1.5rem, 6vw, 1.9rem);
+    }
+
+    .td-hero-honor {
+        gap: 4px 10px;
+        margin-top: 14px;
+    }
+
+    .td-hero-champion {
+        font-size: 1.45rem;
+    }
+
+    .td-hero-final {
+        font-size: 14px;
+    }
+
+    .td-hero-final-score {
+        font-size: 22px;
+    }
+
+    .td-hero-credit {
+        top: 10px;
+        right: 0;
+        font-size: 9.5px;
+    }
+
+    .td-facts-inner {
+        padding: 12px 8px 14px;
+    }
+
+    .td-fact {
+        padding: 0 8px;
+    }
+
+    .td-fact dt {
+        font-size: 10px;
+        letter-spacing: .08em;
+    }
+
+    .td-fact dd {
+        font-size: 21px;
     }
 
     .td-tabs {
@@ -926,23 +1103,32 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
         margin-top: var(--space-4);
     }
 
-    /* 单列小组表仍要放下 8 列,收紧字号与内边距保证积分列可见 */
+    /* 移动端删列而不是压字号:只留 排名 / 球队 / 净胜 / 积分,胜平负收起。 */
     body .td-panel--groups .group-table {
-        font-size: 11px;
+        font-size: 14px;
     }
 
     body .td-panel--groups .group-table > thead > tr > th {
-        padding: 5px 4px;
-        font-size: 10px;
+        padding: 8px 6px;
+        font-size: 12.5px;
     }
 
     body .td-panel--groups .group-table > tbody > tr > td,
     body .td-panel--groups .group-table > tbody > tr > th {
-        padding: 5px 4px;
+        padding: 8px 6px;
     }
 
     body .td-panel--groups .group-table > tbody > tr > th.group-team {
-        min-width: 84px;
+        min-width: 92px;
+    }
+
+    body .td-panel--groups .group-table .group-col-result {
+        display: none;
+    }
+
+    /* 胜/平/负不丢：收起三列，换成「3–0–0」一列；场次保留。 */
+    body .td-panel--groups .group-table .group-col-record {
+        display: table-cell;
     }
 
     .td-section-head {
@@ -958,7 +1144,12 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     }
 
     .td-history {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+
+    .td-history-link + .td-history-link {
+        border-top: 1px solid var(--line);
+        border-left: 0;
     }
 
     .td-history-link {
@@ -968,40 +1159,6 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
     .td-history-link--next {
         margin-left: 0;
         text-align: left;
-    }
-
-    .td-stands {
-        margin-top: var(--space-5);
-    }
-
-    .td-stands__bar {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 2px 12px;
-        padding: 18px 0;
-    }
-
-    .td-stands__name {
-        grid-column: 1;
-        grid-row: 1;
-        font-size: 20px;
-    }
-
-    .td-stands__note {
-        grid-column: 1;
-        grid-row: 2;
-        font-size: 12px;
-    }
-
-    .td-stands__toggle {
-        grid-column: 2;
-        grid-row: 1 / span 2;
-        align-self: center;
-        margin-left: 0;
-    }
-
-    .td-stands__body {
-        padding-bottom: var(--space-4);
     }
 }
 
@@ -1015,7 +1172,53 @@ body .td-panel--groups .group-table > tbody > tr > td.group-rank-cell {
 /* 支持 text-box 的浏览器把大数字的上下留白裁到视觉边缘 */
 @supports (text-box: trim-both cap alphabetic) {
     .td-hero-year,
-    .td-hero-fact dd {
+    .td-fact dd {
         text-box: trim-both cap alphabetic;
     }
+}
+
+/* ==========================================================================
+   届次页代表图（2026-11-25；17:20 改为 <img> + 100vw 媒体层）
+   图片是那一届的证据和情绪，铺满视口宽度；年份、届次名、冠军与决赛仍在
+   最上层。缺图时去掉 .td-hero-media，保持夜场极光底。
+   ========================================================================== */
+body.site-tournament-view .td-hero[data-hero-image] .td-hero-kicker,
+body.site-tournament-view .td-hero[data-hero-image] .td-hero-title,
+body.site-tournament-view .td-hero[data-hero-image] .td-hero-honor,
+body.site-tournament-view .td-hero[data-hero-image] .td-hero-credit {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 12px 40px rgba(0, 0, 0, .38);
+}
+
+/* Safari < 16 没有 overflow: clip：把照片收在 hero 内，宁可不出血也不横向滚动。 */
+@supports not (overflow: clip) {
+    .td-hero-media {
+        left: 0;
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   届次大图：水印跟随图片右上角（2026-11-25）
+   --------------------------------------------------------------------------
+   原来 .td-hero-credit 在 1320px 内容列的右上角，离图片边缘还有约 90px；
+   现在挂在 hero 上，用视口/内容宽的差值推到 100vw 照片的右上角。
+   hero 与导航栏之间不再加 margin：照片直接接在导航下方，不留空段。 */
+body.site-tournament-view .td-hero-credit {
+    position: absolute;
+    top: clamp(12px, 1.2vw, 18px);
+    /* hero 本身是 1320 内容宽，照片是 100vw；这个负 offset 把水印推到
+       照片（视口）右边缘，而不是停在内容列边缘。 */
+    right: calc((100% - 100vw) / 2 + clamp(14px, 1.6vw, 28px));
+    z-index: 3;
+    margin: 0;
+    pointer-events: auto;
+    color: rgba(244, 242, 236, .62);
+    font-size: 10.5px;
+    line-height: 1.5;
+    text-align: right;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 4px 16px rgba(0, 0, 0, .45);
+}
+
+body.site-tournament-view .td-hero-credit a {
+    pointer-events: auto;
 }

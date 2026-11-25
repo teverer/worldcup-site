@@ -2,7 +2,8 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 石子川 2411966, 20261108
- * 模块:留言与资讯 —— 资讯列表卡片。
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:留言与资讯 —— 资讯列表的一行:日期、标题、摘要、阅读入口。
  *
  * @var yii\web\View $this
  * @var common\models\News $model
@@ -12,25 +13,18 @@ use yii\helpers\Html;
 use yii\helpers\StringHelper;
 
 $plainText = trim(preg_replace('/\s+/u', ' ', strip_tags($model->content ?: '')));
-$excerpt = StringHelper::truncate($plainText, 150, '…', null, true);
+$excerpt = StringHelper::truncate($plainText, 120, '…', null, true);
 $date = $model->publish_time ?: $model->create_time;
+$dateText = Yii::$app->formatter->asDate($date, 'php:Y-m-d');
 ?>
-<article class="news-card">
-    <?= Html::a(
-        $model->cover
-            ? Html::img('@web/' . $model->cover, ['class' => 'news-cover', 'alt' => $model->title . '封面'])
-            : '<span class="news-cover news-cover-placeholder">WORLD CUP</span>',
-        ['view', 'id' => $model->id],
-        ['class' => 'news-cover-link', 'aria-label' => '阅读：' . $model->title, 'encode' => false]
-    ) ?>
-    <div class="news-card-body">
-        <p class="news-meta">
-            <?= Html::encode(Yii::$app->formatter->asDate($date, 'php:Y-m-d')) ?>
-            <?php if ($model->author): ?> · <?= Html::encode($model->author) ?><?php endif ?>
-        </p>
-        <h2><?= Html::a(Html::encode($model->title), ['view', 'id' => $model->id]) ?></h2>
-        <?php if ($excerpt !== ''): ?>
-            <p class="news-excerpt"><?= Html::encode($excerpt) ?></p>
-        <?php endif ?>
-    </div>
+<article class="news-row">
+    <a class="news-row-link" href="<?= Html::encode(\yii\helpers\Url::to(['view', 'id' => $model->id])) ?>">
+        <span class="news-row-date"><?= Html::encode($dateText) ?></span>
+        <span class="news-row-body">
+            <span class="news-row-title"><?= Html::encode($model->title) ?></span>
+            <?php if ($excerpt !== ''): ?>
+                <span class="news-row-excerpt"><?= Html::encode($excerpt) ?></span>
+            <?php endif ?>
+        </span>
+    </a>
 </article>

@@ -109,3 +109,1048 @@
         gap: var(--space-3);
     }
 }
+
+/* ==========================================================================
+   球员索引(2026-11-23):搜索优先 + 每届最佳射手默认集合
+   ========================================================================== */
+.pl-head {
+    padding: 0 0 var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.pl-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.pl-head p {
+    max-width: 46em;
+    margin: 0;
+    color: var(--color-muted-strong);
+}
+
+.pl-search {
+    margin-top: var(--space-3);
+    padding: 0 0 var(--space-2);
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    background: transparent;
+}
+
+.pl-search-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+
+.pl-input {
+    flex: 1 1 24rem;
+    width: auto;
+    min-width: 12rem;
+    padding-left: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23A9B8B2' stroke-width='1.6'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 13px center;
+    background-size: 15px 15px;
+}
+
+.pl-search-main .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.pl-search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+}
+
+.pl-search-filters .form-control {
+    width: auto;
+    min-width: 150px;
+    max-width: 220px;
+    padding-right: 32px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A9B8B2' stroke-width='1.6'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 11px 11px;
+}
+
+/* 姓名显示开关:不占主操作层级,放在筛选行末尾,当前项加粗。 */
+.pl-name-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    color: var(--color-muted-strong);
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+
+.pl-name-lang a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.pl-name-lang a:hover,
+.pl-name-lang a:focus {
+    text-decoration: underline;
+}
+
+.pl-name-lang strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.pl-clear {
+    margin-left: var(--space-1);
+    font-size: 13px;
+}
+
+.pl-section {
+    margin-top: var(--space-5);
+}
+
+.pl-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.pl-section-head h2 {
+    margin: 0 0 2px;
+    font-size: var(--fs-xl);
+    letter-spacing: -.01em;
+}
+
+.pl-section-head p {
+    margin: 0;
+    color: inherit;
+    opacity: .72;
+    font-size: var(--fs-sm);
+}
+
+.pl-section-link {
+    flex: 0 0 auto;
+    font-size: 13px;
+}
+
+.pl-scorers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+}
+
+.pl-scorer {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 18px 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+.pl-scorer:hover,
+.pl-scorer:focus {
+    background-color: var(--color-surface-alt);
+    color: inherit;
+    text-decoration: none;
+}
+
+.pl-scorer:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .35);
+    outline-offset: -1px;
+}
+
+.pl-scorer-year {
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+}
+
+.pl-scorer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.pl-scorer-text strong {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 17px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pl-scorer-text span {
+    overflow: hidden;
+    color: var(--color-muted-strong);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pl-scorer-flag {
+    display: inline-block;
+    width: 18px;
+    height: 13px;
+    margin-right: 6px;
+    overflow: hidden;
+    border-radius: 1px;
+    line-height: 0;
+    vertical-align: -1px;
+}
+
+.pl-scorer-flag img {
+    display: block;
+    width: 18px;
+    height: 13px;
+    object-fit: cover;
+}
+
+.pl-scorer-flag.team-flag--code {
+    background: rgba(244, 242, 236, .08);
+    color: var(--steel);
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 13px;
+    text-align: center;
+}
+
+.pl-scorer-goals {
+    color: var(--color-primary);
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.pl-scorer-goals small {
+    margin-left: 2px;
+    color: var(--color-muted-strong);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* 第 12 格：把“浏览全部”收进榜单，11 届不再留一个孤行。 */
+.pl-scorer--all {
+    background-color: rgba(244, 242, 236, .035);
+}
+
+.pl-scorer--all .pl-scorer-year {
+    color: var(--color-primary-light);
+    font-family: var(--font-cn-body);
+    font-size: 12px;
+    letter-spacing: .04em;
+}
+
+.pl-scorer--all .pl-scorer-text strong {
+    color: var(--color-primary-light);
+}
+
+.pl-more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
+    font-size: 14px;
+}
+
+.pl-more span {
+    color: var(--color-muted-strong);
+    font-size: 13px;
+}
+
+.pl-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pl-table td {
+    vertical-align: middle !important;
+}
+
+.pl-table .pl-name {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.pl-empty {
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 767px) {
+    .pl-scorers {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pl-section-head {
+        display: block;
+    }
+
+    .pl-section-link {
+        display: inline-block;
+        margin-top: var(--space-1);
+    }
+}
+
+@media (max-width: 600px) {
+    .pl-search-main {
+        display: block;
+    }
+
+    .pl-search-main .btn {
+        width: 100%;
+        margin-top: var(--space-1);
+    }
+
+    .pl-scorer {
+        grid-template-columns: 3.6rem minmax(0, 1fr) auto;
+    }
+}
+
+/* ==========================================================================
+   球队索引(2026-11-23):按大洲分组的目录
+   ========================================================================== */
+.ti-summary {
+    margin: var(--space-2) 0 0;
+    color: var(--color-muted-strong);
+    font-size: 14px;
+}
+
+/* 球队目录的大洲跳转:一行锚点,不抢搜索的主操作。 */
+.ti-jump {
+    flex-wrap: wrap;
+    row-gap: 6px;
+}
+
+/* art-r6 把 .td-edition 统一成透明页签；大洲跳转是一组地点入口，用 chip 更清楚。 */
+body:not(.site-site-index) .ti-jump .td-edition {
+    padding: 3px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    text-decoration: none;
+}
+
+body:not(.site-site-index) .ti-jump .td-edition:hover,
+body:not(.site-site-index) .ti-jump .td-edition:focus {
+    border-color: var(--color-primary-light);
+    color: var(--color-primary-light);
+}
+
+.ti-jump-label {
+    align-self: center;
+    margin-right: 4px;
+    color: var(--color-muted-strong);
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+
+.ti-group {
+    margin-top: var(--space-4);
+}
+
+.ti-group-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* 计数跟着大洲标题走，不再被推到 1240px 外的另一端。 */
+.ti-group-head > span {
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ti-group-head h2 {
+    margin: 0;
+    font-size: var(--fs-lg);
+    letter-spacing: -.01em;
+}
+
+.ti-group-head span {
+    color: var(--color-muted-strong);
+    font-size: 13px;
+}
+
+.ti-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ti-team {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1);
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.ti-team:hover,
+.ti-team:focus {
+    border-color: #B9D8C6;
+    background-color: var(--color-surface-alt);
+    color: inherit;
+    text-decoration: none;
+}
+
+.ti-team:focus-visible {
+    outline: 3px solid rgba(20, 107, 69, .35);
+    outline-offset: 1px;
+}
+
+.ti-team-id {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ti-team-id .team-flag {
+    width: 22px;
+    height: 16px;
+}
+
+.ti-team-name {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ti-team-code {
+    flex: 0 0 auto;
+    color: var(--color-muted-strong);
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: .04em;
+}
+
+@media (max-width: 600px) {
+    .ti-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ==========================================================================
+   球队详情(2026-11-23):身份头、届次切换、名单
+   ========================================================================== */
+.td-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.td-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.td-meta {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+.td-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.td-secondary {
+    font-size: 14px;
+}
+
+.td-intro {
+    max-width: 70ch;
+    margin: var(--space-2) 0 0;
+    color: var(--color-ink-2);
+    line-height: 1.9;
+}
+
+.td-section {
+    margin-top: var(--space-5);
+}
+
+/* 球队详情：队史总计已收回身份头，正文单栏。 */
+.team-detail .td-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 4vw, 56px);
+    align-items: start;
+}
+
+.team-detail .td-body-main {
+    min-width: 0;
+}
+
+/* 主栏本身已经是可读行宽，表格跟着主栏走，不再留一条 880 的空白。 */
+.team-detail .td-body-main .td-section,
+.team-detail .td-body-main .td-records,
+.team-detail .td-body-main .td-table {
+    max-width: none;
+}
+
+.team-detail .td-body-main > .td-section:first-child {
+    margin-top: 0;
+}
+
+.td-aside {
+    position: sticky;
+    top: 24px;
+    padding: 24px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.td-aside h2 {
+    margin: 0 0 18px;
+    color: var(--color-text);
+    font-size: 18px;
+    letter-spacing: -.01em;
+}
+
+.td-aside-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+    margin: 0;
+}
+
+.td-aside-facts dt {
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+.td-aside-facts dd {
+    margin: 3px 0 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.td-aside-facts dd small {
+    color: var(--color-muted);
+    font-family: var(--font-cn-body);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.td-aside-note {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-border);
+}
+
+.td-aside-note h3 {
+    margin: 0 0 8px;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+}
+
+.td-aside-note p {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.td-aside-years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.td-aside-years a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.td-aside-years a:hover,
+.td-aside-years a:focus {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.td-aside-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    margin-top: 22px;
+    padding: 0 14px;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.td-aside-link:hover,
+.td-aside-link:focus {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    text-decoration: none;
+}
+
+@media (max-width: 1100px) {
+    .team-detail .td-body {
+        grid-template-columns: 1fr;
+    }
+
+    .td-aside {
+        position: static;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .td-aside-link,
+    .td-aside-years a {
+        transition: none;
+    }
+}
+
+/* 三列表/五列表不需要铺满 1200px；把正文控制在可读行宽内。
+   整段（标题 + 附表 / 筛选）一起收窄，右侧的姓名开关才能和表尾对齐。
+   选择器带上容器，压过 Bootstrap 后加载的 .table { max-width:100% }。 */
+.team-detail .td-section {
+    max-width: 880px;
+}
+
+.td-section .td-records,
+.td-section .td-table {
+    max-width: 880px;
+}
+
+/* 球员页只有一条主内容轴：读数带、生涯图、生涯表同宽，
+   在宽屏上铺满版心，不再让右侧空一大块。 */
+.pd-section:has(.pd-table),
+.pd-section.pd-career {
+    max-width: none;
+}
+
+.pd-section .pd-table {
+    max-width: none;
+}
+
+.td-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.td-section-head h2 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    letter-spacing: -.01em;
+}
+
+.td-section-head p {
+    margin: 0;
+    color: inherit;
+    opacity: .72;
+    font-size: 15px;
+}
+
+.td-editions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-2);
+}
+
+.td-edition {
+    padding: 5px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    color: var(--color-ink-2);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+
+.td-edition:hover,
+.td-edition:focus {
+    border-color: #B9D8C6;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.td-edition.is-active,
+.td-edition.is-active:hover,
+.td-edition.is-active:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+}
+
+.td-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.td-table td {
+    vertical-align: middle !important;
+}
+
+.td-table .td-player {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.td-empty {
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 767px) {
+    .td-head {
+        display: block;
+    }
+
+    .td-actions {
+        margin-top: var(--space-2);
+        flex-wrap: wrap;
+    }
+
+    .td-section-head {
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   球员详情(2026-11-23):身份头、生涯数字、经历与统计
+   ========================================================================== */
+.pd-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.pd-head-text {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.pd-photo {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 76px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
+.pd-head h1 {
+    margin: 0 0 4px;
+    font-size: var(--fs-3xl);
+    letter-spacing: -.02em;
+}
+
+.pd-meta {
+    margin: 0;
+    color: var(--color-muted-strong);
+    font-size: var(--fs-sm);
+}
+
+.pd-name-toggle {
+    display: inline-block;
+    margin-top: 2px;
+    color: var(--color-primary);
+    font-size: 13px;
+}
+
+.pd-actions {
+    flex: 0 0 auto;
+}
+
+/* 三个生涯数字是一条读数带，不是三张同款卡片。 */
+.pd-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: var(--space-4) 0 0;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.pd-stat {
+    padding: 18px 24px;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.pd-stat + .pd-stat {
+    border-left: 1px solid var(--color-border);
+}
+
+.pd-stat dt {
+    color: var(--color-muted-strong);
+    font-size: 13.5px;
+    font-weight: 400;
+}
+
+.pd-stat dd {
+    margin: 4px 0 0;
+    color: var(--color-primary);
+    font-size: clamp(2rem, 2.2vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.pd-note {
+    margin: var(--space-1) 0 0;
+    color: var(--steel-2);
+    font-size: 13.5px;
+}
+
+.pd-section {
+    margin-top: var(--space-5);
+}
+
+.pd-section h2 {
+    margin: 0 0 var(--space-1);
+    font-size: 24px;
+    letter-spacing: -.01em;
+}
+
+.pd-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.pd-section-head h2 {
+    margin: 0;
+}
+
+.pd-table th {
+    background-color: var(--color-surface-alt);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pd-table td {
+    vertical-align: middle !important;
+}
+
+@media (max-width: 767px) {
+    .pd-head {
+        display: block;
+    }
+
+    .pd-actions {
+        margin-top: var(--space-2);
+    }
+
+    .pd-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-1);
+    }
+
+    .pd-stat {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pd-photo {
+        width: 56px;
+        height: 60px;
+    }
+
+    .pd-head h1 {
+        font-size: var(--fs-2xl);
+    }
+}
+
+/* 移动端资料表不再沿用 560px 最小宽:先删列,再让表铺满容器。 */
+@media (max-width: 767px) {
+    /* 提高一级特异性:theme.css 在页面 CSS 之后加载,同权重会盖掉这里的覆盖。 */
+    body .table-responsive > .table.catalog-table,
+    body .table-responsive > .table.td-table,
+    body .table-responsive > .table.pl-table,
+    body .table-responsive > .table.pd-table {
+        min-width: 100%;
+    }
+}
+
+/* 移动端删信息而不是缩小:名单/球员结果只保留阅读所需的列 */
+@media (max-width: 600px) {
+    .pd-section-head {
+        display: block;
+    }
+
+    .pd-section-head > p {
+        margin-top: 4px;
+    }
+
+    .td-records th,
+    .td-records td,
+    .pd-table--history th,
+    .pd-table--history td {
+        padding: 8px 6px;
+        font-size: 13.5px;
+    }
+
+    /* 球队历届战绩:场次对读者价值最低,手机收起 */
+    .td-records th:nth-child(3),
+    .td-records td:nth-child(3) {
+        display: none;
+    }
+
+    .td-table th:nth-child(3),
+    .td-table td:nth-child(3),
+    .pl-table th:nth-child(4),
+    .pl-table td:nth-child(4),
+    .pd-table--history th:nth-child(3),
+    .pd-table--history td:nth-child(3),
+    .pd-table--history th:nth-child(4),
+    .pd-table--history td:nth-child(4) {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   球队详情(2026-11-24,减法)：队史总计收回身份头，右栏取消。
+   身份头里用一行四个数字替代原来的右侧摘要卡；窄屏换行。
+   ========================================================================== */
+.td-head-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin: 14px 0 0;
+}
+
+.td-head-facts > div {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+}
+
+.td-head-facts dt {
+    color: var(--steel);
+    font-size: 13px;
+    letter-spacing: .03em;
+    line-height: 1.4;
+}
+
+.td-head-facts dd {
+    margin: 0;
+    color: var(--flood);
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.td-head-facts dd span {
+    margin-left: 3px;
+    color: var(--steel);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+body.site-team-view .td-intro {
+    color: var(--ink-2);
+}
+
+@media (max-width: 767px) {
+    .td-head-facts {
+        gap: 8px 18px;
+        margin-top: 10px;
+    }
+
+    .td-head-facts dd {
+        font-size: 21px;
+    }
+}
+
+/* 名单只有三列:在宽屏上锁到可读行宽,不被拉到 1200px 散开;
+   锁窄后居中,不在右侧留 400px 空。 */
+@media (min-width: 1101px) {
+    .team-detail .td-section[aria-labelledby="td-roster-title"] {
+        max-width: 1060px;
+        margin-inline: 0;
+    }
+}
+
+/* 球队名单按届次 / 翻页时就地更新：只给这一块一个轻量的 busy 反馈，
+   不遮页面、不移动滚动位置。 */
+[data-roster-root][aria-busy="true"] {
+    opacity: .55;
+    cursor: progress;
+    transition: opacity .15s ease;
+}

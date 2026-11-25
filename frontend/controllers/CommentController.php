@@ -13,10 +13,12 @@ use common\models\Comment;
 use common\models\CommentLike;
 use common\models\User;
 use frontend\models\CommentForm;
+use frontend\widgets\CommentSection;
 use yii\db\IntegrityException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -56,22 +58,179 @@ class CommentController extends Controller
      */
     public function actionCreate()
     {
+        $isAjax = Yii::$app->request->isAjax;
         $form = new CommentForm();
         if (!$form->load(Yii::$app->request->post()) || !$form->validate()) {
+            if ($isAjax) {
+                return $this->jsonError($form);
+            }
             $this->flashFormErrors($form);
             return $this->redirectToTargetOrHome($form->targetType, $form->targetId);
         }
 
         $comment = $form->createComment(Yii::$app->user->id);
         if ($comment === null) {
+            if ($isAjax) {
+                return $this->jsonError($form);
+            }
             $this->flashFormErrors($form);
             return $this->redirectToTargetOrHome($form->targetType, $form->targetId);
         }
 
-        Yii::$app->session->setFlash('success', $comment->parent_id
-            ? '回复已发布。'
-            : '留言已发布。');
-        return $this->redirectToTarget($comment->target_type, $comment->target_id);
+        // 表单请求保留 PRG：新留言落在自己那条记录上。
+        if (!$isAjax) {
+            return $this->redirectToTarget(
+                $comment->target_type,
+                $comment->target_id,
+                'comment-' . (int) $comment->id
+            );
+        }
+
+        // AJAX：不整页刷新，把新记录的 HTML 和最新计数交回前端就地插入。
+        return $this->jsonCreated($comment);
+    }
+
+    /**
+     * @param CommentForm $form
+     * @return \yii\web\Response
+     */
+    private function jsonError(CommentForm $form)
+    {
+        $messages = ArrayHelper::getColumn($form->getErrors(), 0);
+        $response = $this->asJson([
+            'ok' => false,
+            'error' => $messages
+                ? implode('；', array_unique($messages))
+                : '留言提交失败，请检查输入内容。',
+        ]);
+        $response->setStatusCode(422);
+        return $response;
+    }
+
+    /**
+     * @param Comment $comment
+     * @return \yii\web\Response
+     */
+    private function jsonCreated(Comment $comment)
+    {
+        // TimestampBehavior 在保存后仍把 create_time 留在 Expression('NOW()')，
+        // 同一次请求里直接渲染会拿它去格式化；先回读成数据库里的时间字符串。
+        $comment->refresh();
+
+        $widget = new CommentSection([
+            'targetType' => $comment->target_type,
+            'targetId' => $comment->target_id,
+        ]);
+        $identity = Yii::$app->user->identity;
+        $isAdmin = $identity !== null && (int) $identity->role >= User::ROLE_ADMIN;
+        $currentUserId = $identity !== null ? (int) $identity->id : null;
+        $isReply = $comment->parent_id !== null;
+        $rootId = $isReply ? $this->threadRootId($comment) : (int) $comment->id;
+
+        if ($isReply) {
+            $parent = $comment->parent;
+            $html = $widget->render('_reply', [
+                'comment' => $comment,
+                'rootId' => $rootId,
+                'parentAuthor' => $parent ? CommentSection::authorName($parent) : null,
+                'likeCounts' => [],
+                'likedIds' => [],
+                'targetType' => $comment->target_type,
+                'targetId' => (int) $comment->target_id,
+                'isAdmin' => $isAdmin,
+                'currentUserId' => $currentUserId,
+            ]);
+            $replyCount = $this->threadReplyCount(
+                $comment->target_type,
+                $comment->target_id,
+                $rootId
+            );
+        } else {
+            $html = $widget->render('_item', [
+                'comment' => $comment,
+                'replies' => [],
+                'authorsById' => [(int) $comment->id => CommentSection::authorName($comment)],
+                'likeCounts' => [],
+                'likedIds' => [],
+                'targetType' => $comment->target_type,
+                'targetId' => (int) $comment->target_id,
+                'isAdmin' => $isAdmin,
+                'currentUserId' => $currentUserId,
+            ]);
+            $replyCount = 0;
+        }
+
+        $comments = Comment::findForTarget($comment->target_type, $comment->target_id)
+            ->with('user')
+            ->all();
+        $participantIds = [];
+        foreach ($comments as $row) {
+            if ((int) $row->user_id > 0) {
+                $participantIds[(int) $row->user_id] = true;
+            }
+        }
+
+        return $this->asJson([
+            'ok' => true,
+            'id' => (int) $comment->id,
+            'html' => $html,
+            'total' => count($comments),
+            'participants' => count($participantIds),
+            'isReply' => $isReply,
+            'rootId' => $rootId,
+            'parentId' => $comment->parent_id !== null ? (int) $comment->parent_id : null,
+            'replyCount' => $replyCount,
+        ]);
+    }
+
+    /**
+     * @param Comment $comment
+     * @return int
+     */
+    private function threadRootId(Comment $comment)
+    {
+        $node = $comment;
+        $guard = 0;
+        while ($node->parent_id !== null && $guard++ < 64) {
+            $parent = $node->parent;
+            if ($parent === null) {
+                break;
+            }
+            $node = $parent;
+        }
+        return (int) $node->id;
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $id
+     * @param int $rootId
+     * @return int
+     */
+    private function threadReplyCount($type, $id, $rootId)
+    {
+        $rows = Comment::findForTarget($type, $id)
+            ->select(['id', 'parent_id'])
+            ->asArray()
+            ->all();
+        $children = [];
+        foreach ($rows as $row) {
+            $children[(int) $row['parent_id']][] = (int) $row['id'];
+        }
+
+        $count = 0;
+        $stack = [$rootId];
+        while ($stack) {
+            $current = array_pop($stack);
+            if (!isset($children[$current])) {
+                continue;
+            }
+            foreach ($children[$current] as $child) {
+                $count++;
+                $stack[] = $child;
+            }
+        }
+        return $count;
     }
 
     /**
@@ -81,24 +240,59 @@ class CommentController extends Controller
     public function actionLike($id)
     {
         $comment = $this->findActiveComment($id);
+        $isAjax = Yii::$app->request->isAjax;
         $like = new CommentLike([
             'comment_id' => $comment->id,
             'user_id' => Yii::$app->user->id,
         ]);
 
         try {
-            if ($like->save()) {
-                Yii::$app->session->setFlash('success', '点赞成功。');
-            } elseif ($like->hasErrors('comment_id')) {
-                Yii::$app->session->setFlash('info', '你已经点赞过这条留言。');
-            } else {
-                Yii::$app->session->setFlash('error', '点赞失败，请稍后重试。');
+            if ($like->save() || $like->hasErrors('comment_id')) {
+                // 已同感 / 刚点过都一样：数字就是反馈。
+                if ($isAjax) {
+                    return $this->jsonLiked($comment);
+                }
+                return $this->redirectToTarget(
+                    $comment->target_type,
+                    $comment->target_id,
+                    'comment-' . (int) $comment->id
+                );
             }
+            Yii::$app->session->setFlash('error', '点赞失败，请稍后重试。');
         } catch (IntegrityException $exception) {
-            Yii::$app->session->setFlash('info', '你已经点赞过这条留言。');
+            // 唯一索引兜底：重复同感不报错。
+            if ($isAjax) {
+                return $this->jsonLiked($comment);
+            }
+            return $this->redirectToTarget(
+                $comment->target_type,
+                $comment->target_id,
+                'comment-' . (int) $comment->id
+            );
         }
 
+        if ($isAjax) {
+            $response = $this->asJson(['ok' => false, 'error' => '点赞失败，请稍后重试。']);
+            $response->setStatusCode(422);
+            return $response;
+        }
         return $this->redirectToTarget($comment->target_type, $comment->target_id);
+    }
+
+    /**
+     * @param Comment $comment
+     * @return \yii\web\Response
+     */
+    private function jsonLiked(Comment $comment)
+    {
+        $count = (int) CommentLike::find()
+            ->where(['comment_id' => $comment->id])
+            ->count();
+        return $this->asJson([
+            'ok' => true,
+            'count' => $count,
+            'liked' => true,
+        ]);
     }
 
     /**
@@ -116,8 +310,7 @@ class CommentController extends Controller
         }
 
         $comment->softDeleteTree();
-        Yii::$app->session->setFlash('success', '留言已删除。');
-        return $this->redirectToTarget($comment->target_type, $comment->target_id);
+        return $this->redirectToTarget($comment->target_type, $comment->target_id, 'comments');
     }
 
     /**
@@ -165,11 +358,20 @@ class CommentController extends Controller
     /**
      * @param string $type
      * @param int $id
+     * @param string|null $fragment 不带 # 的锚点，如 comment-12 / comments
      * @return \yii\web\Response
      */
-    private function redirectToTarget($type, $id)
+    private function redirectToTarget($type, $id, $fragment = null)
     {
         $route = CommentTarget::route($type, $id);
-        return $route ? $this->redirect($route) : $this->redirect(Yii::$app->homeUrl);
+        if ($route === null) {
+            return $this->redirect(Yii::$app->homeUrl);
+        }
+
+        $url = Url::to($route);
+        if ($fragment !== null && $fragment !== '') {
+            $url .= '#' . ltrim($fragment, '#');
+        }
+        return $this->redirect($url);
     }
 }

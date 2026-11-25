@@ -20,10 +20,10 @@ use yii\helpers\Html;
     <?= $form->field($model, 'content')->textarea([
         'rows' => 14,
         'maxlength' => 20000,
-    ])->hint('支持基础 HTML；保存时会清理脚本和危险标签。') ?>
+    ])->hint('支持基础 HTML；自动清理危险标签。') ?>
     <?= $form->field($model, 'coverFile')->fileInput([
         'accept' => 'image/jpeg,image/png,image/webp,image/gif',
-    ])->hint('支持 JPG、PNG、WebP、GIF，最大 5 MB。') ?>
+    ])->hint('JPG / PNG / WebP / GIF，≤ 5 MB。') ?>
     <?php if ($model->cover): ?>
         <div class="form-group">
             <label>当前封面路径</label>

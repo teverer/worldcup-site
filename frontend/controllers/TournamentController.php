@@ -8,26 +8,15 @@
 namespace frontend\controllers;
 
 use common\models\Tournament;
+use frontend\models\Records;
 use frontend\models\TournamentDetail;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class TournamentController extends Controller
 {
-    public const STAGES = [
-        '小组赛',
-        '1/16决赛',
-        '1/8决赛',
-        '1/4决赛',
-        '半决赛',
-        '三四名决赛',
-        '决赛',
-    ];
-
     /**
      * 旧编年列表页已由根页记分牌墙取代,统一跳回根页。
-     *
-     * 旧视图与 tournament-index.css 暂留但不被引用,后续清理。
      *
      * @return \yii\web\Response
      */
@@ -57,6 +46,11 @@ class TournamentController extends Controller
             throw new NotFoundHttpException('届次不存在。');
         }
 
-        return $this->render('view', TournamentDetail::build($model));
+        $data = TournamentDetail::build($model);
+        // 统计页的历史坐标：只取四强、决赛常客、生涯射手三块。
+        $data['history'] = Records::history();
+        $data['currentGoals'] = Records::currentEditionScorers($model->id);
+
+        return $this->render('view', $data);
     }
 }

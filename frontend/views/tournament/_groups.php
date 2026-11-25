@@ -12,14 +12,14 @@
  * @var common\models\Tournament $model
  */
 
+use common\components\TeamFlag;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 <section class="td-panel td-panel--groups" id="groups" tabindex="-1"
          aria-labelledby="td-groups-title">
     <header class="td-section-head">
-        <h2 class="section-title" id="td-groups-title">小组赛 <small>积分榜</small></h2>
-        <p class="td-section-note">仅统计已结束的小组赛；每组前两名出线，24 / 48 队制另取最佳小组第三。</p>
+        <h2 class="section-title" id="td-groups-title">小组积分榜</h2>
     </header>
 
     <?php if ($groups === []): ?>
@@ -28,6 +28,28 @@ use yii\helpers\Url;
             <p>该届参赛队或小组赛结果尚未录入。</p>
         </div>
     <?php else: ?>
+        <?php
+        // 32 队制没有「最佳第三名」；图例只在确有该出线方式时出现。
+        $hasBestThird = false;
+        foreach ($groups as $groupForLegend) {
+            $legendRows = isset($groupForLegend['rows']) && is_array($groupForLegend['rows'])
+                ? $groupForLegend['rows'] : [];
+            foreach ($legendRows as $rowForLegend) {
+                if (isset($rowForLegend['qualification']) && $rowForLegend['qualification'] === 'best_third') {
+                    $hasBestThird = true;
+                    break 2;
+                }
+            }
+        }
+        ?>
+        <p class="group-legend">
+            <span class="group-qual group-qual--top" aria-hidden="true"></span>
+            前二出线
+            <?php if ($hasBestThird): ?>
+                <span class="group-qual group-qual--third" aria-hidden="true"></span>
+                最佳第三
+            <?php endif ?>
+        </p>
         <div class="group-grid">
             <?php foreach ($groups as $group): ?>
                 <?php
@@ -38,7 +60,6 @@ use yii\helpers\Url;
                 <article class="group-card">
                     <header class="group-card__head">
                         <h3><?= Html::encode($groupTitle) ?></h3>
-                        <span class="group-card__count"><?= Html::encode((string) count($rows)) ?> 队</span>
                     </header>
                     <div class="group-card__table-wrap">
                         <table class="table table-compact group-table">
@@ -48,9 +69,10 @@ use yii\helpers\Url;
                                 <th scope="col" class="num">#</th>
                                 <th scope="col">球队</th>
                                 <th scope="col" class="num">场</th>
-                                <th scope="col" class="num">胜</th>
-                                <th scope="col" class="num">平</th>
-                                <th scope="col" class="num">负</th>
+                                <th scope="col" class="num group-col-record">胜–平–负</th>
+                                <th scope="col" class="num group-col-result">胜</th>
+                                <th scope="col" class="num group-col-result">平</th>
+                                <th scope="col" class="num group-col-result">负</th>
                                 <th scope="col" class="num">净胜</th>
                                 <th scope="col" class="num">积分</th>
                             </tr>
@@ -77,20 +99,24 @@ use yii\helpers\Url;
                                         <span class="group-rank"><?= Html::encode((string) ($index + 1)) ?></span>
                                     </td>
                                     <th scope="row" class="group-team">
-                                        <a href="<?= Html::encode(Url::to(['/team/view', 'id' => $teamId])) ?>"
-                                           title="<?= Html::encode($teamName) ?>"><?= Html::encode($teamName) ?></a>
-                                        <?php if ($qualification === 'top2'): ?>
-                                            <span class="group-qual group-qual--top" aria-hidden="true"></span>
-                                            <span class="sr-only">出线</span>
-                                        <?php elseif ($qualification === 'best_third'): ?>
-                                            <span class="group-qual group-qual--third" aria-hidden="true"></span>
-                                            <span class="sr-only">最佳第三名出线</span>
-                                        <?php endif ?>
+                                        <span class="group-team-inner">
+                                            <?= TeamFlag::html(isset($row['code']) ? $row['code'] : null, $teamName, 'group-flag') ?>
+                                            <a href="<?= Html::encode(Url::to(['/team/view', 'id' => $teamId])) ?>"
+                                               title="<?= Html::encode($teamName) ?>"><?= Html::encode($teamName) ?></a>
+                                            <?php if ($qualification === 'top2'): ?>
+                                                <span class="group-qual group-qual--top" aria-hidden="true"></span>
+                                                <span class="sr-only">出线</span>
+                                            <?php elseif ($qualification === 'best_third'): ?>
+                                                <span class="group-qual group-qual--third" aria-hidden="true"></span>
+                                                <span class="sr-only">最佳第三名出线</span>
+                                            <?php endif ?>
+                                        </span>
                                     </th>
                                     <td class="num"><?= Html::encode((string) $row['played']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['won']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['drawn']) ?></td>
-                                    <td class="num"><?= Html::encode((string) $row['lost']) ?></td>
+                                    <td class="num group-col-record"><?= Html::encode((int) $row['won'] . '–' . (int) $row['drawn'] . '–' . (int) $row['lost']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['won']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['drawn']) ?></td>
+                                    <td class="num group-col-result"><?= Html::encode((string) $row['lost']) ?></td>
                                     <td class="num"><?= Html::encode($differenceText) ?></td>
                                     <td class="num group-points"><?= Html::encode((string) $row['points']) ?></td>
                                 </tr>
@@ -101,13 +127,6 @@ use yii\helpers\Url;
                 </article>
             <?php endforeach ?>
         </div>
-
-        <p class="group-legend">
-            <span class="group-qual group-qual--top" aria-hidden="true"></span>
-            小组前两名出线
-            <span class="group-qual group-qual--third" aria-hidden="true"></span>
-            最佳第三名出线
-        </p>
 
         <p class="td-section-more">
             <?= Html::a('查看小组赛全部比赛', [

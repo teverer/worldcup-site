@@ -55,3 +55,8 @@ __pycache__/
 
 # 本地 AI 会话配置（仅本机使用，不提交）
 /CLAUDE.md
+
+# AI 协作记录：只保留在本机，不进公开仓库
+/docs/AI协作-*.md
+/docs/ai对话.md
+/.claude/

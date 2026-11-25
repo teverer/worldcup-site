@@ -1,0 +1,41 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:球队与球员 —— 球员详情页「生涯进球」图的容器尺寸
+   只负责高度,卡片、画布与空态样式复用 charts.css。 */
+
+.pd-career {
+    margin-top: var(--space-4);
+}
+
+.pd-career .pd-section-head {
+    margin-bottom: var(--space-2);
+}
+
+.pd-career-card {
+    padding: 12px 14px 6px;
+}
+
+.chart-canvas--player {
+    height: 400px;
+}
+
+/* 只有一届时不留一整块横轴空白,图也更矮。 */
+.chart-canvas--player.is-single {
+    height: 300px;
+}
+
+@media (max-width: 860px) {
+    .chart-canvas--player {
+        height: 320px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pd-career-card {
+        padding: 10px 8px 4px;
+    }
+
+    .chart-canvas--player {
+        height: 300px;
+    }
+}

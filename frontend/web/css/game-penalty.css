@@ -1,0 +1,29 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:届次与比赛 —— 比赛详情比分板的点球大战结果行 */
+
+/* 点球大战是比赛结果的一部分，写在比分线里；标签用红色信号色，胜者加粗。 */
+.game-penalty {
+    display: block;
+    margin-top: 10px;
+    color: var(--flood);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.game-penalty-label {
+    margin-right: 3px;
+    color: var(--red-bright);
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.game-penalty-sep {
+    margin: 0 2px;
+    color: var(--steel-2);
+}
+
+.game-penalty strong {
+    color: var(--flood);
+    font-weight: 600;
+}

@@ -1,11 +1,26 @@
 <?php
+/**
+ * Team: 国足世界杯夺冠队
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:界面设计 —— 后台入口、登录与工作台概览。
+ */
+
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use backend\models\LoginForm;
+use common\models\Comment;
+use common\models\Game;
+use common\models\Goal;
+use common\models\Member;
+use common\models\News;
+use common\models\Player;
+use common\models\Team;
+use common\models\Tournament;
+use common\models\Work;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -60,7 +75,94 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $counts = [
+            'tournament' => (int) Tournament::find()->count(),
+            'team' => (int) Team::find()->count(),
+            'player' => (int) Player::find()->count(),
+            'game' => (int) Game::find()->count(),
+            'goal' => (int) Goal::find()->count(),
+            'news' => (int) News::find()->count(),
+            'comment' => (int) Comment::find()->count(),
+            'member' => (int) Member::find()->count(),
+            'work' => (int) Work::find()->count(),
+        ];
+
+        $playersMissingPosition = (int) Player::find()
+            ->where(['or', ['position' => null], ['position' => '']])
+            ->count();
+        $membersMissingIntro = (int) Member::find()
+            ->where(['or', ['intro' => null], ['intro' => '']])
+            ->count();
+
+        // 工作台第一行只放能指导动作的数：今天有没有新留言、本月有没有新资讯、
+        // 球员位置填了多少、场均进球是多少。计算口径与列表页一致。
+        $todayStart = date('Y-m-d 00:00:00');
+        $monthStart = date('Y-m-01 00:00:00');
+        $todayComments = (int) Comment::find()->where(['>=', 'create_time', $todayStart])->count();
+        $monthNews = (int) News::find()->where(['>=', 'create_time', $monthStart])->count();
+        $positionRate = $counts['player'] > 0
+            ? (int) round(($counts['player'] - $playersMissingPosition) / $counts['player'] * 100)
+            : 100;
+        // 场均进球按正式比赛统计：点球大战不计入，乌龙球仍算受益方进球。
+        $officialGoals = (int) Goal::find()->where(['is_shootout' => 0])->count();
+        $goalsPerGame = $counts['game'] > 0 ? round($officialGoals / $counts['game'], 1) : 0.0;
+
+        // 最近留言 / 资讯：后台首页只给 5–6 条，完整的去各自列表页。
+        $recentComments = Comment::find()
+            ->with('user')
+            ->orderBy(['create_time' => SORT_DESC, 'id' => SORT_DESC])
+            ->limit(6)
+            ->all();
+        $recentNews = News::find()
+            ->orderBy(['create_time' => SORT_DESC, 'id' => SORT_DESC])
+            ->limit(5)
+            ->all();
+
+        // 待补清单只放「有明确动作、能点进去补」的项;没有缺口时显示下一步建议,不留空白。
+        $gaps = [];
+        if ($counts['work'] === 0) {
+            $gaps[] = [
+                'title' => '作业文件还没有上传',
+                'detail' => '需求、设计、实现、手册、部署、PPT 六份。',
+                'url' => ['/work/index'],
+                'action' => '上传文件',
+            ];
+        }
+        if ($membersMissingIntro > 0) {
+            $gaps[] = [
+                'title' => $membersMissingIntro . ' 位成员没有个人简介',
+                'detail' => '补一句分工或方向即可。',
+                'url' => ['/member/index'],
+                'action' => '补简介',
+            ];
+        }
+        if ($playersMissingPosition > 0) {
+            $gaps[] = [
+                'title' => $playersMissingPosition . ' 名球员缺少位置',
+                'detail' => '缺失的球员会排在位置排序的最后。',
+                'url' => ['/player/index'],
+                'action' => '去补位置',
+            ];
+        }
+        if ($counts['news'] < 6) {
+            $gaps[] = [
+                'title' => '资讯只有 ' . $counts['news'] . ' 篇',
+                'detail' => '建议先补赛事回顾与数据观察。',
+                'url' => ['/news/create'],
+                'action' => '写资讯',
+            ];
+        }
+
+        return $this->render('index', [
+            'counts' => $counts,
+            'gaps' => $gaps,
+            'todayComments' => $todayComments,
+            'monthNews' => $monthNews,
+            'positionRate' => $positionRate,
+            'goalsPerGame' => $goalsPerGame,
+            'recentComments' => $recentComments,
+            'recentNews' => $recentNews,
+        ]);
     }
 
     /**

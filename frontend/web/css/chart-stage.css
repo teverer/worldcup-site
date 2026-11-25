@@ -1,0 +1,260 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261124
+   模块:界面设计 —— 图表大气版:全宽舞台、放大字号/线宽/柱宽、深色可读
+   只覆盖图表容器与排版,系列颜色与几何在 charts.js 里。 */
+
+/* --------------------------------------------------------------------------
+   1. 统计页:两张并排图,回答“谁进球 / 哪些队进球”
+   -------------------------------------------------------------------------- */
+#charts-panel .chart-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+#charts-panel .chart-card {
+    padding: 24px 28px 14px;
+    border: 1px solid rgba(244, 242, 236, .14);
+    border-top-color: rgba(244, 242, 236, .28);
+    border-radius: 2px;
+    background:
+        linear-gradient(180deg, rgba(244, 242, 236, .04), rgba(244, 242, 236, .012) 42%, transparent);
+    box-shadow: none;
+}
+
+#charts-panel .chart-card-head h3 {
+    margin-bottom: 8px;
+    font-family: var(--font-cn-display);
+    font-size: 27px;
+    line-height: 1.2;
+    letter-spacing: .02em;
+}
+
+@media (max-width: 1080px) {
+    #charts-panel .chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+}
+
+/* 统计页的小标题要压过 R6 的 30px 通用 h2,和数据卡拉开一级。 */
+#td-stats-head .section-title,
+#td-history-head .section-title {
+    font-size: 42px;
+    line-height: 1.15;
+}
+
+.td-panel--stats .pl-name-lang,
+.td-panel--stats .pl-name-lang a {
+    font-size: 15px;
+}
+
+.chart-caption {
+    max-width: 72ch;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+#charts-panel .chart-card .chart-caption,
+.td-history-chart .chart-card-head .chart-caption {
+    font-size: 13.5px;
+}
+
+.player-detail .pd-career .pd-section-head p,
+body.site-game .game-progress .game-section-head p {
+    font-size: 13.5px;
+}
+
+#charts-panel .chart-footnote {
+    font-size: 13.5px;
+}
+
+.chart-canvas {
+    height: 440px;
+}
+
+.chart-canvas--scorers {
+    height: 440px;
+}
+
+.chart-canvas--teams {
+    height: 440px;
+}
+
+/* 环心数字：HTML 叠层，左/上百分比与 ECharts 的 pie center 同步。 */
+.chart-teams-wrap {
+    position: relative;
+}
+
+.chart-donut-center {
+    position: absolute;
+    z-index: 2;
+    top: 52%;
+    left: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    color: var(--flood);
+    text-align: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.chart-donut-center[hidden] {
+    display: none;
+}
+
+.chart-donut-center strong {
+    font-family: var(--font-display);
+    font-size: 54px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.chart-donut-center span {
+    color: var(--steel);
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.chart-teams-wrap.is-compact .chart-donut-center {
+    top: 40%;
+    left: 50%;
+}
+
+.chart-teams-wrap.is-compact .chart-donut-center strong {
+    font-size: 36px;
+}
+
+.chart-data summary {
+    font-size: 16px;
+}
+
+#charts-panel .chart-table {
+    font-size: 15.5px;
+}
+
+#charts-panel .chart-table th,
+#charts-panel .chart-table td {
+    padding: 10px 12px;
+}
+
+.chart-footnote {
+    margin-top: 22px;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   2. 球队 / 球员 / 比赛里的图:同一条排版语言,尺寸各自在页面 CSS 里
+   -------------------------------------------------------------------------- */
+.td-history-chart.chart-card,
+.pd-career-card {
+    padding: 22px 24px 12px;
+    border: 1px solid rgba(244, 242, 236, .14);
+    border-radius: 0;
+    background:
+        linear-gradient(180deg, rgba(244, 242, 236, .035), rgba(244, 242, 236, .01));
+}
+
+.td-history-chart .chart-card-head h3 {
+    font-family: var(--font-cn-display);
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.pd-career .pd-section-head h2,
+.game-progress .game-section-head h2 {
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.pd-career .pd-section-head p,
+.game-progress .game-section-head p {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+@media (max-width: 860px) {
+    #charts-panel .chart-card {
+        padding: 20px 18px 14px;
+    }
+
+    #charts-panel .chart-card-head h3 {
+        font-size: 24px;
+    }
+
+    #td-stats-head .section-title,
+#td-history-head .section-title {
+        font-size: 28px;
+    }
+
+    .td-panel--stats .pl-name-lang,
+    .td-panel--stats .pl-name-lang a {
+        font-size: 14px;
+    }
+
+    .chart-caption {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .chart-canvas {
+        height: 380px;
+    }
+
+    .chart-canvas--scorers {
+        height: 520px;
+    }
+
+    .chart-canvas--teams {
+        height: 500px;
+    }
+
+    .td-history-chart .chart-card-head h3,
+    .pd-career .pd-section-head h2,
+    .game-progress .game-section-head h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    #charts-panel .chart-card {
+        padding: 16px 12px 10px;
+    }
+
+    #charts-panel .chart-card-head h3 {
+        font-size: 21px;
+    }
+
+    .chart-canvas {
+        height: 340px;
+    }
+
+    .chart-canvas--scorers {
+        height: 480px;
+    }
+
+    .chart-canvas--teams {
+        height: 480px;
+    }
+
+    .td-history-chart .chart-card-head h3,
+    .pd-career .pd-section-head h2,
+    .game-progress .game-section-head h2 {
+        font-size: 21px;
+    }
+}
+
+
+/* 样本不足时的说明:不画图,但告诉读者去哪里看完整记录。 */
+.td-chart-note,
+.game-chart-note {
+    margin: 0 0 14px;
+    color: var(--steel);
+    font-size: 15px;
+    line-height: 1.7;
+}
+

@@ -1,0 +1,106 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:球队与球员 —— 球员姓名显示开关：全站同一套两段式控件。
+
+   说明：只负责外观；切换逻辑在 name-lang.js，点击后就地改字、不刷新。
+   亮色页面用纸面底 + 墨色当前项；球员详情的深色身份头单独反色。 */
+
+.name-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface-alt);
+    font-size: 13.5px;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.name-lang-opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: var(--color-muted-strong);
+    text-decoration: none;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.name-lang-opt:hover,
+.name-lang-opt:focus {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.name-lang-opt.is-active,
+.name-lang-opt[aria-current="true"] {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+.name-lang-opt:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* 球员详情：深色身份头里的反色版本 */
+body.site-player-view .pd-head .name-lang {
+    border-color: var(--line-dark);
+    background-color: rgba(244, 242, 236, .07);
+}
+
+body.site-player-view .pd-head .name-lang-opt {
+    color: var(--steel);
+}
+
+body.site-player-view .pd-head .name-lang-opt:hover,
+body.site-player-view .pd-head .name-lang-opt:focus {
+    color: var(--flood);
+}
+
+body.site-player-view .pd-head .name-lang-opt.is-active,
+body.site-player-view .pd-head .name-lang-opt[aria-current="true"] {
+    background-color: var(--flood);
+    color: var(--night);
+}
+
+body.site-player-view .pd-head .name-lang-opt:focus-visible {
+    outline-color: var(--green-light);
+}
+
+/* 球员索引：放在筛选行末尾，和旧的姓名开关同一位置 */
+.pl-search-filters .name-lang {
+    margin-left: auto;
+}
+
+/* 比赛详情：开关跟在「进球时间线」标题行右侧 */
+.game-section-head--names {
+    justify-content: flex-start;
+}
+
+.game-section-head--names .name-lang {
+    margin-left: auto;
+}
+
+@media (max-width: 600px) {
+    .name-lang-opt {
+        min-height: 30px;
+        padding: 0 9px;
+    }
+
+    .pl-search-filters .name-lang,
+    .game-section-head--names .name-lang {
+        margin-left: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .name-lang-opt {
+        transition: none;
+    }
+}

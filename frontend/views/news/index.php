@@ -2,7 +2,8 @@
 /**
  * Team: 国足世界杯夺冠队
  * Coding by 石子川 2411966, 20261108
- * 模块:留言与资讯 —— 已发布资讯列表与搜索。
+ * Coding by 李行阳 2411353, 20261123
+ * 模块:留言与资讯 —— 资讯索引:按时间读,搜索标题或作者。
  *
  * @var yii\web\View $this
  * @var common\models\NewsSearch $searchModel
@@ -17,39 +18,20 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/community.css');
 ?>
 <section class="community-page news-index">
-    <header class="community-heading">
-        <p class="community-kicker">WORLD CUP JOURNAL</p>
-        <h1>世界杯资讯</h1>
-        <p>赛事回顾、数据观察与团队动态。</p>
+    <header class="news-head">
+        <h1>资讯</h1>
     </header>
 
-    <?= Html::beginForm(['/news/index'], 'get', ['class' => 'community-search']) ?>
-    <div class="form-group">
-        <?= Html::activeLabel($searchModel, 'q', ['for' => 'news-q']) ?>
-        <?= Html::activeTextInput($searchModel, 'q', [
-            'id' => 'news-q',
-            'name' => 'q',
-            'class' => 'form-control',
-            'maxlength' => 100,
-            'placeholder' => '搜索标题或作者',
-        ]) ?>
-    </div>
-    <div class="community-search-actions">
-        <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('重置', ['/news/index'], ['class' => 'btn btn-default']) ?>
-    </div>
-    <?= Html::endForm() ?>
-
+    <?php // 2 篇资讯不值得一条搜索框；文章多起来再恢复。 ?>
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'itemView' => '_card',
-        'layout' => '<div class="community-summary">{summary}</div>{items}<div class="community-pager">{pager}</div>',
-        'summary' => '共 {totalCount} 条资讯',
-        'emptyText' => '暂无已发布资讯。',
-        'emptyTextOptions' => ['class' => 'community-empty'],
-        'options' => ['class' => 'news-list'],
+        'layout' => '{items}<div class="community-pager">{pager}</div>',
+        'emptyText' => '<div class="news-empty"><h2>还没有资讯</h2>'
+            . '<p><a href="' . Html::encode(Yii::$app->homeUrl) . '">回首页从届次进入</a></p></div>',
+        'emptyTextOptions' => ['class' => 'news-empty-wrap'],
+        'options' => ['class' => 'news-rows'],
         'itemOptions' => ['tag' => false],
-        'viewParams' => ['searchModel' => $searchModel],
         'pager' => [
             'options' => ['class' => 'pagination'],
             'prevPageLabel' => '上一页',

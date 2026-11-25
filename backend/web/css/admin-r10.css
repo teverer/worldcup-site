@@ -1,0 +1,714 @@
+/* Team: 国足世界杯夺冠队
+   Coding by 李行阳 2411353, 20261125
+   模块:界面设计 —— 后台 R10：向成熟后台模板的结构靠拢，并与前台同一套夜场 / 纸面令牌。
+
+   只做覆盖层：不搬模板文件，不引第三方依赖。
+   结构借 AdminLTE 2 / Gentelella 的「品牌 + 分组侧栏 + 面包屑页头 + 数据带 + 表格盒 + 登记表」，
+   视觉回到前台的夜蓝 / 球场绿 / 哑光金 / 冷纸，后台只是更密、更静、没有极光。 */
+
+/* ==========================================================================
+   0. 品牌字：WC 两个字模内嵌，切页不再等字体
+   --------------------------------------------------------------------------
+   Saira Condensed 700 的 A-Z / 0-9 子集（OFL 1.1，源文件见 web/fonts/README.md）。
+   后台每个页面都会重载，若用外链字体 + font-display: swap，导轨上的 WC
+   会先按 Arial Narrow 排一遍、再跳成 Saira；这里把两个字模直接嵌进 CSS，
+   样式一到就是最终字形，不产生字体切换。
+   只覆盖大写字母与数字，其他字符仍走 --font-sans。 */
+@font-face {
+    font-family: "Workbench Mark";
+    src: url("data:font/woff2;base64,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") format("woff2");
+    font-style: normal;
+    font-weight: 700;
+    font-display: block;
+    unicode-range: U+0030-0039, U+0041-005A;
+}
+
+/* ==========================================================================
+   0. 令牌：与前台 theme.css 对齐
+   ========================================================================== */
+:root {
+    --rail: #071A26;
+    --rail-2: #0C2431;
+    --rail-line: rgba(243, 246, 242, .11);
+    --rail-text: #C6D3CF;
+    --rail-muted: #82959D;
+
+    --paper: #E9EDE9;
+    --panel: #F5F7F4;
+    --panel-2: #E2E8E3;
+
+    --ink: #0B1A22;
+    --ink-2: #33454C;
+    --muted: #5F6B66;
+    --muted-2: #7A8782;
+    --line: #D3DBD6;
+    --line-soft: #E0E6E1;
+
+    --accent: #C9A227;
+    --accent-2: #E8C766;
+    --accent-ink: #8A6500;
+    --green: #146B45;
+    --green-2: #1C7A52;
+    --red: #B3261E;
+    --danger: #B3261E;
+
+    --color-bg: var(--paper);
+    --color-surface: var(--panel);
+    --color-surface-alt: var(--panel-2);
+    --color-text: var(--ink);
+    --color-muted: var(--muted);
+    --color-muted-strong: var(--ink-2);
+    --color-primary: var(--green);
+    --color-primary-dark: #0E5138;
+    --color-primary-light: var(--green-2);
+    --color-accent: var(--accent);
+    --color-accent-dark: var(--accent-ink);
+    --color-accent-ink: var(--accent-ink);
+    --color-border: var(--line);
+    --color-danger: var(--red);
+    --color-success: var(--green);
+    --focus-ring: 0 0 0 3px rgba(20, 107, 69, .2);
+}
+
+body.backend-body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* 开发期的 Yii 调试条不参与后台视觉；交付前仍应在 web/index.php 关闭 YII_DEBUG。 */
+.yii-debug-toolbar {
+    display: none !important;
+}
+
+/* 多余的装饰性小字：结构上保留 DOM 也不显示（布局里已同步删除）。 */
+.wb-brand-text small,
+.wb-build,
+.wb-top-meta,
+.wb-item-num,
+.wb-group-title span,
+.wb-footer span:last-child {
+    display: none;
+}
+
+/* ==========================================================================
+   1. 骨架：夜蓝导轨 + 冷纸工作区
+   ========================================================================== */
+.wb-rail {
+    width: 232px;
+    border-right: 1px solid rgba(243, 246, 242, .08);
+    background: linear-gradient(180deg, #0C2431 0%, #071A26 58%, #0A211C 100%);
+    color: var(--rail-text);
+}
+
+.wb-brand {
+    padding: 20px 18px 16px;
+}
+
+.wb-brand-mark {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(232, 199, 102, .55);
+    font-family: "Workbench Mark", "Saira Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    letter-spacing: .06em;
+    background: rgba(232, 199, 102, .12);
+    color: var(--accent-2);
+    font-size: 15px;
+}
+
+.wb-brand-text strong {
+    color: #F3F6F2;
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.wb-nav {
+    padding: 12px 8px 20px;
+}
+
+.wb-item {
+    min-height: 40px;
+    padding: 8px 14px;
+    border-left: 2px solid transparent;
+    color: var(--rail-text);
+    font-size: 14.5px;
+}
+
+.wb-item:hover,
+.wb-item:focus {
+    background-color: rgba(243, 246, 242, .06);
+    color: #F3F6F2;
+}
+
+.wb-item.is-active,
+.wb-item[aria-current="page"] {
+    border-left-color: var(--accent);
+    background-color: rgba(232, 199, 102, .13);
+    box-shadow: inset 2px 0 0 var(--accent);
+    color: #F3F6F2;
+}
+
+.wb-item.is-active:hover,
+.wb-item.is-active:focus {
+    background-color: rgba(232, 199, 102, .18);
+    color: #F3F6F2;
+}
+
+.wb-group {
+    margin-top: 18px;
+}
+
+.wb-group-title {
+    margin: 0 0 6px;
+    padding: 0 14px;
+    color: var(--rail-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+}
+
+.wb-group.is-current .wb-group-title {
+    color: var(--accent-2);
+}
+
+.wb-group .wb-item {
+    padding-left: 20px;
+    color: #A9B8B8;
+    font-size: 14px;
+}
+
+.wb-group .wb-item::before {
+    width: 4px;
+    height: 4px;
+    background: #5E7378;
+}
+
+.wb-group .wb-item:hover::before {
+    background: var(--accent-2);
+}
+
+.wb-group .wb-item.is-active::before {
+    background: var(--accent-2);
+}
+
+.wb-user-avatar {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(232, 199, 102, .35);
+    background: rgba(232, 199, 102, .12);
+    color: var(--accent-2);
+}
+
+.wb-user-text strong {
+    color: #F3F6F2;
+    font-size: 14px;
+}
+
+.wb-user-text small {
+    color: var(--rail-muted);
+    font-size: 12px;
+}
+
+.wb-logout,
+.wb-login {
+    font-size: 13px;
+}
+
+.wb-main {
+    margin-left: 232px;
+    background-color: var(--paper);
+    background-image:
+        linear-gradient(rgba(11, 26, 34, .018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(11, 26, 34, .018) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px;
+}
+
+.wb-top {
+    height: 58px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--line);
+    background-color: rgba(233, 237, 233, .94);
+}
+
+.wb-crumbs {
+    color: var(--muted);
+    font-size: 13.5px;
+}
+
+.wb-crumb-current,
+.wb-crumbs > .active {
+    color: var(--ink);
+}
+
+.backend-main {
+    max-width: 1540px;
+    padding: 34px 38px 64px;
+}
+
+.wb-footer {
+    padding: 16px 38px;
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+/* ==========================================================================
+   2. 页头：标题 / 一句说明 / 主动作
+   ========================================================================== */
+.backend-main > h1,
+.backend-main .dash-title,
+.backend-main .page-header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+}
+
+.admin-page-head {
+    margin-bottom: 24px;
+}
+
+.admin-page-sub {
+    max-width: 66ch;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.65;
+}
+
+.admin-page-action {
+    min-height: 38px;
+    padding: 8px 18px;
+    font-size: 14px;
+}
+
+.admin-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   3. 工作台：一条数据带 + 两块工作面板
+   ========================================================================== */
+.dash-header {
+    padding-bottom: 18px;
+}
+
+.dash-title {
+    font-size: 32px;
+}
+
+.dash-lead {
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.dash-section {
+    margin-top: 26px;
+}
+
+.dash-section-head h2,
+.dash-panel-head h2 {
+    font-size: 19px;
+}
+
+/* 六个数字收成一条带，不再是六张同款小卡；分隔线由 1px 间隙的底色承担。 */
+.dash-stats {
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line-soft);
+}
+
+.backend-main .dash-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    border: 0;
+    border-radius: 0;
+    background: var(--panel);
+    box-shadow: none;
+}
+
+.backend-main .dash-stat:hover,
+.backend-main .dash-stat:focus {
+    border: 0;
+    background: var(--paper);
+    box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.backend-main .dash-stat::before {
+    display: none;
+}
+
+.backend-main .dash-stat-value {
+    color: var(--ink);
+    font-size: 40px;
+    line-height: 1;
+}
+
+.backend-main .dash-stat-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.backend-main .dash-stat-hint {
+    display: none;
+}
+
+.dash-columns {
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.backend-main .dash-panel {
+    padding: 22px 24px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--ink);
+    border-radius: 0;
+    background: var(--panel);
+}
+
+.dash-task {
+    padding: 15px 2px;
+}
+
+.dash-task-text strong {
+    font-size: 15px;
+}
+
+.dash-task-text span {
+    color: var(--muted);
+    font-size: 13.5px;
+}
+
+.dash-task-action {
+    font-size: 13.5px;
+}
+
+.dash-quick a {
+    font-size: 15px;
+}
+
+.dash-quick span {
+    display: none;
+}
+
+.dash-foot {
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+
+/* ==========================================================================
+   4. 表格：更大的行距，更安静的表头与操作
+   ========================================================================== */
+body .grid-view {
+    font-size: 14.5px;
+}
+
+body .grid-view .summary {
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 13.5px;
+}
+
+body .table {
+    font-size: 14.5px;
+}
+
+body .table > thead > tr > th {
+    padding: 12px 14px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink-2);
+    font-size: 13px;
+    letter-spacing: .02em;
+}
+
+body .table > tbody > tr > td,
+body .table > tbody > tr > th {
+    padding: 13px 14px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 14.5px;
+}
+
+body .table > tbody > tr:hover {
+    background: rgba(20, 107, 69, .045);
+}
+
+body .table-responsive {
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+
+/* art-r5 的登记册上缘是 2px 墨线；R10 参考后台模板收成细线，表头更安静。 */
+.backend-main .grid-view .table > thead > tr > th {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink-2);
+}
+
+.backend-main .grid-view .table > tbody > tr:hover > td,
+.backend-main .table > tbody > tr:hover {
+    background-color: rgba(20, 107, 69, .045);
+}
+
+body .grid-view .table > tbody > tr:hover > td:last-child {
+    background: #EDF1EC;
+}
+
+@media (min-width: 1400px) {
+    .backend-main .grid-view .table > thead > tr > th {
+        top: 58px;
+    }
+}
+
+body .grid-view .filters td {
+    background: var(--panel-2);
+}
+
+body .grid-view .table > tbody > tr > td[colspan] {
+    padding: 48px 16px;
+    font-size: 14.5px;
+}
+
+/* 行内操作：保留三枚印章，但字号从 11.5 抬到 13，点击区域更大。 */
+body .grid-view .btn-xs {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+body .grid-view .table > thead > tr > th:last-child,
+body .grid-view .table > tbody > tr > td:last-child {
+    width: 178px;
+    min-width: 178px;
+}
+
+/* ==========================================================================
+   5. 检索行
+   ========================================================================== */
+.admin-filter {
+    padding: 16px 18px 18px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.admin-filter-label {
+    color: var(--ink-2);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.admin-filter-field .form-control,
+.admin-filter-actions .btn {
+    height: 38px;
+}
+
+.admin-filter-actions .btn {
+    padding: 7px 16px;
+    font-size: 14px;
+}
+
+.admin-filter-active-label,
+.admin-chip,
+.admin-chip-clear {
+    font-size: 13.5px;
+}
+
+/* ==========================================================================
+   6. 表单：一张更松的登记表
+   ========================================================================== */
+.form-control {
+    height: 40px;
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+select.form-control {
+    height: 40px;
+}
+
+textarea.form-control {
+    min-height: 120px;
+    line-height: 1.75;
+}
+
+label,
+.control-label {
+    margin-bottom: 6px;
+    color: var(--ink-2);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.help-block {
+    max-width: 64ch;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-grid {
+    gap: 0 28px;
+}
+
+.backend-main > form:not(.form-inline):not(.admin-filter) {
+    max-width: 960px;
+    margin-top: 20px;
+    padding: 26px 30px 22px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--ink);
+    background: var(--panel);
+}
+
+.backend-main > form:not(.form-inline):not(.admin-filter) .form-group:last-child {
+    padding-top: 14px;
+    background: var(--panel);
+}
+
+/* 筛选是工具条，不是登记表：保持整行宽，不套用表单卡的收窄与厚上缘。 */
+.backend-main > form.admin-filter {
+    width: 100%;
+    max-width: none;
+    border-top: 1px solid var(--line);
+}
+
+.btn {
+    min-height: 38px;
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.backend-main .label-info {
+    border-color: rgba(20, 107, 69, .3);
+    background: transparent;
+    color: var(--green);
+}
+
+.btn-sm {
+    min-height: 32px;
+    padding: 5px 12px;
+    font-size: 13.5px;
+}
+
+.alert {
+    font-size: 14px;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+    padding: 7px 12px;
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   7. 登录：夜场背景 + 一张纸面登记卡
+   ========================================================================== */
+body.backend-site-login .wb-top,
+body.backend-site-login .wb-footer {
+    display: none;
+}
+
+body.backend-site-login .wb-main {
+    background: linear-gradient(160deg, #071A26 0%, #0C2431 58%, #0E3B2E 100%);
+}
+
+body.backend-site-login .backend-main {
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+body.backend-site-login .site-login {
+    max-width: 430px;
+    padding: 34px 34px 30px;
+    border: 1px solid rgba(243, 246, 242, .14);
+    border-top: 2px solid var(--accent);
+    background: var(--panel);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .38);
+}
+
+.site-login h1 {
+    font-size: 32px;
+}
+
+.site-login p {
+    font-size: 14px;
+}
+
+.wb-login-brand {
+    margin-bottom: 10px;
+    color: var(--accent-ink);
+    font-size: 12.5px;
+    letter-spacing: .08em;
+}
+
+/* ==========================================================================
+   8. 响应式：窄屏保持一列，不产生页面级横向溢出
+   ========================================================================== */
+@media (max-width: 1199px) {
+    .backend-main {
+        padding: 28px 26px 56px;
+    }
+
+    .dash-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991px) {
+    .wb-rail {
+        width: 236px;
+    }
+
+    .wb-main {
+        margin-left: 0;
+    }
+
+    .wb-top {
+        padding: 0 20px;
+    }
+
+    .backend-main {
+        padding: 24px 20px 48px;
+    }
+}
+
+@media (max-width: 600px) {
+    .backend-main {
+        padding: 20px 14px 42px;
+    }
+
+    .dash-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-page-head {
+        margin-bottom: 18px;
+    }
+
+    .backend-main .dash-stat {
+        padding: 15px 16px;
+    }
+
+    .backend-main .dash-stat-value {
+        font-size: 34px;
+    }
+}
