@@ -72,18 +72,6 @@ class TournamentTeamSearch extends Model
                         'asc' => ['tt.group_name' => SORT_ASC],
                         'desc' => ['tt.group_name' => SORT_DESC],
                     ],
-                    'coach' => [
-                        'asc' => ['tt.coach' => SORT_ASC],
-                        'desc' => ['tt.coach' => SORT_DESC],
-                    ],
-                    'fifa_rank' => [
-                        'asc' => ['tt.fifa_rank' => SORT_ASC],
-                        'desc' => ['tt.fifa_rank' => SORT_DESC],
-                    ],
-                    'final_rank' => [
-                        'asc' => ['tt.final_rank' => SORT_ASC],
-                        'desc' => ['tt.final_rank' => SORT_DESC],
-                    ],
                     'tournament_id' => [
                         'asc' => ['t.year' => SORT_ASC],
                         'desc' => ['t.year' => SORT_DESC],
@@ -116,7 +104,6 @@ class TournamentTeamSearch extends Model
         $query->andFilterWhere(['or',
             ['like', 't.name', $this->q],
             ['like', 'tm.name', $this->q],
-            ['like', 'tt.coach', $this->q],
         ]);
 
         return $provider;

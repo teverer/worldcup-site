@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'name' => 'q',
                 'id' => 'tt-q',
                 'class' => 'form-control',
-                'placeholder' => '球队 / 主教练',
+                'placeholder' => '球队 / 届次',
                 'maxlength' => 100,
             ]) ?>
         </label>

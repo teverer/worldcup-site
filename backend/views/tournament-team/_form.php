@@ -31,11 +31,6 @@ echo $form->field($model, 'tournament_id')->dropDownList($tournamentOptions, ['p
 echo $form->field($model, 'team_id')->dropDownList($teamOptions, ['prompt' => '请选择球队']);
 echo $form->field($model, 'group_name')->textInput(['maxlength' => 10])
     ->hint('例如 A、B,不同届次的小组数量不同。');
-echo $form->field($model, 'coach')->textInput(['maxlength' => 50]);
-echo $form->field($model, 'fifa_rank')->input('number', ['min' => 1, 'max' => 300])
-    ->hint('参赛时的 FIFA 世界排名。');
-echo $form->field($model, 'final_rank')->input('number', ['min' => 1, 'max' => 64])
-    ->hint('最终名次,1 表示冠军。');
 ?>
 <div class="form-group">
     <?= Html::submitButton('保存参赛队', ['class' => 'btn btn-success']) ?>

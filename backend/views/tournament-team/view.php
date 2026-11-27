@@ -49,9 +49,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 : Html::a(Html::encode($model->team->name), ['/team/view', 'id' => $model->team_id]),
         ],
         'group_name',
-        'coach',
-        'fifa_rank',
-        'final_rank',
         'create_time:datetime',
     ],
 ]) ?>

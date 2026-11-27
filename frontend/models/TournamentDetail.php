@@ -197,7 +197,7 @@ class TournamentDetail
             ->from(['tt' => '{{%tournament_team}}'])
             ->innerJoin(['tm' => '{{%team}}'], 'tm.id = tt.team_id')
             ->where(['tt.tournament_id' => $tournamentId])
-            ->orderBy(['tt.group_name' => SORT_ASC, 'tt.fifa_rank' => SORT_ASC, 'tt.id' => SORT_ASC])
+            ->orderBy(['tt.group_name' => SORT_ASC, 'tt.id' => SORT_ASC])
             ->all();
 
         $participants = [];
