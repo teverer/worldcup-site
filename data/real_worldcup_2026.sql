@@ -6,6 +6,7 @@
 -- 文件:data/real_worldcup_2026.sql
 -- 用法:先导入 data/install.sql,再导入本文件(建议在干净库中验证):
 --   mysql --default-character-set=utf8mb4 -u root -p worldcup < data/real_worldcup_2026.sql
+--   全量 26 人名单、球衣号/位置与助攻:继续导入 data/real_worldcup_2026_extras.sql。
 --
 -- 覆盖:2026 美加墨世界杯(48 队/12 组/104 场)
 --   小组赛 72 场 + 淘汰赛 32 场;120 分钟进球 308 个;点球大战 4 场。
@@ -19,7 +20,7 @@
 --   3. 进球分钟按来源“基础分钟”记录(45+3' 记 45、90+12' 记 90),满足 1~130 约束。
 --   4. 乌龙球 goal.team_id 填受益方,player_id 填乌龙球员(属于对方);
 --      player/squad 按乌龙球员的实际所属球队归属。
---   5. 助攻无来源,assist_player_id 全部 NULL;coach/fifa_rank/shirt_number 留 NULL。
+--   5. 本文件只写入进球者名单;助攻与球衣号留 NULL,由 real_worldcup_2026_extras.sql 补充。coach/fifa_rank 为保留字段,不维护。
 --   6. 幂等:所有插入均带 NOT EXISTS 判重,不删除、不覆盖已有数据。
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -199,7 +200,7 @@ CREATE TEMPORARY TABLE tmp_wc2026_player (
 INSERT INTO tmp_wc2026_player (pkey, name, nat) VALUES
 ('MEX|julián quiñones', 'Julián Quiñones', '墨西哥'),
 ('MEX|raúl jiménez', 'Raúl Jiménez', '墨西哥'),
-('KOR|hwang in-beom', 'Hwang In-Beom', '韩国'),
+('KOR|hwang in-beom', 'HWANG Inbeom', '韩国'),
 ('KOR|oh hyeon-gyu', 'Oh Hyeon-Gyu', '韩国'),
 ('CZE|ladislav krejcí', 'Ladislav Krejcí', '捷克'),
 ('CZE|michal sadílek', 'Michal Sadílek', '捷克'),
@@ -222,7 +223,7 @@ INSERT INTO tmp_wc2026_player (pkey, name, nat) VALUES
 ('CAN|promise david', 'Promise David', '加拿大'),
 ('BIH|kerim alajbegovic', 'Kerim Alajbegovic', '波黑'),
 ('QAT|mahmoud abunada', 'Mahmoud Abunada', '卡塔尔'),
-('QAT|hassan al-haydos', 'Hassan Al-Haydos', '卡塔尔'),
+('QAT|hassan al-haydos', 'HASSAN ALHAYDOS', '卡塔尔'),
 ('BRA|vinícius júnior', 'Vinícius Júnior', '巴西'),
 ('MAR|ismael saibari', 'Ismael Saibari', '摩洛哥'),
 ('SCO|john mcginn', 'John McGinn', '苏格兰'),
@@ -291,12 +292,12 @@ INSERT INTO tmp_wc2026_player (pkey, name, nat) VALUES
 ('BEL|kevin de bruyne', 'Kevin De Bruyne', '比利时'),
 ('BEL|romelu lukaku', 'Romelu Lukaku', '比利时'),
 ('BEL|alexis saelemaekers', 'Alexis Saelemaekers', '比利时'),
-('KSA|abdulelah al-amri', 'Abdulelah Al-Amri', '沙特阿拉伯'),
+('KSA|abdulelah al-amri', 'Abdulelah ALAMRI', '沙特阿拉伯'),
 ('URU|maxi araújo', 'Maxi Araújo', '乌拉圭'),
 ('ESP|lamine yamal', 'Lamine Yamal', '西班牙'),
 ('ESP|mikel oyarzabal', 'Mikel Oyarzabal', '西班牙'),
-('KSA|hassan al-tambakti', 'Hassan Al-Tambakti', '沙特阿拉伯'),
-('URU|agustín cano', 'Agustín Cano', '乌拉圭'),
+('KSA|hassan al-tambakti', 'Hassan ALTAMBAKTI', '沙特阿拉伯'),
+('URU|agustín cano', 'Agustin CANOBBIO', '乌拉圭'),
 ('CPV|kevin pina', 'Kevin Pina', '佛得角'),
 ('CPV|hélio varela', 'Hélio Varela', '佛得角'),
 ('ESP|álex baena', 'Álex Baena', '西班牙'),
@@ -351,7 +352,7 @@ INSERT INTO tmp_wc2026_player (pkey, name, nat) VALUES
 ('CRO|petar sucic', 'Petar Sucic', '克罗地亚'),
 ('CRO|nikola vlasic', 'Nikola Vlasic', '克罗地亚'),
 ('GHA|derrick luckassen', 'Derrick Luckassen', '加纳'),
-('CAN|stephan eustáquio', 'Stephan Eustáquio', '加拿大'),
+('CAN|stephan eustáquio', 'Stephen EUSTAQUIO', '加拿大'),
 ('PAR|julio enciso', 'Julio Enciso', '巴拉圭'),
 ('MAR|issa diop', 'Issa Diop', '摩洛哥'),
 ('BRA|casemiro', 'Casemiro', '巴西'),
@@ -408,7 +409,7 @@ JOIN player p ON p.name = d.name AND p.nationality = d.nat
 GROUP BY d.pkey;
 
 -- ---------------------------------------------------------------------------
--- 4. 参赛名单(由真实进球者构成;球衣号无来源,留 NULL)
+-- 4. 参赛名单(本文件只写入进球者;全量名单与球衣号由 real_worldcup_2026_extras.sql 补充)
 -- ---------------------------------------------------------------------------
 DROP TEMPORARY TABLE IF EXISTS tmp_wc2026_squad;
 CREATE TEMPORARY TABLE tmp_wc2026_squad (

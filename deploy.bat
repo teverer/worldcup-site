@@ -104,6 +104,10 @@ if errorlevel 1 goto :failed
 if errorlevel 1 goto :failed
 "%MYSQL_EXE%" --default-character-set=utf8mb4 -h "%DB_HOST%" -P "%DB_PORT%" -u "%DB_USER%" worldcup --execute="SOURCE data/player_name_zh.sql"
 if errorlevel 1 goto :failed
+"%MYSQL_EXE%" --default-character-set=utf8mb4 -h "%DB_HOST%" -P "%DB_PORT%" -u "%DB_USER%" worldcup --execute="SOURCE data/real_worldcup_2026_extras.sql"
+if errorlevel 1 goto :failed
+"%MYSQL_EXE%" --default-character-set=utf8mb4 -h "%DB_HOST%" -P "%DB_PORT%" -u "%DB_USER%" worldcup --execute="SOURCE data/player_name_zh_2026.sql"
+if errorlevel 1 goto :failed
 
 echo [6/7] Write local database config and run checks
 "%PHP_EXE%" tools/apply-db-config.php

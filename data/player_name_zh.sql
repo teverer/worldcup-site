@@ -10,6 +10,8 @@
 -- 用法:
 --   先导入 data/install.sql 与两份 real_worldcup 数据，再导入本文件：
 --     mysql --default-character-set=utf8mb4 -u root -p worldcup < data/player_name_zh.sql
+--   本文件之后再导入 data/real_worldcup_2026_extras.sql（全量名单与助攻）。
+--   2026 全量名单新增球员的中文名见 data/player_name_zh_2026.sql（在 extras 之后导入）。
 --   本文件可重复执行：列不存在才新增；只补 name_zh 为空的行，不覆盖人工修订。
 --   覆盖：1986–2026 每届射手榜前十（93 人）+ 2002 中国国家队，共 112 条为人工定稿；
 --   文件末尾另有 4,170 条全量补充。
